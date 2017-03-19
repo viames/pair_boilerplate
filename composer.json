@@ -1,12 +1,12 @@
 {
-	"name" : "pair_example",
-	"version" : "0.9",
-	"require" : {
-		"viames/pair" : "dev-master"
-	},
-	"repositories" : [ {
-		"type" : "composer",
-		"url" : "https://packagist.org/"
-	}],
-	"license": "MIT"
+  "name" : "viames/pair_example",
+  "version" : "0.9",
+  "require" : {
+    "viames/pair" : "dev-master"
+  },
+  "repositories" : [ {
+    "type" : "composer",
+    "url" : "https://packagist.org/"
+  } ],
+  "license" : "MIT"
 }
