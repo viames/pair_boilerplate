@@ -6,9 +6,47 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit3f10bb21f57faf10a4cd4cb7e902dd52
 {
+    public static $classMap = array (
+        'Pair\\Acl' => __DIR__ . '/..' . '/viames/pair/src/Acl.php',
+        'Pair\\ActiveRecord' => __DIR__ . '/..' . '/viames/pair/src/ActiveRecord.php',
+        'Pair\\Application' => __DIR__ . '/..' . '/viames/pair/src/Application.php',
+        'Pair\\Breadcrumb' => __DIR__ . '/..' . '/viames/pair/src/Breadcrumb.php',
+        'Pair\\Controller' => __DIR__ . '/..' . '/viames/pair/src/Controller.php',
+        'Pair\\Database' => __DIR__ . '/..' . '/viames/pair/src/Database.php',
+        'Pair\\ErrorLog' => __DIR__ . '/..' . '/viames/pair/src/ErrorLog.php',
+        'Pair\\Form' => __DIR__ . '/..' . '/viames/pair/src/Form.php',
+        'Pair\\FormControl' => __DIR__ . '/..' . '/viames/pair/src/Form.php',
+        'Pair\\FormControlButton' => __DIR__ . '/..' . '/viames/pair/src/Form.php',
+        'Pair\\FormControlInput' => __DIR__ . '/..' . '/viames/pair/src/Form.php',
+        'Pair\\FormControlSelect' => __DIR__ . '/..' . '/viames/pair/src/Form.php',
+        'Pair\\FormControlTextarea' => __DIR__ . '/..' . '/viames/pair/src/Form.php',
+        'Pair\\Group' => __DIR__ . '/..' . '/viames/pair/src/Group.php',
+        'Pair\\Input' => __DIR__ . '/..' . '/viames/pair/src/Input.php',
+        'Pair\\Language' => __DIR__ . '/..' . '/viames/pair/src/Language.php',
+        'Pair\\Logger' => __DIR__ . '/..' . '/viames/pair/src/Logger.php',
+        'Pair\\Menu' => __DIR__ . '/..' . '/viames/pair/src/Menu.php',
+        'Pair\\Model' => __DIR__ . '/..' . '/viames/pair/src/Model.php',
+        'Pair\\Module' => __DIR__ . '/..' . '/viames/pair/src/Module.php',
+        'Pair\\Options' => __DIR__ . '/..' . '/viames/pair/src/Options.php',
+        'Pair\\Pagination' => __DIR__ . '/..' . '/viames/pair/src/Pagination.php',
+        'Pair\\Plugin' => __DIR__ . '/..' . '/viames/pair/src/Plugin.php',
+        'Pair\\Router' => __DIR__ . '/..' . '/viames/pair/src/Router.php',
+        'Pair\\Rule' => __DIR__ . '/..' . '/viames/pair/src/Rule.php',
+        'Pair\\Session' => __DIR__ . '/..' . '/viames/pair/src/Session.php',
+        'Pair\\Template' => __DIR__ . '/..' . '/viames/pair/src/Template.php',
+        'Pair\\Translator' => __DIR__ . '/..' . '/viames/pair/src/Translator.php',
+        'Pair\\Upload' => __DIR__ . '/..' . '/viames/pair/src/Upload.php',
+        'Pair\\User' => __DIR__ . '/..' . '/viames/pair/src/User.php',
+        'Pair\\Utilities' => __DIR__ . '/..' . '/viames/pair/src/Utilities.php',
+        'Pair\\View' => __DIR__ . '/..' . '/viames/pair/src/View.php',
+        'Pair\\Widget' => __DIR__ . '/..' . '/viames/pair/src/Widget.php',
+        'Pair\\pluginInterface' => __DIR__ . '/..' . '/viames/pair/src/interfaces.php',
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->classMap = ComposerStaticInit3f10bb21f57faf10a4cd4cb7e902dd52::$classMap;
 
         }, null, ClassLoader::class);
     }

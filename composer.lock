@@ -4,30 +4,67 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "f788fcd3527b31c2c67d658463d6b093",
+    "content-hash": "336a21c2713af9c0df9aba67d79da47c",
     "packages": [
         {
             "name": "viames/pair",
-            "version": "0.9",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Viames/Pair.git",
-                "reference": "2bb2f6a210262234f2dde9b545bfdb8471b09eea"
+                "reference": "65031c07975e38c3404ce2a15a5432a7d0e50494"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Viames/Pair/zipball/2bb2f6a210262234f2dde9b545bfdb8471b09eea",
-                "reference": "2bb2f6a210262234f2dde9b545bfdb8471b09eea",
+                "url": "https://api.github.com/repos/Viames/Pair/zipball/65031c07975e38c3404ce2a15a5432a7d0e50494",
+                "reference": "65031c07975e38c3404ce2a15a5432a7d0e50494",
                 "shasum": ""
             },
+            "require": {
+                "ext-pdo": "*",
+                "php": ">=5.6"
+            },
             "type": "library",
-            "notification-url": "https://packagist.org/downloads/"
+            "autoload": {
+                "classmap": [
+                    "src"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Viames Marino",
+                    "homepage": "https://www.viames.it",
+                    "role": "Developer"
+                }
+            ],
+            "description": "a lightweight PHP framework as the air",
+            "homepage": "https://github.com/Viames/Pair",
+            "keywords": [
+                "active-record",
+                "api-server",
+                "framework",
+                "multilingual",
+                "mvc-framework",
+                "pagination",
+                "pair",
+                "php",
+                "plugin-system",
+                "rest-api",
+                "router"
+            ],
+            "time": "2017-03-19 10:26:15"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "viames/pair": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
