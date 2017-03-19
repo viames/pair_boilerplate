@@ -1,8 +1,11 @@
 {
-	"name" : "pair_example",
-	"version" : "0.9",
-	"repositories" : [{
-		"type" : "composer",
-		"url" : "https://packagist.org/"
-	}]
+  "name" : "pair_example",
+  "version" : "0.9",
+  "require" : {
+    "viames/pair" : "0.9"
+  },
+  "repositories" : [ {
+    "type" : "composer",
+    "url" : "https://packagist.org/"
+  } ]
 }

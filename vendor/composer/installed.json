@@ -1,0 +1,21 @@
+[
+    {
+        "name": "viames/pair",
+        "version": "0.9",
+        "version_normalized": "0.9.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/Viames/Pair.git",
+            "reference": "2bb2f6a210262234f2dde9b545bfdb8471b09eea"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/Viames/Pair/zipball/2bb2f6a210262234f2dde9b545bfdb8471b09eea",
+            "reference": "2bb2f6a210262234f2dde9b545bfdb8471b09eea",
+            "shasum": ""
+        },
+        "type": "library",
+        "installation-source": "dist",
+        "notification-url": "https://packagist.org/downloads/"
+    }
+]
