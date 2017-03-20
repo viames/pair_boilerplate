@@ -29,6 +29,7 @@ return array(
     'Pair\\Options' => $vendorDir . '/viames/pair/src/Options.php',
     'Pair\\Pagination' => $vendorDir . '/viames/pair/src/Pagination.php',
     'Pair\\Plugin' => $vendorDir . '/viames/pair/src/Plugin.php',
+    'Pair\\PluginInterface' => $vendorDir . '/viames/pair/src/PluginInterface.php',
     'Pair\\Router' => $vendorDir . '/viames/pair/src/Router.php',
     'Pair\\Rule' => $vendorDir . '/viames/pair/src/Rule.php',
     'Pair\\Session' => $vendorDir . '/viames/pair/src/Session.php',
@@ -39,5 +40,4 @@ return array(
     'Pair\\Utilities' => $vendorDir . '/viames/pair/src/Utilities.php',
     'Pair\\View' => $vendorDir . '/viames/pair/src/View.php',
     'Pair\\Widget' => $vendorDir . '/viames/pair/src/Widget.php',
-    'Pair\\pluginInterface' => $vendorDir . '/viames/pair/src/interfaces.php',
 );

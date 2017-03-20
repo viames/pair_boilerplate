@@ -30,6 +30,7 @@ class ComposerStaticInit3f10bb21f57faf10a4cd4cb7e902dd52
         'Pair\\Options' => __DIR__ . '/..' . '/viames/pair/src/Options.php',
         'Pair\\Pagination' => __DIR__ . '/..' . '/viames/pair/src/Pagination.php',
         'Pair\\Plugin' => __DIR__ . '/..' . '/viames/pair/src/Plugin.php',
+        'Pair\\PluginInterface' => __DIR__ . '/..' . '/viames/pair/src/PluginInterface.php',
         'Pair\\Router' => __DIR__ . '/..' . '/viames/pair/src/Router.php',
         'Pair\\Rule' => __DIR__ . '/..' . '/viames/pair/src/Rule.php',
         'Pair\\Session' => __DIR__ . '/..' . '/viames/pair/src/Session.php',
@@ -40,7 +41,6 @@ class ComposerStaticInit3f10bb21f57faf10a4cd4cb7e902dd52
         'Pair\\Utilities' => __DIR__ . '/..' . '/viames/pair/src/Utilities.php',
         'Pair\\View' => __DIR__ . '/..' . '/viames/pair/src/View.php',
         'Pair\\Widget' => __DIR__ . '/..' . '/viames/pair/src/Widget.php',
-        'Pair\\pluginInterface' => __DIR__ . '/..' . '/viames/pair/src/interfaces.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
