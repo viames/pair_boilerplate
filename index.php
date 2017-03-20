@@ -9,7 +9,7 @@
 use Pair\Application;
 
 // initialize the framework
-require 'vendor/pair/loader.php';
+require 'vendor/autoload.php';
 
 // declare product version
 define ('PRODUCT_VERSION', '1.0');
