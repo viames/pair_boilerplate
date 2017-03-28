@@ -6,6 +6,20 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit3f10bb21f57faf10a4cd4cb7e902dd52
 {
+    public static $prefixLengthsPsr4 = array (
+        'V' => 
+        array (
+            'Viames\\Pair\\' => 12,
+        ),
+    );
+
+    public static $prefixDirsPsr4 = array (
+        'Viames\\Pair\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/viames/pair',
+        ),
+    );
+
     public static $classMap = array (
         'Pair\\Acl' => __DIR__ . '/..' . '/viames/pair/src/Acl.php',
         'Pair\\ActiveRecord' => __DIR__ . '/..' . '/viames/pair/src/ActiveRecord.php',
@@ -46,6 +60,8 @@ class ComposerStaticInit3f10bb21f57faf10a4cd4cb7e902dd52
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->prefixLengthsPsr4 = ComposerStaticInit3f10bb21f57faf10a4cd4cb7e902dd52::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit3f10bb21f57faf10a4cd4cb7e902dd52::$prefixDirsPsr4;
             $loader->classMap = ComposerStaticInit3f10bb21f57faf10a4cd4cb7e902dd52::$classMap;
 
         }, null, ClassLoader::class);

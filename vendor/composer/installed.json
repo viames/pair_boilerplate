@@ -6,25 +6,28 @@
         "source": {
             "type": "git",
             "url": "https://github.com/Viames/Pair.git",
-            "reference": "65031c07975e38c3404ce2a15a5432a7d0e50494"
+            "reference": "f8a25a2419aded098366a8537af33d8724e8a113"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/Viames/Pair/zipball/65031c07975e38c3404ce2a15a5432a7d0e50494",
-            "reference": "65031c07975e38c3404ce2a15a5432a7d0e50494",
+            "url": "https://api.github.com/repos/Viames/Pair/zipball/f8a25a2419aded098366a8537af33d8724e8a113",
+            "reference": "f8a25a2419aded098366a8537af33d8724e8a113",
             "shasum": ""
         },
         "require": {
             "ext-pdo": "*",
             "php": ">=5.6"
         },
-        "time": "2017-03-19T10:26:15+00:00",
+        "time": "2017-03-24T10:40:29+00:00",
         "type": "library",
         "installation-source": "source",
         "autoload": {
             "classmap": [
                 "src"
-            ]
+            ],
+            "psr-4": {
+                "Viames\\Pair\\": ""
+            }
         },
         "notification-url": "https://packagist.org/downloads/",
         "license": [

@@ -8,11 +8,8 @@
 
 use Pair\Application;
 
-// initialize the framework
+// initialize composer
 require 'vendor/autoload.php';
-
-// declare product version
-define ('PRODUCT_VERSION', '1.0');
 
 // start the Application
 $app = Application::getInstance();
