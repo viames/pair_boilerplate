@@ -16,10 +16,4 @@ class SelftestController extends Controller {
 
 	}
 	
-	public function defaultAction() {
-		
-		$this->view = 'default';
-		
-	}
-
 }

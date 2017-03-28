@@ -359,8 +359,7 @@ class SelftestModel extends Model {
 
 		// list of class files
 		$scan1 = array_diff(scandir('classes'), array('..', '.', '.DS_Store'));
-		$scan2 = array();
-		//$scan2 = array_diff(scandir('framework'), array('..', '.', '.DS_Store'));
+		$scan2 = array_diff(scandir('vendor/viames/pair/src'), array('..', '.', '.DS_Store'));
 
 		$classFiles = array_merge($scan1, $scan2);
 

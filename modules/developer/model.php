@@ -120,7 +120,7 @@ class DeveloperModel extends Model {
 		}
 
 		// list of class files
-		$frameworkFiles = array_diff(scandir('vendor/pair'), array('..', '.', '.DS_Store'));
+		$frameworkFiles = array_diff(scandir('vendor/viames/pair/src'), array('..', '.', '.DS_Store'));
 		
 		foreach ($frameworkFiles as $file) {
 		
@@ -128,11 +128,12 @@ class DeveloperModel extends Model {
 			$class = substr($file, 0, -4);
 				
 			// needed for new classes not already included
-			include_once ('vendor/pair/' . $file);
+			require_once ('vendor/viames/pair/src/' . $file);
 				
 			// will adds just requested children
-			if (is_subclass_of($class, 'Pair\ActiveRecord')) {
-				$mappedTables[] = $class::TABLE_NAME;
+			if (is_subclass_of('Pair\\' . $class, 'Pair\ActiveRecord')) {
+				$nsClass = 'Pair\\' . $class;
+				$mappedTables[] = $nsClass::TABLE_NAME;
 			}
 		
 		}
@@ -327,6 +328,8 @@ class DeveloperModel extends Model {
 		$datetimes	= array();
 		$integers	= array();
 		$booleans	= array();
+		
+		$init = '';
 		
 		// populates properties and binds
 		foreach ($this->binds as $property=>$field) {
