@@ -7,17 +7,16 @@
 (function ($) {
 
     // extended functions
-    $.extend(
-			
+    $.extend(			
+
         /**
-         * Display a message box in the subject container DOM object.
-         * ex. $('#notificationArea').prependMessageBox('Title','Message text','info');
+         * Display a javascript message box.
          *
-         * @param    string    Message title.
-         * @param    string    Message text.
-         * @param    string    Type (info, success, warning, error)
+         * @param	string	Message title.
+         * @param	string	Message text.
+         * @param	string	Type (info, success, warning, error)
          */
-        $.fn.prependMessageBox = function (title, message, type) {
+        $.showMessage = function(title, message, type) {
 			
         	if ('info'==type || 'success'==type || 'warning'==type || 'error'==type) {
 			toastr[type](message, title);
