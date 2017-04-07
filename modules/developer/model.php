@@ -3,7 +3,7 @@
 /**
  * @version	$Id$
  * @author	Viames Marino
- * @package	Pair
+ * @package	Pair_example
  */
 
 use Pair\Application;
@@ -75,7 +75,7 @@ class DeveloperModel extends Model {
 	 */
 	public function getUnmappedTables() {
 		
-		$this->db->setQuery('SHOW TABLES');
+		$this->db->setQuery('SHOW FULL TABLES WHERE Table_type = "BASE TABLE"');
 		$dbTables = $this->db->loadResultList();
 		
 		$mappedTables = $this->getMappedTables();
@@ -171,6 +171,9 @@ class DeveloperModel extends Model {
 			}
 	
 		}
+		
+		// manual entry for Pair’s options table
+		$mappedTables[] = 'options';
 		
 		sort($mappedTables);
 	

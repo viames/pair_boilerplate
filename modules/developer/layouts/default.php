@@ -3,16 +3,21 @@
 /**
  * @version	$Id$
  * @author	Viames Marino
- * @package	Pair
+ * @package	Pair_example
  */
+
+use Pair\Utilities;
 
 ?><div class="col-lg-12">
 	<div class="ibox">
 		<div class="ibox-title">
 			<h5><?php $this->_('DEVELOPER') ?></h5>
 		</div>
-		<div class="ibox-content">
-			<div class="table-responsive">
+		<div class="ibox-content"><?php
+		
+		if (count($this->unmanagedTables)) {
+		
+			?><div class="table-responsive">
 				<table class="table table-hover">
 					<thead>
 						<tr>
@@ -35,8 +40,15 @@
 						
 					?></tbody>
 				</table>
-			</div>
-		</div>
+			</div><?php
+		
+		} else {
+			
+			print Utilities::printNoDataMessageBox();
+			
+		}
+			
+		?></div>
 	</div>
 </div>
 

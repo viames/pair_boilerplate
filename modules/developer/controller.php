@@ -3,7 +3,7 @@
 /**
  * @version	$Id$
  * @author	Viames Marino
- * @package	Pair
+ * @package	Pair_example
  */
 
 use Pair\Breadcrumb;
