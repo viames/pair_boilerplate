@@ -3,12 +3,17 @@
 /**
  * @version	$Id$
  * @author	Viames Marino
- * @package	Pair
+ * @package	Pair example
  */
 
 use Pair\Application;
 use Pair\Menu;
 
+/**
+ * Create a side menu with bootstrap Classes and FontAwesome icons.
+ * @author viames
+ *
+ */
 class BootstrapMenu extends Menu {
 
 	/**
@@ -25,6 +30,11 @@ class BootstrapMenu extends Menu {
 
 		foreach ($this->items as $item) {
 
+			// check on permissions
+			if (isset($item->url) and !$app->currentUser->canAccess($item->url)) {
+				continue;
+			}
+
 			switch ($item->type) {
 
 				// single menu item rendering
@@ -33,7 +43,7 @@ class BootstrapMenu extends Menu {
 					$active = ($item->url == $this->activeItem ? ' class="active"' : '');
 
 					$ret .= '<li' . $active . '><a href="' . $item->url . '"' . ($item->target ? ' target="' . $item->target . '"' : '') .
-						'><i class="fa fa-lg ' . $item->class . '"></i> <span class="nav-label">' . $item->title .'</span> ' .
+						'><i class="fa fa-lg fa-fw ' . $item->class . '"></i> <span class="nav-label">' . $item->title .'</span> ' .
 						'<span class="pull-right label label-primary">' . $item->badge . '</span> </a></li>';
 
 					break;
@@ -48,6 +58,11 @@ class BootstrapMenu extends Menu {
 					// builds each sub-item link
 					foreach ($item->list as $i) {
 
+						// check on permissions
+						if (isset($i->url) and !$app->currentUser->canAccess($i->url)) {
+							continue;
+						}
+
 						if ($i->url == $this->activeItem) {
 							$active		= 'active';
 							$menuClass	= 'active';
@@ -58,17 +73,22 @@ class BootstrapMenu extends Menu {
 
 						$links .=
 							'<li class="' . $active . '"><a href="' . $i->url . '">' .
-							'<i class="fa ' . $i->class . '"></i>' . $i->title .
+							'<i class="fa fa-fw ' . $i->class . '"></i>' . $i->title .
 							'<span class="pull-right label label-primary">' . $i->badge . '</span>' .
 							'</a></li>';
 
 					}
 
+					// prevent empty multi-menu
+					if ('' == $links) {
+						continue;
+					}
+
 					// assembles the multi-menu
 					$ret .=
-						'<li class="' . $menuClass . '">' .
-						'<a href="#">
-								<i class="fa fa-th-large"></i>
+						'<li class="has-sub ' . $menuClass . '">' .
+						'<a href="javascript:;">
+								<i class="fa fa-th-large fa-fw"></i>
 								<span class="nav-label">' . $item->title . '</span>
 								<span class="fa arrow"></span>
 						</a>' .

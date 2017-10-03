@@ -3,13 +3,16 @@
 /**
  * @version	$Id$
  * @author	Viames Marino
- * @package	Pair
+ * @package	Pair example
  */
 
 use Pair\Application;
 
 // initialize composer
 require 'vendor/autoload.php';
+
+// initialize project classes
+require 'classes/classLoader.php';
 
 // start the Application
 $app = Application::getInstance();
@@ -23,9 +26,15 @@ $app->manageSession();
 // CSS
 //$app->loadCss($app->templatePath . '[path_to_your_css_file]');
 
-// javascripts
-//$app->loadJs('[path_to_your_js_file]');
-//$app->loadJs('http://maps.googleapis.com/maps/api/js?libraries=places');
+// collect all scripts
+$scripts = [
+	'pwstrength-bootstrap.min.js'
+];
+
+// add scripts to application
+foreach ($scripts as $script) {
+	$app->loadScript($app->templatePath . 'js/' . $script, TRUE);
+}
 
 // start controller and then display
 $app->startMvc();

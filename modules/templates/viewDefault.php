@@ -39,7 +39,7 @@ class TemplatesViewDefault extends View {
 
 			// check if plugin is compatible with current application version
 			$template->compatible = (version_compare(PRODUCT_VERSION, $template->appVersion) <= 0) ?
-				'<span class="fa fa-check-square-o"></span>' :
+				'<span class="fa fa-check fa-lg text-success"></span>' :
 				'<div style="color:red">v' . $template->appVersion . '</div>';
 			
 			$template->defaultIcon = $template->default ? '<span class="fa fa-star"></span>' : '';

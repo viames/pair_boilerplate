@@ -39,7 +39,7 @@ class ModulesViewDefault extends View {
 
 			// check if plugin is compatible with current application version
 			$module->compatible = (version_compare(PRODUCT_VERSION, $module->appVersion) <= 0) ?
-				'<span class="fa fa-check-square-o"></span>' :
+				'<span class="fa fa-check fa-lg text-success"></span>' :
 				'<div style="color:red">v' . $module->appVersion . '</div>';
 
 			$module->downloadIcon = '<a href="modules/download/'. $module->id .'">'.

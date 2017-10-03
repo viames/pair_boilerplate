@@ -12,7 +12,6 @@ use Pair\Translator;
 $app = Application::getInstance();
 $translator	= Translator::getInstance();
 
-require 'classes/BootstrapMenu.php';
 $menu = new BootstrapMenu();
 
 $menu->addItem(NULL, PRODUCT_NAME, NULL, 'sidebar-brand');

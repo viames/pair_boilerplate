@@ -3,9 +3,10 @@ Options +FollowSymLinks -Indexes
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule (.*) index.php
 <FilesMatch "\.(php|xml|ini)">
-Order Deny,Allow
-Deny from all
+  Order deny,allow
+  Deny from all
 </FilesMatch>
 <Files index.php>
-Order Allow,Deny
-Allow from all
+  Order allow,deny
+  Allow from all
+</Files>

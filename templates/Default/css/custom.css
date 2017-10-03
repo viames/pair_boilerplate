@@ -170,3 +170,12 @@
     -ms-user-select: none;    
     user-select: none;
 }
+
+.progress {
+  height: 2rem;
+  margin: 1rem 0;
+}
+
+input[type='checkbox'].form-control {
+    width: auto;
+}

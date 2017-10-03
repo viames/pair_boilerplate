@@ -169,12 +169,12 @@ class UsersModel extends Model {
 		$form->addInput('name')->setRequired()->setMinLength(2);
 		$form->addInput('surname')->setRequired()->setMinLength(2);
 		$form->addInput('email')->setType('email');
-		$form->addInput('enabled')->setType('bool')->addClass('icheck');
+		$form->addInput('enabled')->setType('bool');
 		$form->addInput('ldapUser');
 		$form->addInput('username', array('autocomplete'=>'off'))->setRequired()->setMinLength(3);
 		$form->addInput('password', array('autocomplete'=>'off'))->setType('password')
 			->setMinLength(5)->addClass('m-b');
-		$form->addInput('showPassword')->setType('bool')->addClass('icheck');
+		$form->addInput('showPassword')->setType('bool');
 		$form->addSelect('groupId')->setRequired()->setListByObjectArray($groups,'id','name');
 		$form->addSelect('languageId')->setRequired()->setListByObjectArray($languages,'id','languageName');
 
@@ -194,7 +194,7 @@ class UsersModel extends Model {
 		
 		$form->addInput('id')->setType('hidden');
 		$form->addInput('name')->setRequired()->setMinLength(3);
-		$form->addInput('default')->setType('bool')->addClass('icheck');
+		$form->addInput('default')->setType('bool');
 		$form->addSelect('defaultAclId');
 
 		return $form;

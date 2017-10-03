@@ -55,7 +55,7 @@ class ModulesController extends Controller {
 		if ('add'==Input::get('action')) {
 				
 			// collects file infos
-			$upload = new Upload($_FILES['package']);
+			$upload = new Upload('package');
 	
 			// checks for common upload errors
 			if ($upload->getLastError()) {
