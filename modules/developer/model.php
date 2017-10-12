@@ -3,7 +3,6 @@
 /**
  * @version	$Id$
  * @author	Viames Marino
- * @package	Pair_example
  */
 
 use Pair\Application;
@@ -69,7 +68,7 @@ class DeveloperModel extends Model {
 	protected $package;
 	
 	/**
-	 * Returns db tables name that has no classes who manages them.
+	 * Return db tables name that has no classes who manages them.
 	 * 
 	 * @return array:string
 	 */
@@ -87,7 +86,7 @@ class DeveloperModel extends Model {
 	}
 	
 	/**
-	 * Returns list of class names that inherit from ActiveRecord.
+	 * Return list of class names that inherit from ActiveRecord.
 	 *
 	 * @return array
 	 */
@@ -223,7 +222,7 @@ class DeveloperModel extends Model {
 	}
 	
 	/**
-	 * Setups all needed variables before to proceed class/module creation.
+	 * Setup all needed variables before to proceed class/module creation.
 	 * 
 	 * @param	string	Table name all lowercase with underscores.
 	 * @param	string	Optional object name with uppercase first and case sensitive.
@@ -434,7 +433,7 @@ class ' . $this->objectName . ' extends ActiveRecord {
 		
 ' . $init .
 '	/**
-	 * Returns array with matching object property name on related db fields.
+	 * Return array with matching object property name on related db fields.
 	 *
 	 * @return	array
 	 */
@@ -517,7 +516,7 @@ class ' . $this->objectName . ' extends ActiveRecord {
 		$content = '<?php
 
 /**
- * @version $Id'.'$
+ * @version	$Id'.'$
  * @author	' . $this->author . ' 
  * @package	' . $this->package . '
  */
@@ -535,16 +534,8 @@ class ' . ucfirst($this->moduleName) . 'Model extends Model {
 	public function get' . ucfirst($this->moduleName) . '() {
 
 		$query = \'SELECT * FROM `' . $this->tableName . '` LIMIT \' . $this->pagination->start . \', \' . $this->pagination->limit;
-		$this->db->setQuery($query);
-		$list = $this->db->loadObjectList();
 
-		$' . $this->getCamelCase($this->tableName) . ' = array();
-
-		foreach ($list as $row) {
-			$' . $this->getCamelCase($this->tableName) . '[] = new ' . $this->objectName . '($row);
-		}
-
-		return $' . $this->getCamelCase($this->tableName) . ';
+		return ' . $this->objectName . '::getObjectsByQuery($query);
 
 	}
 
@@ -555,8 +546,7 @@ class ' . ucfirst($this->moduleName) . 'Model extends Model {
 	 */
 	public function count' . ucfirst($this->moduleName) . '() {
 
-		$query = \'SELECT COUNT(1) FROM ' . $this->tableName . '\';
-		$this->db->setQuery($query);
+		$this->db->setQuery(\'SELECT COUNT(1) FROM ' . $this->tableName . '\');
 		return $this->db->loadCount();
 
 	}
@@ -605,20 +595,28 @@ class ' . ucfirst($this->moduleName) . 'Model extends Model {
 		$content = '<?php
 
 /**
- * @version $Id'.'$
+ * @version	$Id'.'$
  * @author	' . $this->author . ' 
  * @package	' . $this->package . '
  */
 
+use Pair\Breadcrumb;
 use Pair\Controller;
 use Pair\Input;
 use Pair\Router;
  		
 class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 
+	/**
+	 * Initialize the Breadcrumb.
+	 * {@inheritDoc}
+	 *
+	 * @see Pair\Controller::init()
+	 */
 	protected function init() {
 
-		include (\'classes/' . $this->objectName . '.php\');
+		$breadcrumb = Breadcrumb::getInstance();
+		$breadcrumb->addPath(\'' . $this->objectName . '\', \'' . $this->moduleName . '\');
 
 	}
 				
@@ -630,7 +628,7 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 		$' . lcfirst($this->objectName) . ' = new ' . $this->objectName . '();
 ' . implode("\r\n", $newList) . '
 
-		$result = $' . lcfirst($this->objectName) . '->create();
+		$result = $' . lcfirst($this->objectName) . '->store();
 		
 		if ($result) {
 			$this->enqueueMessage($this->lang(\'' . strtoupper($this->objectName) . '_HAS_BEEN_CREATED\'));
@@ -667,7 +665,7 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 ' . implode("\r\n", $editList) . '
 
 		// apply the update
-		$result = $' . lcfirst($this->objectName) . '->update();
+		$result = $' . lcfirst($this->objectName) . '->store();
 
 		if ($result) {
 
@@ -719,6 +717,7 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 				$this->enqueueError($message);
 				$this->view = \'default\';
 			} else {
+				$this->enqueueError($this->lang(\'ERROR_ON_LAST_REQUEST\'));
 				$this->redirect(\'' . $this->moduleName . '/default\');
 			}
 
@@ -789,15 +788,28 @@ EDIT_' . strtoupper($this->objectName) . ' = "' . $tran->translate('EDIT_OBJECT'
  * @package	' . $this->package . '
  */
 
+use Pair\Breadcrumb;
 use Pair\View;
+use Pair\Widget;
 
 class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 
+	/**
+	 * Render HTML of this view.
+	 * {@inheritDoc}
+	 * @see \Pair\View::render()
+	 */
 	public function render() {
 
 		$this->app->pageTitle		= $this->lang(\'' . strtoupper($this->tableName) . '\');
 		$this->app->activeMenuItem	= \'' . $this->moduleName . '\';
 
+		$widget = new Widget();
+		$this->app->breadcrumbWidget = $widget->render(\'breadcrumb\');
+		
+		$widget = new Widget();
+		$this->app->sideMenuWidget = $widget->render(\'sideMenu\');
+		
 		$' . $this->getCamelCase($this->tableName) . ' = $this->model->get' .  ucfirst($this->moduleName) . '();
 
 		$this->pagination->count = $this->model->count' . ucfirst($this->moduleName) . '();
@@ -836,20 +848,20 @@ class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 
 		// edit icon
 		$headers[] = "\t\t\t\t\t\t\t\t<th></th>";
-		$rows[] = "\t\t\t\t\t\t\t\t<td><a class=\"btn btn-default btn-xs\" href=\"" . $this->moduleName . '/edit/<?php print ' . $this->getTableKeyAsCgiParams('$o') . ' ?>"><i class="fa fa-pencil"></i> <?php $this->_(\'EDIT\') ?></a></td>';
+		$rows[] = "\t\t\t\t\t\t\t\t<td><a class=\"btn btn-link\" href=\"" . $this->moduleName . '/edit/<?php print ' . $this->getTableKeyAsCgiParams('$o') . ' ?>"><i class="fa fa-lg">pencil</i></a></td>';
 		
 		// here starts code collect
 		$content = '<?php
 
 /**
- * @version $Id'.'$
+ * @version	$Id'.'$
  * @author	' . $this->author . '
  * @package	' . $this->package . '
  */
 
 use Pair\Utilities;
 
-?><div class="col-lg-12">
+?><div class="col-md-12">
 	<div class="ibox">
 		<div class="ibox-title">
 				<h5><?php $this->_(\'' . strtoupper($this->tableName) . '\') ?></h5>
@@ -906,20 +918,33 @@ if (count($this->' . $this->getCamelCase($this->tableName) . ')) {
 		$content = '<?php
 
 /**
- * @version $Id'.'$
+ * @version	$Id'.'$
  * @author	' . $this->author . '
  * @package	' . $this->package . '
  */
 
+use Pair\Breadcrumb;
 use Pair\View;
+use Pair\Widget;
 
 class ' . ucfirst($this->moduleName) . 'ViewNew extends View {
 
+	/**
+	 * Render HTML of this view.
+	 * {@inheritDoc}
+	 * @see \Pair\View::render()
+	 */
 	public function render() {
 
 		$this->app->pageTitle = $this->lang(\'NEW_' . strtoupper($this->objectName) . '\');
 		$this->app->activeMenuItem = \'' . $this->moduleName . '\';
 
+		$widget = new Widget();
+		$this->app->breadcrumbWidget = $widget->render(\'breadcrumb\');
+		
+		$widget = new Widget();
+		$this->app->sideMenuWidget = $widget->render(\'sideMenu\');
+		
 		$form = $this->model->get' . $this->objectName . 'Form();
 		
 		$this->assign(\'form\', $form);
@@ -944,8 +969,8 @@ class ' . ucfirst($this->moduleName) . 'ViewNew extends View {
 
 				$fields[] = '
 				<div class="form-group">
-					<label class="col-sm-2 control-label"><?php $this->_(\'' . strtoupper($field) . '\') ?></label>
-					<div class="col-sm-10"><?php print $this->form->renderControl(\'' . $property . '\') ?></div>
+					<label class="col-md-3 control-label"><?php $this->_(\'' . strtoupper($field) . '\') ?></label>
+					<div class="col-md-9"><?php print $this->form->renderControl(\'' . $property . '\') ?></div>
 				</div>';
 				
 			}
@@ -956,7 +981,7 @@ class ' . ucfirst($this->moduleName) . 'ViewNew extends View {
 		$content = '<?php
 	
 /**
- * @version $Id'.'$
+ * @version	$Id'.'$
  * @author	' . $this->author . '
  * @package	' . $this->package . '
  */
@@ -971,9 +996,9 @@ class ' . ucfirst($this->moduleName) . 'ViewNew extends View {
 			</fieldset>
 			<div class="hr-line-dashed"></div>
 			<div class="form-group">
-				<div class="col-sm-4 col-sm-offset-2">
-					<button type="submit" class="btn btn-primary" value="add" name="action"><i class="fa fa-asterisk"></i> <?php $this->_(\'INSERT\') ?></button>
-					<a href="' . $this->moduleName . '/default" class="btn btn-default"><i class="fa fa-times"></i> <?php $this->_(\'CANCEL\') ?></a>
+						<div class="col-md-push-3 col-md-9">
+							<button type="submit" class="btn btn-primary" value="add" name="action"><i class="fa fa-asterisk"></i> <?php $this->_(\'INSERT\') ?></button>
+							<a href="' . $this->moduleName . '/default" class="btn btn-default"><i class="fa fa-times"></i> <?php $this->_(\'CANCEL\') ?></a>
 				</div>
 			</div>
 		</form>
@@ -1010,16 +1035,23 @@ class ' . ucfirst($this->moduleName) . 'ViewNew extends View {
 		$content = '<?php
 
 /**
- * @version $Id'.'$
+ * @version	$Id'.'$
  * @author	' . $this->author . '
  * @package	' . $this->package . '
  */
 
+use Pair\Breadcrumb;
 use Pair\Router;
 use Pair\View;
+use Pair\Widget;
 
 class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 
+	/**
+	 * Render HTML of this view.
+	 * {@inheritDoc}
+	 * @see \Pair\View::render()
+	 */
 	public function render() {
 
 		$this->app->pageTitle = $this->lang(\'EDIT_' . strtoupper($this->objectName) . '\');
@@ -1029,6 +1061,12 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 ' . $params . '
 		$' . lcfirst($this->objectName) . ' = new ' . $this->objectName . '(' . $key . ');
 
+		$widget = new Widget();
+		$this->app->breadcrumbWidget = $widget->render(\'breadcrumb\');
+		
+		$widget = new Widget();
+		$this->app->sideMenuWidget = $widget->render(\'sideMenu\');
+		
 		$form = $this->model->get' . ucfirst($this->objectName) . 'Form();
 		$form->setValuesByObject($' . lcfirst($this->objectName) . ');
 
@@ -1055,8 +1093,8 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 		
 				$fields[] = '
 				<div class="form-group">
-					<label class="col-sm-2 control-label"><?php $this->_(\'' . strtoupper($field) . '\') ?></label>
-					<div class="col-sm-10"><?php print $this->form->renderControl(\'' . $property . '\') ?></div>
+							<label class="col-md-3 control-label"><?php $this->_(\'' . strtoupper($field) . '\') ?></label>
+							<div class="col-md-9"><?php print $this->form->renderControl(\'' . $property . '\') ?></div>
 				</div>';
 		
 			} else {
@@ -1071,7 +1109,7 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 		$content = '<?php
 
 /**
- * @version $Id'.'$
+ * @version	$Id'.'$
  * @author	' . $this->author . '
  * @package	' . $this->package . '
  */
@@ -1086,10 +1124,10 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 			</fieldset>
 			<div class="hr-line-dashed"></div>
 			<div class="form-group">
-				<div class="col-sm-4 col-sm-offset-2">
+				<div class="col-md-push-3 col-md-9">
 					<button type="submit" class="btn btn-primary" value="edit" name="action"><i class="fa fa-save"></i> <?php $this->_(\'CHANGE\') ?></button>
 					<a href="' . $this->moduleName . '/default" class="btn btn-default"><i class="fa fa-times"></i> <?php $this->_(\'CANCEL\') ?></a>
-					<a href="' . $this->moduleName . '/delete/<?php print ' . $this->getTableKeyAsCgiParams() . ' ?>" class="btn btn-default confirmDelete"><i class="fa fa-trash-o"></i> <?php $this->_(\'DELETE\') ?></a>
+					<a href="' . $this->moduleName . '/delete/<?php print ' . $this->getTableKeyAsCgiParams() . ' ?>" class="btn btn-link confirm-delete pull-right"><i class="fa fa-trash-o"></i> <?php $this->_(\'DELETE\') ?></a>
 				</div>
 			</div>
 		</form>
@@ -1103,7 +1141,7 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 	}
 
 	/**
-	 * Writes content into file with 0777 permissions.
+	 * Write content into file with 0777 permissions.
 	 * 
 	 * @param	string	File name and full path.
 	 * @param	string	File content.

@@ -1,7 +1,6 @@
 /**
- * @version $Id$
+ * @version	$Id$
  * @author	VIames Marino
- * @package	Pair
  */
 
 $(document).ready(function() {

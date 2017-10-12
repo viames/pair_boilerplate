@@ -1,9 +1,8 @@
 <?php
 
 /**
- * @version $Id$
+ * @version	$Id$
  * @author	Viames Marino 
- * @package	Pair
  */
 
 use Pair\Controller;

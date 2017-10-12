@@ -3,7 +3,6 @@
 /**
  * @version	$Id$
  * @author	Viames Marino
- * @package	Pair
  */
 
 use Pair\Application;
@@ -20,12 +19,14 @@ class SelftestModel extends Model {
 		$res = TRUE;
 
 		// apache section
-		$aModules = \apache_get_modules();
-		if (!in_array('mod_rewrite', $aModules)) {
-			$res = FALSE;
-			$this->logError('Apache mod_rewrite is not loaded');
+		if (function_exists('apache_get_modules')) {
+			$aModules = \apache_get_modules();
+			if (!in_array('mod_rewrite', $aModules)) {
+				$res = FALSE;
+				$this->logError('Apache mod_rewrite is not loaded');
+			}
 		}
-
+	
 		return $res;
 
 	}
@@ -149,9 +150,14 @@ class SelftestModel extends Model {
 
 		$options = Options::getInstance();
 
+		// check on UTC_DATE constant existence
 		if (!defined('UTC_DATE')) {
 			$ret = FALSE;
 			$this->logError('In config.ini file UTC_DATE constant is missing');
+		// or check on fall-back timezone
+		} else if (!UTC_DATE and 'UTC' == date_default_timezone_get()) {
+			$ret = FALSE;
+			$this->logError('In config.ini UTC_DATE constant is FALSE but Timezone results in UTC by php.ini file');
 		}
 
 		if (!defined('AUTH_SOURCE') or ('ldap'!=AUTH_SOURCE and 'internal'!=AUTH_SOURCE and 'none'!=AUTH_SOURCE)) {

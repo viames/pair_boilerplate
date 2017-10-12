@@ -3,12 +3,12 @@
 /**
  * @version	$Id$
  * @author	Viames Marino
- * @package	Pair
  */
 
 use Pair\Form;
 use Pair\Language;
 use Pair\Model;
+use Pair\Translator;
 
 class UserModel extends Model {
 
@@ -128,12 +128,16 @@ class UserModel extends Model {
 	 */
 	public function getLoginForm() {
 		
+		$tran = Translator::getInstance();
 		$form = new Form();
 		
 		$form->addControlClass('form-control');
 		
-		$form->addInput('username', array('autocorrect'=>'off', 'autocapitalize'=>'off'))->setRequired()->setMinLength(3);
-		$form->addInput('password', array('autocorrect'=>'off', 'autocapitalize'=>'off'))->setType('password')->setRequired()->setMinLength(3);
+		$form->addInput('username', array('autocorrect'=>'off', 'autocapitalize'=>'off'))
+			->setRequired()->setMinLength(3)->setPlaceholder($tran->translate('USERNAME'));
+		$form->addInput('password', array('autocorrect'=>'off', 'autocapitalize'=>'off'))
+			->setType('password')->setRequired()->setMinLength(8)
+			->setPlaceholder($tran->translate('PASSWORD'));
 		$form->addInput('referer')->setType('hidden');
 		$form->addInput('timezone')->setType('hidden');
 		
@@ -158,9 +162,10 @@ class UserModel extends Model {
 		$form->addInput('surname')->setRequired()->setMinLength(2);
 		$form->addInput('email')->setType('email');
 		$form->addInput('ldapUser')->setMinLength(2);
-		$form->addInput('username')->setRequired()->setMinLength(3);
-		$form->addInput('password', array('autocomplete'=>'off', 'autocorrect'=>'off', 'autocapitalize'=>'off'))->setType('password')->setMinLength(6);
-		$form->addInput('showPassword')->setType('bool')->addClass('icheck');
+		$form->addInput('username')->setRequired()->setMinLength(3)->setPlaceholder('Username');
+		$form->addInput('password', array('autocomplete'=>'off', 'autocorrect'=>'off', 'autocapitalize'=>'off'))
+			->setType('password')->setMinLength(8)->setPlaceholder('Password');
+		$form->addInput('showPassword')->setType('bool');
 		$form->addSelect('languageId')->setListByObjectArray($languages,'id','languageName')->setRequired();
 
 		return $form;

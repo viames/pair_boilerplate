@@ -3,7 +3,6 @@
 /**
  * @version	$Id$
  * @author	Viames Marino
- * @package	Pair example
  */
 
 // product

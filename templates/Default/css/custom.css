@@ -1,7 +1,6 @@
 /**
- * @version $Id$
+ * @version	$Id$
  * @author  Viames Marino
- * @package Pair
  */
 
 #log {
@@ -169,6 +168,10 @@
     -moz-user-select: none; 
     -ms-user-select: none;    
     user-select: none;
+}
+
+.logo-name {
+	text-align: center;
 }
 
 .progress {

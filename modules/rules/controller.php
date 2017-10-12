@@ -2,8 +2,7 @@
 
 /**
  * @version	$Id$
- * @author	Judmir Karriqi
- * @package	Pair
+ * @author	Viames Marino
  */
 
 use Pair\Controller;

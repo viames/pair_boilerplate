@@ -3,7 +3,6 @@
 /**
  * @version	$Id$
  * @author	Viames Marino
- * @package	Pair
  */
 
 use Pair\Utilities;
@@ -21,11 +20,11 @@ if (count($this->language->details)) {
 	?><table class="table table-hover">
 			<thead>
 				<tr>
-					<th><?php $this->_('MODULE') ?></th>
-					<th><?php $this->_('PERCENTAGE') ?></th>
-					<th><?php $this->_('TRANSLATED_LINES') ?></th>
-					<th><?php $this->_('EDITED') ?></th>
-					<th><?php $this->_('EDIT') ?></th>
+					<th class="text-center"><?php $this->_('MODULE') ?></th>
+					<th class="text-center"><?php $this->_('PERCENTAGE') ?></th>
+					<th class="text-center"><?php $this->_('TRANSLATED_LINES') ?></th>
+					<th class="text-center"><?php $this->_('EDITED') ?></th>
+					<th class="text-center"><?php $this->_('EDIT') ?></th>
 				</tr>
 			</thead>
 			<tbody><?php

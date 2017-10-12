@@ -2,8 +2,7 @@
 
 /**
  * @version	$Id$
- * @author	judmir karriqi
- * @package	Pair
+ * @author	Viames Marino
  */
 
 ?><div class="moduleTitle"><?php $this->_('EDIT_RULE') ?></div>
@@ -40,7 +39,7 @@
 		<div class="buttonBar">
 			<button type="submit" class="buttons" value="edit" name="action"><i class="fa fa-save"></i> <?php $this->_('CHANGE') ?></button>
 			<a href="rules/default" class="buttons grey"><i class="fa fa-times"></i> <?php $this->_('CANCEL') ?></a>
-			<button type="submit" class="buttons naked alert confirmDelete" value="delete" name="action"><i class="fa fa-trash-o"></i> <?php $this->_('DELETE') ?></button>
+			<button type="submit" class="btn btn-link confirm-delete pull-right" value="delete" name="action"><i class="fa fa-trash-o"></i> <?php $this->_('DELETE') ?></button>
 		</div>
 	</form>
 </div>

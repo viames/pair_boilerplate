@@ -2,8 +2,7 @@
 		
 /**
  * @version	$Id$
- * @author	Judmir Karriqi
- * @package	Pair
+ * @author	Viames Marino
  */
 
 use Pair\View;
@@ -28,7 +27,7 @@ class RulesViewDefault extends View {
 		$rules = $this->model->getAclModelRules();
 
 		foreach ($rules as $rule) {
-			$rule->adminIcon = $rule->admin_only ? '<i class="fa fa-pencil"></i>' : '';
+			$rule->adminIcon = $rule->admin_only ? '<i class="fa fa-check fa-lg text-success"></i>' : '';
 		}
 		
 		$this->assign('rules', $rules);

@@ -3,7 +3,6 @@
 /**
  * @version	$Id$
  * @author	Viames Marino
- * @package	Pair
  */
 
 ?><div class="ibox float-e-margins">
@@ -39,7 +38,7 @@
 				<a href="users/groupList" class="btn btn-default"><i class="fa fa-times"></i> <?php $this->_('CANCEL') ?></a><?php
 	
 				if ($this->group->canBeDeleted()) {
-					?><a href="users/groupDelete/<?php print $this->group->id ?>" class="btn btn-default confirmDelete"><i class="fa fa-trash-o"></i> <?php $this->_('DELETE') ?></a><?php				
+					?><a href="users/groupDelete/<?php print $this->group->id ?>" class="btn btn-link confirm-delete pull-right"><i class="fa fa-trash-o"></i> <?php $this->_('DELETE') ?></a><?php				
 				}
 	
 			?></div>

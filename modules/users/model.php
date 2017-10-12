@@ -3,7 +3,6 @@
 /**
  * @version	$Id$
  * @author	Viames Marino
- * @package	Pair
  */
 
 use Pair\Acl;
@@ -12,6 +11,7 @@ use Pair\Form;
 use Pair\Group;
 use Pair\Language;
 use Pair\Model;
+use Pair\Rule;
 use Pair\Translator;
 use Pair\User;
 
@@ -31,19 +31,7 @@ class UsersModel extends Model {
 			' ORDER BY u.name ASC' .
 			' LIMIT ' . $this->pagination->start . ', ' . $this->pagination->limit;
 		
-		$this->db->setQuery($query);
-		$list = $this->db->loadObjectList();
-	
-		$users = array();
-	
-		// creates all objects and populates
-		foreach ($list as $item) {
-			$user = new User($item);
-			$user->groupName	= $item->group_name;
-			$users[] = $user;
-		}
-	
-		return $users;
+		return User::getObjectsByQuery($query);
 
 	}
 
@@ -64,20 +52,7 @@ class UsersModel extends Model {
 			' LEFT JOIN modules AS m ON m.id = r.module_id' .
 			' ORDER BY g.name';
 		
-		$this->db->setQuery($query);
-		$list = $this->db->loadObjectList();
-	
-		$groups = array();
-	
-		foreach ($list as $row) {
-			$group = new Group($row);
-			$group->userCount	= $row->user_count;
-			$group->aclCount	= $row->acl_count;
-			$group->moduleName	= $row->module_name;
-			$groups[] = $group;
-		}
-	
-		return $groups;
+		return Group::getObjectsByQuery($query);
 
 	}
 	
@@ -99,20 +74,7 @@ class UsersModel extends Model {
 			' WHERE a.group_id = ?' .
 			' ORDER BY m.name ASC, r.action ASC';
 	
-		$this->db->setQuery($query);
-		$list = $this->db->loadObjectList($groupId);
-		
-		$acls = array();
-	
-		foreach ($list as $row) {
-			$acl = new Acl($row);
-			$acl->action		= $row->action;
-			$acl->moduleName	= $row->module_name;
-			$acl->moduleAction	= $row->module_action;
-			$acls[] = $acl;
-		}
-	
-		return $acls;
+		return Acl::getObjectsByQuery($query, [groupId]);
 
 	}
 	
@@ -131,20 +93,7 @@ class UsersModel extends Model {
 			' WHERE admin_only = 0' .
 			' ORDER BY m.name ASC, r.action ASC';
 	
-		$this->db->setQuery($query);
-		$list = $this->db->loadObjectList();
-	
-		$rules = array();
-	
-		foreach ($list as $row) {
-			$rule = new Acl($row);
-			$rule->action		= $row->action;
-			$rule->moduleName	= $row->module_name;
-			$rule->moduleAction	= $row->module_action;
-			$rules[] = $rule;
-		}
-	
-		return $rules;
+		return Rule::getObjectsByQuery($query);
 	
 	}
 
@@ -172,9 +121,7 @@ class UsersModel extends Model {
 		$form->addInput('enabled')->setType('bool');
 		$form->addInput('ldapUser');
 		$form->addInput('username', array('autocomplete'=>'off'))->setRequired()->setMinLength(3);
-		$form->addInput('password', array('autocomplete'=>'off'))->setType('password')
-			->setMinLength(5)->addClass('m-b');
-		$form->addInput('showPassword')->setType('bool');
+		$form->addInput('password', array('autocomplete'=>'off'))->setType('password')->setMinLength(8);
 		$form->addSelect('groupId')->setRequired()->setListByObjectArray($groups,'id','name');
 		$form->addSelect('languageId')->setRequired()->setListByObjectArray($languages,'id','languageName');
 

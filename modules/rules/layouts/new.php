@@ -2,8 +2,7 @@
 	
 /**
  * @version	$Id$
- * @author	judmir karriqi
- * @package	Pair
+ * @author	Viames Marino
  */
 	
 ?><div class="moduleTitle"><?php $this->_('NEW_RULE') ?></div>

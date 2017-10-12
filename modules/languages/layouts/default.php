@@ -3,7 +3,6 @@
 /**
  * @version	$Id$
  * @author	Viames Marino
- * @package	Pair
  */
 
 use Pair\Utilities;
@@ -44,7 +43,7 @@ if (count($this->languages)) {
 					<td class="text-center"><?php
 
 					if (!$language->default) {
-						?><a href="languages/details/<?php print $language->id ?>" title="<?php $this->_('SEE_DETAILS') ?>" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i></a><?php
+						?><a href="languages/details/<?php print $language->id ?>" title="<?php $this->_('SEE_DETAILS') ?>"><i class="fa fa-eye fa-lg"></i></a><?php
 					}			
 					
 				?></tr><?php 

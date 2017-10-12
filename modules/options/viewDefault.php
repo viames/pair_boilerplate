@@ -3,7 +3,6 @@
 /**
  * @version	$Id$
  * @author	Viames Marino
- * @package	Pair
  */
 
 use Pair\Breadcrumb;
@@ -51,19 +50,23 @@ class OptionsViewDefault extends View {
 					$form->addInput($o->name)->setType('text')->setValue($o->value);
 					break;
 		
+				case 'textarea':
+					$form->addTextarea($o->name)->setCols(40)->setRows(5)->setValue($o->value);
+					break;
+					
 				case 'int':
 					$form->addInput($o->name)->setType('number')->setValue($o->value);
 					break;
 		
 				case 'bool':
-					$form->addInput($o->name)->setType('bool')->addClass('icheck')->setValue($o->value);
-					break;
-				/*
-				case 'list':
-					//$o->field = Form::buildSelect($o->name, $o->listItems, 'value', 'text', $o->value);
-					$form->addSelect($o->name)->setType('bool')->setValue($o->value);
+					$form->addInput($o->name)->setType('bool')->setValue($o->value);
 					break;
 
+				case 'list':
+					$form->addSelect($o->name)->setListByObjectArray($o->listItems,'value','text')->setValue($o->value);
+					break;
+
+				/*
 				case 'custom':
 					$func = 'get' . ucfirst($o->name) . 'Field';
 					if (method_exists($this, $func)) {
@@ -77,7 +80,6 @@ class OptionsViewDefault extends View {
 		}
 		
 		$this->assign('form',	$form);
-		//$this->assign('options',$options);
 		$this->assign('groupedOptions',$groupedOptions);
 
 	}

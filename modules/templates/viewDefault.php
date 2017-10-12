@@ -3,7 +3,6 @@
 /**
  * @version	$Id$
  * @author	Viames Marino
- * @package	Pair
  */
 
 use Pair\Options;
@@ -50,7 +49,7 @@ class TemplatesViewDefault extends View {
 					'<span class="fa fa-lg fa-download"></span></a>';
 
 			if ($devMode) {
-				$template->deleteIcon = $template->default ? '' : '<a href="templates/delete/'. $template->id .'" class="confirmDelete">'.
+				$template->deleteIcon = $template->default ? '' : '<a href="templates/delete/'. $template->id .'" class="confirm-delete">'.
 					'<span class="fa fa-lg fa-times"></span></a>';
 			} else {
 				$template->deleteIcon = '<span class="fa fa-lg fa-times disabled"></span>';

@@ -3,7 +3,6 @@
 /**
  * @version	$Id$
  * @author	Viames Marino
- * @package	Pair example
  */
 
 ?><div class="ibox float-e-margins">
@@ -60,7 +59,7 @@
 					<div class="col-md-push-3 col-md-9">
 						<button type="submit" class="btn btn-primary" value="edit" name="action"><i class="fa fa-save"></i> <?php $this->_('CHANGE')?></button>
 						<a href="users/userList" class="btn btn-default"><i class="fa fa-times"></i> <?php $this->_('CANCEL') ?></a>
-						<a href="users/userDelete/<?php print $this->user->id ?>" class="btn btn-link confirmDelete pull-right"><i class="fa fa-trash-o"></i> <?php $this->_('DELETE')?></a>
+						<a href="users/userDelete/<?php print $this->user->id ?>" class="btn btn-link confirm-delete pull-right"><i class="fa fa-trash-o"></i> <?php $this->_('DELETE')?></a>
 					</div>
 				</div>
 			</fieldset>

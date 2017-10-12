@@ -3,7 +3,6 @@
 /**
  * @version	$Id$
  * @author	Viames Marino
- * @package	Pair_example
  */
 
 ?><div class="moduleTitle"><?php $this->_('DEVELOPER') ?></div>

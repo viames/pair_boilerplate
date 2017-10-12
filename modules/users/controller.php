@@ -3,7 +3,6 @@
 /**
  * @version	$Id$
  * @author	Viames Marino
- * @package	Pair
  */
 
 use Pair\Acl;
@@ -26,6 +25,12 @@ class UsersController extends Controller {
 		$username = Input::get('username');
 		$password = Input::get('password');
 		
+		// password must be 8 chars or over...
+		if (strlen($password) < 8) {
+			$this->enqueueError($this->lang('SHORT_PASSWORD'));
+			$this->app->redirect('users/userList');
+		}
+
 		// check if username exist
 		if (count(User::getAllObjects(array('username'=>$username)))) {
 			$this->enqueueError($this->lang('USER_EXIST', $username));
@@ -43,8 +48,8 @@ class UsersController extends Controller {
 		$user->ldapUser		= Input::get('ldapUser') ? Input::get('ldapUser') : NULL;
 		$user->username		= $username;
 		$user->enabled		= Input::get('enabled', 'bool');
-		$user->groupId		= Input::get('groupId', 'int');
 		$user->languageId	= Input::get('languageId', 'int');
+		$user->groupId		= Input::get('groupId', 'int');
 		$user->admin		= FALSE;
 		$user->faults		= 0;
 
@@ -82,12 +87,36 @@ class UsersController extends Controller {
 	 */
 	public function userChangeAction() {
 	
-		$form	= $this->model->getUserForm();
+		$this->view = 'userList';
+	
+		// controllo validità del form
+		if (!$this->model->getUserForm()->isValid()) {
+			$this->enqueueError($this->lang('USER_HAS_NOT_BEEN_CHANGED', $user->fullName));
+			return;
+		}
+		
 		$user	= new User(Input::get('id', 'int'));
 		$group	= new Group(Input::get('groupId', 'int'));
 		
+		// controllo validità utente e gruppo
+		if (!$user->isLoaded() or !$group->isLoaded()) {
+			$this->enqueueError($this->lang('USER_HAS_NOT_BEEN_CHANGED', $user->fullName));
+			return;
+		}
+		
+		if (!$this->app->currentUser->admin and $user->admin) {
+			$this->enqueueError($this->lang('USER_HAS_NOT_BEEN_CHANGED', $user->fullName));
+			return;
+		}
+		
 		$password = Input::get('password');
 		
+		// password must be 8 chars or over...
+		if (strlen($password) > 0 and strlen($password) < 8) {
+			$this->enqueueError($this->lang('SHORT_PASSWORD'));
+			$this->app->redirect('users/userList');
+		}
+
 		$user->name			= Input::get('name');
 		$user->surname		= Input::get('surname');
 		$user->email		= Input::get('email') ? Input::get('email') : NULL;
@@ -101,9 +130,7 @@ class UsersController extends Controller {
 			$user->hash = User::getHashedPasswordWithSalt($password);
 		}
 		
-		if (!$form->isValid()) {
-			$this->enqueueError($this->lang('USER_HAS_NOT_BEEN_CHANGED', $user->fullName));
-		} else if ($user->updateNotNull()) {
+		if ($user->store()) {
 			$this->enqueueMessage($this->lang('USER_HAS_BEEN_CHANGED', $user->fullName));
 		}
 		

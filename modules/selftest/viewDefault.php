@@ -3,7 +3,6 @@
 /**
  * @version	$Id$
  * @author	Viames Marino
- * @package	Pair
  */
 
 use Pair\Database;
@@ -107,8 +106,8 @@ class SelftestViewDefault extends View {
 		$result = $this->model->checkPlugins();
 		$test->assertTrue($label, $result, $this->lang('APPLICATION'));
 		
-		$iconMark	= '<i class="fa fa-check-square-o"></i>';
-		$iconCross	= '<i class="fa fa-square-o"></i>';
+		$iconMark	= '<i class="fa fa-check-square-o fa-lg text-success"></i>';
+		$iconCross	= '<i class="fa fa-square-o fa-lg text-danger"></i>';
 		
 		$this->assign('iconMark',	$iconMark);
 		$this->assign('iconCross',	$iconCross);

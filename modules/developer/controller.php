@@ -3,7 +3,6 @@
 /**
  * @version	$Id$
  * @author	Viames Marino
- * @package	Pair_example
  */
 
 use Pair\Breadcrumb;
@@ -11,6 +10,7 @@ use Pair\Controller;
 use Pair\Input;
 use Pair\Module;
 use Pair\Router;
+use Pair\Rule;
 use Pair\Translator;
 
 class DeveloperController extends Controller {
@@ -143,19 +143,24 @@ class DeveloperController extends Controller {
 	
 			}
 			
-			// creates plugin object
-			$modPlugin					= new Module();
-			$modPlugin->name			= $this->model->moduleName;
-			$modPlugin->version			= '1.0';
-			$modPlugin->dateReleased	= date('Y-m-d H:i:s');
-			$modPlugin->appVersion		= PRODUCT_VERSION;
-			$modPlugin->installedBy		= $this->app->currentUser->id;
-			$modPlugin->dateInstalled	= date('Y-m-d H:i:s');
-			$modPlugin->create();
+			// create module object
+			$module					= new Module();
+			$module->name			= $this->model->moduleName;
+			$module->version		= '1.0';
+			$module->dateReleased	= date('Y-m-d H:i:s');
+			$module->appVersion		= PRODUCT_VERSION;
+			$module->installedBy	= $this->app->currentUser->id;
+			$module->dateInstalled	= date('Y-m-d H:i:s');
+			$module->store();
 			
-			// creates manifest file
-			$plugin = $modPlugin->getPlugin();
+			// create manifest file
+			$plugin = $module->getPlugin();
 			$plugin->createManifestFile();
+	
+			// adds rule
+			$rule = new Rule();
+			$rule->moduleId = $module->id;
+			$rule->store();
 	
 		} else {
 	

@@ -3,7 +3,6 @@
 /**
  * @version	$Id$
  * @author	Viames Marino
- * @package	Pair
  */
 
 use Pair\Options;
@@ -46,7 +45,7 @@ class ModulesViewDefault extends View {
 					'<span class="fa fa-lg fa-download"></span></a>';
 
 			if ($devMode) {
-				$module->deleteIcon = '<a href="modules/delete/'. $module->id .'" class="confirmDelete">'.
+				$module->deleteIcon = '<a href="modules/delete/'. $module->id .'" class="confirm-delete">'.
 					'<span class="fa fa-lg fa-times"></span></a>';
 			} else {
 				$module->deleteIcon = '<span class="fa fa-lg fa-times disabled"></span>';

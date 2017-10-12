@@ -3,7 +3,6 @@
 /**
  * @version	$Id$
  * @author	Viames Marino
- * @package	Pair
  */
 
 use Pair\Breadcrumb;
@@ -47,7 +46,7 @@ class LanguagesViewDetails extends View {
 				LanguagesModel::setProgressBar($detail);
 				
 				if ($language->isWritable($module)) {
-					$detail->editButton = '<a href="languages/edit/' . $language->id . '/' . $module . '"><i class="fa fa-pencil"></i> ' . $this->lang('EDIT') . '</a>';
+					$detail->editButton = '<a href="languages/edit/' . $language->id . '/' . $module . '"><i class="fa fa-pencil fa-lg"></i></a>';
 				} else {
 					$detail->editButton = '<div title="' . $this->lang('LANGUAGE_FILE_IS_NOT_WRITABLE') . '"><i class="fa fa-lg fa-lock"></i></div>';
 				}

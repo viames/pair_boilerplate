@@ -3,7 +3,6 @@
 /**
  * @version	$Id$
  * @author	Viames Marino
- * @package	Pair
  */
 
 use Pair\Breadcrumb;
@@ -61,6 +60,8 @@ class LanguagesViewEdit extends View {
 				
 				if (isset($strings[$key])) {
 					$control->setValue($strings[$key]);
+				} else {
+					$control->addClass('text-danger');
 				}
 				
 			}

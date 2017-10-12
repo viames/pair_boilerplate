@@ -2,9 +2,7 @@
 
 /**
  * @version	$Id$
- * @author	Viames Marino
- * @package	Pair
- */
+ * @author	Viames Marino */
 
 use Pair\View;
 use Pair\Widget;
@@ -37,7 +35,7 @@ class LanguagesViewDefault extends View {
 			
 			LanguagesModel::setProgressBar($language);
 			
-			$language->defaultIcon = $language->default ? '<i class="fa fa-lg fa-check-square-o"></i>' : NULL;
+			$language->defaultIcon = $language->default ? '<i class="fa fa-lg fa-star text-warning"></i>' : NULL;
 			
 		}
 		

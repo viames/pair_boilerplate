@@ -3,7 +3,6 @@
 /**
  * @version	$Id$
  * @author	Viames Marino
- * @package	Pair
  */
 
 use Pair\Application;
@@ -17,6 +16,7 @@ $menu = new BootstrapMenu();
 $menu->addItem(NULL, PRODUCT_NAME, NULL, 'sidebar-brand');
 $menu->addItem('users', $translator->translate('USERS'), NULL, 'fa-user');
 $menu->addItem('users/groupList', $translator->translate('GROUPS'), NULL, 'fa-users');
+$menu->addItem('rules', $translator->translate('RULES'), NULL, 'fa-unlock');
 $menu->addItem('options/default', $translator->translate('OPTIONS'), NULL, 'fa-sliders');
 $menu->addItem('selftest/default', $translator->translate('SELF_TEST'), NULL, 'fa-check-square-o');
 $menu->addItem('languages/default', $translator->translate('LANGUAGES'), NULL, 'fa-globe');

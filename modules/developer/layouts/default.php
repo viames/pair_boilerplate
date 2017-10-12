@@ -3,7 +3,6 @@
 /**
  * @version	$Id$
  * @author	Viames Marino
- * @package	Pair_example
  */
 
 use Pair\Utilities;
@@ -32,8 +31,8 @@ use Pair\Utilities;
 					
 							?><tr>
 								<td><?php print $t ?></td>
-								<td><a href="developer/classWizard/<?php print $t ?>" class="btn btn-default btn-xs"><i class="fa fa-magic"></i> <?php $this->_('CREATE_CLASS') ?></a></td>
-								<td><a href="developer/moduleWizard/<?php print $t ?>" class="btn btn-default btn-xs"><i class="fa fa-magic"></i> <?php $this->_('CREATE_MODULE') ?></a></td>
+								<td><a href="developer/classWizard/<?php print $t ?>" class="btn btn-primary btn-xs"><i class="fa fa-magic"></i> <?php $this->_('CREATE_CLASS') ?></a></td>
+								<td><a href="developer/moduleWizard/<?php print $t ?>" class="btn btn-primary btn-xs"><i class="fa fa-magic"></i> <?php $this->_('CREATE_MODULE') ?></a></td>
 							</tr><?php 
 							
 						}

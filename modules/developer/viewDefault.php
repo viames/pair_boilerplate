@@ -3,7 +3,6 @@
 /**
  * @version	$Id$
  * @author	Viames Marino
- * @package	Pair_example
  */
 
 use Pair\Options;
@@ -31,6 +30,9 @@ class DeveloperViewDefault extends View {
 		
 		$unmanagedTables = $this->model->getUnmappedTables();
 		
+		$inSviluppo = $options->getValue('development');
+		
+		$this->assign('inSviluppo', $inSviluppo);
 		$this->assign('unmanagedTables', $unmanagedTables);
 
 	}
