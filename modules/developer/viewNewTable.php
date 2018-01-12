@@ -9,7 +9,7 @@ use Pair\Options;
 use Pair\View;
 use Pair\Widget;
 
-class DeveloperViewDefault extends View {
+class DeveloperViewNewTable extends View {
 
 	public function render() {
 
@@ -24,9 +24,14 @@ class DeveloperViewDefault extends View {
 		$widget = new Widget();
 		$this->app->sideMenuWidget = $widget->render('sideMenu');
 		
-		$development = $options->getValue('development');
-
-		$this->assign('development', $development);
+		// prevents access to instances that are not under development
+		if (!$this->app->currentUser->admin) {
+			$this->layout = 'accessDenied';
+		}
+		
+		$unmappedClasses = $this->model->getUnmappedClasses();
+		
+		$this->assign('unmappedClasses', $unmappedClasses);
 
 	}
 	

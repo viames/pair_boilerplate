@@ -5,49 +5,32 @@
  * @author	Viames Marino
  */
 
-use Pair\Utilities;
-
-?><div class="col-lg-12">
-	<div class="ibox">
-		<div class="ibox-title">
-			<h5><?php $this->_('DEVELOPER') ?></h5>
+?><div class="row">
+	<div class="col-12">
+		<div class="panel panel-inverse">
+			<div class="panel-heading">
+				<h4 class="panel-title"><?php $this->_('DEVELOPER') ?></h4>
+			</div>
+			<div class="panel-body">
+				<div class="flex-box-container">
+					<div>
+						<p>Crea una nuova classe o un nuovo modulo da una tabella della base di dati</em></p>
+						<a href="developer/newClass" class="btn btn-primary"><i class="fal fa-play"></i> Inizia</a>
+					</div>
+					<div>
+						<p>Crea una nuova tabella della base di dati da una classe Pair\ActiveRecord</p>
+						<a href="developer/newTable" class="btn btn-primary"><i class="fal fa-play"></i> Inizia</a>
+					</div>
+					<div><?php
+			
+					if ($this->development) {
+						?><p>Azzera i dati ed i file di importazione XLS, fatture e lettere di compensazione</p>
+						<a href="developer/cleanData" class="btn btn-warning confirm-action"><i class="fal fa-play"></i> Esegui</a><?php
+					}
+					
+					?></div>
+				</div>
+			</div>
 		</div>
-		<div class="ibox-content"><?php
-		
-		if (count($this->unmanagedTables)) {
-		
-			?><div class="table-responsive">
-				<table class="table table-hover">
-					<thead>
-						<tr>
-							<th><?php $this->_('TABLE_NAME') ?></th>
-							<th>&nbsp;</th>
-							<th>&nbsp;</th>
-						</tr>
-					</thead>
-					<tbody><?php 
-					
-						foreach ($this->unmanagedTables as $t) {
-					
-							?><tr>
-								<td><?php print $t ?></td>
-								<td><a href="developer/classWizard/<?php print $t ?>" class="btn btn-primary btn-xs"><i class="fa fa-magic"></i> <?php $this->_('CREATE_CLASS') ?></a></td>
-								<td><a href="developer/moduleWizard/<?php print $t ?>" class="btn btn-primary btn-xs"><i class="fa fa-magic"></i> <?php $this->_('CREATE_MODULE') ?></a></td>
-							</tr><?php 
-							
-						}
-						
-					?></tbody>
-				</table>
-			</div><?php
-		
-		} else {
-			
-			print Utilities::printNoDataMessageBox();
-			
-		}
-			
-		?></div>
 	</div>
 </div>
-

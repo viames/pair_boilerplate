@@ -9,7 +9,7 @@ use Pair\Options;
 use Pair\View;
 use Pair\Widget;
 
-class DeveloperViewDefault extends View {
+class DeveloperViewNewClass extends View {
 
 	public function render() {
 
@@ -24,9 +24,9 @@ class DeveloperViewDefault extends View {
 		$widget = new Widget();
 		$this->app->sideMenuWidget = $widget->render('sideMenu');
 		
-		$development = $options->getValue('development');
-
-		$this->assign('development', $development);
+		$unmappedTables = $this->model->getUnmappedTables();
+		
+		$this->assign('unmappedTables', $unmappedTables);
 
 	}
 	

@@ -10,6 +10,7 @@ use Pair\Form;
 use Pair\Language;
 use Pair\Model;
 use Pair\Translator;
+use Pair\Utilities;
 
 class DeveloperModel extends Model {
 
@@ -66,118 +67,134 @@ class DeveloperModel extends Model {
 	 * @var string
 	 */
 	protected $package;
+
+	/**
+	 * Custom layouts array.
+	 * @var array
+	 */
+	protected $layouts;
 	
 	/**
-	 * Return db tables name that has no classes who manages them.
+	 * Return db tables name that has no classes mapped.
 	 * 
 	 * @return array:string
 	 */
 	public function getUnmappedTables() {
 		
 		$this->db->setQuery('SHOW FULL TABLES WHERE Table_type = "BASE TABLE"');
-		$dbTables = $this->db->loadResultList();
+		$allTables = $this->db->loadResultList();
 		
-		$mappedTables = $this->getMappedTables();
+		$classesTables = $this->getClassesTables();
 		
-		$unmappedTables = array_diff($dbTables, $mappedTables);
+		$unmappedTables = array_diff($allTables, $classesTables);
 		
 		return $unmappedTables;
 		
 	}
 	
 	/**
-	 * Return list of class names that inherit from ActiveRecord.
+	 * Return classes name that has no db tables mapped.
+	 *
+	 * @return array:string
+	 */
+	public function getUnmappedClasses() {
+		
+		$this->db->setQuery('SHOW FULL TABLES WHERE Table_type = "BASE TABLE"');
+		$allTables = $this->db->loadResultList();
+		
+		$classesTables = $this->getClassesTables();
+		
+		$unmappedClasses = array_diff($classesTables, $allTables);
+		
+		return $unmappedClasses;
+		
+	}
+	
+	/**
+	 * Scan the whole system searching for ActiveRecord classes. These will be include_once.
+	 * 
+	 * @return stdClass[]
+	 */
+	private function getActiveRecordClasses() {
+		
+		$classes = array();
+
+		// lambda method that check a folder and add each ActiveRecord class found
+		$checkFolder = function ($folder) use(&$classes) {
+
+			if (!is_dir($folder)) return;
+				
+			$files = array_diff(scandir($folder), array('..', '.', '.DS_Store'));
+			
+			foreach ($files as $file) {
+				
+				// only .php files are included
+				if ('.php' != substr($file,-4)) continue;
+				
+				// include the file code
+				include_once ($folder . '/' . $file);
+				
+				// cut .php from file name
+				$class = substr($file, 0, -4);
+
+				// Pair classes must prefix with namespace
+				if ('vendor/viames/pair/src' == $folder) {
+					$class = 'Pair\\' . $class;
+				}
+				
+				// check on class exists
+				if (!class_exists($class)) continue;
+					
+				$reflection = new ReflectionClass($class);
+				
+				// check on right parent and no abstraction
+				if (is_subclass_of($class, 'Pair\ActiveRecord') and !$reflection->isAbstract()) {
+
+					$classes[$class] = ['file'=>$file, 'folder'=>$folder, 'tableName'=>$class::TABLE_NAME];
+					
+				}
+				
+			}
+			
+		};
+		
+		// Pair framework
+		$checkFolder('vendor/viames/pair/src');
+		
+		// manual entry for Pair’s special options table
+		$classes['Options'] = ['folder'=>'vendor/viames/pair/src', 'tableName'=>'options'];
+		
+		// custom classes
+		$checkFolder('classes');
+
+		// modules classes
+		$modules = array_diff(scandir('modules'), array('..', '.', '.DS_Store'));
+		foreach ($modules as $module) {
+			$checkFolder('modules/' . $module . '/classes');
+		}
+		
+		return $classes;
+	
+	}
+	
+	/**
+	 * Return list of tables mapped by ActiveRecord inherited classes.
 	 *
 	 * @return array
 	 */
-	private function getMappedTables() {
+	public function getClassesTables() {
 	
-		$mappedTables = array();
-	
-		// list of class files
-		$classFiles = array_diff(scandir('classes'), array('..', '.', '.DS_Store'));
+		$classesTables = [];
+		$classes = Utilities::getActiveRecordClasses();
 		
-		foreach ($classFiles as $file) {
-	
-			// cuts .php from file name
-			$class = substr($file, 0, -4);
-			
-			// needed for new classes not already included
-			include_once ('classes/' . $file);
-			
-			if (class_exists($class)) {
-				
-				$reflection = new ReflectionClass($class);
-				
-				// will adds just requested children
-				if ($reflection->isSubclassOf('Pair\ActiveRecord') and !$reflection->isAbstract()) {
-					$mappedTables[] = $class::TABLE_NAME;
-				}
-			
-			}
-	
+		foreach ($classes as $class) {
+			$classesTables[] = $class['tableName'];
 		}
+		
+		sort($classesTables);
 
-		// list of class files
-		$frameworkFiles = array_diff(scandir('vendor/viames/pair/src'), array('..', '.', '.DS_Store'));
+		return $classesTables;
 		
-		foreach ($frameworkFiles as $file) {
-		
-			// cut .php from file name
-			$class = substr($file, 0, -4);
-				
-			// needed for new classes not already included
-			require_once ('vendor/viames/pair/src/' . $file);
-				
-			// will adds just requested children
-			if (is_subclass_of('Pair\\' . $class, 'Pair\ActiveRecord')) {
-				$nsClass = 'Pair\\' . $class;
-				$mappedTables[] = $nsClass::TABLE_NAME;
-			}
-		
-		}
-		
-		// list of class files in modules
-		$modules = array_diff(scandir('modules'), array('..', '.', '.DS_Store'));
-	
-		foreach ($modules as $module) {
-				
-			$classesFolder = 'modules/' . $module . '/classes';
-				
-			if (is_dir($classesFolder)) {
-	
-				$classFiles = array_diff(scandir($classesFolder), array('..', '.', '.DS_Store'));
-	
-				foreach ($classFiles as $file) {
-	
-					// only .php files are included
-					if ('.php' == substr($file,-4)) {
-	
-						include_once ($classesFolder . '/' . $file);
-	
-						// cut .php from file name
-						$class = substr($file, 0, -4);
-						
-						// will adds just requested children
-						if (is_subclass_of($class, 'Pair\ActiveRecord')) {
-							$mappedTables[] = $class::TABLE_NAME;
-						}
-	
-					}
-	
-				}
-	
-			}
-	
-		}
-		
-		// manual entry for Pair’s options table
-		$mappedTables[] = 'options';
-		
-		sort($mappedTables);
-	
-		return $mappedTables;
-	
 	}
 	
 	public function getClassWizardForm() {
@@ -199,26 +216,113 @@ class DeveloperModel extends Model {
 	
 	}
 	
-	private function getCamelCase($text, $capFirst=FALSE) {
+	/**
+	 * Create a new db table based on TABLE_FIELDS constant for an ActiveRecord class.
+	 * 
+	 * @param	string	Class name.
+	 * 
+	 * @return	boolean
+	 */
+	public function createTableByClass(string $class): bool {
 		
-		$camelCase = str_replace(' ', '', ucwords(str_replace('_', ' ', $text)));
-		
-		if (!$capFirst) {
-			$camelCase[0] = lcfirst($camelCase[0]);
+		if (!defined($class . '::TABLE_FIELDS')) {
+			$this->addError('TABLE_FIELDS constant is missing in the class ' . $class);
+			return FALSE;
+		}
+
+		if (0==count($class::TABLE_FIELDS)) {
+			$this->addError('TABLE_FIELDS constant has no fields in the class ' . $class);
+			return FALSE;
 		}
 		
-		return $camelCase;
-	
+		$fields = [];
+		$primaryKeys = [];
+		$indexes = [];
+		
+		foreach ($class::TABLE_FIELDS as $name => $props) {
+			
+			$escaped = $this->db->escape($name);
+			
+			// switch on primary keys, indexes and unique columns
+			switch ($props[2]) {
+				
+				case 'PRI':
+					$primaryKeys[] = $escaped;
+					break;
+					
+				case 'MUL':
+					$indexes[] = '  KEY ' . $escaped . ' (' . $escaped . ')';
+					break;
+					
+				case 'UNI':
+					$indexes[] = '  UNIQUE KEY ' . $escaped . ' (' . $escaped . ')';
+					break;
+					
+			}
+			
+			// field name and type
+			$field = '  ' . $escaped . ' ' . strtoupper($props[0]);
+			
+			// not nullable
+			if ('NO' == $props[1]) {
+				$field.=  ' NOT NULL';
+			}
+			
+			// default value
+			if (is_null($props[3])) {
+				$field.= 'YES' == $props[1] ? ' DEFAULT NULL' : ''; 
+			} else if (!is_null($props[3])) {
+				$field.= " DEFAULT '" . $props[3] . "'";
+			}
+			
+			// auto_increment
+			$field.= $props[4] ? ' ' . $props[4] : '';
+
+			$fields[] = $field;
+					
+		}
+		
+		// build up the ddl query
+		$query = 'CREATE TABLE IF NOT EXISTS `' . $class::TABLE_NAME . "` (\n";
+		$query.= implode(",\n", $fields) . ",\n";
+		$query.= count($primaryKeys) ? '  PRIMARY KEY (' . implode(',', $primaryKeys) . "),\n" : '';
+		$query.= count($indexes) ? implode(",\n", $indexes) . "\n" : '';
+		$query.= ') ENGINE = InnoDB';
+		
+		$this->db->exec($query);
+		
+		if ($this->db->getLastError()) {
+			$this->addError($this->db->getLastError());
+			return FALSE;
+		}
+		
+		return TRUE;
+		
 	}
 	
-	private function getObjectNameHint($tableName) {
+	/**
+	 * Search a class file by its mapped table.
+	 * 
+	 * @param	string	Table name.
+	 * 
+	 * @return	string
+	 */
+	public function getClassByTable(string $tableName): string {
 		
-		if ('s' == substr($tableName,-1)) {
-			$tableName = substr($tableName,0,-1);
+		// get all ActiveRecord classes
+		$classes = Utilities::getActiveRecordClasses();
+		
+		// search for required one
+		foreach ($classes as $class => $opts) {
+			if ($opts['tableName'] == $tableName) {
+				include_once($opts['folder'] . '/' . $opts['file']);
+				return $class;
+			}
 		}
 		
-		return $this->getCamelCase($tableName, TRUE);
-		
+		$this->addError('Class not found for table: ' . $tableName);
+		return '';
+
 	}
 	
 	/**
@@ -231,21 +335,26 @@ class DeveloperModel extends Model {
 	public function setupVariables($tableName, $objectName=NULL, $moduleName=NULL) {
 		
 		$app = Application::getInstance();
+
+		// load custom layouts
+		include_once 'assets/layouts.php';
+		$this->layouts		= $layouts;		
 		
 		$this->tableName	= $tableName;
 		$this->moduleName	= $moduleName ? $moduleName : strtolower(str_replace('_', '', $tableName));
-		$this->objectName	= $objectName ? $objectName : $this->getObjectNameHint($tableName);
+		$this->objectName	= $objectName ? $objectName : $this->getSingularObjectName($tableName);
 		$this->author		= $app->currentUser->fullName;
 		$this->package		= PRODUCT_NAME;
 		
 		$this->propType		= array();
 		$this->binds		= array();
 		
-		$boolTypes = array('bool', 'tinyint(1)', 'smallint(1)', 'int(1)');
+		// get table columns list
+		$columns = $this->db->describeTable($this->tableName);
 		
-		// table columns
-		$this->db->setQuery('SHOW COLUMNS FROM ' . $this->db->escape($tableName));
-		$columns = $this->db->loadObjectList();
+		if (!$columns) {
+			return;
+		}
 		
 		// iterates all found columns
 		foreach ($columns as $column) {
@@ -271,48 +380,77 @@ class DeveloperModel extends Model {
 					$this->tableKey = $column->Field;
 					
 				}
+				
 			}
 
-			// datetime type
-			if ('date' == $column->Type) {
-				
-				$this->propType[$property] = 'date';
+			// split the column Type to recognize field type and length
+			preg_match('#^([\w]+)(\([^\)]+\))?#i', $column->Type, $matches);
+			$type	= $matches[1];
+			$length	= isset($matches[2]) ? substr($matches[2], 1, -1) : NULL;
 
-			} else if ('datetime' == $column->Type) {
-				
-				$this->propType[$property] = 'datetime';
-				
-			// bool type
-			} else if (in_array(substr($column->Type,0,(strrpos($column->Type, ')') ? strrpos($column->Type, ')')+1 : strlen($column->Type))), $boolTypes)) {
-				
+			// mark type as needed by Pair ActiveRecord
+			if (1 == $length and in_array($type, ['tinyint', 'smallint', 'mediumint', 'int'])) {
+
+				// int(1) is recognized like bool type
 				$this->propType[$property] = 'bool';
 				
-			// int type
-			} else if ('int' == substr($column->Type,0,3) or 'bigint' == substr($column->Type,0,6)) {
-				
-				$this->propType[$property] = 'int';
-
-			// string type
-			} else if ('varchar' == substr($column->Type,0,7) or 'decimal' == substr($column->Type,0,7)) {
-				
-				$this->propType[$property] = 'text';
-
-			// enum type
-			} else if ('enum' == substr($column->Type,0,4)) {
-				
-				$this->propType[$property] = 'enum';
-				$this->members[$property] = explode("','", substr($column->Type, 6, -2));
-
-			// set type
-			} else if ('set' == substr($column->Type,0,3)) {
-			
-				$this->propType[$property] = 'set';
-				$this->members[$property] = explode("','", substr($column->Type, 5, -2));
-				
-			// text type
 			} else {
-				
-				$this->propType[$property] = 'text';
+			
+				switch ($type) {
+					
+					case 'date':
+						$this->propType[$property] = 'date';
+						break;
+						
+					case 'datetime':
+					case 'timestamp':
+						$this->propType[$property] = 'datetime';
+						break;
+
+					case 'bool':
+					case 'boolean':
+						$this->propType[$property] = 'bool';
+						break;
+						
+					case 'enum':
+			 		case 'set':
+						$this->propType[$property] = $type;
+						$this->members[$property] = $length ? explode("','", substr($length, 1, -1)) : NULL;
+						break;
+						
+					case 'tinyint':
+					case 'smallint':
+					case 'mediumint':
+					case 'int':
+					case 'bigint':
+					case 'year':
+						$this->propType[$property] = 'int';
+						break;
+					
+					case 'dec':
+			 		case 'decimal':
+			 		case 'double':
+			 		case 'double precision':
+			 		case 'fixed':
+			 		case 'float':
+			 		case 'numeric':
+			 		case 'real':
+			 			$this->propType[$property] = 'float';
+			 			break;
+			 			
+			 		case 'tinytext':
+			 		case 'text':
+			 		case 'mediumtext':
+			 		case 'longtext':
+						$this->propType[$property] = 'text';
+						break;
+						
+					// char, varchar, json, time etc.
+			 		default:
+			 			$this->propType[$property] = 'string';
+			 			break;
+			 			
+				}
 				
 			}
 			
@@ -326,55 +464,114 @@ class DeveloperModel extends Model {
 	public function saveClass($file) {
 		
 		// here starts building of property cast
-		$inits		= array();
-		$datetimes	= array();
-		$integers	= array();
-		$booleans	= array();
+		$inits		= [];
+		$booleans	= [];
+		$datetimes	= [];
+		$integers	= [];
+		$floats		= [];
+		$describe	= [];
+		$fkGets		= [];
 		
 		$init = '';
 		
-		// populates properties and binds
-		foreach ($this->binds as $property=>$field) {
+		// retrieve data about table schema
+		$columns = $this->db->describeTable($this->tableName);
+		
+		// assemble all table columns
+		foreach ($columns as $col) {
+			$default = is_null($col->Default) ? 'NULL' : "'" . $col->Default . "'";
+			$type = str_replace("'", "\'", $col->Type);
+			$describe[] = "\t\t'" . $col->Field . "' => ['" . $type . "', '" . $col->Null .
+						"', '" . $col->Key . "', " . $default . ", '" . $col->Extra . "']";
+		}
+		
+		// build the TABLE_FIELDS constant declaration
+		$tableFields = "\t/**\n\t * Struct of mapped table.\n\t * @var mixed[]\n\t */\n\t" .
+				"const TABLE_FIELDS = [\n" . implode(",\n", $describe) . "\n\t];\n\n";
+
+		// assemble referencing columns
+		$referencing = $this->db->getTableReferencing($this->tableName);
+		$lines = $this->formatForeignKeysList($referencing);
+		
+		// build the TABLE_REFERENCING constant declaration
+		$tableReferencing = $lines ? "\t/**\n\t * Columns of this table that are referencing other tables.\n\t * @var string[]\n\t */\n\t" .
+				"const TABLE_REFERENCING = [" . $lines . "];\n\n" : '';
+		
+		// populate properties declaration and binds
+		foreach ($this->binds as $property => $field) {
 			
 			// assembles php-doc
-			$prop = "\t/**\r\n\t * Property that binds db field $field.\r\n\t * @var ";
+			$phpDoc = "\t/**\n\t * Property that binds db field $field.\n\t * @var ";
 
 			// sets right property type
 			switch ($this->propType[$property]) {
 				
-				case 'text':	
+				case 'string':
+				case 'text':
 				case 'enum':
 				case 'set':
-					$prop .= 'string';
+					$phpType = 'string';
 					break;
 				
 				case 'int':
-					$prop .= 'int';
+					$phpType = 'int';
 					$integers[] = "'" . $property . "'";
 					break;
 					
 				case 'bool':
-					$prop .= 'bool';
+					$phpType = 'bool';
 					$booleans[] = "'" . $property . "'";
 					break;
 				
 				case 'date':
 				case 'datetime':
-					$prop .= 'DateTime';
+					$phpType = 'DateTime';
 					$datetimes[] = "'" . $property . "'";
 					break;
 					
+				case 'float':
+					$phpType = 'float';
+					$floats[] = "'" . $property . "'";
+					break;
+					
 				default:
-					$prop .= 'unknown';
+					$phpType = 'unknown';
 					break;
 					
 			}
 
-			$prop .= "\r\n\t */\r\n\tprotected $" . $property . ';';
-			$properties[] = $prop;
+			$properties[] = $phpDoc . $phpType . "\n\t */\n\tprotected $" . $property . ";";
 
-			$binds[] = "\r\n\t\t\t'" . $property . "' => '" . $field . "'";
+			$binds[] = "\n\t\t\t'" . $property . "' => '" . $field . "'";
 			
+			// add a cached methods for a foreign key
+			if (!is_null($this->getForeignKey($field, $referencing))) {
+				
+				// get the fk-column for the current field
+				$col = $this->getForeignKey($field, $referencing);
+
+				// get its class
+				$fkClass = $this->getClassByTable($col->REFERENCED_TABLE_NAME);
+			
+				// build the cached method to get a referenced objects 
+				$fkGets[] =	"\t/**\n\t * Return related " . $fkClass . " object. Cached.\n" .
+						"\t *\n\t * @return	" . $fkClass . "|NULL\n\t */\n" .
+						"\tpublic function get" . str_replace('\\', '', $fkClass) . "() {\n\n" .
+						"\t\t\$class	= '" . $fkClass . "';\n" .
+						"\t\t\$id		= \$this->" . $property . ";\n\n" .
+						"\t\t// add to object cache\n" .
+						"\t\tif (!\$this->issetCache(\$class)) {\n" .
+						"\t\t\t\$this->setCache(\$class, (\$id ? new \$class(\$id) : NULL));\n" .
+						"\t\t}\n\n" .
+						"\t\treturn \$this->getCache(\$class);\n\n" .
+						"\t}\n\n";
+				
+			}
+			
+		}
+
+		if (count($booleans)) {
+			$inits[] = '$this->bindAsBoolean(' . implode(', ', $booleans) . ');';
 		}
 
 		if (count($datetimes)) {
@@ -384,11 +581,11 @@ class DeveloperModel extends Model {
 		if (count($integers)) {
 			$inits[] = '$this->bindAsInteger(' . implode(', ', $integers) . ');';
 		}
-			
-		if (count($booleans)) {
-			$inits[] = '$this->bindAsBoolean(' . implode(', ', $booleans) . ');';
-		}
 
+		if (count($floats)) {
+			$inits[] = '$this->bindAsFloat(' . implode(', ', $floats) . ');';
+		}
+		
 		// at least one var group need to be cast
 		if (count($inits)) {
 
@@ -398,40 +595,34 @@ class DeveloperModel extends Model {
 	 */
 	protected function init() {
 
-		" . implode("\r\n\r\n\t\t", $inits) . "
+		" . implode("\n\n\t\t", $inits) . "
 
-	}\r\n\r\n";
+	}\n\n";
 
 		}
 		
 		// here starts code collect
-		$content = '<?php
-		
-/**
- * @version	$Id'.'$
- * @author	' . $this->author . ' 
- * @package	' . $this->package . '
- */
-
-use Pair\ActiveRecord;
+		$content = $this->getFileStart() .
+'use Pair\ActiveRecord;
 
 class ' . $this->objectName . ' extends ActiveRecord {
-
-' . implode("\n\r", $properties) . '
-
+	
+' . implode("\n\n", $properties) . '
+	
 	/**
 	 * Name of related db table.
 	 * @var string
 	 */
 	const TABLE_NAME = \'' . $this->tableName . '\';
-		
+	
 	/**
 	 * Name of primary key db field.
 	 * @var string
 	 */
 	const TABLE_KEY = ' . $this->getFormattedTableKey() . ';
-		
-' . $init .
+
+' . $tableFields . $tableReferencing . $init .
+
 '	/**
 	 * Return array with matching object property name on related db fields.
 	 *
@@ -444,84 +635,144 @@ class ' . $this->objectName . ' extends ActiveRecord {
 		return $varFields;
 		
 	}
-	
-}';
+
+' . implode('', $fkGets) . '}';
 		
 		// writes the code into the file
 		$this->writeFile($file, $content);
-	
+		
 	}
 	
+	/**
+	 * Save the model.php file with all Form entries.
+	 * 
+	 * @param	string	File name with relative path.
+	 */
 	public function saveModel($file) {
 
-		$fields = array();
+		$lists  = [];
+		$fields = [];
 		
-		foreach ($this->binds as $property=>$field) {
+		// columns that are referencing other tables
+		$referencing = $this->db->getTableReferencing($this->tableName);
+		
+		foreach ($this->binds as $property => $field) {
 			
 			// hidden inputs
 			if ($this->isTableKey($field)) {
 				
-				$field = "\$form->addInput('" . $property . "')->setType('hidden')";
-			
+				$control = '$form->addInput(\'' . $property . "')->setType('hidden')";
+
+			// foreign key
+			} else if (!is_null($this->getForeignKey($field, $referencing))) {
+
+				// get the fk-column for the current field
+				$col = $this->getForeignKey($field, $referencing);
+
+				// some useful variables
+				$fkClass	= $this->getClassByTable($col->REFERENCED_TABLE_NAME);
+				$tmp		= explode('\\', $fkClass);
+				$fkVar		= '$' . $this->getCamelCase(end($tmp));
+				$fkColumn	= $this->getCamelCase($col->REFERENCED_COLUMN_NAME);
+
+				// add the list of all fk-class objects
+				$lists[] = "\t\t" . $fkVar . ' = ' . $fkClass . "::getAllObjects();\n";
+				
+				// create the new select
+				$control  = '$form->addSelect(\'' . $property . '\')';
+				
+				// return the first text property of a class
+				$getFirstTextProperty = function($class) {
+					$obj = new $class();
+					$props = $obj->getAllProperties();
+					foreach ($props as $prop => $value) {
+						if ('string' == $obj->getPropertyType($prop)) {
+							return $prop;
+						}
+					}
+					return NULL;
+				};
+
+				// search the first string-type field in the class, to use as label
+				$firstTextProp = $getFirstTextProperty($fkClass);
+				if (!$firstTextProp) {
+					$firstTextProp = $fkColumn;
+				}
+				
+				// if is nullable field, add an empty option
+				if ($this->isFieldNullable($this->tableName, $field)) {
+					$control .= '->prependEmpty()';
+				}
+				
+				// set value for the select control
+				$control .= '->setListByObjectArray(' . $fkVar . ', \'' . $fkColumn . '\', \'' . $firstTextProp . '\')';
+				
 			// standard inputs
 			} else {
-			
+				
 				switch ($this->propType[$property]) {
 					
+					case 'bool':
+						$control = "\$form->addInput('" . $property . "')->setType('bool')";
+						break;
+					
 					case 'date':
-						$field = "\$form->addInput('" . $property . "')->setType('date')";
+						$control = "\$form->addInput('" . $property . "')->setType('date')";
 						break;
 
 					case 'datetime':
-						$field = "\$form->addInput('" . $property . "')->setType('datetime')";
+						$control = "\$form->addInput('" . $property . "')->setType('datetime')";
 						break;
 								
-					case 'bool':
-						$field = "\$form->addInput('" . $property . "')->setType('bool')";
-						break;
-					
 					case 'int':
-						$field = "\$form->addInput('" . $property . "')->setType('number')";
+						$control = "\$form->addInput('" . $property . "')->setType('number')";
 						break;
-					
+
+					case 'float':
+						$control = "\$form->addInput('" . $property . "')->setType('number')->setStep('0.01')";
+						break;
+						
 					case 'enum':
 					case 'set':
 						$values = array();
 						foreach($this->members[$property] as $value) {
 							$values [] = "'" . $value . "'=>'" . $value . "'";
 						}
-						$field  = "\$form->addSelect('" . $property . "')";
+						$control  = "\$form->addSelect('" . $property . "')";
 						if ('set'==$this->propType[$property]) {
-							$field .= '->setMultiple()';
+							$control .= '->setMultiple()';
 						}
 						if (count($values)) {
-							$field .= '->setListByAssociativeArray(array(' . implode(',', $values) . '))';
+							$control .= '->setListByAssociativeArray(array(' . implode(',', $values) . '))';
 						}
 						break;
 					
-					default:
-						$field = "\$form->addInput('" . $property . "')";
+					default: 
+					case 'string':
+						$control = "\$form->addInput('" . $property . "')";
+						break;
+					
+					case 'text':
+						$control = "\$form->addTextarea('" . $property . "')";
 						break;
 				
+				}
+				
+				// if is not nullable field, set as required
+				if (!$this->isFieldNullable($this->tableName, $field)) {
+					$control .= '->setRequired()';
 				}
 				
 			}
 			
 			// indentation
-			$fields[] = "\t\t" . $field . ";";
+			$controls[] = "\t\t" . $control . ";";
 		
 		}
 		
 		// here starts code collect
-		$content = '<?php
-
-/**
- * @version	$Id'.'$
- * @author	' . $this->author . ' 
- * @package	' . $this->package . '
- */
-
-use Pair\Form;
+		$content = $this->getFileStart() .
+'use Pair\Form;
 use Pair\Model;
 
 class ' . ucfirst($this->moduleName) . 'Model extends Model {
@@ -557,12 +808,14 @@ class ' . ucfirst($this->moduleName) . 'Model extends Model {
 	 * @return Form
 	 */ 
 	public function get' . $this->objectName . 'Form() {
-		
-		$form = new Form();
+
+' . implode('', $lists) .
+
+'		$form = new Form();
 			
 		$form->addControlClass(\'form-control\');
 			
-' . implode("\r\n", $fields) . '
+' . implode("\n", $controls) . '
 		
 		return $form;
 		
@@ -592,15 +845,8 @@ class ' . ucfirst($this->moduleName) . 'Model extends Model {
 		}
 		
 		// here starts code collect
-		$content = '<?php
-
-/**
- * @version	$Id'.'$
- * @author	' . $this->author . ' 
- * @package	' . $this->package . '
- */
-
-use Pair\Breadcrumb;
+		$content = $this->getFileStart() .
+'use Pair\Breadcrumb;
 use Pair\Controller;
 use Pair\Input;
 use Pair\Router;
@@ -614,12 +860,12 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 	 * @see Pair\Controller::init()
 	 */
 	protected function init() {
-
+		
 		$breadcrumb = Breadcrumb::getInstance();
 		$breadcrumb->addPath(\'' . $this->objectName . '\', \'' . $this->moduleName . '\');
-
+		
 	}
-				
+	
 	/**
 	 * Adds a new object.
 	 */
@@ -780,15 +1026,8 @@ EDIT_' . strtoupper($this->objectName) . ' = "' . $tran->translate('EDIT_OBJECT'
 	public function saveViewDefault($file) {
 		
 		// here starts code collect
-		$content = '<?php
-		
-/**
- * @version $Id'.'$
- * @author	' . $this->author . '
- * @package	' . $this->package . '
- */
-
-use Pair\Breadcrumb;
+		$content = $this->getFileStart() .
+'use Pair\Breadcrumb;
 use Pair\View;
 use Pair\Widget;
 
@@ -825,105 +1064,76 @@ class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 
 	}
 	
+	/**
+	 * Based on custom layouts, create the PHP layout file for default action.
+	 * 
+	 * @param	string	Final file to write.
+	 */
 	public function saveLayoutDefault($file) {
+
+		// custom layouts file
+		$layouts = $this->layouts;
 		
-		$headers = array();
-		$rows = array();
+		// trigger for link on first item
+		$fieldWithLink = TRUE;
 		
+		// collects table headers and cells
 		foreach ($this->binds as $property=>$field) {
-		
+			
 			if (!$this->isTableKey($field)) {
-				$headers[] = "\t\t\t\t\t\t\t\t<th><?php \$this->_('" . strtoupper($field) . "') ?></th>";
-				if ('date' == $this->propType[$property]) {
-					$rows[] = "\t\t\t\t\t\t\t\t<td><?php print htmlspecialchars(\$o->" . $property . "->format('Y-m-d')) ?></td>";
-				} else if ('datetime' == $this->propType[$property]) {
-					$rows[] = "\t\t\t\t\t\t\t\t<td><?php print htmlspecialchars(\$o->" . $property . "->format('Y-m-d H:i')) ?></td>";
-				} else {
-					$rows[] = "\t\t\t\t\t\t\t\t<td><?php print htmlspecialchars(\$o->" . $property . ") ?></td>";
+				
+				// replace the table-header placeholder
+				$headers[] = str_replace('{tableHeader}', "<?php \$this->_('" . strtoupper($field) . "') ?>", $layouts['default-table-header']);
+				
+				// add the date/datetime format method
+				switch ($this->propType[$property]) {
+					case 'date':		$property.= "->format('Y-m-d')"; break;
+					case 'datetime':	$property.= "->format('Y-m-d H:i')"; break;
 				}
+				
+				// replace the table-cell placeholder with link on the first item
+				if ($fieldWithLink) {
+					$replace = '<a href="' . $this->moduleName . '/edit/<?php print ' . $this->getTableKeyAsCgiParams('$o') . ' ?>">';
+					$replace.= '<?php print htmlspecialchars($o->' . $property . ') ?>';
+					$replace.= '</a>';
+					$fieldWithLink = FALSE;
+				} else {
+					$replace = '<?php print htmlspecialchars($o->' . $property . ') ?>';
+				}
+
+				$cells[] = str_replace('{tableCell}', $replace, $layouts['default-table-cell']);
+				
 			}
 			
-			
 		}
-
-		// edit icon
-		$headers[] = "\t\t\t\t\t\t\t\t<th></th>";
-		$rows[] = "\t\t\t\t\t\t\t\t<td><a class=\"btn btn-link\" href=\"" . $this->moduleName . '/edit/<?php print ' . $this->getTableKeyAsCgiParams('$o') . ' ?>"><i class="fa fa-lg">pencil</i></a></td>';
 		
-		// here starts code collect
-		$content = '<?php
-
-/**
- * @version	$Id'.'$
- * @author	' . $this->author . '
- * @package	' . $this->package . '
- */
-
-use Pair\Utilities;
-
-?><div class="col-md-12">
-	<div class="ibox">
-		<div class="ibox-title">
-				<h5><?php $this->_(\'' . strtoupper($this->tableName) . '\') ?></h5>
-				<div class="ibox-tools">
-					<a class="btn btn-primary btn-xs" href="' . $this->moduleName . '/new"><i class="fa fa-plus-circle"></i> <?php $this->_(\'NEW_' . strtoupper($this->objectName) . '\') ?></a>
-				</div>
-			</div>
-			<div class="ibox-content">
-				<div class="table-responsive"><?php
+		// the cycle that outputs a full table-row
+		$tableRows =
+			'<?php foreach ($this->' . $this->getCamelCase($this->tableName) . ' as $o) {' .
+			"?><tr>\n" . implode("\n", $cells) . "</tr><?php\n" .
+			"} ?>\n";
 		
-if (count($this->' . $this->getCamelCase($this->tableName) . ')) {
-		
-					?><table class="table table-hover">
-						<thead>
-							<tr>
-' . implode("\r\n", $headers) . '
-							</tr>
-						</thead>
-						<tbody><?php
-			
-							foreach ($this->' . $this->getCamelCase($this->tableName) . ' as $o) {
-		
-							?><tr>
-' . implode("\r\n", $rows) . '
-							</tr><?php 
-				
-							}
-							
-						?></tbody>
-					</table><?php
-		
-	print $this->getPaginationBar();
-		
-} else {
+		$ph['fileStart']	= $this->getFileStart();
+		$ph['pageTitle']	= '<?php $this->_(\'' . strtoupper($this->tableName) . '\') ?>';
+		$ph['linkAdd']		= $this->moduleName . '/new';
+		$ph['newElement']	= '<?php $this->_(\'NEW_' . strtoupper($this->objectName) . '\') ?>';
+		$ph['itemsArray']	= '$this->' . $this->getCamelCase($this->tableName);
+		$ph['tableHeaders']	= implode("\n", $headers);
+		$ph['tableRows']	= $tableRows;
 
-	Utilities::printNoDataMessageBox();
-
-}
-
-			?></div>
-		</div>
-	</div>
-</div>';
+		// replace value on placeholders
+		$content = $this->replaceHolders($layouts['default-page'], $ph);
 
 		// writes the code into the file
 		$this->writeFile($file, $content);
 
 	}
 	
-	
 	public function saveViewNew($file) {
 
 		// here starts code collect
-		$content = '<?php
-
-/**
- * @version	$Id'.'$
- * @author	' . $this->author . '
- * @package	' . $this->package . '
- */
-
-use Pair\Breadcrumb;
+		$content = $this->getFileStart() .
+'use Pair\Breadcrumb;
 use Pair\View;
 use Pair\Widget;
 
@@ -963,48 +1173,29 @@ class ' . ucfirst($this->moduleName) . 'ViewNew extends View {
 	
 		$fields = array();
 		
+		// collects fields
 		foreach ($this->binds as $property=>$field) {
 			
 			if (!$this->isTableKey($field)) {
-
-				$fields[] = '
-				<div class="form-group">
-					<label class="col-md-3 control-label"><?php $this->_(\'' . strtoupper($field) . '\') ?></label>
-					<div class="col-md-9"><?php print $this->form->renderControl(\'' . $property . '\') ?></div>
-				</div>';
+				
+				$search = ['{fieldLabel}', '{fieldControl}'];
+				$replace = ['<?php $this->_(\'' . strtoupper($field) . '\') ?>',
+							'<?php print $this->form->renderControl(\'' . $property . '\') ?>'];
+				$fields[] = str_replace($search, $replace, $this->layouts['new-field']);
 				
 			}
 			
 		}
 		
-		// here starts code collect
-		$content = '<?php
-	
-/**
- * @version	$Id'.'$
- * @author	' . $this->author . '
- * @package	' . $this->package . '
- */
-	
-?><div class="ibox float-e-margins">
-	<div class="ibox-title">
-		<h5><?php $this->_(\'NEW_' . strtoupper($this->objectName) . '\') ?></h5>
-	</div>
-	<div class="ibox-content">
-		<form action="' . $this->moduleName . '/add" method="post" class="form-horizontal">
-			<fieldset>' . implode('', $fields)  . ' 
-			</fieldset>
-			<div class="hr-line-dashed"></div>
-			<div class="form-group">
-						<div class="col-md-push-3 col-md-9">
-							<button type="submit" class="btn btn-primary" value="add" name="action"><i class="fa fa-asterisk"></i> <?php $this->_(\'INSERT\') ?></button>
-							<a href="' . $this->moduleName . '/default" class="btn btn-default"><i class="fa fa-times"></i> <?php $this->_(\'CANCEL\') ?></a>
-				</div>
-			</div>
-		</form>
-	</div>
-</div>';
+		$ph['fileStart']	= $this->getFileStart();
+		$ph['pageTitle']	= '<?php $this->_(\'NEW_' . strtoupper($this->objectName) . '\') ?>';
+		$ph['formAction']	= $this->moduleName . '/add';
+		$ph['fields']		= implode('', $fields);
+		$ph['cancelUrl']	= $this->moduleName;
 
+		// replace value on placeholders
+		$content = $this->replaceHolders($this->layouts['new-page'], $ph);
+		
 		// writes the code into the file
 		$this->writeFile($file, $content);
 
@@ -1032,15 +1223,8 @@ class ' . ucfirst($this->moduleName) . 'ViewNew extends View {
 		}		
 
 		// here starts code collect
-		$content = '<?php
-
-/**
- * @version	$Id'.'$
- * @author	' . $this->author . '
- * @package	' . $this->package . '
- */
-
-use Pair\Breadcrumb;
+		$content = $this->getFileStart() .
+'use Pair\Breadcrumb;
 use Pair\Router;
 use Pair\View;
 use Pair\Widget;
@@ -1081,62 +1265,117 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 		// writes the code into the file
 		$this->writeFile($file, $content);
 
-}
+	}
 	
 	public function saveLayoutEdit($file) {
 		
-		$fields = array();
+		$fields = [];
+		$hiddens = [];
 		
+		// collects fields
 		foreach ($this->binds as $property=>$field) {
-				
+			
 			if (!$this->isTableKey($field)) {
-		
-				$fields[] = '
-				<div class="form-group">
-							<label class="col-md-3 control-label"><?php $this->_(\'' . strtoupper($field) . '\') ?></label>
-							<div class="col-md-9"><?php print $this->form->renderControl(\'' . $property . '\') ?></div>
-				</div>';
-		
+				
+				$search = ['{fieldLabel}', '{fieldControl}'];
+				$replace = ['<?php $this->_(\'' . strtoupper($field) . '\') ?>',
+						'<?php print $this->form->renderControl(\'' . $property . '\') ?>'];
+				$fields[] = str_replace($search, $replace, $this->layouts['edit-field']);
+				
 			} else {
 				
-				$fields[] = "\r\n\t\t\t\t".'<?php print $this->form->renderControl(\'' . $property . '\') ?>';
-				
+				$hiddens[] = '<?php print $this->form->renderControl(\'' . $property . '\') ?>';
+			
 			}
-				
+			
 		}
 		
-		// here starts code collect
-		$content = '<?php
-
-/**
- * @version	$Id'.'$
- * @author	' . $this->author . '
- * @package	' . $this->package . '
- */
-
-?><div class="ibox float-e-margins">
-	<div class="ibox-title">
-			<h5><?php $this->_(\'EDIT_' . strtoupper($this->objectName) . '\') ?></h5>
-	</div>
-	<div class="ibox-content">
-		<form action="' . $this->moduleName . '/change" method="post" class="form-horizontal">
-			<fieldset>' . implode('', $fields) . '
-			</fieldset>
-			<div class="hr-line-dashed"></div>
-			<div class="form-group">
-				<div class="col-md-push-3 col-md-9">
-					<button type="submit" class="btn btn-primary" value="edit" name="action"><i class="fa fa-save"></i> <?php $this->_(\'CHANGE\') ?></button>
-					<a href="' . $this->moduleName . '/default" class="btn btn-default"><i class="fa fa-times"></i> <?php $this->_(\'CANCEL\') ?></a>
-					<a href="' . $this->moduleName . '/delete/<?php print ' . $this->getTableKeyAsCgiParams() . ' ?>" class="btn btn-link confirm-delete pull-right"><i class="fa fa-trash-o"></i> <?php $this->_(\'DELETE\') ?></a>
-				</div>
-			</div>
-		</form>
-	</div>
-</div>
-';
+		$ph['fileStart']	= $this->getFileStart();
+		$ph['pageTitle']	= '<?php $this->_(\'EDIT_' . strtoupper($this->objectName) . '\') ?>';
+		$ph['formAction']	= $this->moduleName . '/change';
+		$ph['fields']		= implode('', $fields);
+		$ph['hiddenFields']	= implode('', $hiddens);
+		$ph['cancelUrl']	= $this->moduleName;
+		$ph['deleteUrl']	=  $this->moduleName . '/delete/<?php print ' . $this->getTableKeyAsCgiParams() . ' ?>';
+		
+		// replace value on placeholders
+		$content = $this->replaceHolders($this->layouts['edit-page'], $ph);
 		
 		// writes the code into the file
 		$this->writeFile($file, $content);
+		
+	}
+	
+	private function getCamelCase(string $text, bool $capFirst=FALSE): string {
+		
+		$camelCase = str_replace(' ', '', ucwords(str_replace(['_','\\'], ' ', $text)));
+		
+		if (!$capFirst) {
+			$camelCase[0] = lcfirst($camelCase[0]);
+		}
+		
+		return $camelCase;
+		
+	}
+	
+	private function getSingularObjectName($tableName) {
+		
+		$tmp = explode('_', $tableName);
+		$lastWord = strtolower(end($tmp));
+		
+		$specials = [
+			'woman' => 'women', 'man' => 'men', 'child' => 'children', 'tooth' => 'teeth',
+			'foot' => 'feet', 'person' => 'people', 'leaf' => 'leaves', 'mouse' => 'mice',
+			'goose' => 'geese', 'half' => 'halves', 'knife' => 'knives', 'wife' => 'wives',
+			'life' => 'lives', 'elf' => 'elves', 'loaf' => 'loaves', 'potato' => 'potatoes',
+			'tomato' => 'tomatoes', 'cactus' => 'cacti', 'focus' => 'foci', 'fungus' => 'fungi',
+			'nucleus' => 'nuclei', 'syllabus' => 'syllabi', 'analysis' => 'analyses',
+			'diagnosis' => 'diagnoses', 'oasis' => 'oases', 'thesis' => 'theses',
+			'crisis' => 'crises', 'phenomenon' => 'phenomena', 'criterion' => 'criteria',
+			'datum' => 'data'];
+		
+		// irregular noun plurals
+		if (in_array($lastWord, $specials)) {
+			$singleWord = array_search($lastWord, $specials);
+			$singleName = substr($tableName, 0, strpos($tableName, $lastWord)) . $singleWord;
+		// singular noun ending in a consonant and then y makes the plural by dropping the y and adding-ies
+		} else if ('ies' == substr($tableName, -3)) {
+			$singleName = substr($tableName,0,-3) . 'y';
+		// a singular noun ending in s, x, z, ch, sh makes the plural by adding-es
+		} else if ('es' == substr($tableName,-2) and (in_array(substr($tableName,-4,-2),['ch','sh']) or
+				(in_array(substr($tableName,-3,-2),['s','x','z'])))) {
+			$singleName = substr($tableName,0,-2);
+		// singular nouns form the plural by adding -s
+		} else if ('s' == substr($tableName,-1)) {
+			$singleName = substr($tableName,0,-1);
+		// maybe it’s already singular
+		} else {
+			$singleName = $tableName;
+		}
+		
+		return $this->getCamelCase($singleName, TRUE);
+		
+	}
+	
+	/**
+	 * Replace all layout’s placeholders in one shot.
+	 *
+	 * @param	string	The HTML template with placeholders.
+	 * @param	array	List with placeholders name as key and value.
+	 *
+	 * @return	string
+	 */
+	private function replaceHolders(string $layout, array $placeholders): string {
+		
+		$search = [];
+		$replace = [];
+		
+		foreach ($placeholders as $placeholder => $value) {
+			$search[] = '{' . $placeholder . '}';
+			$replace[] = $value;
+		}
+		
+		return str_replace($search, $replace, $layout);
 		
 	}
 
@@ -1217,5 +1456,72 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 		}
 		
 	}
+	
+	private function getFileStart() {
+		
+		return "<?php\n\n/**\n * @version	\$Id\$\n * @author	" . $this->author .
+			"\n */\n\n";
+	
+	}
+	
+	/**
+	 * Format a list of foreign-keys for class constants as array declaration text.
+	 * 
+	 * @param	array	The fk list.
+	 * 
+	 * @return	string
+	 */
+	private function formatForeignKeysList($list) {
+		
+		if (!is_array($list) or 0 == count($list)) {
+			return '';
+		}
+		
+		$lines = [];
 
+		foreach ($list as $col) {
+			
+			$lines[] = "\t\t'" . $col->CONSTRAINT_NAME . "' => ['" . $col->COLUMN_NAME . "', '" .
+					$col->REFERENCED_TABLE_NAME . "', '" . $col->REFERENCED_COLUMN_NAME . "', '" .
+					$col->UPDATE_RULE . "', '" . $col->DELETE_RULE . "']";
+			
+		}
+		
+		return "\n" . implode(",\n", $lines) . "\n\t";
+		
+	}
+	
+	/**
+	 * Search in fk list the field name and return it if found; NULL otherwise.
+	 * 
+	 * @param	string	Field name.
+	 * @param	array	Foreign Key list.
+	 * 
+	 * @return	stdClass|NULL
+	 */
+	private function getForeignKey(string $field, array $referencing) {
+		
+		foreach ($referencing as $col) {
+			if ($field == $col->COLUMN_NAME) return $col;
+		}
+		
+		return NULL;
+	
+	}
+	
+	/**
+	 * Return TRUE if the passed field is nullable.
+	 * 
+	 * @param	string	Table name.
+	 * @param	string	Field.
+	 * 
+	 * @return	bool
+	 */
+	private function isFieldNullable(string $tableName, string $field): bool {
+		
+		$column = $this->db->describeColumn($tableName, $field);
+		return (isset($column->Null) and 'YES' == $column->Null);
+		
+	}
+	
 }

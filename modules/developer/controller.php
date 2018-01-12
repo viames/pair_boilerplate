@@ -9,6 +9,7 @@ use Pair\Breadcrumb;
 use Pair\Controller;
 use Pair\Input;
 use Pair\Module;
+use Pair\Options;
 use Pair\Router;
 use Pair\Rule;
 use Pair\Translator;
@@ -16,6 +17,13 @@ use Pair\Translator;
 class DeveloperController extends Controller {
 	
 	protected function init() {
+		
+		$options = Options::getInstance();
+		
+		// prevents access to instances that are not under development
+		if (!$this->app->currentUser->admin or !$options->getValue('development')) {
+			$this->redirect('developer/accessDenied');
+		}
 		
 		$breadcrumb = Breadcrumb::getInstance();
 		$breadcrumb->addPath('Developer module', 'developer');
@@ -27,7 +35,7 @@ class DeveloperController extends Controller {
 		$route = Router::getInstance();
 		
 		if (!$route->getParam(0)) {
-			$this->enqueueError($this->lang('TABLENAME_WAS_NOT_SPECIFIED'));
+			$this->enqueueError($this->lang('TABLE_NAME_NOT_SPECIFIED'));
 		}
 		
 	}
@@ -37,14 +45,14 @@ class DeveloperController extends Controller {
 		$route = Router::getInstance();
 		
 		if (!$route->getParam(0)) {
-			$this->enqueueError($this->lang('TABLENAME_WAS_NOT_SPECIFIED'));
+			$this->enqueueError($this->lang('TABLE_NAME_NOT_SPECIFIED'));
 		}
 		
 	}
 
 	public function classCreationAction() {
 		
-		$this->view = 'default';
+		$this->view = 'newClass';
 
 		$tableName	= Input::get('tableName');
 		$objectName	= Input::get('objectName');
@@ -156,10 +164,11 @@ class DeveloperController extends Controller {
 			// create manifest file
 			$plugin = $module->getPlugin();
 			$plugin->createManifestFile();
-	
+			
 			// adds rule
 			$rule = new Rule();
 			$rule->moduleId = $module->id;
+			$rule->adminOnly = FALSE;
 			$rule->store();
 	
 		} else {
@@ -168,6 +177,73 @@ class DeveloperController extends Controller {
 	
 		}
 	
+	}
+	
+	public function createTableAction() {
+		
+		$tableName = $this->route->getParam(0);
+		
+		$class = $this->model->getClassByTable($tableName);
+		
+		if (!$class) {
+			$this->enqueueError($this->lang('CLASS_NOT_FOUND_FOR_TABLE', $tableName));
+			$this->view = 'newTable';
+			return;
+		}
+		
+		$res = $this->model->createTableByClass($class);
+		
+		if ($res) {
+			$this->enqueueMessage($this->lang('TABLE_HAS_BEEN_CREATED', $tableName));
+			$this->redirect('developer');
+		} else {
+			$errors = $this->model->getErrors();
+			$this->enqueueError($this->lang('ERROR_ON_LAST_REQUEST') . "\n" . implode("\n", $errors));
+			$this->view = 'newTable';
+		}
+		
+	}
+	
+	public function cleanDataAction() {
+
+		$res = TRUE;
+		
+		// elimina tutte le lettere di compensazione
+		foreach (ClearingLetter::getAllObjects() as $clearingLetter) {
+			if (!$clearingLetter->delete()) {
+				$res = FALSE;
+			}
+		}
+		
+		// elimina tutte le fatture
+		foreach (Invoice::getAllObjects() as $invoice) {
+			if (!$invoice->delete()) {
+				$res = FALSE;
+			}
+		}
+
+		// elimina tutte le importazioni
+		foreach (FileUpload::getAllObjects() as $fileUpload) {
+			if (!$fileUpload->delete()) {
+				$res = FALSE;
+			}
+		}
+
+		// ho inserito le query qui per evitare modifiche al model (e facilitare il merge...)
+		
+		// azzera i numeri di ultima fattura e nota di credito
+		$db = \Pair\Database::getInstance();
+		$db->exec('UPDATE affiliates SET last_invoice_number = 0, last_credit_memo = 0');
+		$db->exec('UPDATE company SET last_invoice_number = 0, last_credit_memo = 0');
+
+		if ($res) {
+			$this->enqueueMessage('Le fatture, le lettere di compensazione e le importazioni sono state azzerate');
+			$this->redirect('developer');
+		} else {
+			$this->enqueueError('Si è verificato un errore imprevisto');
+			$this->view = 'default';
+		}
+		
 	}
 	
 }

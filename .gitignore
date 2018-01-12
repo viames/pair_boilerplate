@@ -2,3 +2,5 @@
 *.prefs
 
 vendor/viames/pair/
+
+config.php
