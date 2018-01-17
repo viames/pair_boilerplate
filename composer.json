@@ -1,7 +1,6 @@
 {
 	"name" : "viames/pair_example",
 	"description" : "Skeleton project based on Pair PHP framework",
-	"version" : "0.9",
 	"minimum-stability": "dev",
 	"require" : {
 		"viames/pair" : "^1.1",
