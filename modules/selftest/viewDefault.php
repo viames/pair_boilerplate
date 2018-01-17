@@ -29,14 +29,10 @@ class SelftestViewDefault extends View {
 		// starts the test
 		$test = new SelfTest();
 		
-		// apache version and config
-		$label = $this->lang('TEST_APACHE_CONFIGURATION');
-		$result = $this->model->testApache();
-		$test->assertTrue($label, $result, $this->lang('SERVER'));
-		
 		// php version and config
+		$extensions = array('curl','fileinfo','gd','json','mcrypt', 'openssl','pcre','PDO','pdo_mysql','Reflection','soap');
 		$label = $this->lang('TEST_PHP_CONFIGURATION', phpversion());
-		$result = $this->model->testPhp();
+		$result = $this->model->testPhp($extensions, '5.6.0');
 		$test->assertTrue($label, $result, $this->lang('SERVER'));
 		
 		// mysql version
@@ -50,19 +46,13 @@ class SelftestViewDefault extends View {
 		$test->assertTrue($label, $result, $this->lang('SERVER'));
 		
 		// test folder permissions
-		$label = $this->lang('TEST_FOLDERS');
-		$result = $this->model->testFolders();
+		$folders = array('languages', 'modules', 'temp', 'templates');
+		$label = $this->lang('TEST_FOLDERS', implode(', ', $folders));
+		$result = $this->model->testFolders($folders);
 		$test->assertTrue($label, $result, $this->lang('APPLICATION'));
 
-		// ActiveRecord for multiple classes
-		$classes = $this->model->getActiveRecordClasses();
-		$errors  = 0;
-		
-		foreach ($classes as $class) {
-			$obj = new $class;
-			$errors	+= $obj->selfTest();
-		}
-		
+		// test activeRecord classes
+		$errors = $this->model->testActiveRecordClasses();
 		$label = $errors ? $this->lang('ACTIVE_RECORDS_CLASSES_ERRORS', $errors) : $this->lang('TEST_ACTIVE_RECORDS_CLASSES');
 		$test->assertIsZero($label, $errors, $this->lang('APPLICATION'));
 		
@@ -73,41 +63,13 @@ class SelftestViewDefault extends View {
 		$label = $unfound['folders'] ? $this->lang('LANGUAGE_FOLDERS_NOT_FOUND', $unfound['folders']) : $this->lang('TEST_LANGUAGE_FOLDERS'); 
 		$test->assertIsZero($label, $unfound['folders'], $this->lang('APPLICATION'));
 		
-		/*
-		// unfound files
-		$label = $unfound['files'] ? $this->lang('LANGUAGE_FILES_NOT_FOUND', $unfound['files']) : $this->lang('TEST_LANGUAGE_FILES');
-		$test->assertIsZero($label, $unfound['files'], $this->lang('APPLICATION'));
-		
-		// double test on language lines
-		if (!$unfound['lines'] and !$unfound['notNeeded']) {
-
-			$label = $this->lang('TEST_LANGUAGE_LINES');
-			$test->assertTrue($label, TRUE, $this->lang('APPLICATION'));
-
-		} else {
-		
-			// untranslated language lines
-			if ($unfound['lines']) {
-				$label = $this->lang('UNTRANSLATED_LANGUAGE_LINES', $unfound['lines']);
-				$test->assertIsZero($label, $unfound['lines'], $this->lang('APPLICATION'));
-			}
-			
-			// lines not needed for this language
-			if ($unfound['notNeeded']) {
-				$label = $this->lang('UNNEEDED_LANGUAGE_LINES', $unfound['notNeeded']);
-				$test->assertIsZero($label, $unfound['notNeeded'], $this->lang('APPLICATION'));
-			}
-			
-		}
-		*/
-
 		// test plugins
 		$label = $this->lang('TEST_PLUGINS');
 		$result = $this->model->checkPlugins();
 		$test->assertTrue($label, $result, $this->lang('APPLICATION'));
 		
-		$iconMark	= '<i class="fa fa-check-square-o fa-lg text-success"></i>';
-		$iconCross	= '<i class="fa fa-square-o fa-lg text-danger"></i>';
+		$iconMark	= '<i class="fa fa-check fa-lg text-success"></i>';
+		$iconCross	= '<i class="fa fa-times fa-lg text-danger"></i>';
 		
 		$this->assign('iconMark',	$iconMark);
 		$this->assign('iconCross',	$iconCross);

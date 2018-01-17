@@ -9,9 +9,7 @@ use Pair\Application;
 use Pair\Menu;
 
 /**
- * Create a side menu with bootstrap Classes and FontAwesome icons.
- * @author viames
- *
+ * Create a side menu with Bootstrap classes and FontAwesome icons.
  */
 class BootstrapMenu extends Menu {
 

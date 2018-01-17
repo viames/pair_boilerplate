@@ -99,8 +99,11 @@ $layouts['edit-page'] =
 					<div class="form-group">
 						<div class="col-md-push-3 col-md-9">
 							<button type="submit" class="btn btn-primary" value="edit" name="action"><i class="fal fa-save"></i> <?php $this->_(\'CHANGE\') ?></button>
-							<a href="{cancelUrl}" class="btn btn-default"><i class="fal fa-times"></i> <?php $this->_(\'CANCEL\') ?></a>
-							<a href="{deleteUrl}" class="btn btn-link confirm-delete pull-right"><i class="fal fa-trash"></i> <?php $this->_(\'DELETE\') ?></a>
+							<a href="{cancelUrl}" class="btn btn-default"><i class="fal fa-times"></i> <?php $this->_(\'CANCEL\') ?></a><?php
+							if ($this->{object}->isDeletable()) {
+								?><a href="{deleteUrl}" class="btn btn-link confirm-delete pull-right"><i class="fal fa-trash"></i> <?php $this->_(\'DELETE\') ?></a><?php
+							}
+							?>
 						</div>
 					</div>
 				</form>

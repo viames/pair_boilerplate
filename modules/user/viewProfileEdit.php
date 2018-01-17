@@ -22,13 +22,13 @@ class UserViewProfileEdit extends View {
 		$this->app->sideMenuWidget = $widget->render('sideMenu');
 		
 		$user		= $this->app->currentUser;
-		$languages	= Language::getAllObjects(NULL, array('languageName'));
+		$languages	= Language::getAllObjects(NULL, array('englishName'));
 
 		$this->app->pageTitle = $this->lang('USER_EDIT', $user->fullName);
 
 		$form = $this->model->getUserForm();
 		$form->setValuesByObject($user);
-		$form->getControl('languageId')->setListByObjectArray($languages,'id','languageName')->setValue($user->languageId);
+		$form->getControl('languageId')->setListByObjectArray($languages,'id','englishName')->setValue($user->languageId);
 		
 		$this->assign('user',	$user);
 		$this->assign('form',	$form);

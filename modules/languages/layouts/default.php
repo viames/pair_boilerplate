@@ -34,7 +34,7 @@ if (count($this->languages)) {
 			foreach ($this->languages as $language) {
 
 				?><tr>
-					<td><?php print htmlspecialchars($language->languageName) ?></td>
+					<td><?php print htmlspecialchars($language->englishName) ?></td>
 					<td class="text-center" style="width:30%"><?php print $language->progressBar ?></td>
 					<td class="text-center"><?php print $language->complete ?></td>
 					<td class="text-center"><?php print $language->defaultIcon ?></td>

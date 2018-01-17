@@ -28,7 +28,7 @@ class LanguagesViewDetails extends View {
 		$language = new Language($route->getParam(0));
 
 		// add breadcrumb path
-		Breadcrumb::getInstance()->addPath($this->lang('LANGUAGE_X', $language->languageName));
+		Breadcrumb::getInstance()->addPath($this->lang('LANGUAGE_X', $language->englishName));
 				
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');

@@ -156,7 +156,7 @@ class UserModel extends Model {
 		
 		$form->addControlClass('form-control');
 		
-		$languages	= Language::getAllObjects(NULL, array('languageName'));
+		$languages	= Language::getAllObjects(NULL, array('englishName'));
 
 		$form->addInput('name')->setRequired()->setMinLength(2);
 		$form->addInput('surname')->setRequired()->setMinLength(2);
@@ -166,7 +166,7 @@ class UserModel extends Model {
 		$form->addInput('password', array('autocomplete'=>'off', 'autocorrect'=>'off', 'autocapitalize'=>'off'))
 			->setType('password')->setMinLength(8)->setPlaceholder('Password');
 		$form->addInput('showPassword')->setType('bool');
-		$form->addSelect('languageId')->setListByObjectArray($languages,'id','languageName')->setRequired();
+		$form->addSelect('languageId')->setListByObjectArray($languages,'id','englishName')->setRequired();
 
 		return $form;
 

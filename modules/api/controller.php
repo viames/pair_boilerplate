@@ -97,7 +97,7 @@ class ApiController extends Controller {
 		$data->fullname	= $user->fullName;
 		$data->username = $user->username;
 		$data->group	= $group->name;
-		$data->language	= $language->languageName;
+		$data->language	= $language->englishName;
 		$data->email	= $user->email;
 		$data->timezone	= $user->tzName;
 		

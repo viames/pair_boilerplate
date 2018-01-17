@@ -37,9 +37,9 @@ class LanguagesController extends Controller {
 
 		// user messages
 		if ($res) {
-			$this->enqueueMessage($this->lang('LANGUAGE_STRINGS_UPDATED', array($language->languageName, ucfirst($module))));
+			$this->enqueueMessage($this->lang('LANGUAGE_STRINGS_UPDATED', array($language->englishName, ucfirst($module))));
 		} else {
-			$this->enqueueError($this->lang('LANGUAGE_STRINGS_NOT_UPDATED', array($language->languageName, ucfirst($module))));
+			$this->enqueueError($this->lang('LANGUAGE_STRINGS_NOT_UPDATED', array($language->englishName, ucfirst($module))));
 		}
 
 		$this->app->redirect('languages/details/' . $langId);

@@ -109,7 +109,7 @@ class UsersModel extends Model {
 
 		// lists for select
 		$groups	= Group::getAllObjects(NULL, 'name');
-		$languages = Language::getAllObjects(NULL, array('languageName'));
+		$languages = Language::getAllObjects(NULL, array('englishName'));
 		
 		$form	= new Form();
 		$form->addControlClass('form-control');
@@ -123,7 +123,7 @@ class UsersModel extends Model {
 		$form->addInput('username', array('autocomplete'=>'off'))->setRequired()->setMinLength(3);
 		$form->addInput('password', array('autocomplete'=>'off'))->setType('password')->setMinLength(8);
 		$form->addSelect('groupId')->setRequired()->setListByObjectArray($groups,'id','name');
-		$form->addSelect('languageId')->setRequired()->setListByObjectArray($languages,'id','languageName');
+		$form->addSelect('languageId')->setRequired()->setListByObjectArray($languages,'id','englishName');
 
 		return $form;
 

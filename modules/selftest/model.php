@@ -11,52 +11,41 @@ use Pair\Model;
 use Pair\Module;
 use Pair\Options;
 use Pair\Translator;
+use Pair\Utilities;
 
 class SelftestModel extends Model {
 
-	public function testApache() {
+	/**
+	 * Check that PHP extensions and version satisfy application requests.
+	 * 
+	 * @param	array	List of required PHP extensions.
+	 * @param	string	Minimum PHP required version.
+	 * 
+	 * @return	bool
+	 */ 
+	public function testPhp($extensions, $version) {
 
 		$res = TRUE;
-
-		// apache section
-		if (function_exists('apache_get_modules')) {
-			$aModules = \apache_get_modules();
-			if (!in_array('mod_rewrite', $aModules)) {
-				$res = FALSE;
-				$this->logError('Apache mod_rewrite is not loaded');
-			}
-		}
-	
-		return $res;
-
-	}
-
-	public function testPhp() {
-
-		$res = TRUE;
-
-		// php section
-		$requiredPhpExt = array('curl','fileinfo','gd','json','mcrypt', 'openssl','pcre','PDO','Reflection','soap','sockets');
 
 		$hiddenExt = array();
 		
 		if ('ldap' == AUTH_SOURCE) {
-			$requiredPhpExt[] = 'ldap';
+			$extensions[] = 'ldap';
 		}
 		
 		switch (DBMS) {
 			case 'mysql':
-				$requiredPhpExt[] = 'pdo_mysql';
+				$extensions[] = 'pdo_mysql';
 				break;
 			case 'mssql':
-				$requiredPhpExt[] = 'pdo_dblib';
+				$extensions[] = 'pdo_dblib';
 				break;
 		}
 		
-		$this->app->logEvent('Checking for PHP extensions ' . implode(', ', $requiredPhpExt));
+		$this->app->logEvent('Checking for PHP extensions ' . implode(', ', $extensions));
 
 		// check each library
-		foreach ($requiredPhpExt as $ext) {
+		foreach ($extensions as $ext) {
 
 			if (!extension_loaded($ext)) {
 
@@ -78,9 +67,9 @@ class SelftestModel extends Model {
 
 		}
 
-		if (version_compare(phpversion(), "5.6.0", "<")) {
+		if (version_compare(phpversion(), $version, "<")) {
 			$res = FALSE;
-			$this->logError('PHP version required is 5.6 or greater. You are using PHP ' . phpversion());
+			$this->logError('PHP version required is ' . $version . ' or greater. You are using PHP ' . phpversion());
 		}
 
 		return $res;
@@ -106,14 +95,12 @@ class SelftestModel extends Model {
 
 		// the right settings list
 		$settings = array(
-			'character_set_client'		=> 'utf8',
-			'character_set_connection'	=> 'utf8',
+			'character_set_client'		=> 'utf8mb4',
+			'character_set_connection'	=> 'utf8mb4',
 			'character_set_database'	=> 'utf8mb4',
-			'character_set_filesystem'	=> 'binary',
-			'character_set_results'		=> 'utf8',
+			'character_set_results'		=> 'utf8mb4',
 			'character_set_server'		=> 'utf8mb4',
-			'character_set_system'		=> 'utf8',
-			'collation_connection'		=> 'utf8_general_ci',
+			'collation_connection'		=> 'utf8mb4_unicode_ci',
 			'collation_database'		=> 'utf8mb4_unicode_ci',
 			'collation_server'			=> 'utf8mb4_unicode_ci');
 		
@@ -127,7 +114,7 @@ class SelftestModel extends Model {
 			if (array_key_exists($row->Variable_name, $settings)) {
 				
 				if ($settings[$row->Variable_name] != $row->Value) {
-					$this->logError('DBMS setting parameter ' . $row->Variable_name . ' value is ' . $row->Value . ' should be ' . $settings[$row->Variable_name]);
+					$this->logWarning('DBMS setting parameter ' . $row->Variable_name . ' value is ' . $row->Value . ' should be ' . $settings[$row->Variable_name]);
 					$ret = FALSE;
 				}
 				
@@ -150,7 +137,7 @@ class SelftestModel extends Model {
 
 		$options = Options::getInstance();
 
-		// check on UTC_DATE constant existence
+		// check about missing UTC_DATE constant
 		if (!defined('UTC_DATE')) {
 			$ret = FALSE;
 			$this->logError('In config.ini file UTC_DATE constant is missing');
@@ -178,12 +165,10 @@ class SelftestModel extends Model {
 	/**
 	 * Tests needed folders in both read and write.
 	 */
-	public function testFolders() {
+	public function testFolders($folders) {
 
 		$ret = TRUE;
 
-		$folders = array('files', 'languages', 'modules', 'templates');
-		
 		$modules = Module::getAllObjects();
 		
 		foreach ($modules as $module) {
@@ -208,6 +193,108 @@ class SelftestModel extends Model {
 
 		return $ret;
 
+	}
+
+	/**
+	 * Run run test on maps and references on all ActiveRecord classes of this application.
+	 * 
+	 * @return int
+	 */
+	public function testActiveRecordClasses(): int {
+
+		// the final error count
+		$errors  = 0;
+		
+		// get all ActiveRecord classes
+		$classes = Utilities::getActiveRecordClasses();
+		
+		foreach ($classes as $class => $opts) {
+
+			// build a class object properly
+			if ($opts['constructor']) {
+				$object = new $class;
+			} else if ($opts['getInstance']) {
+				$object = $class::getInstance();
+			} else {
+				continue;
+			}
+			
+			// run test on maps and references
+			$errors += $this->testClassMaps($object);
+			
+		}
+		
+		return $errors;
+	
+	}
+	
+	/**
+	 * Test the class couples properties-dbfields. Return the error count.
+	 * 
+	 * @param	multitype	Object to test.
+	 *
+	 * @return	int
+	 */
+	public function testClassMaps($object) {
+		
+		$app = Application::getInstance();
+		
+		// count nr of errors found on each class
+		$errorCount = 0;
+		
+		$class = get_class($object);
+		
+		// all class-table maps
+		$properties = $object->getAllProperties();
+		
+		// all class properties
+		$properties = get_object_vars($object);
+		
+		// all db fields
+		if (!$this->db->tableExists($class::TABLE_NAME)) {
+			$errorCount++;
+			$app->logError('DB Table ' . $class::TABLE_NAME . ' doesn’t exist');
+			return $errorCount;
+		}
+		
+		// get the mapped table description
+		$describe = $this->db->describeTable($class::TABLE_NAME);
+		
+		// assemble a useful array with field names as key
+		foreach ($describe as $f) {
+			$fieldList[] = $f->Field;
+		}
+		
+		// test on each db-field mapped by the class
+		foreach ($properties as $property => $value) {
+			
+			$field = $class::getMappedField($property);
+			
+			// looks for object declared property and db bind field
+			if (!in_array($property, $properties)) {
+				$errorCount++;
+				$app->logError('Class ' . $class . ' is missing property “' . $property . '”');
+			}
+			
+			if (!array_search($field, $fieldList)) {
+				$errorCount++;
+				$app->logError('Class ' . $class . ' is managing unexistent field “' . $field . '”');
+			}
+			
+		}
+		
+		// second check for existent field unmapped by the class
+		foreach ($fieldList as $field) {
+
+			if (!$class::getMappedProperty($field)) {
+				$errorCount++;
+				$app->logError('Class ' . $class . ' is not binding “' . $field . '” in method getBinds()');
+			}
+			
+		}
+		
+		return $errorCount;
+		
 	}
 
 	/**
@@ -264,7 +351,7 @@ class SelftestModel extends Model {
 							if (!file_exists($langFolder . '/' . $language->code . '.ini')) {
 	
 								$files++;
-								//$this->logWarning('Unfound ' . $language->languageName . ' language file at this path: ' . $langFolder);
+								//$this->logWarning('Unfound ' . $language->englishName . ' language file at this path: ' . $langFolder);
 	
 							} else {
 
@@ -352,81 +439,6 @@ class SelftestModel extends Model {
 
 		return count($differences);
 		
-	}
-
-	/**
-	 * Returns list of class names that inherite from ActiveRecord.
-	 *
-	 * @return array
-	 */
-	public function getActiveRecordClasses() {
-
-		$classes = array();
-
-		// list of class files
-		$scan1 = array_diff(scandir('classes'), array('..', '.', '.DS_Store'));
-		$scan2 = array_diff(scandir('vendor/viames/pair/src'), array('..', '.', '.DS_Store'));
-
-		$classFiles = array_merge($scan1, $scan2);
-
-		foreach ($classFiles as $file) {
-
-			// cut .php from file name
-			$class = substr($file, 0, -4);
-
-			// will adds just requested children
-			if (is_subclass_of($class, 'Pair\ActiveRecord')) {
-				$reflection = new ReflectionClass($class);
-				if (!$reflection->isAbstract()) {
-					$classes[] = $class;
-				}
-			}
-
-		}
-
-		// list of class files in modules
-		$modules = array_diff(scandir('modules'), array('..', '.', '.DS_Store'));
-
-		foreach ($modules as $module) {
-
-			$classesFolder = 'modules/' . $module . '/classes';
-
-			if (is_dir($classesFolder)) {
-
-				$classFiles = array_diff(scandir($classesFolder), array('..', '.', '.DS_Store'));
-
-				foreach ($classFiles as $file) {
-
-					// only .php files are included
-					if ('.php' == substr($file,-4)) {
-
-						// cut .php from file name
-						$class = substr($file, 0, -4);
-
-						if (!class_exists($class)) {
-							include_once ($classesFolder . '/' . $file);
-						}
-						
-						// will adds just requested children
-						if (is_subclass_of($class, 'Pair\ActiveRecord')) {
-							$reflection = new ReflectionClass($class);
-							if (!$reflection->isAbstract()) {
-								$classes[] = $class;
-							}
-						}
-
-					}
-
-				}
-
-			}
-
-		}
-		
-		sort($classes);
-
-		return $classes;
-
 	}
 
 	/**

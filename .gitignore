@@ -1,6 +1,4 @@
-
 *.prefs
-
-vendor/viames/pair/
-
+composer.lock
 config.php
+vendor/**

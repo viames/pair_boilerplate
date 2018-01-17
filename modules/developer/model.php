@@ -224,7 +224,11 @@ class DeveloperModel extends Model {
 	 * @return	boolean
 	 */
 	public function createTableByClass(string $class): bool {
-		
+
+		$this->addError('Function under development');
+		return FALSE;
+
+		/*
 		if (!defined($class . '::TABLE_FIELDS')) {
 			$this->addError('TABLE_FIELDS constant is missing in the class ' . $class);
 			return FALSE;
@@ -297,7 +301,7 @@ class DeveloperModel extends Model {
 		}
 		
 		return TRUE;
-		
+		*/
 	}
 	
 	/**
@@ -466,6 +470,7 @@ class DeveloperModel extends Model {
 		// here starts building of property cast
 		$inits		= [];
 		$booleans	= [];
+		$csvs		= [];
 		$datetimes	= [];
 		$integers	= [];
 		$floats		= [];
@@ -477,25 +482,7 @@ class DeveloperModel extends Model {
 		// retrieve data about table schema
 		$columns = $this->db->describeTable($this->tableName);
 		
-		// assemble all table columns
-		foreach ($columns as $col) {
-			$default = is_null($col->Default) ? 'NULL' : "'" . $col->Default . "'";
-			$type = str_replace("'", "\'", $col->Type);
-			$describe[] = "\t\t'" . $col->Field . "' => ['" . $type . "', '" . $col->Null .
-						"', '" . $col->Key . "', " . $default . ", '" . $col->Extra . "']";
-		}
-		
-		// build the TABLE_FIELDS constant declaration
-		$tableFields = "\t/**\n\t * Struct of mapped table.\n\t * @var mixed[]\n\t */\n\t" .
-				"const TABLE_FIELDS = [\n" . implode(",\n", $describe) . "\n\t];\n\n";
-
-		// assemble referencing columns
-		$referencing = $this->db->getTableReferencing($this->tableName);
-		$lines = $this->formatForeignKeysList($referencing);
-		
-		// build the TABLE_REFERENCING constant declaration
-		$tableReferencing = $lines ? "\t/**\n\t * Columns of this table that are referencing other tables.\n\t * @var string[]\n\t */\n\t" .
-				"const TABLE_REFERENCING = [" . $lines . "];\n\n" : '';
+		$foreignKeys = $this->db->getForeignKeys($this->tableName);
 		
 		// populate properties declaration and binds
 		foreach ($this->binds as $property => $field) {
@@ -509,20 +496,19 @@ class DeveloperModel extends Model {
 				case 'string':
 				case 'text':
 				case 'enum':
-				case 'set':
 					$phpType = 'string';
 					break;
-				
-				case 'int':
-					$phpType = 'int';
-					$integers[] = "'" . $property . "'";
-					break;
-					
+
 				case 'bool':
 					$phpType = 'bool';
 					$booleans[] = "'" . $property . "'";
 					break;
 				
+				case 'set':
+					$phpType = 'csv';
+					$csvs[] = "'" . $property . "'";
+					break;
+					
 				case 'date':
 				case 'datetime':
 					$phpType = 'DateTime';
@@ -532,6 +518,11 @@ class DeveloperModel extends Model {
 				case 'float':
 					$phpType = 'float';
 					$floats[] = "'" . $property . "'";
+					break;
+					
+				case 'int':
+					$phpType = 'int';
+					$integers[] = "'" . $property . "'";
 					break;
 					
 				default:
@@ -544,12 +535,12 @@ class DeveloperModel extends Model {
 
 			$binds[] = "\n\t\t\t'" . $property . "' => '" . $field . "'";
 			
+			// get the fk-column for the current field
+			$col = $this->getForeignKey($field, $foreignKeys);
+			
 			// add a cached methods for a foreign key
-			if (!is_null($this->getForeignKey($field, $referencing))) {
+			if (!is_null($col)) {
 				
-				// get the fk-column for the current field
-				$col = $this->getForeignKey($field, $referencing);
-
 				// get its class
 				$fkClass = $this->getClassByTable($col->REFERENCED_TABLE_NAME);
 			
@@ -573,19 +564,23 @@ class DeveloperModel extends Model {
 		if (count($booleans)) {
 			$inits[] = '$this->bindAsBoolean(' . implode(', ', $booleans) . ');';
 		}
-
+		
+		if (count($csvs)) {
+			$inits[] = '$this->bindAsCsv(' . implode(', ', $csvs) . ');';
+		}
+		
 		if (count($datetimes)) {
 			$inits[] = '$this->bindAsDatetime(' . implode(', ', $datetimes) . ');';
+		}
+		
+		if (count($floats)) {
+			$inits[] = '$this->bindAsFloat(' . implode(', ', $floats) . ');';
 		}
 		
 		if (count($integers)) {
 			$inits[] = '$this->bindAsInteger(' . implode(', ', $integers) . ');';
 		}
 
-		if (count($floats)) {
-			$inits[] = '$this->bindAsFloat(' . implode(', ', $floats) . ');';
-		}
-		
 		// at least one var group need to be cast
 		if (count($inits)) {
 
@@ -621,7 +616,7 @@ class ' . $this->objectName . ' extends ActiveRecord {
 	 */
 	const TABLE_KEY = ' . $this->getFormattedTableKey() . ';
 
-' . $tableFields . $tableReferencing . $init .
+' . $init .
 
 '	/**
 	 * Return array with matching object property name on related db fields.
@@ -654,7 +649,7 @@ class ' . $this->objectName . ' extends ActiveRecord {
 		$fields = [];
 		
 		// columns that are referencing other tables
-		$referencing = $this->db->getTableReferencing($this->tableName);
+		$foreignKeys = $this->db->getForeignKeys($this->tableName);
 		
 		foreach ($this->binds as $property => $field) {
 			
@@ -664,10 +659,10 @@ class ' . $this->objectName . ' extends ActiveRecord {
 				$control = '$form->addInput(\'' . $property . "')->setType('hidden')";
 
 			// foreign key
-			} else if (!is_null($this->getForeignKey($field, $referencing))) {
+			} else if (!is_null($this->getForeignKey($field, $foreignKeys))) {
 
 				// get the fk-column for the current field
-				$col = $this->getForeignKey($field, $referencing);
+				$col = $this->getForeignKey($field, $foreignKeys);
 
 				// some useful variables
 				$fkClass	= $this->getClassByTable($col->REFERENCED_TABLE_NAME);
@@ -731,16 +726,30 @@ class ' . $this->objectName . ' extends ActiveRecord {
 					case 'float':
 						$control = "\$form->addInput('" . $property . "')->setType('number')->setStep('0.01')";
 						break;
-						
+
 					case 'enum':
-					case 'set':
 						$values = array();
-						foreach($this->members[$property] as $value) {
+						foreach ($this->members[$property] as $value) {
 							$values [] = "'" . $value . "'=>'" . $value . "'";
 						}
 						$control  = "\$form->addSelect('" . $property . "')";
-						if ('set'==$this->propType[$property]) {
-							$control .= '->setMultiple()';
+						if ($this->isFieldNullable($this->tableName, $field)) {
+							$control .= '->prependEmpty()';
+						}
+						if (count($values)) {
+							$control .= '->setListByAssociativeArray(array(' . implode(',', $values) . '))';
+						}
+						break;
+						
+					// control name for "set" has []
+					case 'set':
+						$values = array();
+						foreach ($this->members[$property] as $value) {
+							$values [] = "'" . $value . "'=>'" . $value . "'";
+						}
+						$control  = "\$form->addSelect('" . $property . "[]')->setMultiple()";
+						if ($this->isFieldNullable($this->tableName, $field)) {
+							$control .= '->prependEmpty()';
 						}
 						if (count($values)) {
 							$control .= '->setListByAssociativeArray(array(' . implode(',', $values) . '))';
@@ -759,7 +768,7 @@ class ' . $this->objectName . ' extends ActiveRecord {
 				}
 				
 				// if is not nullable field, set as required
-				if (!$this->isFieldNullable($this->tableName, $field)) {
+				if ($this->propType[$property] != 'bool' and !$this->isFieldNullable($this->tableName, $field)) {
 					$control .= '->setRequired()';
 				}
 				
@@ -830,20 +839,6 @@ class ' . ucfirst($this->moduleName) . 'Model extends Model {
 	
 	public function saveController($file) {
 		
-		// initialize
-		$propList = array();
-		$newList  = array();
-		$editList = array();
-		
-		// build each input line
-		foreach ($this->binds as $property=>$field) {
-			// FIXME make it working for compound key
-			if (!$this->isTableKey($field)) {
-				$newList[]  = "\t\t\$" . lcfirst($this->objectName) . '->' . $property . ' = Input::get(\'' . $property . '\');';
-				$editList[] = "\t\t\$" . lcfirst($this->objectName) . '->' . $property . ' = Input::get(\'' . $property . '\');';
-			}
-		}
-		
 		// here starts code collect
 		$content = $this->getFileStart() .
 'use Pair\Breadcrumb;
@@ -872,7 +867,7 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 	public function addAction() {
 	
 		$' . lcfirst($this->objectName) . ' = new ' . $this->objectName . '();
-' . implode("\r\n", $newList) . '
+		$' . lcfirst($this->objectName) . '->populateByRequest();
 
 		$result = $' . lcfirst($this->objectName) . '->store();
 		
@@ -907,8 +902,7 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 	public function changeAction() {
 
 		$' . lcfirst($this->objectName) . ' = new ' . $this->objectName . '(Input::get(' . $this->getFormattedTableKey() . '));
-
-' . implode("\r\n", $editList) . '
+		$' . lcfirst($this->objectName) . '->populateByRequest();
 
 		// apply the update
 		$result = $' . lcfirst($this->objectName) . '->store();
@@ -1087,18 +1081,20 @@ class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 				
 				// add the date/datetime format method
 				switch ($this->propType[$property]) {
-					case 'date':		$property.= "->format('Y-m-d')"; break;
-					case 'datetime':	$property.= "->format('Y-m-d H:i')"; break;
+					case 'date':	 $object = '$o->formatDate(\'' . $property . '\')';		break;
+					case 'datetime': $object = '$o->formatDateTime(\'' . $property . '\')'; break;
+					case 'set':		 $object = 'implode(\', \', $o->' . $property . ')';	break;
+					default:		 $object = '$o->' . $property;							break;
 				}
 				
 				// replace the table-cell placeholder with link on the first item
 				if ($fieldWithLink) {
 					$replace = '<a href="' . $this->moduleName . '/edit/<?php print ' . $this->getTableKeyAsCgiParams('$o') . ' ?>">';
-					$replace.= '<?php print htmlspecialchars($o->' . $property . ') ?>';
+					$replace.= '<?php print htmlspecialchars(' . $object . ') ?>';
 					$replace.= '</a>';
 					$fieldWithLink = FALSE;
 				} else {
-					$replace = '<?php print htmlspecialchars($o->' . $property . ') ?>';
+					$replace = '<?php print htmlspecialchars(' . $object . ') ?>';
 				}
 
 				$cells[] = str_replace('{tableCell}', $replace, $layouts['default-table-cell']);
@@ -1295,6 +1291,7 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 		$ph['formAction']	= $this->moduleName . '/change';
 		$ph['fields']		= implode('', $fields);
 		$ph['hiddenFields']	= implode('', $hiddens);
+		$ph['object']		= lcfirst($this->objectName);
 		$ph['cancelUrl']	= $this->moduleName;
 		$ph['deleteUrl']	=  $this->moduleName . '/delete/<?php print ' . $this->getTableKeyAsCgiParams() . ' ?>';
 		
@@ -1465,33 +1462,6 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 	}
 	
 	/**
-	 * Format a list of foreign-keys for class constants as array declaration text.
-	 * 
-	 * @param	array	The fk list.
-	 * 
-	 * @return	string
-	 */
-	private function formatForeignKeysList($list) {
-		
-		if (!is_array($list) or 0 == count($list)) {
-			return '';
-		}
-		
-		$lines = [];
-
-		foreach ($list as $col) {
-			
-			$lines[] = "\t\t'" . $col->CONSTRAINT_NAME . "' => ['" . $col->COLUMN_NAME . "', '" .
-					$col->REFERENCED_TABLE_NAME . "', '" . $col->REFERENCED_COLUMN_NAME . "', '" .
-					$col->UPDATE_RULE . "', '" . $col->DELETE_RULE . "']";
-			
-		}
-		
-		return "\n" . implode(",\n", $lines) . "\n\t";
-		
-	}
-	
-	/**
 	 * Search in fk list the field name and return it if found; NULL otherwise.
 	 * 
 	 * @param	string	Field name.
@@ -1499,9 +1469,9 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 	 * 
 	 * @return	stdClass|NULL
 	 */
-	private function getForeignKey(string $field, array $referencing) {
+	private function getForeignKey(string $field, array $foreignKeys) {
 		
-		foreach ($referencing as $col) {
+		foreach ($foreignKeys as $col) {
 			if ($field == $col->COLUMN_NAME) return $col;
 		}
 		

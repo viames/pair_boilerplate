@@ -31,7 +31,7 @@ class LanguagesViewEdit extends View {
 
 		// add breadcrumb path
 		Breadcrumb::getInstance()
-			->addPath($this->lang('LANGUAGE_X', $language->languageName), 'languages/details/' . $language->id)
+		->addPath($this->lang('LANGUAGE_X', $language->englishName), 'languages/details/' . $language->id)
 			->addPath($this->lang('MODULE_X', ucfirst($module)));
 		
 		$widget = new Widget();

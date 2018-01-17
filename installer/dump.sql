@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.15, for osx10.11 (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.20
 --
--- Host: localhost    Database: pair
+-- Host: localhost    Database: pair_example
 -- ------------------------------------------------------
--- Server version	5.7.15
+-- Server version	5.7.20
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -30,9 +30,9 @@ CREATE TABLE `acl` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `rule_id` (`rule_id`,`group_id`),
   KEY `group_id` (`group_id`) USING BTREE,
-  CONSTRAINT `acl_group_id` FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`),
-  CONSTRAINT `acl_rules_id` FOREIGN KEY (`rule_id`) REFERENCES `rules` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+  CONSTRAINT `fk_acl_groups` FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_acl_rules` FOREIGN KEY (`rule_id`) REFERENCES `rules` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -56,19 +56,19 @@ CREATE TABLE `error_logs` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `created_time` datetime NOT NULL,
   `user_id` int(10) unsigned DEFAULT NULL,
-  `module` varchar(20) NOT NULL,
-  `action` varchar(20) NOT NULL,
-  `get_data` text NOT NULL,
-  `post_data` text NOT NULL,
-  `cookie_data` text NOT NULL,
-  `description` varchar(255) NOT NULL,
-  `user_messages` text NOT NULL,
-  `referer` varchar(255) NOT NULL,
+  `module` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `action` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `get_data` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `post_data` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `cookie_data` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_messages` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `referer` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `created_time` (`created_time`),
   CONSTRAINT `error_logs_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -89,10 +89,10 @@ DROP TABLE IF EXISTS `groups`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `groups` (
   `id` int(3) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL,
+  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `is_default` int(1) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -114,14 +114,14 @@ DROP TABLE IF EXISTS `languages`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `languages` (
   `id` int(3) unsigned NOT NULL AUTO_INCREMENT,
-  `code` varchar(2) NOT NULL,
-  `representation` varchar(5) NOT NULL,
-  `language_name` varchar(30) NOT NULL,
+  `code` varchar(2) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `representation` varchar(5) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `english_name` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `is_default` tinyint(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `full_code` (`representation`),
   KEY `code` (`code`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -143,17 +143,17 @@ DROP TABLE IF EXISTS `modules`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `modules` (
   `id` int(3) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL,
-  `version` varchar(10) NOT NULL,
+  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `version` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `date_released` datetime NOT NULL,
-  `app_version` varchar(10) NOT NULL DEFAULT '1',
+  `app_version` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '1',
   `installed_by` int(4) unsigned NOT NULL,
   `date_installed` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`),
   KEY `installed_by` (`installed_by`),
   KEY `date_installed` (`date_installed`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -174,15 +174,15 @@ DROP TABLE IF EXISTS `options`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `options` (
-  `name` varchar(30) NOT NULL,
-  `label` varchar(30) NOT NULL DEFAULT '',
-  `type` enum('text','bool','int','list','custom') NOT NULL DEFAULT 'text',
-  `value` varchar(60) NOT NULL,
-  `list_options` text,
-  `group` varchar(12) NOT NULL,
+  `name` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `label` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `type` enum('text','textarea','bool','int','list','custom') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'text',
+  `value` varchar(1024) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `list_options` text COLLATE utf8mb4_unicode_ci,
+  `group` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`name`),
   KEY `group` (`group`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -204,13 +204,13 @@ DROP TABLE IF EXISTS `rules`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `rules` (
   `id` int(3) unsigned NOT NULL AUTO_INCREMENT,
-  `action` varchar(30) DEFAULT NULL,
+  `action` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `admin_only` tinyint(1) NOT NULL DEFAULT '0',
   `module_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `module_action` (`module_id`,`action`) USING BTREE,
-  CONSTRAINT `rules_module_id` FOREIGN KEY (`module_id`) REFERENCES `modules` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+  CONSTRAINT `fk_rules_modules` FOREIGN KEY (`module_id`) REFERENCES `modules` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -231,15 +231,24 @@ DROP TABLE IF EXISTS `sessions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `sessions` (
-  `id_session` varchar(100) NOT NULL,
+  `id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `id_user` int(4) unsigned DEFAULT NULL,
   `start_time` datetime NOT NULL,
   `timezone_offset` decimal(2,1) DEFAULT NULL,
-  `timezone_name` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`id_session`),
+  `timezone_name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
   KEY `user_id` (`id_user`,`start_time`)
-) ENGINE=MEMORY DEFAULT CHARSET=utf8;
+) ENGINE=MEMORY DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sessions`
+--
+
+LOCK TABLES `sessions` WRITE;
+/*!40000 ALTER TABLE `sessions` DISABLE KEYS */;
+/*!40000 ALTER TABLE `sessions` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `templates`
@@ -250,20 +259,20 @@ DROP TABLE IF EXISTS `templates`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `templates` (
   `id` int(3) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL,
-  `version` varchar(10) NOT NULL,
+  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `version` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `date_released` datetime NOT NULL,
-  `app_version` varchar(10) NOT NULL DEFAULT '1',
+  `app_version` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '1',
   `is_default` tinyint(1) NOT NULL DEFAULT '0',
   `installed_by` int(4) unsigned NOT NULL,
   `date_installed` datetime NOT NULL,
   `derived` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `palette` varchar(255) NOT NULL DEFAULT '',
+  `palette` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`),
   KEY `installed_by` (`installed_by`),
   KEY `date_installed` (`date_installed`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -287,12 +296,12 @@ CREATE TABLE `users` (
   `id` int(4) unsigned NOT NULL AUTO_INCREMENT,
   `group_id` int(3) unsigned NOT NULL,
   `language_id` int(3) unsigned NOT NULL,
-  `ldap_user` varchar(50) DEFAULT NULL,
-  `username` varchar(100) NOT NULL,
-  `hash` varchar(100) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `surname` varchar(100) NOT NULL,
-  `email` varchar(100) DEFAULT NULL,
+  `ldap_user` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `username` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `hash` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `surname` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `email` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `admin` tinyint(1) NOT NULL DEFAULT '0',
   `enabled` int(1) unsigned NOT NULL,
   `last_login` datetime DEFAULT NULL,
@@ -302,8 +311,10 @@ CREATE TABLE `users` (
   KEY `group_id` (`group_id`),
   KEY `admin` (`admin`),
   KEY `language_id` (`language_id`),
-  KEY `ldap_user` (`ldap_user`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+  KEY `ldap_user` (`ldap_user`),
+  CONSTRAINT `fk_users_groups` FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`),
+  CONSTRAINT `fk_users_languages` FOREIGN KEY (`language_id`) REFERENCES `languages` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -312,7 +323,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,1,1,'','admin','$2a$12$WfnHFTmVnZ.f8DO.rAi7OeU1Eco2/5gJ8w/2E5qHoVN3yN.luri/.','Administrator','User','admin@pair',1,1,'2017-03-01 19:47:50',0);
+INSERT INTO `users` VALUES (1,1,1,'','admin','$2a$12$WfnHFTmVnZ.f8DO.rAi7OeU1Eco2/5gJ8w/2E5qHoVN3yN.luri/.','Administrator','User','admin@vms',1,1,'2017-10-11 13:33:02',0);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -324,5 +335,3 @@ UNLOCK TABLES;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2017-03-01 20:48:19

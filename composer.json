@@ -1,12 +1,40 @@
 {
-  "name" : "viames/pair_example",
-  "version" : "0.9",
-  "require" : {
-    "viames/pair" : "dev-master"
-  },
-  "repositories" : [ {
-    "type" : "composer",
-    "url" : "https://packagist.org/"
-  } ],
-  "license" : "MIT"
+	"name" : "viames/pair_example",
+	"description" : "Skeleton project based on Pair PHP framework",
+	"version" : "0.9",
+	"minimum-stability": "dev",
+	"require" : {
+		"viames/pair" : "^1.1"
+		"php" : ">=5.6",
+		"ext-pdo" : "*"
+	},
+	"repositories" : [
+		{
+			"type" : "composer",
+			"url" : "https://packagist.org/packages/viames/pair_example"
+		},{
+			"type": "vcs",
+			"url": "https://github.com/Viames/Pair_example"
+		}
+	],
+	"license" : "MIT",
+	"keywords" : [
+		"pair",
+		"php",
+		"multilingual",
+		"framework",
+		"active-record",
+		"plugin-system",
+		"pagination",
+		"router",
+		"rest-api"
+	],
+	"homepage" : "https://github.com/Viames/Pair_example",
+	"authors" : [
+		{
+			"name" : "Viames Marino",
+			"homepage" : "https://www.viames.it",
+			"role" : "Developer"
+		}
+	]
 }

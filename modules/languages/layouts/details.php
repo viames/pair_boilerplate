@@ -10,7 +10,7 @@ use Pair\Utilities;
 ?><div class="col-lg-12">
 	<div class="ibox">
 		<div class="ibox-title">
-			<h5><?php $this->_('DETAILS_OF_LANGUAGE', $this->language->languageName) ?></h5>
+			<h5><?php $this->_('DETAILS_OF_LANGUAGE', $this->language->englishName) ?></h5>
 		</div>
 		<div class="ibox-content">
 			<div class="table-responsive"><?php

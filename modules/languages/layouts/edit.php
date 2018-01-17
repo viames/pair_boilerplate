@@ -8,7 +8,7 @@
 ?><div class="col-lg-12">
 	<div class="ibox">
 		<div class="ibox-title">
-			<h5><?php $this->_('EDIT_LANGUAGE_FILE', array($this->language->languageName, ucfirst($this->module))) ?></h5>
+			<h5><?php $this->_('EDIT_LANGUAGE_FILE', array($this->language->englishName, ucfirst($this->module))) ?></h5>
 		</div>
 		<div class="ibox-content">
 			<form action="languages/change" method="post" class="form-horizontal"><?php

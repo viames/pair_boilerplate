@@ -5,18 +5,20 @@
  * @author	Viames Marino
  */
 
-?><div class="col-lg-12">
-	<div class="ibox">
-		<div class="ibox-title">
-			<h5><?php $this->_('SELF_TEST') ?></h5>
-			<div class="ibox-tools">
-				<a class="btn btn-primary btn-xs" href="selftest/default"><i class="fa fa-repeat"></i> <?php $this->_('REFRESH') ?></a>
+?>
+<div class="row">
+	<div class="col-lg-12">
+		<div class="ibox">
+			<div class="ibox-title">
+				<h5><?php $this->_('SELF_TEST') ?></h5>
+				<div class="ibox-tools">
+					<a class="btn btn-primary btn-xs" href="selftest/default"><i class="fa fa-repeat"></i> <?php $this->_('REFRESH') ?></a>
+				</div>
 			</div>
-		</div>
-		<div class="ibox-content">
-			<div class="table-responsive">
-				<table class="table table-hover">
-					<tbody><?php
+			<div class="ibox-content">
+				<div class="table-responsive">
+					<table class="table table-hover">
+						<tbody><?php
 	
 						foreach ($this->sections as $name=>$tests) {
 
@@ -33,8 +35,9 @@
 							
 						}
 	
-					?></tbody>
-				</table>
+						?></tbody>
+					</table>
+				</div>
 			</div>
 		</div>
 	</div>
