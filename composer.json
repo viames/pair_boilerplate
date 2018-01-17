@@ -4,7 +4,7 @@
 	"version" : "0.9",
 	"minimum-stability": "dev",
 	"require" : {
-		"viames/pair" : "^1.1"
+		"viames/pair" : "^1.1",
 		"php" : ">=5.6",
 		"ext-pdo" : "*"
 	},
