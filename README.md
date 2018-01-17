@@ -35,13 +35,13 @@ You can ask Composer to create the project into your new folder.
 Launch a command-line terminal and start a new composer project:
 
 ```bash
-composer create-project viames/pair_example
+$ composer create-project viames/pair_example
 ```
 
 If you want to test code that is in the master branch, which hasn’t been pushed as a release, you can use master.
 
-```
-composer create-project viames/pair_example dev-master
+```bash
+$ composer create-project viames/pair_example dev-master
 ```
 
 If you don’t have composer installed, you can download it here: [https://getcomposer.org](https://getcomposer.org/)
