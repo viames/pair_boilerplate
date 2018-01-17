@@ -8,10 +8,7 @@
 		"ext-pdo" : "*"
 	},
 	"repositories" : [
-		{
-			"type" : "composer",
-			"url" : "https://packagist.org/packages/viames/pair_example"
-		},{
+        {
 			"type": "vcs",
 			"url": "https://github.com/Viames/Pair_example"
 		}

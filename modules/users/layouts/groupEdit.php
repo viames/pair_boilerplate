@@ -6,27 +6,27 @@
  */
 
 ?><div class="ibox float-e-margins">
-	<div class="ibox-title">
+	<div class="card-header">
 		<h5><?php $this->_('GROUP_EDIT') ?> "<?php print $this->group->name ?>"</h5>
 	</div>
-	<div class="ibox-content">
+	<div class="card-body">
 		<form action="users/groupChange" method="post" class="form-horizontal">
 			<fieldset>
 
 				<?php print $this->form->renderControl('id') ?>
 
-				<div class="form-group">
+				<div class="form-group row">
 					<label class="col-sm-2 control-label"><?php $this->_('NAME') ?></label>
 					<div class="col-sm-10"><?php print $this->form->renderControl('name') ?></div>
 				</div>
-				<div class="form-group">
+				<div class="form-group row">
 					<label class="col-sm-2 control-label"><?php $this->_('IS_DEFAULT') ?></label>
 					<div class="col-sm-10"><?php print $this->form->renderControl('default') ?></div>
 				</div><?php
 		
 			if ($this->group->modules) { 
 
-				?><div class="form-group">
+				?><div class="form-group row">
 					<label class="col-sm-2 control-label"><?php $this->_('DEFAULT_MODULE') ?></label>
 					<div class="col-sm-10"><?php print $this->form->renderControl('defaultAclId') ?></div>
 				</div><?php
@@ -38,7 +38,7 @@
 				<a href="users/groupList" class="btn btn-default"><i class="fa fa-times"></i> <?php $this->_('CANCEL') ?></a><?php
 	
 				if ($this->group->canBeDeleted()) {
-					?><a href="users/groupDelete/<?php print $this->group->id ?>" class="btn btn-link confirm-delete pull-right"><i class="fa fa-trash-o"></i> <?php $this->_('DELETE') ?></a><?php				
+					?><a href="users/groupDelete/<?php print $this->group->id ?>" class="btn btn-link confirm-delete float-right"><i class="fa fa-trash-o"></i> <?php $this->_('DELETE') ?></a><?php				
 				}
 	
 			?></div>

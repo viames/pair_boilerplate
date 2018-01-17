@@ -10,14 +10,12 @@ use Pair\Utilities;
 if (count($this->groups)) {
 
 	?><div class="col-lg-12">
-		<div class="ibox">
-	    		<div class="ibox-title">
-		            	<h5>Elenco gruppi</h5>
-				<div class="ibox-tools">
-					<a class="btn btn-primary btn-xs" href="users/groupNew"><i class="fa fa-plus-circle"></i> Nuovo gruppo</a>
-				</div>
+		<div class="card">
+	    	<div class="card-header">
+				<h5 class="float-left">Elenco gruppi</h5>
+				<a class="btn btn-primary btn-sm float-right" href="users/groupNew"><i class="fa fa-plus-circle"></i> Nuovo gruppo</a>
 			</div>
-			<div class="ibox-content">
+			<div class="card-body">
 				<div class="table-responsive">
 					<table class="table table-hover">
 						<thead>
@@ -42,10 +40,10 @@ if (count($this->groups)) {
 								<td class="text-center">
 									<div class="iconText">
 										<?php print $group->aclCount ?>
-										<a href="users/aclList/<?php print $group->id ?>" class="btn btn-default btn-xs"><i class="fa fa-unlock-alt"></i></a>
+										<a href="users/aclList/<?php print $group->id ?>" class="btn btn-default btn-sm"><i class="fa fa-unlock-alt"></i></a>
 									</div>
 								</td>
-								<td class="text-center"><a class="btn btn-default btn-xs" href="users/groupEdit/<?php print $group->id ?>"><i class="fa fa-pencil"></i> <?php $this->_('EDIT') ?></a></td>
+								<td class="text-center"><a class="btn btn-default btn-sm" href="users/groupEdit/<?php print $group->id ?>"><i class="fa fa-pencil"></i> <?php $this->_('EDIT') ?></a></td>
 							</tr><?php
 					
 						}

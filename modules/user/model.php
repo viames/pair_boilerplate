@@ -136,7 +136,7 @@ class UserModel extends Model {
 		$form->addInput('username', array('autocorrect'=>'off', 'autocapitalize'=>'off'))
 			->setRequired()->setMinLength(3)->setPlaceholder($tran->translate('USERNAME'));
 		$form->addInput('password', array('autocorrect'=>'off', 'autocapitalize'=>'off'))
-			->setType('password')->setRequired()->setMinLength(8)
+			->setType('password')->setRequired()
 			->setPlaceholder($tran->translate('PASSWORD'));
 		$form->addInput('referer')->setType('hidden');
 		$form->addInput('timezone')->setType('hidden');

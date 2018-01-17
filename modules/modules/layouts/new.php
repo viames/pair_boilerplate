@@ -8,10 +8,10 @@
 ?><div class="row">
 	<div class="col-lg-12">
 		<div class="ibox float-e-margins">
-			<div class="ibox-title">
-				<h5>Carica un nuovo modulo <small>da pacchetto ZIP</small></h5>
+			<div class="card-header">
+				<h5 class="float-left">Carica un nuovo modulo <small>da pacchetto ZIP</small></h5>
 			</div>
-			<div class="ibox-content">
+			<div class="card-body">
 				<div class="row">
 					<div class="col-sm-6 b-r">
 						<h3 class="m-t-none m-b">Nuovo modulo</h3>
@@ -23,7 +23,7 @@
 							<label>Seleziona il pacchetto</label> 
 							<?php print $this->form->renderControl('package') ?>
 							<div class="hr-line-dashed"></div>
-							<div class="form-group">
+							<div class="form-group row">
 								<button type="submit" class="btn btn-primary" value="add" name="action"><i class="fa fa-asterisk"></i> <?php $this->_('INSERT')?></button>
 								<a href="modules/default" class="btn btn-default cancel"><i class="fa fa-times"></i> <?php $this->_('CANCEL')?></a>
 							</div>

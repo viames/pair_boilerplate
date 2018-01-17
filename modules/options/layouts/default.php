@@ -13,13 +13,13 @@
 			
 			foreach ($this->groupedOptions as $groupName=>$group) {
 
-				?><div class="ibox">
-				<div class="ibox-title"><h5><?php print $groupName ?></h5></div>
-				<div class="ibox-content"><?php 
+				?><div class="card">
+				<div class="card-header"><h5><?php print $groupName ?></h5></div>
+				<div class="card-body"><?php 
 										
 				foreach ($group as $o) {
 			
-					?><div class="form-group row">
+					?><div class="form-group row row">
 						<label class="col-md-3 control-label"><?php print $o->label ?><br><small><?php print $o->name ?></small></label>
 						<div class="col-md-9"><?php print $this->form->renderControl($o->name)  ?></div>
 					</div><?php
@@ -32,7 +32,7 @@
 			}
 	
 			?><hr>
-			<div class="form-group">
+			<div class="form-group row">
 				<div class="col-md-push-3 col-md-9">
 					<button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> <?php $this->_('SAVE') ?></button>
 				</div>

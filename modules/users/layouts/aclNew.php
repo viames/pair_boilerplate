@@ -8,11 +8,11 @@
 use Pair\Utilities;
 
 ?><div class="col-lg-12">
-	<div class="ibox">
-		<div class="ibox-title">
-			<h5>Aggiungi ACL al gruppo <?php print htmlspecialchars($this->group->name) ?></h5>
+	<div class="card">
+		<div class="card-header">
+			<h5 class="float-left">Aggiungi ACL al gruppo <?php print htmlspecialchars($this->group->name) ?></h5>
 		</div>
-		<div class="ibox-content">
+		<div class="card-body">
 			<div class="table-responsive"><?php
 
 if (count($this->rules)) {

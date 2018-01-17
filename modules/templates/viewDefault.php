@@ -45,7 +45,7 @@ class TemplatesViewDefault extends View {
 			
 			$template->derivedIcon = $template->derived ? '<span class="fa fa-check-square-o"></span>' : '';
 
-			$template->downloadIcon = '<a class="btn btn-default btn-xs" href="templates/download/'. $template->id .'">'.
+			$template->downloadIcon = '<a class="btn btn-default btn-sm" href="templates/download/'. $template->id .'">'.
 					'<span class="fa fa-lg fa-download"></span></a>';
 
 			if ($devMode) {

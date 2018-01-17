@@ -8,11 +8,11 @@
 use Pair\Utilities;
 
 ?><div class="col-lg-12">
-	<div class="ibox">
-		<div class="ibox-title">
+	<div class="card">
+		<div class="card-header">
 			<h5><?php $this->_('LANGUAGES') ?></h5>
 		</div>
-		<div class="ibox-content">
+		<div class="card-body">
 			<div class="table-responsive" id="pageLanguages"><?php
 
 if (count($this->languages)) {

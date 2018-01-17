@@ -8,14 +8,12 @@
 ?>
 <div class="row">
 	<div class="col-lg-12">
-		<div class="ibox">
-			<div class="ibox-title">
-				<h5><?php $this->_('SELF_TEST') ?></h5>
-				<div class="ibox-tools">
-					<a class="btn btn-primary btn-xs" href="selftest/default"><i class="fa fa-repeat"></i> <?php $this->_('REFRESH') ?></a>
-				</div>
+		<div class="card">
+			<div class="card-header">
+				<h5 class="float-left"><?php $this->_('SELF_TEST') ?></h5>
+				<a class="btn btn-primary btn-sm float-right" href="selftest/default"><i class="fa fa-repeat"></i> <?php $this->_('REFRESH') ?></a>
 			</div>
-			<div class="ibox-content">
+			<div class="card-body">
 				<div class="table-responsive">
 					<table class="table table-hover">
 						<tbody><?php

@@ -5,41 +5,32 @@
  * @author	Viames Marino
  */
 
-?><div class="moduleTitle"><?php $this->_('EDIT_RULE') ?></div>
-<div class="col-lg-8 col-lg-offset-2">
-	<form action="rules/change" method="post">
-		<?php print $this->form->renderControl('id') ?>
-
-		<div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 form-group">
-			<div class="col-lg-12 col-md-12">
-				<label><?php $this->_('MODULE')?></label>
+?><form action="rules/change" method="post">
+	<div class="card">
+		<div class="card-body">
+			<?php print $this->form->renderControl('id') ?>
+			<div class="form-group row">
+				<label class="col-md-3 control-label"><?php $this->_('MODULE')?></label>
+				<div class="col-md-9"><?php print $this->form->renderControl('module') ?></div>
 			</div>
-			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-				<?php print $this->form->renderControl('module') ?>
+			<div class="form-group row">
+				<label class="col-md-3 control-label"><?php $this->_('ACTION')?></label>
+				<div class="col-md-9"><?php print $this->form->renderControl('actionAcl') ?></div>
 			</div>
-		</div>
-
-		<div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 form-group">
-			<div class="col-lg-12 col-md-12">
-				<label><?php $this->_('ACTION')?></label>
-			</div>
-			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-				<?php print $this->form->renderControl('actionAcl') ?>
+			<div class="form-group row">
+				<label class="col-md-3 control-label"><?php $this->_('ADMIN_ONLY')?></label>
+				<div class="col-md-9"><?php print $this->form->renderControl('adminOnly') ?></div>
 			</div>
 		</div>
-
-		<div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 form-group">
-			<div class="col-lg-12 col-md-12">
-				<label><?php $this->_('ADMIN_ONLY')?></label>
-			</div>
-			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-				<?php print $this->form->renderControl('adminOnly') ?>
+		<div class="card-footer">
+			<div class="form-group row">
+				<div class="col-3 order-1 d-none d-sm-none d-md-block"></div>
+				<div class="col-9 order-2">
+					<button type="submit" class="btn btn-primary" value="edit"><i class="fa fa-save"></i> <?php $this->_('CHANGE') ?></button>
+					<a href="rules/default" class="btn btn-secondary"><i class="fa fa-times"></i> <?php $this->_('CANCEL') ?></a>
+					<button type="submit" class="btn btn-link confirm-delete float-right" value="delete" name="action"><i class="fa fa-trash"></i> <?php $this->_('DELETE') ?></button>
+				</div>
 			</div>
 		</div>
-		<div class="buttonBar">
-			<button type="submit" class="buttons" value="edit" name="action"><i class="fa fa-save"></i> <?php $this->_('CHANGE') ?></button>
-			<a href="rules/default" class="buttons grey"><i class="fa fa-times"></i> <?php $this->_('CANCEL') ?></a>
-			<button type="submit" class="btn btn-link confirm-delete pull-right" value="delete" name="action"><i class="fa fa-trash-o"></i> <?php $this->_('DELETE') ?></button>
-		</div>
-	</form>
-</div>
+	</div>
+</form>

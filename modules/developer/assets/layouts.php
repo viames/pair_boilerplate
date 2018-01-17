@@ -15,7 +15,7 @@ $layouts['default-page'] =
 			<h4 class="panel-title">{pageTitle}</h4>
 		</div>
 		<div class="panel-body">
-			<a href="{linkAdd}" class="btn btn-primary"><i class="fal fa-plus"></i> {newElement}</a>
+			<a href="{linkAdd}" class="btn btn-primary"><i class="fa fa-plus"></i> {newElement}</a>
 			<hr><?php
 
 			if (count({itemsArray})) {
@@ -64,10 +64,10 @@ $layouts['new-page'] =
 					<fieldset>{fields}
 					</fieldset>
 					<div class="hr-line-dashed"></div>
-					<div class="form-group">
+					<div class="form-group row">
 						<div class="col-md-push-3 col-md-9">
-							<button type="submit" class="btn btn-primary" value="add" name="action"><i class="fal fa-asterisk"></i> <?php $this->_(\'INSERT\') ?></button>
-							<a href="{cancelUrl}" class="btn btn-default"><i class="fal fa-times"></i> <?php $this->_(\'CANCEL\') ?></a>
+							<button type="submit" class="btn btn-primary" value="add" name="action"><i class="fa fa-asterisk"></i> <?php $this->_(\'INSERT\') ?></button>
+							<a href="{cancelUrl}" class="btn btn-default"><i class="fa fa-times"></i> <?php $this->_(\'CANCEL\') ?></a>
 						</div>
 					</div>
 				</form>
@@ -77,7 +77,7 @@ $layouts['new-page'] =
 </div>';
 		
 $layouts['new-field'] = '
-						<div class="form-group">
+						<div class="form-group row">
 							<label class="col-md-3 control-label">{fieldLabel}</label>
 							<div class="col-md-9">{fieldControl}</div>
 						</div>';
@@ -96,12 +96,12 @@ $layouts['edit-page'] =
 					<fieldset>{fields}
 					</fieldset>
 					<div class="hr-line-dashed"></div>
-					<div class="form-group">
+					<div class="form-group row">
 						<div class="col-md-push-3 col-md-9">
-							<button type="submit" class="btn btn-primary" value="edit" name="action"><i class="fal fa-save"></i> <?php $this->_(\'CHANGE\') ?></button>
-							<a href="{cancelUrl}" class="btn btn-default"><i class="fal fa-times"></i> <?php $this->_(\'CANCEL\') ?></a><?php
+							<button type="submit" class="btn btn-primary" value="edit" name="action"><i class="fa fa-save"></i> <?php $this->_(\'CHANGE\') ?></button>
+							<a href="{cancelUrl}" class="btn btn-default"><i class="fa fa-times"></i> <?php $this->_(\'CANCEL\') ?></a><?php
 							if ($this->{object}->isDeletable()) {
-								?><a href="{deleteUrl}" class="btn btn-link confirm-delete pull-right"><i class="fal fa-trash"></i> <?php $this->_(\'DELETE\') ?></a><?php
+								?><a href="{deleteUrl}" class="btn btn-link confirm-delete float-right"><i class="fa fa-trash"></i> <?php $this->_(\'DELETE\') ?></a><?php
 							}
 							?>
 						</div>
@@ -113,7 +113,7 @@ $layouts['edit-page'] =
 </div>';
 
 $layouts['edit-field'] = '
-						<div class="form-group">
+						<div class="form-group row">
 							<label class="col-md-3 control-label">{fieldLabel}</label>
 							<div class="col-md-9">{fieldControl}</div>
 						</div>';

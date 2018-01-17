@@ -204,46 +204,4 @@ class DeveloperController extends Controller {
 		
 	}
 	
-	public function cleanDataAction() {
-
-		$res = TRUE;
-		
-		// elimina tutte le lettere di compensazione
-		foreach (ClearingLetter::getAllObjects() as $clearingLetter) {
-			if (!$clearingLetter->delete()) {
-				$res = FALSE;
-			}
-		}
-		
-		// elimina tutte le fatture
-		foreach (Invoice::getAllObjects() as $invoice) {
-			if (!$invoice->delete()) {
-				$res = FALSE;
-			}
-		}
-
-		// elimina tutte le importazioni
-		foreach (FileUpload::getAllObjects() as $fileUpload) {
-			if (!$fileUpload->delete()) {
-				$res = FALSE;
-			}
-		}
-
-		// ho inserito le query qui per evitare modifiche al model (e facilitare il merge...)
-		
-		// azzera i numeri di ultima fattura e nota di credito
-		$db = \Pair\Database::getInstance();
-		$db->exec('UPDATE affiliates SET last_invoice_number = 0, last_credit_memo = 0');
-		$db->exec('UPDATE company SET last_invoice_number = 0, last_credit_memo = 0');
-
-		if ($res) {
-			$this->enqueueMessage('Le fatture, le lettere di compensazione e le importazioni sono state azzerate');
-			$this->redirect('developer');
-		} else {
-			$this->enqueueError('Si è verificato un errore imprevisto');
-			$this->view = 'default';
-		}
-		
-	}
-	
 }

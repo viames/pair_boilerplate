@@ -31,8 +31,8 @@ use Pair\Utilities;
 						
 								?><tr>
 									<td><?php print $t ?></td>
-									<td><a href="developer/newClassWizard/<?php print $t ?>" class="btn btn-primary btn-xs"><i class="fal fa-magic"></i> <?php $this->_('CREATE_CLASS') ?></a></td>
-									<td><a href="developer/newModuleWizard/<?php print $t ?>" class="btn btn-primary btn-xs"><i class="fal fa-magic"></i> <?php $this->_('CREATE_MODULE') ?></a></td>
+									<td><a href="developer/newClassWizard/<?php print $t ?>" class="btn btn-primary btn-sm"><i class="fa fa-magic"></i> <?php $this->_('CREATE_CLASS') ?></a></td>
+									<td><a href="developer/newModuleWizard/<?php print $t ?>" class="btn btn-primary btn-sm"><i class="fa fa-magic"></i> <?php $this->_('CREATE_MODULE') ?></a></td>
 								</tr><?php 
 								
 							}

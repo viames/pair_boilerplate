@@ -8,19 +8,19 @@
 use Pair\Utilities;
 
 ?><div class="col-lg-12">
-	<div class="ibox">
-		<div class="ibox-title">
-           	<h5><?php $this->_('ACCESS_LIST_OF_GROUP', $this->group->name) ?></h5><?php
+	<div class="card">
+		<div class="card-header">
+           	<h5 class="float-left"><?php $this->_('ACCESS_LIST_OF_GROUP', $this->group->name) ?></h5><?php
            	
-			// show button if acl is not full
-			if ($this->missingAcl) {
-				?><div class="ibox-tools">
-					<a href="users/aclNew/<?php print $this->group->id ?>"><button type="button" class="btn btn-primary btn-xs"><i class="fa fa-plus-circle"></i> <?php $this->_('ADD') ?></button></a>
-           		</div><?php
-			}
+		// show button if acl is not full
+		if ($this->missingAcl) {
+			?>
+			<a class="btn btn-primary btn-sm float-right" href="users/aclNew/<?php print $this->group->id ?>"><button type="button"><i class="fa fa-plus-circle"></i> <?php $this->_('ADD') ?></button></a><?php
+		}
 			
-		?></div>
-		<div class="ibox-content">
+			?>
+		</div>
+		<div class="card-body">
 			<div class="table-responsive"><?php
 
 	if (count($this->acl)) {
@@ -43,7 +43,7 @@ use Pair\Utilities;
 				
 				// avoid deletion of default ACL
 				if (!$item->default) {
-					?><a class="btn btn-default btn-xs" href="users/aclDelete/<?php print $item->id ?>"><i class="fa fa-times"></i></a><?php
+					?><a class="btn btn-default btn-sm" href="users/aclDelete/<?php print $item->id ?>"><i class="fa fa-times"></i></a><?php
 				} else {
 					?><i class="fa fa-times disabled"></i><?php ;
 				}

@@ -10,14 +10,12 @@ use Pair\Utilities;
 if (count($this->templates)) {
 
 	?><div class="col-lg-12">
-		<div class="ibox">
-			<div class="ibox-title">
-				<h5>Plugin template</h5>
-				<div class="ibox-tools">
-					<a class="btn btn-primary btn-xs" href="templates/new"><i class="fa fa-plus-circle"></i> Nuovo template</a>
-				</div>
+		<div class="card">
+			<div class="card-header">
+				<h5 class="float-left">Plugin template</h5>
+				<a class="btn btn-primary btn-sm float-right" href="templates/new"><i class="fa fa-plus-circle"></i> Nuovo template</a>
 			</div>
-			<div class="ibox-content">
+			<div class="card-body">
 				<div class="table-responsive">
 					<table class="table table-hover">
 						<thead>

@@ -14,7 +14,7 @@ class UsersViewUserList extends View {
 
 	public function render() {
 
-		$this->app->pageTitle = 'Gestione utenti';
+		$this->app->pageTitle = $this->lang('USERS');
 		$this->app->activeMenuItem = 'users/userList';
 
 		$breadcrumb = Breadcrumb::getInstance();
@@ -32,7 +32,7 @@ class UsersViewUserList extends View {
 		
 		foreach ($users as $user) {
 
-			$user->enabledIcon	= $user->enabled ? '<i class="fa fa-lg fa-check-square-o"></i>' : '<i class="fa fa-lg fa-square-o"></i>';
+			$user->enabledIcon	= $user->enabled ? '<i class="fa fa-lg fa-check text-success"></i>' : '<i class="fa fa-lg fa-square-o"></i>';
 			$user->adminIcon	= $user->admin ? 'admin' : NULL;
 			
 		}

@@ -6,6 +6,7 @@
  */
 
 use Pair\Application;
+use Pair\Database;
 
 // initialize composer
 require 'vendor/autoload.php';
@@ -15,6 +16,10 @@ require 'classes/classLoader.php';
 
 // start the Application
 $app = Application::getInstance();
+
+// force utf8mb4
+$db = Database::getInstance();
+$db->setUtf8unicode();
 
 // any API requests
 $app->runApi('api');

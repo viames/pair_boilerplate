@@ -41,7 +41,7 @@ class BootstrapMenu extends Menu {
 
 					$ret .= '<li' . $active . '><a href="' . $item->url . '"' . ($item->target ? ' target="' . $item->target . '"' : '') .
 						'><i class="fa fa-lg fa-fw ' . $item->class . '"></i> <span class="nav-label">' . $item->title .'</span> ' .
-						'<span class="pull-right label label-primary">' . $item->badge . '</span> </a></li>';
+						'<span class="float-right label label-primary">' . $item->badge . '</span> </a></li>';
 
 					break;
 
@@ -71,7 +71,7 @@ class BootstrapMenu extends Menu {
 						$links .=
 							'<li class="' . $active . '"><a href="' . $i->url . '">' .
 							'<i class="fa fa-fw ' . $i->class . '"></i>' . $i->title .
-							'<span class="pull-right label label-primary">' . $i->badge . '</span>' .
+							'<span class="float-right label label-primary">' . $i->badge . '</span>' .
 							'</a></li>';
 
 					}

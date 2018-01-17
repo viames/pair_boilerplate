@@ -30,7 +30,7 @@ use Pair\Utilities;
 						
 								?><tr>
 									<td><?php print $t ?></td>
-									<td><a href="developer/createTable/<?php print $t ?>" class="btn btn-primary btn-xs"><i class="fal fa-database"></i> <?php $this->_('CREATE_TABLE') ?></a></td>
+									<td><a href="developer/createTable/<?php print $t ?>" class="btn btn-primary btn-sm"><i class="fa fa-database"></i> <?php $this->_('CREATE_TABLE') ?></a></td>
 								</tr><?php 
 								
 							}

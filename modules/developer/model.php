@@ -200,6 +200,7 @@ class DeveloperModel extends Model {
 	public function getClassWizardForm() {
 		
 		$form = new Form();
+		$form->addControlClass('form-control');
 		$form->addInput('objectName')->setRequired();
 		$form->addInput('tableName')->setType('hidden')->setRequired();
 		return $form;
@@ -209,6 +210,7 @@ class DeveloperModel extends Model {
 	public function getModuleWizardForm() {
 	
 		$form = new Form();
+		$form->addControlClass('form-control');
 		$form->addInput('objectName')->setRequired();
 		$form->addInput('moduleName')->setRequired();
 		$form->addInput('tableName')->setType('hidden')->setRequired();
@@ -222,6 +224,8 @@ class DeveloperModel extends Model {
 	 * @param	string	Class name.
 	 * 
 	 * @return	boolean
+	 * 
+	 * @todo
 	 */
 	public function createTableByClass(string $class): bool {
 

@@ -10,14 +10,12 @@ use Pair\Utilities;
 if (count($this->modules)) {
 	
 	?><div class="col-lg-12">
-		<div class="ibox">
-			<div class="ibox-title">
-				<h5>Plugin moduli</h5>
-				<div class="ibox-tools">
-					<a class="btn btn-primary btn-xs" href="modules/new"><i class="fa fa-plus-circle"></i> Nuovo modulo</a>
-				</div>
+		<div class="card">
+			<div class="card-header">
+				<h5 class="float-left">Plugin moduli</h5>
+				<a class="btn btn-primary btn-sm float-right" href="modules/new"><i class="fa fa-plus-circle"></i> Nuovo modulo</a>
 			</div>
-			<div class="ibox-content">
+			<div class="card-body">
 				<div class="table-responsive">
 					<table class="table table-hover">
 						<thead>

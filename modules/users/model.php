@@ -74,7 +74,7 @@ class UsersModel extends Model {
 			' WHERE a.group_id = ?' .
 			' ORDER BY m.name ASC, r.action ASC';
 	
-		return Acl::getObjectsByQuery($query, [groupId]);
+		return Acl::getObjectsByQuery($query, $groupId);
 
 	}
 	
@@ -122,6 +122,7 @@ class UsersModel extends Model {
 		$form->addInput('ldapUser');
 		$form->addInput('username', array('autocomplete'=>'off'))->setRequired()->setMinLength(3);
 		$form->addInput('password', array('autocomplete'=>'off'))->setType('password')->setMinLength(8);
+		$form->addInput('showPassword')->setType('bool');
 		$form->addSelect('groupId')->setRequired()->setListByObjectArray($groups,'id','name');
 		$form->addSelect('languageId')->setRequired()->setListByObjectArray($languages,'id','englishName');
 
@@ -138,7 +139,7 @@ class UsersModel extends Model {
 
 		$form = new Form();
 		$form->addControlClass('form-control');
-		
+
 		$form->addInput('id')->setType('hidden');
 		$form->addInput('name')->setRequired()->setMinLength(3);
 		$form->addInput('default')->setType('bool');
@@ -157,9 +158,9 @@ class UsersModel extends Model {
 
 		$form = new Form();
 		$form->addControlClass('form-control');
-
+		
 		$form->addInput('groupId')->setType('hidden');
-
+		
 		return $form;
 
 	}

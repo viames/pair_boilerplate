@@ -56,7 +56,9 @@ class RulesModel extends Model {
 	public function getRulesForm() {
 		
 		$form = new Form();
-			
+		
+		$form->addControlClass('form-control');
+		
 		$form->addInput('id')->setType('hidden');
 		$form->addSelect('module');
 		$form->addInput('actionAcl');
