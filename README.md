@@ -1,5 +1,5 @@
 # Pair example
-a skeleton project to use Pair PHP Framework easily
+a skeleton project to use [Pair PHP Framework](https://github.com/Viames/Pair) easily
 
 [![Latest Stable Version](https://poser.pugx.org/viames/pair_example/v/stable)](https://packagist.org/packages/viames/pair_example)
 [![Latest Unstable Version](https://poser.pugx.org/viames/pair_example/v/unstable)](https://packagist.org/packages/viames/pair_example)
