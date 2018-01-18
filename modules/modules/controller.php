@@ -29,12 +29,6 @@ class ModulesController extends Controller {
 		
 	}
 	
-	public function newAction() {
-	
-		$this->view = 'new';
-	
-	}
-	
 	public function downloadAction() {
 		
 		$route		= Router::getInstance();
@@ -84,17 +78,17 @@ class ModulesController extends Controller {
 	
 	public function deleteAction() {
 		
-		$route = Router::getInstance();
-
-		$module = new Module($route->getParam(0));
+		$module = new Module($this->route->getParam(0));
 		
 		if ($module->delete()) {
 			$this->enqueueMessage($this->lang('MODULE_HAS_BEEN_REMOVED_SUCCESFULLY'));
+			$this->redirect('modules/default');
 		} else {
 			$this->enqueueError($this->lang('MODULE_HAS_NOT_BEEN_REMOVED'));
+			$this->view = 'default';
+			$this->route->action = 'default';
+			$this->route->resetParams();
 		}
-
-		$this->redirect('modules/default');
 
 	}
 	

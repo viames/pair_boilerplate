@@ -14,9 +14,9 @@ class ModulesViewNew extends View {
 	public function render() {
 
 		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath('Nuovo modulo', 'modules/new');
+		$breadcrumb->addPath($this->lang('NEW_MODULE'), 'modules/new');
 		
-		$this->app->pageTitle		= $this->lang('MODULES');
+		$this->app->pageTitle		= $this->lang('NEW_MODULE');
 		$this->app->activeMenuItem	= 'modules/default';
 
 		$widget = new Widget();

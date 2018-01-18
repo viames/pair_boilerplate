@@ -7,8 +7,7 @@
 
 use Pair\Utilities;
 
-?><div class="col-lg-12">
-	<div class="card">
+?><div class="card">
 		<div class="card-header">
 			<h5><?php $this->_('LANGUAGES') ?></h5>
 		</div>
@@ -62,7 +61,6 @@ if (count($this->languages)) {
 			
 }	
 	
-			?></div>
-		</div>
+		?></div>
 	</div>
 </div>

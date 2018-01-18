@@ -37,7 +37,7 @@ class UsersViewUserList extends View {
 		
 		foreach ($users as $user) {
 
-			$user->enabledIcon	= $user->enabled ? '<i class="fal fa-check fa-lg text-success"></i>' : '<i class="fa fa-times fa-lg text-danger"></i>';
+			$user->enabledIcon	= $user->enabled ? '<i class="fa fa-check fa-lg text-success"></i>' : '<i class="fa fa-times fa-lg text-danger"></i>';
 			$user->adminIcon	= $user->admin ? 'admin' : NULL;
 			
 			// everyone edit granted to admin only

@@ -13,15 +13,12 @@ class TemplatesViewNew extends View {
 
 	public function render() {
 
-		$this->layout = 'new';
-		
 		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath('Nuovo template', 'templates/new');
+		$breadcrumb->addPath($this->lang('NEW_TEMPLATE'), 'templates/new');
 
-		$this->app->activeMenuItem	= 'templates/default';
 		$this->app->pageTitle		= $this->lang('NEW_TEMPLATE');
+		$this->app->activeMenuItem	= 'templates/default';
 		
-		$widget = new Widget();
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
 		

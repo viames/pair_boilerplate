@@ -29,7 +29,7 @@ class TemplatesViewDefault extends View {
 		$widget = new Widget();
 		$this->app->sideMenuWidget = $widget->render('sideMenu');
 		
-		$templates = $this->model->getTemplates();
+		$templates = $this->model->getActiveRecordObjects('Pair\Template', 'name');
 		
 		// if development mode is switched on, hide the delete button
 		$devMode = ($options->getValue('development') and $this->app->currentUser->admin) ? TRUE : FALSE;
@@ -43,9 +43,9 @@ class TemplatesViewDefault extends View {
 			
 			$template->defaultIcon = $template->default ? '<span class="fa fa-star"></span>' : '';
 			
-			$template->derivedIcon = $template->derived ? '<span class="fa fa-check-square-o"></span>' : '';
+			$template->derivedIcon = $template->derived ? '<span class="fa fa-check"></span>' : '';
 
-			$template->downloadIcon = '<a class="btn btn-default btn-sm" href="templates/download/'. $template->id .'">'.
+			$template->downloadIcon = '<a href="templates/download/'. $template->id .'">'.
 					'<span class="fa fa-lg fa-download"></span></a>';
 
 			if ($devMode) {

@@ -28,7 +28,7 @@ class TemplatesController extends Controller {
 		$breadcrumb->addPath('Template', 'templates/default');
 		
 	}
-	
+
 	public function downloadAction() {
 		
 		$route		= Router::getInstance();
@@ -78,21 +78,18 @@ class TemplatesController extends Controller {
 	
 	public function deleteAction() {
 		
-		$this->view = 'default';
-		
-		$route = Router::getInstance();
-		$template = new Template($route->getParam(0));
+		$template = new Template($this->route->getParam(0));
 		
 		if ($template->delete()) {
 			$this->enqueueMessage($this->lang('TEMPLATE_HAS_BEEN_REMOVED_SUCCESFULLY'));
+			$this->redirect('templates/default');
 		} else {
 			$this->enqueueError($this->lang('TEMPLATE_HAS_NOT_BEEN_REMOVED'));
+			$this->view = 'default';
+			$this->route->action = 'default';
+			$this->route->resetParams();
 		}
-
-		// will go on default page
-		$route->action = 'default';
-		$route->resetParams();
-
+	
 	}
 	
 }
