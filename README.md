@@ -68,6 +68,8 @@ define('DB_PASS', 'db_pass');
 
 By creating different versions of this file you can move the project on different web-servers. This is useful for running a development version, a test version and a production version of the same project.
 
+Now it’s time to login using `admin` as username and password too. Maybe you agree to change this one as soon as you login 😌
+
 ---
 
 ### Contributing
