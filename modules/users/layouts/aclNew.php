@@ -48,7 +48,7 @@ if (count($this->rules)) {
 		</table>
 		<div class="buttonBar">
 			<button type="submit" class="btn btn-primary" value="addAcl" name="action"><i class="fa fa-asterisk"></i> <?php $this->_('ADD') ?></button>
-			<a href="users/aclList/<?php print $this->group->id ?>" class="btn btn-default"><i class="fa fa-times"></i> <?php $this->_('CANCEL') ?></a>
+			<a href="users/aclList/<?php print $this->group->id ?>" class="btn btn-secondary"><i class="fa fa-times"></i> <?php $this->_('CANCEL') ?></a>
 		</div>
 	</form><?php
 

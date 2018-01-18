@@ -33,7 +33,7 @@
 				</div>
 				<div class="row">
 					<div class="col-sm-10 col-sm-offset-2">
-						<a href="user/profileEdit" class="btn btn-default"><i class="fa fa-pencil"></i> Modifica</a>
+						<a href="user/profileEdit" class="btn btn-secondary"><i class="fa fa-pencil-alt"></i> Modifica</a>
 					</div>
 				</div>
 			</fieldset>

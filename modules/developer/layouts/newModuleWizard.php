@@ -29,7 +29,7 @@
 							<div class="form-group row">
 								<div class="col-md-push-3 col-md-9">
 									<button type="submit" class="btn btn-primary" value="save" name="action"><i class="fa fa-save"></i> <?php $this->_('CREATE_MODULE') ?></button>
-									<a href="developer" class="btn btn-default"><i class="fa fa-times"></i> <?php $this->_('CANCEL')?></a>
+									<a href="developer" class="btn btn-secondary"><i class="fa fa-times"></i> <?php $this->_('CANCEL')?></a>
 								</div>
 							</div>
 						</fieldset>

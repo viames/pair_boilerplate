@@ -28,7 +28,7 @@
 			<div class="form-group row">
 				<div class="col-md-push-3 col-md-9">
 					<button class="btn btn-primary" type="submit"><i class="fa fa-save"></i> <?php $this->_('CHANGE') ?></button>
-					<a class="btn btn-default" href="<?php print $this->referer ?>"><i class="fa fa-times"></i> <?php $this->_('CANCEL') ?></a>
+					<a class="btn btn-secondary" href="<?php print $this->referer ?>"><i class="fa fa-times"></i> <?php $this->_('CANCEL') ?></a>
 				</div>
 			</div>
 		</form>

@@ -45,7 +45,7 @@
 				</div>
 				<div class="col-sm-10 col-sm-offset-2">
 					<button type="submit" class="btn btn-primary" value="edit" name="action"><i class="fa fa-save"></i> <?php $this->_('CHANGE')?></button>
-					<a href="user/profile" class="btn btn-default"><i class="fa fa-times"></i> <?php $this->_('CANCEL') ?></a>
+					<a href="user/profile" class="btn btn-secondary"><i class="fa fa-times"></i> <?php $this->_('CANCEL') ?></a>
 				</div>
 			</fieldset>
 		</form>

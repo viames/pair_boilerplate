@@ -35,10 +35,10 @@
 		
 			?><div class="buttonBar">
 				<button type="submit" class="btn btn-primary" value="edit" name="action"><i class="fa fa-save"></i> <?php $this->_('CHANGE') ?></button>
-				<a href="users/groupList" class="btn btn-default"><i class="fa fa-times"></i> <?php $this->_('CANCEL') ?></a><?php
+				<a href="users/groupList" class="btn btn-secondary"><i class="fa fa-times"></i> <?php $this->_('CANCEL') ?></a><?php
 	
 				if ($this->group->canBeDeleted()) {
-					?><a href="users/groupDelete/<?php print $this->group->id ?>" class="btn btn-link confirm-delete float-right"><i class="fa fa-trash-o"></i> <?php $this->_('DELETE') ?></a><?php				
+					?><a href="users/groupDelete/<?php print $this->group->id ?>" class="btn btn-link confirm-delete float-right"><i class="fa fa-trash"></i> <?php $this->_('DELETE') ?></a><?php				
 				}
 	
 			?></div>

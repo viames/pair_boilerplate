@@ -34,16 +34,16 @@ if (count($this->groups)) {
 					
 							?><tr<?php if (!$group->aclCount) print ' class="alert"' ?>>
 								<td><?php print $group->name ?></td>
-								<td class="text-center"><?php print ($group->default ? '<i class="fa fa-check-square-o fa-lg"></i>' : '') ?></td>
+								<td class="text-center"><?php print ($group->default ? '<i class="fa fa-check fa-lg text-success"></i>' : '') ?></td>
 								<td class="text-center"><?php print $group->userCount ?></td>
 								<td class="text-center small"><?php print $group->moduleName ?></td>
 								<td class="text-center">
 									<div class="iconText">
 										<?php print $group->aclCount ?>
-										<a href="users/aclList/<?php print $group->id ?>" class="btn btn-default btn-sm"><i class="fa fa-unlock-alt"></i></a>
+										<a href="users/aclList/<?php print $group->id ?>" class="btn btn-secondary btn-sm"><i class="fa fa-unlock-alt"></i></a>
 									</div>
 								</td>
-								<td class="text-center"><a class="btn btn-default btn-sm" href="users/groupEdit/<?php print $group->id ?>"><i class="fa fa-pencil"></i> <?php $this->_('EDIT') ?></a></td>
+								<td class="text-center"><a class="btn btn-secondary btn-sm" href="users/groupEdit/<?php print $group->id ?>"><i class="fa fa-pencil-alt"></i> <?php $this->_('EDIT') ?></a></td>
 							</tr><?php
 					
 						}
