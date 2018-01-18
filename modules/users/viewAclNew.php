@@ -4,6 +4,7 @@
  * @version	$Id$
  * @author	Viames Marino
  */
+
 use Pair\Breadcrumb;
 use Pair\Group;
 use Pair\Router;

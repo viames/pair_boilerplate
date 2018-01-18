@@ -104,6 +104,7 @@ class UsersController extends Controller {
 			return;
 		}
 		
+		// limit changes by standard users 
 		if (!$this->app->currentUser->admin and $user->admin) {
 			$this->enqueueError($this->lang('USER_HAS_NOT_BEEN_CHANGED', $user->fullName));
 			return;

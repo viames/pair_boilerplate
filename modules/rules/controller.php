@@ -18,17 +18,17 @@ class RulesController extends Controller {
 	public function addAction() {
 
 		// get input value
-		$moduleId   = Input::get('module', 'int');
-		$actionAcl  = Input::get('actionAcl') ? Input::get('actionAcl') : NULL;
+		$moduleId   = Input::get('moduleId', 'int');
+		$action		= Input::get('actionField') ? Input::get('actionField') : NULL;
 		$adminOnly  = Input::get('adminOnly', 'bool');
 
-		$rule = Rule::getRuleModuleName($moduleId, $actionAcl, $adminOnly);
+		$rule = Rule::getRuleModuleName($moduleId, $action, $adminOnly);
 
 		if (!$rule) {
 
 			$rules = new Rule();
 			$rules->moduleId	= $moduleId;
-			$rules->action		= $actionAcl;
+			$rules->action		= $action;
 			$rules->adminOnly   = $adminOnly;
 
 			// TODO remove this after remove module field from rules table
@@ -37,17 +37,18 @@ class RulesController extends Controller {
 
 			if ($rules->create()) {
 				$this->enqueueMessage($this->lang('RULE_HAS_BEEN_CREATED', $module->name));
+				$this->redirect('rules/default');
 			} else {
 				$this->enqueueError($this->lang('RULE_HAS_NOT_BEEN_CREATED'));
+				$this->view = 'default';
 			}
 
 		}  else {
 			
 			$this->enqueueError($this->lang('RULE_EXISTS', array($rule->moduleName, $rule->ruleAction)));
+			$this->view = 'default';
 			
 		}
-
-		$this->redirect('rules/default');
 
 	}
 
@@ -69,48 +70,49 @@ class RulesController extends Controller {
 		$this->view = 'default';
 		$rule = new Rule(Input::get('id'));
 
-		switch (Input::get('action')) {
+		// get input value
+		$moduleId   = Input::get('moduleId');
+		$action		= Input::get('actionField');
+		$adminOnly  = Input::get('adminOnly');
 
-			case 'edit':
+		// checks if record already exists
+		$checkRule = Rule::getRuleModuleName($moduleId, $action, $adminOnly);
 
-				// get input value
-				$moduleId   = Input::get('module');
-				$actionAcl  = Input::get('actionAcl');
-				$adminOnly  = Input::get('adminOnly');
+		// get module name
+		$module = new Module($moduleId);
 
-				// checks if record already exists
-				$checkRule = Rule::getRuleModuleName($moduleId, $actionAcl, $adminOnly);
+		// if nothing found or record has the same ID
+		if (!$checkRule) {
 
-				// get module name
-				$module			 = new Module($moduleId);
+			$rule->moduleId  = Input::get('moduleId');
+			$rule->action	 = Input::get('actionField');
+			$rule->adminOnly = Input::get('adminOnly', 'bool');
 
-				// if nothing found or record has the same ID
-				if (!$checkRule) {
+			if ($rule->update()) {
+				$this->enqueueMessage($this->lang('RULE_HAS_BEEN_CHANGED_SUCCESSFULLY', $module->name));
+			}
 
-					$rule->moduleId  = Input::get('module');
-					$rule->action	= Input::get('actionAcl');
-					$rule->adminOnly = Input::get('adminOnly', 'bool');
-
-					if ($rule->update()) {
-						$this->enqueueMessage($this->lang('RULE_HAS_BEEN_CHANGED_SUCCESSFULLY', $module->name));
-					}
-
-				} else {
-					$this->enqueueError($this->lang('RULE_EDIT_EXISTS',array($module->name,$checkRule->ruleAction)));
-				}
-				break;
-
-			case 'delete':
-
-				if ($rule->delete()) {
-					$this->enqueueMessage($this->lang('RULE_HAS_BEEN_DELETED_SUCCESSFULLY'));
-				} else {
-					$this->enqueueError($this->lang('ERROR_DELETING_RULES'));
-				}
-				break;
-
+		} else {
+			$this->enqueueError($this->lang('RULE_EDIT_EXISTS',array($module->name,$checkRule->ruleAction)));
 		}
 
+	}
+	
+	/**
+	 * Delete an object.
+	 */
+	public function deleteAction() {
+		
+		$rule = new Rule($this->route->getParam(0));
+		
+		if ($rule->delete()) {
+			$this->enqueueMessage($this->lang('RULE_HAS_BEEN_DELETED_SUCCESSFULLY'));
+		} else {
+			$this->enqueueError($this->lang('ERROR_DELETING_RULES'));
+		}
+
+		$this->app->redirect('rules/default');
+			
 	}
 
 }

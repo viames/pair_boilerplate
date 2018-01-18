@@ -39,16 +39,8 @@ class UsersViewUserEdit extends View {
 		$user->groupName = $groupName->name;
 
 		$form = $this->model->getUserForm();
-
+		$form->setValuesByObject($user);
 		$form->getControl('id')->setValue($user->id)->setRequired();
-		$form->getControl('groupId')->setValue($user->groupId);
-		$form->getControl('languageId')->setValue($user->languageId);
-		$form->getControl('name')->setValue($user->name);
-		$form->getControl('surname')->setValue($user->surname);
-		$form->getControl('email')->setValue($user->email);
-		$form->getControl('enabled')->setValue($user->enabled);
-		$form->getControl('ldapUser')->setValue($user->ldapUser);
-		$form->getControl('username')->setValue($user->username);
 
 		$this->assign('user', $user);
 		$this->assign('form', $form);

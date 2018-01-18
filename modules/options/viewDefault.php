@@ -18,7 +18,6 @@ class OptionsViewDefault extends View {
 		$options = Options::getInstance();
 
 		$this->app->pageTitle = $this->lang('OPTIONS');
-		$this->app->activeMenuItem = 'options/default';
 
 		$breadcrumb = Breadcrumb::getInstance();
 		$breadcrumb->addPath($this->lang('OPTIONS'));

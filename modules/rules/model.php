@@ -7,6 +7,7 @@
 
 use Pair\Form;
 use Pair\Model;
+use Pair\Module;
 
 class RulesModel extends Model {
 
@@ -55,14 +56,15 @@ class RulesModel extends Model {
 	 */ 
 	public function getRulesForm() {
 		
+		$modules = Module::getAllObjects(NULL, array('name'));
+
 		$form = new Form();
-		
 		$form->addControlClass('form-control');
-		
+			
 		$form->addInput('id')->setType('hidden');
-		$form->addSelect('module');
-		$form->addInput('actionAcl');
-		$form->addInput('adminOnly')->setType('bool')->addClass('icheck');
+		$form->addSelect('moduleId')->setListByObjectArray($modules, 'id', 'name')->setRequired();
+		$form->addInput('actionField');
+		$form->addInput('adminOnly', $prop)->setType('bool');
 		
 		return $form;
 		

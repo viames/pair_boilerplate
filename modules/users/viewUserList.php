@@ -12,6 +12,11 @@ use Pair\Widget;
 
 class UsersViewUserList extends View {
 
+	/**
+	 * Computes data and assigns values to layout.
+	 *
+	 * @see View::render()
+	 */
 	public function render() {
 
 		$this->app->pageTitle = $this->lang('USERS');
@@ -32,8 +37,13 @@ class UsersViewUserList extends View {
 		
 		foreach ($users as $user) {
 
-			$user->enabledIcon	= $user->enabled ? '<i class="fa fa-lg fa-check text-success"></i>' : '<i class="fa fa-lg fa-square-o"></i>';
+			$user->enabledIcon	= $user->enabled ? '<i class="fal fa-check fa-lg text-success"></i>' : '<i class="fa fa-times fa-lg text-danger"></i>';
 			$user->adminIcon	= $user->admin ? 'admin' : NULL;
+			
+			// everyone edit granted to admin only
+			if ($this->app->currentUser->admin or !$user->admin) {
+				$user->username = '<a href="users/userEdit/' . $user->id . '">' . $user->username . '</a>';
+			}
 			
 		}
 

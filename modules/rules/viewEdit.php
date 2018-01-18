@@ -5,7 +5,6 @@
  * @author	Viames Marino
  */
 
-use Pair\Module;
 use Pair\Router;
 use Pair\Rule;
 use Pair\View;
@@ -18,7 +17,7 @@ class RulesViewEdit extends View {
 		$route = Router::getInstance();
 
 		$this->app->pageTitle = $this->lang('EDIT_RULE');
-		$this->app->activeMenuItem = 'rules/default';
+		$this->app->activeMenuItem = 'rules';
 
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
@@ -26,18 +25,16 @@ class RulesViewEdit extends View {
 		$widget = new Widget();
 		$this->app->sideMenuWidget = $widget->render('sideMenu');
 
-		$modules = Module::getAllObjects(NULL, array('name'));
-
 		$rule = new Rule($route->getParam(0));
 
 		$form = $this->model->getRulesForm();
+		$form->setValuesByObject($rule);
 		
-		$form->getControl('id')->setValue($rule->id);
-		$form->getControl('module')->setListByObjectArray($modules, 'id', 'name')->setValue($rule->moduleId);
-		$form->getControl('actionAcl')->setValue($rule->action);
-		$form->getControl('adminOnly')->setValue($rule->adminOnly);
-
+		// necessario per by-pass del router action
+		$form->getControl('actionField')->setValue($rule->action);
+		
 		$this->assign('form', $form);
+		$this->assign('ruleId', $rule->id);
 		
 	}
 	
