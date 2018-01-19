@@ -61,10 +61,10 @@ define ('PRODUCT_NAME', 'Pair example');
 define ('BASE_URI', '/pair_example'); // application URL subpath
 
 // database
-define('DB_HOST', 'db_host');
-define('DB_NAME', 'db_name');
-define('DB_USER', 'db_user');
-define('DB_PASS', 'db_pass');
+define ('DB_HOST', 'db_host');
+define ('DB_NAME', 'db_name');
+define ('DB_USER', 'db_user');
+define ('DB_PASS', 'db_pass');
 ```
 
 By creating different versions of this file you can move the project on different web-servers. This is useful for running a development version, a test version and a production version of the same project.
