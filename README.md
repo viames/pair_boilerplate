@@ -2,6 +2,7 @@
 a skeleton project to use [Pair PHP Framework](https://github.com/Viames/Pair) easily
 
 [![Latest Stable Version](https://poser.pugx.org/viames/pair_example/v/stable)](https://packagist.org/packages/viames/pair_example)
+[![Total Downloads](https://poser.pugx.org/viames/pair_example/downloads)](https://packagist.org/packages/viames/pair_example)
 [![Latest Unstable Version](https://poser.pugx.org/viames/pair_example/v/unstable)](https://packagist.org/packages/viames/pair_example)
 [![License](https://poser.pugx.org/viames/pair_example/license)](https://packagist.org/packages/viames/pair_example)
 [![composer.lock](https://poser.pugx.org/viames/pair_example/composerlock)](https://packagist.org/packages/viames/pair_example)
@@ -60,10 +61,10 @@ define ('PRODUCT_NAME', 'Pair example');
 define ('BASE_URI', '/pair_example'); // application URL subpath
 
 // database
-define('DB_HOST', 'db_host');
-define('DB_NAME', 'db_name');
-define('DB_USER', 'db_user');
-define('DB_PASS', 'db_pass');
+define ('DB_HOST', 'db_host');
+define ('DB_NAME', 'db_name');
+define ('DB_USER', 'db_user');
+define ('DB_PASS', 'db_pass');
 ```
 
 By creating different versions of this file you can move the project on different web-servers. This is useful for running a development version, a test version and a production version of the same project.
