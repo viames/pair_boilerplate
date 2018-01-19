@@ -156,15 +156,15 @@ class UserModel extends Model {
 		
 		$form->addControlClass('form-control');
 		
-		$languages	= Language::getAllObjects(NULL, array('englishName'));
+		$languages = Language::getAllObjects(NULL, array('englishName'));
 
 		$form->addInput('name')->setRequired()->setMinLength(2);
 		$form->addInput('surname')->setRequired()->setMinLength(2);
 		$form->addInput('email')->setType('email');
 		$form->addInput('ldapUser')->setMinLength(2);
-		$form->addInput('username')->setRequired()->setMinLength(3)->setPlaceholder('Username');
+		$form->addInput('username')->setRequired()->setMinLength(3);
 		$form->addInput('password', array('autocomplete'=>'off', 'autocorrect'=>'off', 'autocapitalize'=>'off'))
-			->setType('password')->setMinLength(8)->setPlaceholder('Password');
+			->setType('password')->setMinLength(8);
 		$form->addInput('showPassword')->setType('bool');
 		$form->addSelect('languageId')->setListByObjectArray($languages,'id','englishName')->setRequired();
 

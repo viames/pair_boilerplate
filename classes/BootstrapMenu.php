@@ -28,7 +28,7 @@ class BootstrapMenu extends Menu {
 		foreach ($this->items as $item) {
 
 			// check on permissions
-			if (isset($item->url) and !$app->currentUser->canAccess($item->url)) {
+			if (isset($item->url) and !(isset($app->currentUser) and $app->currentUser->canAccess($item->url))) {
 				continue;
 			}
 
@@ -56,7 +56,7 @@ class BootstrapMenu extends Menu {
 					foreach ($item->list as $i) {
 
 						// check on permissions
-						if (isset($i->url) and !$app->currentUser->canAccess($i->url)) {
+						if (isset($i->url) and !(isset($app->currentUser) and $app->currentUser->canAccess($i->url))) {
 							continue;
 						}
 

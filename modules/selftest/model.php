@@ -203,24 +203,47 @@ class SelftestModel extends Model {
 	public function testActiveRecordClasses(): int {
 
 		// the final error count
-		$errors  = 0;
+		$errors = 0;
 		
 		// get all ActiveRecord classes
 		$classes = Utilities::getActiveRecordClasses();
 		
-		foreach ($classes as $class => $opts) {
+		// plain list of Pair framework classes
+		$pairClasses = ['Acl','ErrorLog','Group','Language','Module','Rule','Session','Template','User'];
+		array_walk($pairClasses, function(&$c) { $c = 'Pair\\' . $c; });
+		
+		// list of excluded from test
+		$excludeClasses = [];
+		
+		// build the object and perform the test
+		foreach ($classes as $class => &$opts) {
 
 			// build a class object properly
 			if ($opts['constructor']) {
-				$object = new $class;
+				$opts['object'] = new $class;
 			} else if ($opts['getInstance']) {
-				$object = $class::getInstance();
+				$opts['object'] = $class::getInstance();
 			} else {
+				$excludeClasses[] = $class;
 				continue;
 			}
 			
-			// run test on maps and references
-			$errors += $this->testClassMaps($object);
+			// exclude Pair’s parent class of a children that inherit it
+			foreach ($pairClasses as $pairClass) {
+				if (!$opts['pair'] and is_subclass_of($opts['object'], $pairClass)) {
+					$excludeClasses[] = $pairClass;
+				}
+			}
+					
+		}
+		
+		// repeat scan to test valid classes
+		foreach ($classes as $class => $opts) {
+			
+			// run test on class binds
+			if (!in_array($class, $excludeClasses)) {
+				$errors += $this->testClassMaps($opts['object']);
+			}
 			
 		}
 		

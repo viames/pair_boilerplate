@@ -18,7 +18,7 @@ $menu->addItem('users/groupList', $translator->translate('GROUPS'), NULL, 'fa-us
 $menu->addItem('rules', $translator->translate('RULES'), NULL, 'fa-unlock');
 
 // admin multimenu
-if ($app->currentUser->admin) {
+if (isset($app->currentUser) and $app->currentUser->admin) {
 	
 	$menu->addItem('options', $translator->translate('OPTIONS'), NULL, 'fa-sliders-h');
 	$menu->addItem('selftest', $translator->translate('SELF_TEST'), NULL, 'fa-check');
