@@ -22,11 +22,7 @@ class RulesViewNew extends View {
 		$widget = new Widget();
 		$this->app->sideMenuWidget = $widget->render('sideMenu');
 
-		$modules = Module::getAllObjects(NULL, array('name'));
-
 		$form = $this->model->getRulesForm();
-
-		$form->getControl('module')->setListByObjectArray($modules, 'id', 'name');
 
 		$this->assign('form', $form);
 		

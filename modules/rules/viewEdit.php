@@ -34,7 +34,7 @@ class RulesViewEdit extends View {
 		$form->getControl('actionField')->setValue($rule->action);
 		
 		$this->assign('form', $form);
-		$this->assign('ruleId', $rule->id);
+		$this->assign('rule', $rule);
 		
 	}
 	

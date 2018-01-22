@@ -9,35 +9,35 @@
     $.extend(			
 
         /**
-         * Display a javascript message box.
+         * Display a javascript message box by using iziToast
          *
          * @param	string	Message title.
          * @param	string	Message text.
          * @param	string	Type (info, success, warning, error)
          */
-        $.showMessage = function(title, message, type) {
+        $.showMessage = function(title, message, type = 'info') {
 			
-        	if ('info'==type || 'success'==type || 'warning'==type || 'error'==type) {
-			toastr[type](message, title);
-        	} else {
-        		toastr['error']('Unexpected server response', 'Error');
+        	if ('info'!=type && 'success'!=type && 'warning'!=type && 'error'!=type) {
+        		type = 'info';
         	}
         	
+        	iziToast[type]({title: title, message: message});
+        	
         },
-
-         /**
+        	
+        /**
          * Sets the event list visible or hidden.
          */
         $.toggleLogEvents = function() {
 
         	if ($('#log .events').is(':visible')) {
         		$('#log .events').hide().addClass('hidden');
-        		$('#logShowEvents').html('Show <span class="fa fa-caret-down"></span>');
-        		$.cookie('LogShowEvents', 0, {path: '/'});
+        		$('#logShowEvents').removeClass('active').html('Show <span class="fa fa-caret-down"></span>');
+        		Cookies.set('LogShowEvents', 0, {path: '/'});
         	} else {
         		$('#log .events').show().removeClass('hidden');
-        		$('#logShowEvents').html('Hide <span class="fa fa-caret-up"></span>');
-        		$.cookie('LogShowEvents', 1, {path: '/'});
+        		$('#logShowEvents').addClass('active').html('Hide <span class="fa fa-caret-up"></span>');
+        		Cookies.set('LogShowEvents', 1, {path: '/'});
         		$('html, body').stop().animate({'scrollTop': $('#log .events').offset().top-60}, 200, 'swing');
         	}
         	
@@ -53,11 +53,11 @@
         	if (menuItem.hasClass('active')) {
         		menuItem.removeClass('active');
         		$('#log .query').addClass('hidden');
-        		$.cookie('LogShowQueries', 0, {path: '/'});
+        		Cookies.set('LogShowQueries', 0, {path: '/'});
         	} else {
         		menuItem.addClass('active');
         		$('#log .query').removeClass('hidden');
-        		$.cookie('LogShowQueries', 1, {path: '/'});
+        		Cookies.set('LogShowQueries', 1, {path: '/'});
         		if ($('#log .events').is(':hidden')) {
         			$('#logShowEvents').trigger('click');
         		}

@@ -90,10 +90,14 @@ class RulesController extends Controller {
 
 			if ($rule->update()) {
 				$this->enqueueMessage($this->lang('RULE_HAS_BEEN_CHANGED_SUCCESSFULLY', $module->name));
+				$this->redirect('rules');
 			}
 
 		} else {
+			
 			$this->enqueueError($this->lang('RULE_EDIT_EXISTS',array($module->name,$checkRule->ruleAction)));
+			$this->view = 'default';
+			
 		}
 
 	}
@@ -104,14 +108,15 @@ class RulesController extends Controller {
 	public function deleteAction() {
 		
 		$rule = new Rule($this->route->getParam(0));
+		$moduleName = $rule->getModule()->name;
 		
 		if ($rule->delete()) {
-			$this->enqueueMessage($this->lang('RULE_HAS_BEEN_DELETED_SUCCESSFULLY'));
+			$this->enqueueMessage($this->lang('RULE_HAS_BEEN_DELETED_SUCCESSFULLY', $moduleName));
+			$this->app->redirect('rules/default');
 		} else {
 			$this->enqueueError($this->lang('ERROR_DELETING_RULES'));
+			$this->view = 'default';
 		}
-
-		$this->app->redirect('rules/default');
 			
 	}
 

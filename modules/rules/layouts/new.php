@@ -10,11 +10,11 @@
 		<div class="card-body">
 			<div class="form-group row">
 				<label class="col-md-3 control-label"><?php $this->_('MODULE')?></label>
-				<div class="col-md-9"><?php print $this->form->renderControl('module') ?></div>
+				<div class="col-md-9"><?php print $this->form->renderControl('moduleId') ?></div>
 			</div>
 			<div class="form-group row">
 				<label class="col-md-3 control-label"><?php $this->_('ACTION')?></label>
-				<div class="col-md-9"><?php print $this->form->renderControl('actionAcl') ?></div>
+				<div class="col-md-9"><?php print $this->form->renderControl('actionField') ?></div>
 			</div>
 			<div class="form-group row">
 				<label class="col-md-3 control-label"><?php $this->_('ADMIN_ONLY')?></label>

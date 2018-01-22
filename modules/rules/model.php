@@ -64,7 +64,7 @@ class RulesModel extends Model {
 		$form->addInput('id')->setType('hidden');
 		$form->addSelect('moduleId')->setListByObjectArray($modules, 'id', 'name')->setRequired();
 		$form->addInput('actionField');
-		$form->addInput('adminOnly', $prop)->setType('bool');
+		$form->addInput('adminOnly')->setType('bool');
 		
 		return $form;
 		
