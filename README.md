@@ -34,7 +34,7 @@ Now you can create a new project [manually](#manual-installation) or by using [C
 
 #### <a name="composer">Composer</a>
 
-You can ask Composer to create the project into your new folder. If you don’t have Composer installed in your system, please [download it](https://getcomposer.org/).
+You can ask Composer to create the project into your new folder. If you don’t have Composer installed in your system, please [download it](https://getcomposer.org/download/).
 
 Launch a command-line terminal and create a new composer project named `project_name`:
 
