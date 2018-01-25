@@ -24,7 +24,7 @@ Choose a name for your new project and create a new folder where to install Pair
 $ mkdir project_name
 $ cd project_name
 ```
-Now you can create a new project [manually](#manual-installation) or by using [Composer](#composer).
+Now you can create a new project [manually](#manual-installation) or by using [Composer](#composer), that allows to easily update Pair framework.
 
 #### <a name="manual-installation">Manual installation</a>
 
@@ -50,26 +50,28 @@ $ composer create-project viames/pair_example dev-master
 
 ### Configuration
 
-Please open the config.php file in the root of the project, you will see a bunch of lines that can be customized according to your installation.
+When launched, the Pair framework will check `config.php` file and, because it isn’t bundled, will starts the web installer interface. Please fill in all required data and in a second your Pair application will be up and running.
+
+In case you written something wrong in the config.php file, you can edit it manually. This is the file content
 
 ```PHP
 <?php
 
 // product
 define ('PRODUCT_VERSION', '1.0');
-define ('PRODUCT_NAME', 'Pair example');
-define ('BASE_URI', '/pair_example'); // application URL subpath
+define ('PRODUCT_NAME', 'Your application name');
+define ('BASE_URI', '/any_subpath_on_url');
 
 // database
-define ('DB_HOST', 'db_host');
-define ('DB_NAME', 'db_name');
-define ('DB_USER', 'db_user');
-define ('DB_PASS', 'db_pass');
+define ('DB_HOST', 'your_host');
+define ('DB_NAME', 'your_name');
+define ('DB_USER', 'your_user');
+define ('DB_PASS', 'your_pass');
 ```
 
-By creating different versions of this file you can move the project on different web-servers. This is useful for running a development version, a test version and a production version of the same project.
+By creating different versions of this file you can move the project on other web-servers. This is useful to run a development version, a test version and a production version of the same project.
 
-Now it’s time to login using `admin` as username and password too. Maybe you agree to change this one as soon as you login 😌
+Now it’s time to login using the account that have your email address as username and a strong 15 chars random password that’s shown at the installation end.
 
 ---
 

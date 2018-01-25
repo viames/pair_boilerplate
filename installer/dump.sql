@@ -1,13 +1,7 @@
--- MySQL dump 10.13  Distrib 5.7.20
---
--- Host: localhost    Database: pair_example
--- ------------------------------------------------------
--- Server version	5.7.20
-
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -19,10 +13,9 @@
 -- Table structure for table `acl`
 --
 
-DROP TABLE IF EXISTS `acl`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `acl` (
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE IF NOT EXISTS `acl` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `rule_id` int(3) unsigned NOT NULL,
   `group_id` int(3) unsigned DEFAULT NULL,
@@ -49,10 +42,9 @@ UNLOCK TABLES;
 -- Table structure for table `error_logs`
 --
 
-DROP TABLE IF EXISTS `error_logs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `error_logs` (
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE IF NOT EXISTS `error_logs` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `created_time` datetime NOT NULL,
   `user_id` int(10) unsigned DEFAULT NULL,
@@ -84,10 +76,9 @@ UNLOCK TABLES;
 -- Table structure for table `groups`
 --
 
-DROP TABLE IF EXISTS `groups`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `groups` (
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE IF NOT EXISTS `groups` (
   `id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `is_default` int(1) unsigned NOT NULL,
@@ -109,10 +100,9 @@ UNLOCK TABLES;
 -- Table structure for table `languages`
 --
 
-DROP TABLE IF EXISTS `languages`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `languages` (
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE IF NOT EXISTS `languages` (
   `id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `code` varchar(2) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `representation` varchar(5) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
@@ -138,10 +128,9 @@ UNLOCK TABLES;
 -- Table structure for table `modules`
 --
 
-DROP TABLE IF EXISTS `modules`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `modules` (
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE IF NOT EXISTS `modules` (
   `id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `version` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
@@ -170,10 +159,9 @@ UNLOCK TABLES;
 -- Table structure for table `options`
 --
 
-DROP TABLE IF EXISTS `options`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `options` (
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE IF NOT EXISTS `options` (
   `name` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `label` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `type` enum('text','textarea','bool','int','list','custom') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'text',
@@ -199,10 +187,9 @@ UNLOCK TABLES;
 -- Table structure for table `rules`
 --
 
-DROP TABLE IF EXISTS `rules`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `rules` (
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE IF NOT EXISTS `rules` (
   `id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `action` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `admin_only` tinyint(1) NOT NULL DEFAULT '0',
@@ -227,10 +214,9 @@ UNLOCK TABLES;
 -- Table structure for table `sessions`
 --
 
-DROP TABLE IF EXISTS `sessions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `sessions` (
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE IF NOT EXISTS `sessions` (
   `id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `id_user` int(4) unsigned DEFAULT NULL,
   `start_time` datetime NOT NULL,
@@ -254,10 +240,9 @@ UNLOCK TABLES;
 -- Table structure for table `templates`
 --
 
-DROP TABLE IF EXISTS `templates`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `templates` (
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE IF NOT EXISTS `templates` (
   `id` int(3) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `version` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
@@ -289,10 +274,9 @@ UNLOCK TABLES;
 -- Table structure for table `users`
 --
 
-DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `users` (
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE IF NOT EXISTS `users` (
   `id` int(4) unsigned NOT NULL AUTO_INCREMENT,
   `group_id` int(3) unsigned NOT NULL,
   `language_id` int(3) unsigned NOT NULL,
@@ -316,17 +300,6 @@ CREATE TABLE `users` (
   CONSTRAINT `fk_users_languages` FOREIGN KEY (`language_id`) REFERENCES `languages` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `users`
---
-
-LOCK TABLES `users` WRITE;
-/*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,1,1,'','admin','$2a$12$WfnHFTmVnZ.f8DO.rAi7OeU1Eco2/5gJ8w/2E5qHoVN3yN.luri/.','Administrator','User','admin@vms',1,1,'2017-10-11 13:33:02',0);
-/*!40000 ALTER TABLE `users` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

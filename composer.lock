@@ -1,0 +1,79 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "bf971d8eda041becd3b3ea2209eebb1a",
+    "packages": [
+        {
+            "name": "viames/pair",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Viames/Pair.git",
+                "reference": "8ff78666e9f332b566c6a2d7d4a40069feb98a5b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Viames/Pair/zipball/8ff78666e9f332b566c6a2d7d4a40069feb98a5b",
+                "reference": "8ff78666e9f332b566c6a2d7d4a40069feb98a5b",
+                "shasum": ""
+            },
+            "require": {
+                "ext-pdo": "*",
+                "php": ">=5.6"
+            },
+            "suggest": {
+                "ext-xdebug": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src"
+                ],
+                "psr-4": {
+                    "Viames\\Pair\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Viames Marino",
+                    "homepage": "https://www.viames.it",
+                    "role": "Developer"
+                }
+            ],
+            "description": "lightweight PHP framework as the air",
+            "homepage": "https://github.com/Viames/Pair",
+            "keywords": [
+                "active-record",
+                "framework",
+                "multilingual",
+                "pagination",
+                "pair",
+                "php",
+                "plugin-system",
+                "rest-api",
+                "router"
+            ],
+            "time": "2018-01-22T13:37:35+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "viames/pair": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=5.6",
+        "ext-pdo": "*"
+    },
+    "platform-dev": []
+}

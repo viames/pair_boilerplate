@@ -1,5 +1,4 @@
 *.prefs
-composer.lock
 composer.phar
 config.php
 vendor/
