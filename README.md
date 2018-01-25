@@ -34,18 +34,12 @@ Now you can create a new project [manually](#manual-installation) or by using [C
 
 #### <a name="composer">Composer</a>
 
-You can ask Composer to create the project into your new folder. If you don’t have Composer installed in your system, please [download it](https://getcomposer.org/).
+You can ask Composer to create the project into your new folder. If you don’t have Composer installed in your system, please [download it](https://getcomposer.org/download/).
 
-Launch a command-line terminal and start a new composer project:
-
-```bash
-$ composer create-project viames/pair_example
-```
-
-If you want to test code that is in the master branch, which hasn’t been pushed as a release, you can use master:
+Launch a command-line terminal and create a new composer project named `project_name`:
 
 ```bash
-$ composer create-project viames/pair_example dev-master
+$ composer create-project viames/pair_example project_name
 ```
 
 ### Configuration
