@@ -256,7 +256,8 @@ CREATE TABLE IF NOT EXISTS `templates` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`),
   KEY `installed_by` (`installed_by`),
-  KEY `date_installed` (`date_installed`)
+  KEY `date_installed` (`date_installed`),
+  CONSTRAINT `fk_templates_users` FOREIGN KEY (`installed_by`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
