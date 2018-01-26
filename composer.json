@@ -4,7 +4,7 @@
 	"type": "project",
 	"minimum-stability": "dev",
 	"require" : {
-		"viames/pair" : "dev-master",
+		"viames/pair" : ">=1.1.0",
 		"php" : ">=5.6",
 		"ext-pdo" : "*"
 	},

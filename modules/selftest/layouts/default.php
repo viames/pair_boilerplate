@@ -10,7 +10,7 @@
 		<div class="card">
 			<div class="card-header">
 				<h5 class="float-left"><?php $this->_('SELF_TEST') ?></h5>
-				<a class="btn btn-primary btn-sm float-right" href="selftest/default"><i class="fa fa-repeat"></i> <?php $this->_('REFRESH') ?></a>
+				<a class="btn btn-primary btn-sm float-right" href="selftest/default"><i class="fa fa-redo"></i> <?php $this->_('REFRESH') ?></a>
 			</div>
 			<div class="card-body">
 				<div class="table-responsive">
