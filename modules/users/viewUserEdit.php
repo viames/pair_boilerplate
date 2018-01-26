@@ -21,9 +21,6 @@ class UsersViewUserEdit extends View {
 		$this->app->pageTitle = $this->lang('USER_EDIT');
 		$this->app->activeMenuItem = 'users/userList';
 		
-		$userId = $route->get('userId');
-		
-		
 		$userId	= $route->getParam(0);
 		$user	= new User($userId);
 		
