@@ -16,7 +16,7 @@
 					<form action="developer/classCreation" method="post" class="form-horizontal"> 
 						<fieldset>
 							<div class="form-group row">
-								<label class="col-md-3 control-label"><?php $this->_('OBJECT_NAME')?></label>
+								<label class="col-md-3"><?php $this->_('OBJECT_NAME')?></label>
 								<div class="col-md-3"><?php print $this->form->renderControl('objectName') ?></div>
 								<div class="description"><?php $this->_('OBJECT_NAME_DESCRIPTION')?></div>
 							</div>

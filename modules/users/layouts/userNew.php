@@ -12,43 +12,43 @@
 		</div>
 		<div class="card-body">
 			<div class="form-group row">
-				<label class="col-md-3 control-label"><?php $this->_('NAME') ?></label>
+				<label class="col-md-3"><?php $this->_('NAME') ?></label>
 				<div class="col-md-9"><?php print $this->form->renderControl('name') ?></div>
 			</div>
 			<div class="form-group row">
-				<label class="col-md-3 control-label"><?php $this->_('SURNAME') ?></label>
+				<label class="col-md-3"><?php $this->_('SURNAME') ?></label>
 				<div class="col-md-9"><?php print $this->form->renderControl('surname') ?></div>
 			</div>
 			<div class="form-group row">
-				<label class="col-md-3 control-label"><?php $this->_('EMAIL') ?></label>
+				<label class="col-md-3"><?php $this->_('EMAIL') ?></label>
 				<div class="col-md-9"><?php print $this->form->renderControl('email') ?></div>
 			</div>
 			<div class="form-group row">
-				<label class="col-md-3 control-label"><?php $this->_('ENABLED') ?></label>
+				<label class="col-md-3"><?php $this->_('ENABLED') ?></label>
 				<div class="col-md-9"><?php print $this->form->renderControl('enabled') ?></div>
 			</div>
 			<div class="form-group row">
-				<label class="col-md-3 control-label"><?php $this->_('LDAP_USER') ?></label>
+				<label class="col-md-3"><?php $this->_('LDAP_USER') ?></label>
 				<div class="col-md-9"><?php print $this->form->renderControl('ldapUser') ?></div>
 			</div>
 			<div class="form-group row">
-				<label class="col-md-3 control-label"><?php $this->_('USERNAME') ?></label>
+				<label class="col-md-3"><?php $this->_('USERNAME') ?></label>
 				<div class="col-md-9"><?php print $this->form->renderControl('username') ?></div>
 			</div>
 			<div class="form-group row">
-				<label class="col-md-3 control-label"><?php $this->_('PASSWORD') ?></label>
+				<label class="col-md-3"><?php $this->_('PASSWORD') ?></label>
 				<div class="col-md-9"><?php print $this->form->renderControl('password') ?></div>
 			</div>
 			<div class="form-group row">
-				<label class="col-md-3 control-label"><?php $this->_('SHOW_PASSWORD') ?></label>
+				<label class="col-md-3"><?php $this->_('SHOW_PASSWORD') ?></label>
 				<div class="col-md-9"><?php print $this->form->renderControl('showPassword') ?></div>
 			</div>
 			<div class="form-group row">
-				<label class="col-md-3 control-label"><?php $this->_('LANGUAGE') ?></label>
+				<label class="col-md-3"><?php $this->_('LANGUAGE') ?></label>
 				<div class="col-md-9"><?php print $this->form->renderControl('languageId') ?></div>
 			</div>
 			<div class="form-group row">
-				<label class="col-md-3 control-label"><?php $this->_('GROUP') ?></label>
+				<label class="col-md-3"><?php $this->_('GROUP') ?></label>
 				<div class="col-md-9"><?php print $this->form->renderControl('groupId') ?></div>
 			</div>
 		</div>

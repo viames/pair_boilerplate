@@ -3,6 +3,14 @@
  * @author  Viames Marino
  */
 
+.colorSample {
+    border: 1px solid white;
+    float: left;
+    height: 10px;
+    margin: 3px 1px;
+    width: 10px;
+}
+
 #log {
     background-color: white;
     box-sizing: border-box;

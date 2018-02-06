@@ -35,6 +35,12 @@ class TemplatesViewDefault extends View {
 		$devMode = ($options->getValue('development') and $this->app->currentUser->admin) ? TRUE : FALSE;
 		
 		foreach ($templates as $template) {
+			
+			$template->paletteSamples = '';
+			
+			foreach ($template->palette as $color) {
+				$template->paletteSamples .= '<div class="colorSample" style="background-color:' . $color . '" title="' . $color . '"></div>';
+			}
 
 			// check if plugin is compatible with current application version
 			$template->compatible = (version_compare(PRODUCT_VERSION, $template->appVersion) <= 0) ?

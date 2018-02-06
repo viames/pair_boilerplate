@@ -334,7 +334,7 @@ class SelftestModel extends Model {
 		$languages = Language::getAllObjects(NULL, array('code'));
 
 		// paths
-		$defaultLang = $translator->default . '.ini';
+		$defaultLang = $translator->getDefaultLanguage()->code . '.ini';
 
 		// count of fails
 		$files		= 0;
@@ -369,7 +369,7 @@ class SelftestModel extends Model {
 					foreach ($languages as $language) {
 
 						// else if is not default, pass keys to another array
-						if ($language->code != $translator->default) {
+						if ($language->code != $translator->getDefaultLanguage()->code) {
 
 							if (!file_exists($langFolder . '/' . $language->code . '.ini')) {
 	

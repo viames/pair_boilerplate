@@ -38,7 +38,7 @@ if (count($this->templates)) {
 							<td><?php print htmlspecialchars($template->name . ' v' . $template->version) ?></td>
 							<td class="text-center"><?php print $template->defaultIcon ?></td>
 							<td class="text-center"><?php print $template->compatible ?></td>
-							<td class="text-center small"><?php print $template->getPaletteSamples() ?></td>
+							<td class="text-center small"><?php print $template->paletteSamples ?></td>
 							<td class="text-center small"><?php print $template->formatDateTime('dateReleased', $this->lang('DATE_FORMAT')) ?></td>
 							<td class="text-center small"><?php print $template->formatDateTime('dateInstalled', $this->lang('DATE_FORMAT')) ?></td>
 							<td class="text-center"><?php print $template->derivedIcon ?></td>

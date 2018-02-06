@@ -18,7 +18,7 @@
 		foreach ($this->defStrings as $key=>$value) {
 		
 			?><div class="form-group row">
-				<label class="col-md-3 control-label"><?php print htmlspecialchars($value) ?></label>
+				<label class="col-md-3"><?php print htmlspecialchars($value) ?></label>
 				<div class="col-md-9"><?php print $this->form->renderControl($key) ?></div>
 			</div><?php 
 					

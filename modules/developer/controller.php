@@ -86,8 +86,6 @@ class DeveloperController extends Controller {
 		
 		$this->view = 'default';
 
-		$language = Translator::getInstance();
-		
 		$tableName	= Input::get('tableName');
 		$objectName	= Input::get('objectName');
 		$moduleName	= Input::get('moduleName');
@@ -113,11 +111,14 @@ class DeveloperController extends Controller {
 					umask($old);
 				}
 				
+				// languages
+				$translations = $this->model->getAvailableTranslations();
+				foreach ($translations as $t) {
+					$this->model->saveLanguage($folder . '/languages/' . $t . '.ini', $t);
+				}
+
 				// object class file
 				$this->model->saveClass($folder . '/classes/' . $this->model->objectName . '.php');
-				
-				// languages
-				$this->model->saveLanguage($folder . '/languages/' . $language->default . '.ini');
 				
 				// controller
 				$this->model->saveController($folder . '/controller.php');
@@ -144,7 +145,7 @@ class DeveloperController extends Controller {
 				$this->model->saveLayoutEdit($folder . '/layouts/edit.php');
 				
 				$this->enqueueMessage($this->lang('MODULE_HAS_BEEN_CREATED', $this->model->moduleName));
-	
+				
 			} else {
 	
 				$this->enqueueError($this->lang('MODULE_FOLDER_ALREADY_EXISTS', $folder));

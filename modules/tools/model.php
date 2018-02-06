@@ -96,17 +96,20 @@ class ToolsModel extends Model {
 				if (!in_array(strtolower($dir), $names)) {
 					
 					// manifest file path
-					$manifest = $pluginsFolder . '/' . $dir . '/manifest.xml';
+					$manifestFile = $pluginsFolder . '/' . $dir . '/manifest.xml';
 					
 					// manifest file is missing
-					if (!file_exists($manifest)) {
+					if (!file_exists($manifestFile)) {
 
 						$app->logWarning('File manifest.xml is missing for ' . ucfirst($type) . ' plugin at path /' . $folder . '/' . $dir);
 					
 					} else {
 
+						// get XML content of manifest by reading a file
+						$manifest = Plugin::getManifestByFile($manifestFile);
+						
 						// creates db record by its manifest file
-						Plugin::createPluginByManifest(file_get_contents($manifest));
+						Plugin::createPluginByManifest($manifest);
 						
 						// logging
 						$app->logEvent('Inserted a new plugin record for ' . $type . ' ' . $dir);

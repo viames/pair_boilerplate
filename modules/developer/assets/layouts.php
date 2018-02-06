@@ -7,41 +7,41 @@
 
 // layout della pagina default
 $layouts['default-page'] =
-'{fileStart}use Pair\Utilities;
-
-?><div class="col-12">
-	<div class="panel panel-inverse">
-		<div class="panel-heading">
-			<h4 class="panel-title">{pageTitle}</h4>
+'<div class="row">
+	<div class="col-12">
+		<div class="panel panel-inverse">
+			<div class="panel-heading">
+				<h4 class="panel-title">{pageTitle}</h4>
+			</div>
+			<div class="panel-body">
+				<a href="{linkAdd}" class="btn btn-primary"><i class="fa fa-plus"></i> {newElement}</a>
+				<hr><?php
+	
+				if (count({itemsArray})) {
+	
+					?><div class="table-responsive">
+						<table class="table table-hover">
+							<thead>
+								<tr>
+	{tableHeaders}
+								</tr>
+							</thead>
+							<tbody>
+	{tableRows}
+							</tbody>
+						</table>
+					</div><?php
+	
+					print $this->getPaginationBar();
+						
+				} else {
+						
+					Pair\Utilities::printNoDataMessageBox();
+						
+				}
+			
+			?></div>
 		</div>
-		<div class="panel-body">
-			<a href="{linkAdd}" class="btn btn-primary"><i class="fa fa-plus"></i> {newElement}</a>
-			<hr><?php
-
-			if (count({itemsArray})) {
-
-				?><div class="table-responsive">
-					<table class="table table-hover">
-						<thead>
-							<tr>
-{tableHeaders}
-							</tr>
-						</thead>
-						<tbody>
-{tableRows}
-						</tbody>
-					</table>
-				</div><?php
-
-				print $this->getPaginationBar();
-					
-			} else {
-					
-				Utilities::printNoDataMessageBox();
-					
-			}
-		
-		?></div>
 	</div>
 </div>';
 
@@ -53,7 +53,7 @@ $layouts['default-table-cell'] = "\t\t\t\t\t\t\t\t<td>{tableCell}</td>";
 
 // layout della pagina new
 $layouts['new-page'] =
-'{fileStart}?><div class="row">
+'<div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-inverse">
 			<div class="panel-heading">
@@ -78,13 +78,13 @@ $layouts['new-page'] =
 		
 $layouts['new-field'] = '
 						<div class="form-group row">
-							<label class="col-md-3 control-label">{fieldLabel}</label>
+							<label class="col-md-3">{fieldLabel}</label>
 							<div class="col-md-9">{fieldControl}</div>
 						</div>';
 
 // layout della pagina edit
 $layouts['edit-page'] =
-'{fileStart}?><div class="row">
+'<div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-inverse">
 			<div class="panel-heading">
@@ -100,10 +100,9 @@ $layouts['edit-page'] =
 						<div class="col-md-push-3 col-md-9">
 							<button type="submit" class="btn btn-primary" value="edit" name="action"><i class="fa fa-save"></i> <?php $this->_(\'CHANGE\') ?></button>
 							<a href="{cancelUrl}" class="btn btn-secondary"><i class="fa fa-times"></i> <?php $this->_(\'CANCEL\') ?></a><?php
-							if ($this->{object}->isDeletable()) {
-								?><a href="{deleteUrl}" class="btn btn-link confirm-delete float-right"><i class="fa fa-trash"></i> <?php $this->_(\'DELETE\') ?></a><?php
-							}
-							?>
+							if ($this->{object}->isDeletable()) { ?>
+							<a href="{deleteUrl}" class="btn btn-link confirm-delete pull-right float-right"><i class="fa fa-trash"></i> <?php $this->_(\'DELETE\') ?></a><?php
+							} ?>
 						</div>
 					</div>
 				</form>
@@ -114,6 +113,6 @@ $layouts['edit-page'] =
 
 $layouts['edit-field'] = '
 						<div class="form-group row">
-							<label class="col-md-3 control-label">{fieldLabel}</label>
+							<label class="col-md-3">{fieldLabel}</label>
 							<div class="col-md-9">{fieldControl}</div>
 						</div>';

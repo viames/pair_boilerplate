@@ -22,9 +22,6 @@ $app->runApi('api');
 // any session
 $app->manageSession();
 
-// CSS
-//$app->loadCss($app->templatePath . '[path_to_your_css_file]');
-
 // collect all scripts
 $scripts = [
 	'pwstrength-bootstrap.min.js'

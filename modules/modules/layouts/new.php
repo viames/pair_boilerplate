@@ -18,7 +18,7 @@
 			<div class="col-sm-6">
 				<form role="form" action="modules/add" method="post" enctype="multipart/form-data">
 					<div class="form-group row">
-						<label class="control-label"><?php print $this->_('SELECT') ?></label> 
+						<label><?php print $this->_('SELECT') ?></label> 
 						<?php print $this->form->renderControl('package') ?>
 					</div>
 					<div class="form-group row">

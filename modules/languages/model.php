@@ -30,7 +30,7 @@ class LanguagesModel extends Model {
 		}
 		
 		// paths
-		$defaultLang = $translator->default . '.ini';
+		$defaultLang = $translator->getDefaultLanguage()->code . '.ini';
 
 		$folders = Language::getLanguageFolders();
 		
@@ -56,7 +56,7 @@ class LanguagesModel extends Model {
 					}
 					
 					// compares to default language
-					if ($language->code != $translator->default) {
+					if ($language->code != $translator->getDefaultLanguage()->code) {
 						
 						// details of comparing lines
 						$details = new stdClass();
@@ -102,7 +102,7 @@ class LanguagesModel extends Model {
 		// sets 100% to default language and zero to the rest
 		foreach ($languages as $language) {
 
-			if ($translator->default == $language->code) {
+			if ($translator->getDefaultLanguage()->code == $language->code) {
 				$language->perc		= 100.0;
 				$language->complete	= $defLines;
 			} else {

@@ -247,7 +247,7 @@ CREATE TABLE IF NOT EXISTS `templates` (
   `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `version` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `date_released` datetime NOT NULL,
-  `app_version` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '1',
+  `app_version` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '1.0',
   `is_default` tinyint(1) NOT NULL DEFAULT '0',
   `installed_by` int(4) unsigned NOT NULL,
   `date_installed` datetime NOT NULL,

@@ -9,7 +9,8 @@ use Pair\Utilities;
 
 if (count($this->groups)) {
 
-	?><div class="col-lg-12">
+?><div class="row">
+	<div class="col-lg-12">
 		<div class="card">
 	    	<div class="card-header">
 				<h5 class="float-left">Elenco gruppi</h5>
@@ -53,7 +54,8 @@ if (count($this->groups)) {
 				</div>
 			</div>
 		</div>
-	</div><?php
+	</div>
+</div><?php
 
 	print $this->getPaginationBar();
 

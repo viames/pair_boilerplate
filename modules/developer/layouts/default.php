@@ -17,10 +17,12 @@
 						<p>Crea una nuova classe o un nuovo modulo da una tabella della base di dati</em></p>
 						<a href="developer/newClass" class="btn btn-primary"><i class="fa fa-play"></i> Inizia</a>
 					</div>
+					<?php /*
 					<div>
 						<p>Crea una nuova tabella della base di dati da una classe Pair\ActiveRecord</p>
 						<a href="developer/newTable" class="btn btn-primary"><i class="fa fa-play"></i> Inizia</a>
 					</div>
+					*/ ?>
 				</div>
 			</div>
 		</div>

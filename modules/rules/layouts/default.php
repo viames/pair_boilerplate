@@ -8,13 +8,14 @@
 use Pair\Utilities;
 
 ?>
-<div class="col-lg-12">
-	<div class="card">
-		<div class="card-header">
-			<h5 class="float-left"><?php $this->_('RULES') ?></h5>
-			<a class="btn btn-primary btn-sm float-right" href="rules/new"><i class="fa fa-plus-circle"></i> <?php $this->_('NEW_RULE') ?></a>
-		</div>
-		<div class="card-body"><?php
+<div class="row">
+	<div class="col-lg-12">
+		<div class="card">
+			<div class="card-header">
+				<h5 class="float-left"><?php $this->_('RULES') ?></h5>
+				<a class="btn btn-primary btn-sm float-right" href="rules/new"><i class="fa fa-plus-circle"></i> <?php $this->_('NEW_RULE') ?></a>
+			</div>
+			<div class="card-body"><?php
 		
 		if (count($this->rules)) {
 			
@@ -55,6 +56,7 @@ use Pair\Utilities;
 		}
 		
 		?>
+			</div>
 		</div>
 	</div>
 </div>

@@ -266,6 +266,31 @@ class DeveloperModel extends Model {
 
 	}
 	
+	public function getAvailableTranslations() {
+		
+		// list of files to exclude
+		$excludes = array('..', '.', '.DS_Store', 'thumbs.db');
+		
+		try {
+			
+			// reads folders file and dirs as plain array
+			$langs = array_diff(scandir(dirname(__FILE__) . '/languages', 0), $excludes);
+			
+		} catch (Exception $e) {
+		
+			$this->addError('Language folder can’t be scan in order to return available language');
+			return [];
+		
+		}
+		
+		foreach ($langs as &$l) {
+			$l = str_replace('.ini', '', $l);
+		}
+		
+		return $langs;
+		
+	}
+	
 	/**
 	 * Setup all needed variables before to proceed class/module creation.
 	 * 
@@ -276,9 +301,13 @@ class DeveloperModel extends Model {
 	public function setupVariables($tableName, $objectName=NULL, $moduleName=NULL) {
 		
 		$app = Application::getInstance();
+		
+		// custom layouts
+		$customLayout = $app->template->getPath() . '/developer_layouts.php';
 
-		// load custom layouts
-		include_once 'assets/layouts.php';
+		// load proper layout contents
+		include_once (file_exists($customLayout) ? $customLayout : 'assets/layouts.php');
+		
 		$this->layouts		= $layouts;		
 		
 		$this->tableName	= $tableName;
@@ -402,6 +431,11 @@ class DeveloperModel extends Model {
 		
 	}
 	
+	/**
+	 * Assemble and save the object class file.
+	 * 
+	 * @param	string	File name.
+	 */
 	public function saveClass($file) {
 		
 		// here starts building of property cast
@@ -411,23 +445,13 @@ class DeveloperModel extends Model {
 		$datetimes	= [];
 		$integers	= [];
 		$floats		= [];
-		$describe	= [];
-		$fkGets		= [];
 		
 		$init = '';
 		
-		// retrieve data about table schema
-		$columns = $this->db->describeTable($this->tableName);
-		
-		$foreignKeys = $this->db->getForeignKeys($this->tableName);
-		
-		// populate properties declaration and binds
+		// populate the properties declarations
 		foreach ($this->binds as $property => $field) {
 			
-			// assembles php-doc
-			$phpDoc = "\t/**\n\t * Property that binds db field $field.\n\t * @var ";
-
-			// sets right property type
+			// set the right property type
 			switch ($this->propType[$property]) {
 				
 				case 'string':
@@ -468,33 +492,9 @@ class DeveloperModel extends Model {
 					
 			}
 
-			$properties[] = $phpDoc . $phpType . "\n\t */\n\tprotected $" . $property . ";";
-
-			$binds[] = "\n\t\t\t'" . $property . "' => '" . $field . "'";
-			
-			// get the fk-column for the current field
-			$col = $this->getForeignKey($field, $foreignKeys);
-			
-			// add a cached methods for a foreign key
-			if (!is_null($col)) {
-				
-				// get its class
-				$fkClass = $this->getClassByTable($col->REFERENCED_TABLE_NAME);
-			
-				// build the cached method to get a referenced objects 
-				$fkGets[] =	"\t/**\n\t * Return related " . $fkClass . " object. Cached.\n" .
-						"\t *\n\t * @return	" . $fkClass . "|NULL\n\t */\n" .
-						"\tpublic function get" . str_replace('\\', '', $fkClass) . "() {\n\n" .
-						"\t\t\$class	= '" . $fkClass . "';\n" .
-						"\t\t\$id		= \$this->" . $property . ";\n\n" .
-						"\t\t// add to object cache\n" .
-						"\t\tif (!\$this->issetCache(\$class)) {\n" .
-						"\t\t\t\$this->setCache(\$class, (\$id ? new \$class(\$id) : NULL));\n" .
-						"\t\t}\n\n" .
-						"\t\treturn \$this->getCache(\$class);\n\n" .
-						"\t}\n\n";
-				
-			}
+			// assembles property declaration
+			$properties[] = "\t/**\n\t * This property maps the $field field.\n\t " .
+							"* @var " . $phpType . "\n\t */\n\tprotected $" . $property . ";";
 			
 		}
 
@@ -553,28 +553,13 @@ class ' . $this->objectName . ' extends ActiveRecord {
 	 */
 	const TABLE_KEY = ' . $this->getFormattedTableKey() . ';
 
-' . $init .
-
-'	/**
-	 * Return array with matching object property name on related db fields.
-	 *
-	 * @return	array
-	 */
-	protected static function getBinds() {
-		
-		$varFields = array (' . implode(",", $binds) . ');
-		
-		return $varFields;
-		
-	}
-
-' . implode('', $fkGets) . '}';
+' . $init . '}';
 		
 		// writes the code into the file
 		$this->writeFile($file, $content);
 		
 	}
-	
+
 	/**
 	 * Save the model.php file with all Form entries.
 	 * 
@@ -612,21 +597,9 @@ class ' . $this->objectName . ' extends ActiveRecord {
 				
 				// create the new select
 				$control  = '$form->addSelect(\'' . $property . '\')';
-				
-				// return the first text property of a class
-				$getFirstTextProperty = function($class) {
-					$obj = new $class();
-					$props = $obj->getAllProperties();
-					foreach ($props as $prop => $value) {
-						if ('string' == $obj->getPropertyType($prop)) {
-							return $prop;
-						}
-					}
-					return NULL;
-				};
 
 				// search the first string-type field in the class, to use as label
-				$firstTextProp = $getFirstTextProperty($fkClass);
+				$firstTextProp = $this->getFirstTextProperty($fkClass);
 				if (!$firstTextProp) {
 					$firstTextProp = $fkColumn;
 				}
@@ -781,7 +754,6 @@ class ' . ucfirst($this->moduleName) . 'Model extends Model {
 'use Pair\Breadcrumb;
 use Pair\Controller;
 use Pair\Input;
-use Pair\Router;
  		
 class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 
@@ -799,7 +771,7 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 	}
 	
 	/**
-	 * Adds a new object.
+	 * Add a new object.
 	 */
 	public function addAction() {
 	
@@ -823,7 +795,7 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 	}
 
 	/**
-	 * Shows form for edit a ' . $this->objectName . ' object.
+	 * Show form for edit a ' . $this->objectName . ' object.
 	 */
 	public function editAction() {
 	
@@ -834,7 +806,7 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 	}
 
 	/**
-	 * Modifies a ' . $this->objectName . ' object.
+	 * Modify a ' . $this->objectName . ' object.
 	 */
 	public function changeAction() {
 
@@ -868,13 +840,11 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 	}
 
 	/**
-	 * Deletes a ' . $this->objectName . ' object.
+	 * Delete a ' . $this->objectName . ' object.
 	 */
 	public function deleteAction() {
 
-		$route = Router::getInstance();
-
-	 	$' . lcfirst($this->objectName) . ' = new ' . $this->objectName . '($route->getParam(0));
+	 	$' . lcfirst($this->objectName) . ' = $this->getObjectRequestedById(\'' . $this->objectName . '\');
 
 		// execute deletion
 		$result = $' . lcfirst($this->objectName) . '->delete();
@@ -909,16 +879,30 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 
 	}
 
-	public function saveLanguage($file) {
+	/**
+	 * Create and save a language file.
+	 * 
+	 * @param	string	Full path to language translation INI file.
+	 * @param	string	ISO 639-1 language code (ex. “en”).
+	 */
+	public function saveLanguage($file, $languageCode) {
 		
+		// get the Translator singleton
 		$tran = Translator::getInstance();
 		
-		// sets language for create the right file
-		$userLang = $tran->current;
-		$tran->current = $tran->default;
+		// keep the current language code
+		$currentLang = $tran->getCurrentLanguage();
 
-		// gets language name
-		$language = Language::getLanguageByCode($tran->default);
+		// get a new Language object
+		$newLang = Language::getLanguageByCode($languageCode);
+		
+		// if language doesn’t exist in application, return
+		if (!$newLang) {
+			return;
+		}
+		
+		// set a new language
+		$tran->setLanguage($newLang);
 		
 		$ucObject = strtoupper($this->objectName);
 		
@@ -932,25 +916,22 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 		}
 		
 		// here starts code collect
-		$content = '; $Id'.'$
-; ' . $language->englishName . ' language
-
-' . strtoupper($this->tableName) . ' = "' . str_replace('_', ' ', ucfirst($this->tableName)) .'"
-' . $ucObject . '_HAS_BEEN_CREATED = "' . $tran->translate('OBJECT_HAS_BEEN_CREATED', $this->objectName) . '"
-' . $ucObject . '_HAS_NOT_BEEN_CREATED = "' . $tran->translate('OBJECT_HAS_NOT_BEEN_CREATED', $this->objectName) . '"
-' . $ucObject . '_HAS_BEEN_CHANGED_SUCCESFULLY = "' . $tran->translate('OBJECT_HAS_BEEN_CHANGED_SUCCESFULLY', $this->objectName) . '"
-' . $ucObject . '_HAS_BEEN_DELETED_SUCCESFULLY = "' . $tran->translate('OBJECT_HAS_BEEN_DELETED_SUCCESFULLY', $this->objectName) . '"
-ERROR_DELETING_' . $ucObject . ' = "' . $tran->translate('ERROR_DELETING_OBJECT', $this->objectName) . '"
-NEW_' . strtoupper($this->objectName) . ' = "' . $tran->translate('NEW_OBJECT', $this->objectName) . '"
-EDIT_' . strtoupper($this->objectName) . ' = "' . $tran->translate('EDIT_OBJECT', $this->objectName) . '"
-' . implode("\r\n", $fields) . '
-';
+		$content = '; $Id' . "\$\n; " . $newLang->englishName . " language\n\n";
+		$content.= strtoupper($this->tableName) . ' = "' . str_replace('_', ' ', ucfirst($this->tableName)) . "\"\n";
+		$content.= $ucObject . '_HAS_BEEN_CREATED = "' . $tran->translate('OBJECT_HAS_BEEN_CREATED', $this->objectName) . "\"\n";
+		$content.= $ucObject . '_HAS_NOT_BEEN_CREATED = "' . $tran->translate('OBJECT_HAS_NOT_BEEN_CREATED', $this->objectName) . "\"\n";
+		$content.= $ucObject . '_HAS_BEEN_CHANGED_SUCCESFULLY = "' . $tran->translate('OBJECT_HAS_BEEN_CHANGED_SUCCESFULLY', $this->objectName) . "\"\n";
+		$content.= $ucObject . '_HAS_BEEN_DELETED_SUCCESFULLY = "' . $tran->translate('OBJECT_HAS_BEEN_DELETED_SUCCESFULLY', $this->objectName) . "\"\n";
+		$content.= 'ERROR_DELETING_' . $ucObject . ' = "' . $tran->translate('ERROR_DELETING_OBJECT', $this->objectName) . "\"\n";
+		$content.= 'NEW_' . strtoupper($this->objectName) . ' = "' . $tran->translate('NEW_OBJECT', $this->objectName) . "\"\n";
+		$content.= 'EDIT_' . strtoupper($this->objectName) . ' = "' . $tran->translate('EDIT_OBJECT', $this->objectName) . "\"\n";
+		$content.= implode("\n", $fields);
 		
 		// writes the code into the file
 		$this->writeFile($file, $content);
 
 		// sets back the user language
-		$tran->current = $userLang;
+		$tran->setLanguage($currentLang);
 		
 	}
 	
@@ -1002,39 +983,63 @@ class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 	 */
 	public function saveLayoutDefault($file) {
 
-		// custom layouts file
-		$layouts = $this->layouts;
-		
 		// trigger for link on first item
 		$fieldWithLink = TRUE;
+		
+		// get table’s foreign keys
+		$foreignKeys = $this->db->getForeignKeys ($this->tableName);
 		
 		// collects table headers and cells
 		foreach ($this->binds as $property=>$field) {
 			
+			// jump the table keys
 			if (!$this->isTableKey($field)) {
 				
 				// replace the table-header placeholder
-				$headers[] = str_replace('{tableHeader}', "<?php \$this->_('" . strtoupper($field) . "') ?>", $layouts['default-table-header']);
+				$headers[] = str_replace('{tableHeader}', "<?php \$this->_('" . strtoupper($field) . "') ?>", $this->layouts['default-table-header']);
 				
-				// add the date/datetime format method
-				switch ($this->propType[$property]) {
-					case 'date':	 $object = '$o->formatDate(\'' . $property . '\')';		break;
-					case 'datetime': $object = '$o->formatDateTime(\'' . $property . '\')'; break;
-					case 'set':		 $object = 'implode(\', \', $o->' . $property . ')';	break;
-					default:		 $object = '$o->' . $property;							break;
+				// get the fk-column for the current field
+				$col = $this->getForeignKey($field, $foreignKeys);
+				
+				// set the proper value for this property visualization
+				if (is_null($col)) {
+				
+					// add the date/datetime format method
+					switch ($this->propType[$property]) {
+						case 'date':	 $object = '$o->formatDate(\'' . $property . '\')'; break;
+						case 'datetime': $object = '$o->formatDateTime(\'' . $property . '\')'; break;
+						case 'set':		 $object = 'htmlspecialchars(implode(\', \', $o->' . $property . '))'; break;
+						case 'bool':	 $object = '($o->' . $property . ' ? \'<i class="fa fa-check text-success"></i>\' : \'\')'; break;
+						default:		 $object = 'htmlspecialchars($o->' . $property . ')'; break;
+					}
+					
+				// or get it by the related Pair object
+				} else {
+					
+					// get the class that’s mapping a table
+					$fkClass = $this->getClassByTable($col->REFERENCED_TABLE_NAME);
+					
+					// search the first string-type field in the class, to use as label
+					$firstTextProp = $this->getFirstTextProperty($fkClass);
+					if (!$firstTextProp) {
+						$firstTextProp = $this->getCamelCase($col->REFERENCED_COLUMN_NAME);
+					}
+					
+					$object = 'htmlspecialchars($o->getRelatedProperty(\'' . $property . '\', \'' . $firstTextProp . '\'))';
+					
 				}
+				
+				// complete the property value
+				$replace = '<?php print ' . $object . ' ?>';
 				
 				// replace the table-cell placeholder with link on the first item
 				if ($fieldWithLink) {
-					$replace = '<a href="' . $this->moduleName . '/edit/<?php print ' . $this->getTableKeyAsCgiParams('$o') . ' ?>">';
-					$replace.= '<?php print htmlspecialchars(' . $object . ') ?>';
-					$replace.= '</a>';
+					$replace = '<a href="' . $this->moduleName . '/edit/<?php print ' . $this->getTableKeyAsCgiParams('$o') . ' ?>">' . $replace . '</a>';
 					$fieldWithLink = FALSE;
-				} else {
-					$replace = '<?php print htmlspecialchars(' . $object . ') ?>';
 				}
 
-				$cells[] = str_replace('{tableCell}', $replace, $layouts['default-table-cell']);
+				// format table cell based on layout
+				$cells[] = str_replace('{tableCell}', $replace, $this->layouts['default-table-cell']);
 				
 			}
 			
@@ -1046,7 +1051,6 @@ class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 			"?><tr>\n" . implode("\n", $cells) . "</tr><?php\n" .
 			"} ?>\n";
 		
-		$ph['fileStart']	= $this->getFileStart();
 		$ph['pageTitle']	= '<?php $this->_(\'' . strtoupper($this->tableName) . '\') ?>';
 		$ph['linkAdd']		= $this->moduleName . '/new';
 		$ph['newElement']	= '<?php $this->_(\'NEW_' . strtoupper($this->objectName) . '\') ?>';
@@ -1055,7 +1059,7 @@ class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 		$ph['tableRows']	= $tableRows;
 
 		// replace value on placeholders
-		$content = $this->replaceHolders($layouts['default-page'], $ph);
+		$content = $this->getFileStart() . '?>' . $this->replaceHolders($this->layouts['default-page'], $ph);
 
 		// writes the code into the file
 		$this->writeFile($file, $content);
@@ -1120,14 +1124,13 @@ class ' . ucfirst($this->moduleName) . 'ViewNew extends View {
 			
 		}
 		
-		$ph['fileStart']	= $this->getFileStart();
 		$ph['pageTitle']	= '<?php $this->_(\'NEW_' . strtoupper($this->objectName) . '\') ?>';
 		$ph['formAction']	= $this->moduleName . '/add';
 		$ph['fields']		= implode('', $fields);
 		$ph['cancelUrl']	= $this->moduleName;
 
 		// replace value on placeholders
-		$content = $this->replaceHolders($this->layouts['new-page'], $ph);
+		$content = $this->getFileStart() . '?>' . $this->replaceHolders($this->layouts['new-page'], $ph);
 		
 		// writes the code into the file
 		$this->writeFile($file, $content);
@@ -1223,7 +1226,6 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 			
 		}
 		
-		$ph['fileStart']	= $this->getFileStart();
 		$ph['pageTitle']	= '<?php $this->_(\'EDIT_' . strtoupper($this->objectName) . '\') ?>';
 		$ph['formAction']	= $this->moduleName . '/change';
 		$ph['fields']		= implode('', $fields);
@@ -1233,7 +1235,7 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 		$ph['deleteUrl']	=  $this->moduleName . '/delete/<?php print ' . $this->getTableKeyAsCgiParams() . ' ?>';
 		
 		// replace value on placeholders
-		$content = $this->replaceHolders($this->layouts['edit-page'], $ph);
+		$content = $this->getFileStart() . '?>' . $this->replaceHolders($this->layouts['edit-page'], $ph);
 		
 		// writes the code into the file
 		$this->writeFile($file, $content);
@@ -1428,6 +1430,24 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 		
 		$column = $this->db->describeColumn($tableName, $field);
 		return (isset($column->Null) and 'YES' == $column->Null);
+		
+	}
+	
+	/**
+	 * Return the first text property of a class by its name.
+	 */
+	private function getFirstTextProperty($class) {
+		
+		$obj = new $class();
+		$props = $obj->getAllProperties();
+		
+		foreach ($props as $prop => $value) {
+			if ('string' == $obj->getPropertyType($prop)) {
+				return $prop;
+			}
+		}
+		
+		return NULL;
 		
 	}
 	
