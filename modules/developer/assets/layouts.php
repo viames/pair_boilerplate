@@ -23,11 +23,11 @@ $layouts['default-page'] =
 						<table class="table table-hover">
 							<thead>
 								<tr>
-	{tableHeaders}
+{tableHeaders}
 								</tr>
 							</thead>
 							<tbody>
-	{tableRows}
+{tableRows}
 							</tbody>
 						</table>
 					</div><?php
@@ -60,7 +60,7 @@ $layouts['new-page'] =
 				<h4 class="panel-title">{pageTitle}</h4>
 			</div>
 			<div class="panel-body">
-				<form action="{formAction}" method="post" class="form-horizontal">
+				<form action="{formAction}" method="post">
 					<fieldset>{fields}
 					</fieldset>
 					<div class="hr-line-dashed"></div>
@@ -91,7 +91,7 @@ $layouts['edit-page'] =
 				<h4 class="panel-title">{pageTitle}</h4>
 			</div>
 			<div class="panel-body">
-				<form action="{formAction}" method="post" class="form-horizontal">
+				<form action="{formAction}" method="post">
 					{hiddenFields}
 					<fieldset>{fields}
 					</fieldset>

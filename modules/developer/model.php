@@ -301,9 +301,9 @@ class DeveloperModel extends Model {
 	public function setupVariables($tableName, $objectName=NULL, $moduleName=NULL) {
 		
 		$app = Application::getInstance();
-		
+
 		// custom layouts
-		$customLayout = $app->template->getPath() . '/developer_layouts.php';
+		$customLayout = $app->template->getPath() . 'developer_layouts.php';
 
 		// load proper layout contents
 		include_once (file_exists($customLayout) ? $customLayout : 'assets/layouts.php');
@@ -585,32 +585,44 @@ class ' . $this->objectName . ' extends ActiveRecord {
 
 				// get the fk-column for the current field
 				$col = $this->getForeignKey($field, $foreignKeys);
-
-				// some useful variables
-				$fkClass	= $this->getClassByTable($col->REFERENCED_TABLE_NAME);
-				$tmp		= explode('\\', $fkClass);
-				$fkVar		= '$' . $this->getCamelCase(end($tmp));
-				$fkColumn	= $this->getCamelCase($col->REFERENCED_COLUMN_NAME);
-
-				// add the list of all fk-class objects
-				$lists[] = "\t\t" . $fkVar . ' = ' . $fkClass . "::getAllObjects();\n";
 				
-				// create the new select
-				$control  = '$form->addSelect(\'' . $property . '\')';
+				// get class of a referenced table
+				$fkClass = $this->getClassByTable($col->REFERENCED_TABLE_NAME);
 
-				// search the first string-type field in the class, to use as label
-				$firstTextProp = $this->getFirstTextProperty($fkClass);
-				if (!$firstTextProp) {
-					$firstTextProp = $fkColumn;
+				// class found, add a select with options from related object
+				if ($fkClass) {
+				
+					// some useful variables
+					$tmp		= explode('\\', $fkClass);
+					$fkVar		= '$' . $this->getCamelCase(end($tmp));
+					$fkColumn	= $this->getCamelCase($col->REFERENCED_COLUMN_NAME);
+	
+					// add the list of all fk-class objects
+					$lists[] = "\t\t" . $fkVar . ' = ' . $fkClass . "::getAllObjects();\n";
+					
+					// create the new select
+					$control  = '$form->addSelect(\'' . $property . '\')';
+	
+					// search the first string-type field in the class, to use as label
+					$firstTextProp = $this->getFirstTextProperty($fkClass);
+					if (!$firstTextProp) {
+						$firstTextProp = $fkColumn;
+					}
+					
+					// if is nullable field, add an empty option
+					if ($this->isFieldNullable($this->tableName, $field)) {
+						$control .= '->prependEmpty()';
+					}
+					
+					// set value for the select control
+					$control .= '->setListByObjectArray(' . $fkVar . ', \'' . $fkColumn . '\', \'' . $firstTextProp . '\')';
+					
+				// class not found, create a simple text input control 
+				} else {
+					
+					$control = "\$form->addInput('" . $property . "')";
+					
 				}
-				
-				// if is nullable field, add an empty option
-				if ($this->isFieldNullable($this->tableName, $field)) {
-					$control .= '->prependEmpty()';
-				}
-				
-				// set value for the select control
-				$control .= '->setListByObjectArray(' . $fkVar . ', \'' . $fkColumn . '\', \'' . $firstTextProp . '\')';
 				
 			// standard inputs
 			} else {
@@ -1019,13 +1031,23 @@ class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 					// get the class that’s mapping a table
 					$fkClass = $this->getClassByTable($col->REFERENCED_TABLE_NAME);
 					
-					// search the first string-type field in the class, to use as label
-					$firstTextProp = $this->getFirstTextProperty($fkClass);
-					if (!$firstTextProp) {
-						$firstTextProp = $this->getCamelCase($col->REFERENCED_COLUMN_NAME);
-					}
+					// class found, get a related object
+					if ($fkClass) {
 					
-					$object = 'htmlspecialchars($o->getRelatedProperty(\'' . $property . '\', \'' . $firstTextProp . '\'))';
+						// search the first string-type field in the class, to use as label
+						$firstTextProp = $this->getFirstTextProperty($fkClass);
+						if (!$firstTextProp) {
+							$firstTextProp = $this->getCamelCase($col->REFERENCED_COLUMN_NAME);
+						}
+						
+						$object = 'htmlspecialchars($o->getRelatedProperty(\'' . $property . '\', \'' . $firstTextProp . '\'))';
+					
+					// class not found, show a simple field value
+					} else {
+						
+						$object = 'htmlspecialchars($o->' . $property . ')';
+						
+					}
 					
 				}
 				
@@ -1438,16 +1460,21 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 	 */
 	private function getFirstTextProperty($class) {
 		
+		if (!$class) return NULL;
+		
 		$obj = new $class();
 		$props = $obj->getAllProperties();
 		
+		// search for string property
 		foreach ($props as $prop => $value) {
 			if ('string' == $obj->getPropertyType($prop)) {
 				return $prop;
 			}
 		}
 		
-		return NULL;
+		// in case not found any string property
+		reset($props);
+		return key($props);
 		
 	}
 	

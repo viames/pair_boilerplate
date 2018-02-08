@@ -12,7 +12,6 @@ use Pair\Module;
 use Pair\Options;
 use Pair\Router;
 use Pair\Rule;
-use Pair\Translator;
 
 class DeveloperController extends Controller {
 	
