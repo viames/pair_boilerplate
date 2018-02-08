@@ -46,7 +46,7 @@ $ composer create-project viames/pair_example project_name
 
 When launched, the Pair framework will check `config.php` file and, because it isn’t bundled, will starts the web installer interface. Please fill in all required data and in a second your Pair application will be up and running.
 
-In case you written something wrong in the config.php file, you can edit it manually. This is the file content
+In case you written something wrong in the `config.php` file, you can edit it manually. This is the file content
 
 ```PHP
 <?php
@@ -63,7 +63,7 @@ define ('DB_USER', 'your_user');
 define ('DB_PASS', 'your_pass');
 ```
 
-By creating different versions of this file you can move the project on other web-servers. This is useful to run a development version, a test version and a production version of the same project.
+By creating different versions of `config.php` file you can move the project on other web-servers. This is useful to run a development version, a test version and a production version of the same project.
 
 Now it’s time to login using the account that have your email address as username and a strong 15 chars random password that’s shown at the installation end.
 
