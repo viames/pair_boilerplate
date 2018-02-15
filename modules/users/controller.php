@@ -89,14 +89,14 @@ class UsersController extends Controller {
 	
 		$this->view = 'userList';
 	
+		$user	= new User(Input::get('id', 'int'));
+		$group	= new Group(Input::get('groupId', 'int'));
+		
 		// controllo validità del form
 		if (!$this->model->getUserForm()->isValid()) {
 			$this->enqueueError($this->lang('USER_HAS_NOT_BEEN_CHANGED', $user->fullName));
 			return;
 		}
-		
-		$user	= new User(Input::get('id', 'int'));
-		$group	= new Group(Input::get('groupId', 'int'));
 		
 		// controllo validità utente e gruppo
 		if (!$user->isLoaded() or !$group->isLoaded()) {
