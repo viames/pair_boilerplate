@@ -30,7 +30,7 @@ class SelftestViewDefault extends View {
 		$test = new SelfTest();
 		
 		// php version and config
-		$extensions = array('curl','fileinfo','gd','json','mcrypt','openssl','pcre','PDO','pdo_mysql','Reflection','soap');
+		$extensions = array('curl','fileinfo','gd','json','mcrypt','openssl','pcre','PDO','pdo_mysql','Reflection');
 		$label = $this->lang('TEST_PHP_CONFIGURATION', phpversion());
 		$result = $this->model->testPhp($extensions, '5.6.0');
 		$test->assertTrue($label, $result, $this->lang('SERVER'));

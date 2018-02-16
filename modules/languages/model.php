@@ -106,7 +106,7 @@ class LanguagesModel extends Model {
 				$language->perc		= 100.0;
 				$language->complete	= $defLines;
 			} else {
-				$language->perc		= floor(($translated[$language->code] / $defLines * 100));
+				$language->perc		= $defLines ? floor(($translated[$language->code] / $defLines * 100)) : 0;
 				$language->complete	= $translated[$language->code];
 			}
 		}
