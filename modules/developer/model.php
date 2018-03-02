@@ -392,7 +392,6 @@ class DeveloperModel extends Model {
 					case 'smallint':
 					case 'mediumint':
 					case 'int':
-					case 'bigint':
 					case 'year':
 						$this->propType[$property] = 'int';
 						break;
@@ -415,7 +414,8 @@ class DeveloperModel extends Model {
 						$this->propType[$property] = 'text';
 						break;
 						
-					// char, varchar, json, time etc.
+					// char, varchar, bigint, json, time etc.
+			 		case 'bigint':
 			 		default:
 			 			$this->propType[$property] = 'string';
 			 			break;
