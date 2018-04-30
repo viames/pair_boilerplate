@@ -392,6 +392,7 @@ class DeveloperModel extends Model {
 					case 'smallint':
 					case 'mediumint':
 					case 'int':
+					case 'bigint':
 					case 'year':
 						$this->propType[$property] = 'int';
 						break;
@@ -414,8 +415,7 @@ class DeveloperModel extends Model {
 						$this->propType[$property] = 'text';
 						break;
 						
-					// char, varchar, bigint, json, time etc.
-			 		case 'bigint':
+					// char, varchar, json, time etc.
 			 		default:
 			 			$this->propType[$property] = 'string';
 			 			break;
@@ -794,7 +794,7 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 		
 		if ($result) {
 			$this->enqueueMessage($this->lang(\'' . strtoupper($this->objectName) . '_HAS_BEEN_CREATED\'));
-			$this->redirect(\'' . $this->moduleName . '/default\');
+			$this->redirect(\'' . $this->moduleName . '\');
 		} else {
 			$msg = $this->lang(\'' . strtoupper($this->objectName) . '_HAS_NOT_BEEN_CREATED\') . \':\';
 			foreach ($' . lcfirst($this->objectName) . '->getErrors() as $error) {
@@ -832,7 +832,7 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 
 			// notify the change and redirect
 			$this->enqueueMessage($this->lang(\'' . strtoupper($this->objectName) . '_HAS_BEEN_CHANGED_SUCCESFULLY\'));
-			$this->redirect(\'' . $this->moduleName . '/default\');
+			$this->redirect(\'' . $this->moduleName . '\');
 
 		} else {
 
@@ -844,7 +844,7 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 				$this->enqueueError($message);
 				$this->view = \'default\';
 			} else {
-				$this->redirect(\'' . $this->moduleName . '/default\');
+				$this->redirect(\'' . $this->moduleName . '\');
 			}
 
 		}
@@ -864,7 +864,7 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 		if ($result) {
 
 			$this->enqueueMessage($this->lang(\'' . strtoupper($this->objectName) . '_HAS_BEEN_DELETED_SUCCESFULLY\'));
-			$this->redirect(\'' . $this->moduleName . '/default\');
+			$this->redirect(\'' . $this->moduleName . '\');
 
 		} else {
 
@@ -877,7 +877,7 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 				$this->view = \'default\';
 			} else {
 				$this->enqueueError($this->lang(\'ERROR_ON_LAST_REQUEST\'));
-				$this->redirect(\'' . $this->moduleName . '/default\');
+				$this->redirect(\'' . $this->moduleName . '\');
 			}
 
 		}
