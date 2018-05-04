@@ -14,7 +14,7 @@
 			<div class="panel-body">
 				<div class="flex-box-container">
 					<div>
-						<p>Crea una nuova classe o un nuovo modulo da una tabella della base di dati</em></p>
+						<p>Crea una nuova classe o un nuovo modulo da una tabella della base di dati</p>
 						<a href="developer/newClass" class="btn btn-primary"><i class="fa fa-play"></i> Inizia</a>
 					</div>
 				</div>

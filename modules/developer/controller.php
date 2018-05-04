@@ -53,12 +53,13 @@ class DeveloperController extends Controller {
 		
 		$this->view = 'newClass';
 
-		$tableName	= Input::get('tableName');
-		$objectName	= Input::get('objectName');
+		$tableName   = Input::get('tableName');
+		$objectName  = Input::get('objectName');
+		$svnComments = Input::getBool('svnComments');
 
 		if ($tableName and $objectName) {
 			
-			$this->model->setupVariables($tableName, $objectName);
+			$this->model->setupVariables($tableName, $objectName, $svnComments);
 			
 			$file = APPLICATION_PATH . '/classes/' . $this->model->objectName . '.php';
 
@@ -88,10 +89,12 @@ class DeveloperController extends Controller {
 		$tableName	= Input::get('tableName');
 		$objectName	= Input::get('objectName');
 		$moduleName	= Input::get('moduleName');
+		$svnComments = Input::getBool('svnComments');
+		$commonClass = Input::getBool('commonClass');
 			
 		if ($tableName and $objectName and $moduleName) {
 			
-			$this->model->setupVariables($tableName, $objectName, $moduleName);
+			$this->model->setupVariables($tableName, $objectName, $svnComments, $moduleName);
 			
 			$folder = APPLICATION_PATH . '/modules/' . $this->model->moduleName;
 				
@@ -117,7 +120,8 @@ class DeveloperController extends Controller {
 				}
 
 				// object class file
-				$this->model->saveClass($folder . '/classes/' . $this->model->objectName . '.php');
+				$path = ($commonClass ? APPLICATION_PATH : $folder) . '/classes/' . $this->model->objectName . '.php';
+				$this->model->saveClass($path);
 				
 				// controller
 				$this->model->saveController($folder . '/controller.php');

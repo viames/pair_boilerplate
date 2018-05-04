@@ -39,6 +39,12 @@ class DeveloperModel extends Model {
 	protected $objectName;
 	
 	/**
+	 * If TRUE, add comments and SVN $Id$ for auto-properties.
+	 * @var bool
+	 */
+	protected $svnComments;
+	
+	/**
 	 * List of properties type (property_name => type).
 	 * @var array
 	 */
@@ -135,6 +141,7 @@ class DeveloperModel extends Model {
 		$form = new Form();
 		$form->addControlClass('form-control');
 		$form->addInput('objectName')->setRequired();
+		$form->addInput('svnComments')->setType('bool');
 		$form->addInput('tableName')->setType('hidden')->setRequired();
 		return $form;
 		
@@ -146,6 +153,8 @@ class DeveloperModel extends Model {
 		$form->addControlClass('form-control');
 		$form->addInput('objectName')->setRequired();
 		$form->addInput('moduleName')->setRequired();
+		$form->addInput('svnComments')->setType('bool');
+		$form->addInput('commonClass')->setType('bool');
 		$form->addInput('tableName')->setType('hidden')->setRequired();
 		return $form;
 	
@@ -296,11 +305,15 @@ class DeveloperModel extends Model {
 	 * 
 	 * @param	string	Table name all lowercase with underscores.
 	 * @param	string	Optional object name with uppercase first and case sensitive.
+	 * @param	bool	If TRUE, add initial comments and $Id$ for SVN auto-properties.
 	 * @param	string	Optional module name all lowercase alpha chars only.
 	 */
-	public function setupVariables($tableName, $objectName=NULL, $moduleName=NULL) {
+	public function setupVariables($tableName, $objectName=NULL, $svnComments=FALSE, $moduleName=NULL) {
 		
 		$app = Application::getInstance();
+
+		// initialize layouts array
+		$layouts = [];
 
 		// custom layouts
 		$customLayout = $app->template->getPath() . 'developer_layouts.php';
@@ -313,6 +326,7 @@ class DeveloperModel extends Model {
 		$this->tableName	= $tableName;
 		$this->moduleName	= $moduleName ? $moduleName : strtolower(str_replace('_', '', $tableName));
 		$this->objectName	= $objectName ? $objectName : $this->getSingularObjectName($tableName);
+		$this->svnComments	= $svnComments;
 		$this->author		= $app->currentUser->fullName;
 		$this->package		= PRODUCT_NAME;
 		
@@ -549,7 +563,7 @@ class ' . $this->objectName . ' extends ActiveRecord {
 	
 	/**
 	 * Name of primary key db field.
-	 * @var string
+	 * @var string|array
 	 */
 	const TABLE_KEY = ' . $this->getFormattedTableKey() . ';
 
@@ -927,17 +941,21 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 
 		}
 		
+		$content = '';
+		
 		// here starts code collect
-		$content = '; $Id' . "\$\n; " . $newLang->englishName . " language\n\n";
-		$content.= strtoupper($this->tableName) . ' = "' . str_replace('_', ' ', ucfirst($this->tableName)) . "\"\n";
-		$content.= $ucObject . '_HAS_BEEN_CREATED = "' . $tran->translate('OBJECT_HAS_BEEN_CREATED', $this->objectName) . "\"\n";
-		$content.= $ucObject . '_HAS_NOT_BEEN_CREATED = "' . $tran->translate('OBJECT_HAS_NOT_BEEN_CREATED', $this->objectName) . "\"\n";
-		$content.= $ucObject . '_HAS_BEEN_CHANGED_SUCCESFULLY = "' . $tran->translate('OBJECT_HAS_BEEN_CHANGED_SUCCESFULLY', $this->objectName) . "\"\n";
-		$content.= $ucObject . '_HAS_BEEN_DELETED_SUCCESFULLY = "' . $tran->translate('OBJECT_HAS_BEEN_DELETED_SUCCESFULLY', $this->objectName) . "\"\n";
-		$content.= 'ERROR_DELETING_' . $ucObject . ' = "' . $tran->translate('ERROR_DELETING_OBJECT', $this->objectName) . "\"\n";
-		$content.= 'NEW_' . strtoupper($this->objectName) . ' = "' . $tran->translate('NEW_OBJECT', $this->objectName) . "\"\n";
-		$content.= 'EDIT_' . strtoupper($this->objectName) . ' = "' . $tran->translate('EDIT_OBJECT', $this->objectName) . "\"\n";
-		$content.= implode("\n", $fields);
+		if ($this->svnComments) {
+			$content .= '; $Id' . "\$\n; " . $newLang->englishName . " language\n\n";
+		}
+		$content .= strtoupper($this->tableName) . ' = "' . str_replace('_', ' ', ucfirst($this->tableName)) . "\"\n";
+		$content .= $ucObject . '_HAS_BEEN_CREATED = "' . $tran->translate('OBJECT_HAS_BEEN_CREATED', $this->objectName) . "\"\n";
+		$content .= $ucObject . '_HAS_NOT_BEEN_CREATED = "' . $tran->translate('OBJECT_HAS_NOT_BEEN_CREATED', $this->objectName) . "\"\n";
+		$content .= $ucObject . '_HAS_BEEN_CHANGED_SUCCESFULLY = "' . $tran->translate('OBJECT_HAS_BEEN_CHANGED_SUCCESFULLY', $this->objectName) . "\"\n";
+		$content .= $ucObject . '_HAS_BEEN_DELETED_SUCCESFULLY = "' . $tran->translate('OBJECT_HAS_BEEN_DELETED_SUCCESFULLY', $this->objectName) . "\"\n";
+		$content .= 'ERROR_DELETING_' . $ucObject . ' = "' . $tran->translate('ERROR_DELETING_OBJECT', $this->objectName) . "\"\n";
+		$content .= 'NEW_' . strtoupper($this->objectName) . ' = "' . $tran->translate('NEW_OBJECT', $this->objectName) . "\"\n";
+		$content .= 'EDIT_' . strtoupper($this->objectName) . ' = "' . $tran->translate('EDIT_OBJECT', $this->objectName) . "\"\n";
+		$content .= implode("\n", $fields);
 		
 		// writes the code into the file
 		$this->writeFile($file, $content);
@@ -1415,10 +1433,20 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 		
 	}
 	
+	/**
+	 * Create the file header comments and SVN $Id$ for auto-properties.
+	 * 
+	 * @return string
+	 */
 	private function getFileStart() {
 		
-		return "<?php\n\n/**\n * @version	\$Id\$\n * @author	" . $this->author .
-			"\n */\n\n";
+		$fileStart = "<?php\n\n";
+		
+		if ($this->svnComments) {
+			$fileStart .= "/**\n * @version	\$Id\$\n * @author	" . $this->author . "\n */\n\n";
+		}
+		
+		return $fileStart;
 	
 	}
 	

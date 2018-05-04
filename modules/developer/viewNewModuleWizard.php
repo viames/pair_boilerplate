@@ -34,6 +34,7 @@ class DeveloperViewNewModuleWizard extends View {
 		$form = $this->model->getModuleWizardForm();
 		$form->getControl('objectName')->setValue($this->model->objectName);
 		$form->getControl('moduleName')->setValue($this->model->moduleName);
+		$form->getControl('commonClass')->setValue(TRUE);
 		$form->getControl('tableName')->setValue($tableName);
 		
 		$this->assign('form', $form);
