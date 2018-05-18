@@ -742,8 +742,7 @@ class ' . ucfirst($this->moduleName) . 'Model extends Model {
 	 */
 	public function count' . ucfirst($this->moduleName) . '() {
 
-		$this->db->setQuery(\'SELECT COUNT(1) FROM ' . $this->tableName . '\');
-		return $this->db->loadCount();
+		return ' . $this->objectName . '::countAllObjects();
 
 	}
 

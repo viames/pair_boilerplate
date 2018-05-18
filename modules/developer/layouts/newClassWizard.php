@@ -28,7 +28,7 @@
 							<?php print $this->form->renderControl('tableName') ?>
 							<div class="form-group">
 								<div class="col-md-push-3 col-md-9">
-									<button type="submit" class="btn btn-primary" value="save" name="action"><i class="fa fa-save"></i> <?php $this->_('CREATE_CLASS') ?></button>
+									<button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> <?php $this->_('CREATE_CLASS') ?></button>
 									<a href="developer" class="btn btn-default"><i class="fa fa-times"></i> <?php $this->_('CANCEL')?></a>
 								</div>
 							</div>

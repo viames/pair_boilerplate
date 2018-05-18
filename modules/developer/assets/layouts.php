@@ -66,7 +66,7 @@ $layouts['new-page'] =
 					<div class="hr-line-dashed"></div>
 					<div class="form-group row">
 						<div class="col-md-push-3 col-md-9">
-							<button type="submit" class="btn btn-primary" value="add" name="action"><i class="fa fa-asterisk"></i> <?php $this->_(\'INSERT\') ?></button>
+							<button type="submit" class="btn btn-primary"><i class="fa fa-asterisk"></i> <?php $this->_(\'INSERT\') ?></button>
 							<a href="{cancelUrl}" class="btn btn-secondary"><i class="fa fa-times"></i> <?php $this->_(\'CANCEL\') ?></a>
 						</div>
 					</div>
@@ -98,7 +98,7 @@ $layouts['edit-page'] =
 					<div class="hr-line-dashed"></div>
 					<div class="form-group row">
 						<div class="col-md-push-3 col-md-9">
-							<button type="submit" class="btn btn-primary" value="edit" name="action"><i class="fa fa-save"></i> <?php $this->_(\'CHANGE\') ?></button>
+							<button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> <?php $this->_(\'CHANGE\') ?></button>
 							<a href="{cancelUrl}" class="btn btn-secondary"><i class="fa fa-times"></i> <?php $this->_(\'CANCEL\') ?></a><?php
 							if ($this->{object}->isDeletable()) { ?>
 							<a href="{deleteUrl}" class="btn btn-link confirm-delete pull-right float-right"><i class="fa fa-trash"></i> <?php $this->_(\'DELETE\') ?></a><?php
