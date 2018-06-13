@@ -103,9 +103,12 @@ class DeveloperController extends Controller {
 				// module folders
 				$folders = array(
 					$folder,
-					$folder . '/classes/',
 					$folder . '/languages/',
 					$folder . '/layouts/');
+				
+				if (!$commonClass) {
+					$folders[] = $folder . '/classes/';
+				}
 				
 				foreach ($folders as $f) {
 					$old = umask(0);

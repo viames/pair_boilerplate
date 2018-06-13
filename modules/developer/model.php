@@ -91,6 +91,7 @@ class DeveloperModel extends Model {
 		$allTables = $this->db->loadResultList();
 		
 		$classesTables = $this->getClassesTables();
+		$classesTables[] = 'options';
 		
 		$unmappedTables = array_diff($allTables, $classesTables);
 		
@@ -406,7 +407,6 @@ class DeveloperModel extends Model {
 					case 'smallint':
 					case 'mediumint':
 					case 'int':
-					case 'bigint':
 					case 'year':
 						$this->propType[$property] = 'int';
 						break;
@@ -507,7 +507,7 @@ class DeveloperModel extends Model {
 			}
 
 			// assembles property declaration
-			$properties[] = "\t/**\n\t * This property maps the $field field.\n\t " .
+			$properties[] = "\t/**\n\t * This property maps “" . $field . "” column.\n\t " .
 							"* @var " . $phpType . "\n\t */\n\tprotected $" . $property . ";";
 			
 		}

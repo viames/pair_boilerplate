@@ -14,8 +14,8 @@
 			<div class="panel-body">
 				<div class="flex-box-container">
 					<div>
-						<p>Crea una nuova classe o un nuovo modulo da una tabella della base di dati</p>
-						<a href="developer/newClass" class="btn btn-primary"><i class="fa fa-play"></i> Inizia</a>
+						<p><?php $this->_('CREATE_CLASS_OR_MODULE_DESCRIPTION') ?></p>
+						<a href="developer/newClass" class="btn btn-primary"><i class="fa fa-play"></i> <?php $this->_('START') ?></a>
 					</div>
 				</div>
 			</div>
