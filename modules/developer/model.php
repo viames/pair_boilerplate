@@ -695,6 +695,10 @@ class ' . $this->objectName . ' extends ActiveRecord {
 					default: 
 					case 'string':
 						$control = "\$form->addInput('" . $property . "')";
+						$maxLength = $this->getFieldMaxLength($this->tableName, $field);
+						if ($maxLength) {
+							$control .= '->setMaxLength(' . $maxLength . ')';
+						}
 						break;
 					
 					case 'text':
@@ -1479,6 +1483,24 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 		
 		$column = $this->db->describeColumn($tableName, $field);
 		return (isset($column->Null) and 'YES' == $column->Null);
+		
+	}
+	
+	/**
+	 * If field has length attribute, return it, otherwise return NULL.
+	 * 
+	 * @param	string	Table name.
+	 * @param	string	Field.
+	 * 
+	 * @return	int|NULL
+	 */
+	private function getFieldMaxLength(string $tableName, string $field) {
+		
+		$column = $this->db->describeColumn($tableName, $field);
+		
+		// split the column Type to recognize field type and length
+		preg_match('#^([\w]+)(\([^\)]+\))?#i', $column->Type, $matches);
+		return isset($matches[2]) ? (int)substr($matches[2], 1, -1) : NULL;
 		
 	}
 	

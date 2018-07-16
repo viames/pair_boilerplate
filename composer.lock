@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dfa413077476601e627d0b9c1c1b38e1",
+    "content-hash": "cce13e8f8f496b394a51b421b5a09780",
     "packages": [
         {
             "name": "viames/pair",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Viames/Pair.git",
-                "reference": "057939ef3029c4f46411d0ccdfcd2bbfe8397320"
+                "reference": "bf4ef90e179aeae001cbdea38304cc704d8d5521"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Viames/Pair/zipball/057939ef3029c4f46411d0ccdfcd2bbfe8397320",
-                "reference": "057939ef3029c4f46411d0ccdfcd2bbfe8397320",
+                "url": "https://api.github.com/repos/Viames/Pair/zipball/bf4ef90e179aeae001cbdea38304cc704d8d5521",
+                "reference": "bf4ef90e179aeae001cbdea38304cc704d8d5521",
                 "shasum": ""
             },
             "require": {
@@ -60,7 +60,7 @@
                 "rest-api",
                 "router"
             ],
-            "time": "2018-02-06T14:14:52+00:00"
+            "time": "2018-07-06T09:37:28+00:00"
         }
     ],
     "packages-dev": [],

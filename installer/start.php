@@ -369,7 +369,7 @@ class Installer {
 			$v['baseUri'] = $this->baseUri;
 		}
 
-?><!doctype html>
+?><!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
@@ -508,7 +508,7 @@ class Installer {
 		
 		$v = $this->getPostVars();
 		
-?><!doctype html>
+?><!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
