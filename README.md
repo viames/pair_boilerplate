@@ -16,56 +16,36 @@ Also it acts as REST API server.
 
 ## Quick start
 
-### Installation
+The [Installer](https://github.com/Viames/Pair_example/wiki/Installer) is used to configure the basic data of your web project. It starts automatically when the URL for the root folder is first launched, creates a custom [configuration](https://github.com/Viames/Pair/wiki/Configuration-file) file and auto-deletes after checking that everything is OK and that the installation was successful.
 
-Choose a name for your new project and create a new folder where to install Pair_example:
+After the installation is completed, all the fields declared in the installer can subsequently be customized by modifying the `configuration` file except those related to the user created. For the latter, it is sufficient to modify it via the Users module.
 
-```bash
-$ mkdir project_name
-$ cd project_name
-```
-Now you can create a new project [manually](#manual-installation) or by using [Composer](#composer), that allows to easily update Pair framework.
+## Create a new project
 
-#### <a name="manual-installation">Manual installation</a>
+To start a web project with the Pair framework, this sequence is the suggested one:
 
-1. Please download the [Pair_example](https://github.com/Viames/Pair_example/releases)’s latest available release;
-2. Unzip the content into your project folder;
-3. Run your browser at web-server root and add the sub-url as configured in `BASE_URI` constant of config.php.
+#### 1. Install Pair_example
 
-#### <a name="composer">Composer</a>
-
-You can ask Composer to create the project into your new folder. If you don’t have Composer installed in your system, please [download it](https://getcomposer.org/download/).
-
-Launch a command-line terminal and create a new composer project named `project_name`:
-
-```bash
-$ composer create-project viames/pair_example project_name
+Use Composer to copy php files to a folder into your web server documents path:
+```shell
+composer create-project viames/pair_example my_project_name
 ```
 
-### Configuration
+#### 2. Run it by the browser
 
-When launched, the Pair framework will check `config.php` file and, because it isn’t bundled, will starts the web installer interface. Please fill in all required data and in a second your Pair application will be up and running.
-
-In case you written something wrong in the `config.php` file, you can edit it manually. This is the file content
-
-```PHP
-<?php
-
-// product
-define ('PRODUCT_VERSION', '1.0');
-define ('PRODUCT_NAME', 'Your application name');
-define ('BASE_URI', '/any_subpath_on_url');
-
-// database
-define ('DB_HOST', 'your_host');
-define ('DB_NAME', 'your_name');
-define ('DB_USER', 'your_user');
-define ('DB_PASS', 'your_pass');
+Launch the browser to the base address of the Pair_example project to start the [Installer](https://github.com/Viames/Pair_example/wiki/Installer).
+```shell
+http://localhost/my_project_name
 ```
+The project is ready to accept login and will let you manage users.
 
-By creating different versions of `config.php` file you can move the project on other web-servers. This is useful to run a development version, a test version and a production version of the same project.
+#### 3. Expand it according to your needs
 
-Now it’s time to login using the account that have your email address as username and a strong 15 chars random password that’s shown at the installation end.
+Create additional InnoDB tables for database of your project and set the foreign keys properly, these are useful for getting the most out of [ActiveRecord](https://github.com/Viames/Pair/wiki/ActiveRecord). Then start the built-in [Developer module](https://github.com/Viames/Pair_example/wiki/Developer), which will allow you to create a complete CRUD and class module for each of your custom tables.
+
+#### 4. Customize the template
+
+Your project deserves a unique aspect, so proceed to customize the existing template or install a new template plugin via the built-in `Template` module.
 
 ---
 
