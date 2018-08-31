@@ -29,7 +29,7 @@
 					<button type="submit" class="btn btn-primary" value="edit"><i class="fa fa-save"></i> <?php $this->_('CHANGE') ?></button>
 					<a href="rules/default" class="btn btn-secondary"><i class="fa fa-times"></i> <?php $this->_('CANCEL') ?></a><?php
 					if ($this->rule->isDeletable()) {
-						?><a href="rules/delete/<?php print $this->rule->id ?>" class="btn btn-link confirm-delete float-right" value="delete" name="action"><i class="fa fa-trash"></i> <?php $this->_('DELETE') ?></a><?php
+						?><a href="rules/delete/<?php print $this->rule->id ?>" class="btn btn-link confirm-delete float-right"><i class="fa fa-trash"></i> <?php $this->_('DELETE') ?></a><?php
 					}
 					?>
 				</div>

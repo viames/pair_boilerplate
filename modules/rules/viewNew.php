@@ -5,7 +5,6 @@
  * @author	Viames Marino
  */
 
-use Pair\Module;
 use Pair\View;
 use Pair\Widget;
 
