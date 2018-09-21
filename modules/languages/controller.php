@@ -1,49 +1,125 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
 use Pair\Breadcrumb;
 use Pair\Controller;
 use Pair\Input;
 use Pair\Language;
-use Pair\Router;
-
+ 		
 class LanguagesController extends Controller {
 
+	/**
+	 * Initialize the Breadcrumb.
+	 * {@inheritDoc}
+	 *
+	 * @see Pair\Controller::init()
+	 */
 	protected function init() {
 		
-		Breadcrumb::getInstance()->addPath($this->lang('LANGUAGES'), 'languages/default');
+		$breadcrumb = Breadcrumb::getInstance();
+		$breadcrumb->addPath('Language', 'languages');
 		
 	}
 	
 	/**
-	 * Do the language strings change.
+	 * Add a new object.
 	 */
-	public function changeAction() {
+	public function addAction() {
 	
-		$route = Router::getInstance();
+		$languageCopy = new Language();
+		$languageCopy->populateByRequest();
 
-		$langId = Input::get('l', 'int');
-		$module = Input::get('m');
+		$result = $languageCopy->store();
 		
-		$language = new Language($langId);
-
-		$strings = Input::getInputsByRegex('#[A-Z][A-Z_]+#');
-
-		$res = $language->setStrings($strings, $module);
-
-		// user messages
-		if ($res) {
-			$this->enqueueMessage($this->lang('LANGUAGE_STRINGS_UPDATED', array($language->englishName, ucfirst($module))));
+		if ($result) {
+			$this->enqueueMessage($this->lang('LANGUAGE_HAS_BEEN_CREATED'));
+			$this->redirect('languages');
 		} else {
-			$this->enqueueError($this->lang('LANGUAGE_STRINGS_NOT_UPDATED', array($language->englishName, ucfirst($module))));
-		}
+			$msg = $this->lang('LANGUAGE_HAS_NOT_BEEN_CREATED') . ':';
+			foreach ($languageCopy->getErrors() as $error) {
+				$msg .= " \n" . $error;
+			}
+			$this->enqueueError($msg);
+			$this->view = 'default';
+		}					
 
-		$this->app->redirect('languages/details/' . $langId);
+	}
+
+	/**
+	 * Show form for edit a Language object.
+	 */
+	public function editAction() {
+	
+		$languageCopy = $this->getObjectRequestedById('Pair\Language');
+	
+		$this->view = $languageCopy ? 'edit' : 'default';
 	
 	}
-	
+
+	/**
+	 * Modify a Language object.
+	 */
+	public function changeAction() {
+
+		$languageCopy = new Language(Input::get('id'));
+		$languageCopy->populateByRequest();
+
+		// apply the update
+		$result = $languageCopy->store();
+
+		if ($result) {
+
+			// notify the change and redirect
+			$this->enqueueMessage($this->lang('LANGUAGE_HAS_BEEN_CHANGED_SUCCESFULLY'));
+			$this->redirect('languages');
+
+		} else {
+
+			// get error list from object
+			$errors = $languageCopy->getErrors();
+
+			if (count($errors)) { 
+				$message = $this->lang('ERROR_ON_LAST_REQUEST') . ": \n" . implode(" \n", $errors);
+				$this->enqueueError($message);
+				$this->view = 'default';
+			} else {
+				$this->redirect('languages');
+			}
+
+		}
+
+	}
+
+	/**
+	 * Delete a Language object.
+	 */
+	public function deleteAction() {
+
+	 	$languageCopy = $this->getObjectRequestedById('Language');
+
+		// execute deletion
+		$result = $languageCopy->delete();
+
+		if ($result) {
+
+			$this->enqueueMessage($this->lang('LANGUAGE_HAS_BEEN_DELETED_SUCCESFULLY'));
+			$this->redirect('languages');
+
+		} else {
+
+			// get error list from object
+			$errors = $languageCopy->getErrors();
+
+			if (count($errors)) { 
+				$message = $this->lang('ERROR_DELETING_LANGUAGE') . ": \n" . implode(" \n", $errors);
+				$this->enqueueError($message);
+				$this->view = 'default';
+			} else {
+				$this->enqueueError($this->lang('ERROR_ON_LAST_REQUEST'));
+				$this->redirect('languages');
+			}
+
+		}
+
+	}
+
 }

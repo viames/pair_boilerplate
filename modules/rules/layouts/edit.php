@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
 ?><form action="rules/change" method="post">
 	<div class="card">
 		<div class="card-body">

@@ -1,10 +1,5 @@
 <?php 
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
 use Pair\Translator;
 
 $translator = Translator::getInstance();
@@ -24,7 +19,7 @@ $translator = Translator::getInstance();
 		<div id="messageArea"></div>
 		<div class="wrapper">
 			<div class="box">
-				<h3 class="animated fadeInDown"><?php print $translator->translate('NOT_FOUND', '') ?></h3>
+				<h3 class="animated fadeInDown"><?php print $translator->get('NOT_FOUND', '') ?></h3>
 				<div class="icon animated fadeInUp"></div>
 			</div>
 		</div>

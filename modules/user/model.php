@@ -1,12 +1,6 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
 use Pair\Form;
-use Pair\Language;
 use Pair\Model;
 use Pair\Translator;
 
@@ -134,10 +128,10 @@ class UserModel extends Model {
 		$form->addControlClass('form-control');
 		
 		$form->addInput('username', array('autocorrect'=>'off', 'autocapitalize'=>'off'))
-			->setRequired()->setMinLength(3)->setPlaceholder($tran->translate('USERNAME'));
+			->setRequired()->setMinLength(3)->setPlaceholder($tran->get('USERNAME'));
 		$form->addInput('password', array('autocorrect'=>'off', 'autocapitalize'=>'off'))
 			->setType('password')->setRequired()
-			->setPlaceholder($tran->translate('PASSWORD'));
+			->setPlaceholder($tran->get('PASSWORD'));
 		$form->addInput('referer')->setType('hidden');
 		$form->addInput('timezone')->setType('hidden');
 		
@@ -156,7 +150,7 @@ class UserModel extends Model {
 		
 		$form->addControlClass('form-control');
 		
-		$languages = Language::getAllObjects(NULL, array('englishName'));
+		$locales = Locale::getAllNames();
 
 		$form->addInput('name')->setRequired()->setMinLength(2);
 		$form->addInput('surname')->setRequired()->setMinLength(2);
@@ -166,7 +160,7 @@ class UserModel extends Model {
 		$form->addInput('password', array('autocomplete'=>'off', 'autocorrect'=>'off', 'autocapitalize'=>'off'))
 			->setType('password')->setMinLength(8);
 		$form->addInput('showPassword')->setType('bool');
-		$form->addSelect('languageId')->setListByObjectArray($languages,'id','englishName')->setRequired();
+		$form->addSelect('languageId')->setListByObjectArray($locales,'id','nativeName')->setRequired();
 
 		return $form;
 

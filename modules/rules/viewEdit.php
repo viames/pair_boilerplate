@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
 use Pair\Router;
 use Pair\Rule;
 use Pair\View;
@@ -13,8 +8,6 @@ use Pair\Widget;
 class RulesViewEdit extends View {
 
 	public function render() {
-
-		$route = Router::getInstance();
 
 		$this->app->pageTitle = $this->lang('EDIT_RULE');
 		$this->app->activeMenuItem = 'rules';
@@ -25,7 +18,7 @@ class RulesViewEdit extends View {
 		$widget = new Widget();
 		$this->app->sideMenuWidget = $widget->render('sideMenu');
 
-		$rule = new Rule($route->getParam(0));
+		$rule = new Rule(Router::get(0));
 
 		$form = $this->model->getRulesForm();
 		$form->setValuesByObject($rule);

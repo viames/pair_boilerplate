@@ -1,13 +1,4 @@
-<?php
-
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
-use Pair\Utilities;
-
-?><div class="col-lg-12">
+<div class="col-lg-12">
 	<div class="card">
 		<div class="card-header">
 			<h5 class="float-left">Aggiungi ACL al gruppo <?php print htmlspecialchars($this->group->name) ?></h5>
@@ -54,7 +45,7 @@ if (count($this->rules)) {
 
 } else {
 
-	Utilities::printNoDataMessageBox();
+	Pair\Utilities::printNoDataMessageBox();
 
 }
 

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
 use Pair\Breadcrumb;
 use Pair\Group;
 use Pair\Router;
@@ -17,8 +12,7 @@ class UsersViewAclList extends View {
 
 		$this->app->activeMenuItem = 'users/groupList';
 
-		$route = Router::getInstance();
-		$groupId = $route->getParam(0);
+		$groupId = Router::get(0);
 
 		$group = new Group($groupId);
 

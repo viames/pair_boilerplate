@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
 use Pair\Breadcrumb;
 use Pair\Controller;
 use Pair\Plugin;
@@ -76,8 +71,8 @@ class TemplatesController extends Controller {
 		} else {
 			$this->enqueueError($this->lang('TEMPLATE_HAS_NOT_BEEN_REMOVED'));
 			$this->view = 'default';
-			$this->route->action = 'default';
-			$this->route->resetParams();
+			$this->router->action = 'default';
+			$this->router->resetParams();
 		}
 	
 	}

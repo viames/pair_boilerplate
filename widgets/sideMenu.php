@@ -1,10 +1,5 @@
 <?php 
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
 use Pair\Application;
 use Pair\Translator;
 
@@ -13,23 +8,26 @@ $translator	= Translator::getInstance();
 
 $menu = new BootstrapMenu();
 
-$menu->addItem('users/userList', $translator->translate('USERS'), NULL, 'fa-user');
-$menu->addItem('users/groupList', $translator->translate('GROUPS'), NULL, 'fa-users');
-$menu->addItem('options', $translator->translate('OPTIONS'), NULL, 'fa-sliders-h');
+$menu->addItem('users/userList', $translator->get('USERS'), NULL, 'fa-user');
+$menu->addItem('users/groupList', $translator->get('GROUPS'), NULL, 'fa-users');
+$menu->addItem('options', $translator->get('OPTIONS'), NULL, 'fa-sliders-h');
 
 // admin multimenu
 if (is_a($app->currentUser, 'Pair\User') and $app->currentUser->admin) {
 
-	$menu->addItem('rules', $translator->translate('RULES'), NULL, 'fa-unlock');	
-	$menu->addItem('selftest', $translator->translate('SELF_TEST'), NULL, 'fa-check');
-	$menu->addItem('tools', $translator->translate('TOOLS'), NULL, 'fa-wrench');
-	$menu->addItem('languages/default', $translator->translate('LANGUAGES'), NULL, 'fa-language');
-	$menu->addItem('modules/default', 'Moduli', NULL, 'fa-puzzle-piece');
-	$menu->addItem('templates/default', 'Template', NULL, 'fa-puzzle-piece');
-	$menu->addItem('developer', $translator->translate('DEVELOPER'), NULL, 'fa-magic');
+	$menu->addItem('locales', $translator->get('LOCALES'), NULL, 'fa-globe');
+	$menu->addItem('countries', $translator->get('COUNTRIES'), NULL, 'fa-globe-africa');
+	$menu->addItem('languages', $translator->get('LANGUAGES'), NULL, 'fa-language');
+	$menu->addItem('rules', $translator->get('RULES'), NULL, 'fa-unlock');	
+	$menu->addItem('selftest', $translator->get('SELF_TEST'), NULL, 'fa-check');
+	$menu->addItem('tools', $translator->get('TOOLS'), NULL, 'fa-wrench');
+	$menu->addItem('modules/default', $translator->get('MODULES'), NULL, 'fa-puzzle-piece');
+	$menu->addItem('templates/default', $translator->get('TEMPLATES'), NULL, 'fa-puzzle-piece');
+	$menu->addItem('developer', $translator->get('DEVELOPER'), NULL, 'fa-magic');
+	$menu->addItem('translator', $translator->get('TRANSLATOR'), NULL, 'fa-magic');
 
 }
 
-$menu->addItem('user/logout', $translator->translate('LOGOUT'), NULL, 'fa-sign-out-alt');
+$menu->addItem('user/logout', $translator->get('LOGOUT'), NULL, 'fa-sign-out-alt');
 
 print $menu->render();

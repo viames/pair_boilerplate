@@ -1,154 +1,53 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
-use Pair\Model;
-use Pair\Translator;
+use Pair\Form;
 use Pair\Language;
+use Pair\Model;
 
 class LanguagesModel extends Model {
 
 	/**
-	 * Compares all languages files with default language files and returns percentage of completeness.
+	 * Returns object list with pagination.
 	 *
-	 * @param	array:Language	List of languages.
+	 * @return	array:Language
 	 */
-	public function setLanguagePercentage($languages) {
+	public function getLanguagescopy() {
 
-		// initilize default lines
-		$defLines = 0;
-		
-		// instance of current language translator
-		$translator = Translator::getInstance();
-		
-		// initialize counter of fails
-		foreach ($languages as $language) {
-			$translated[$language->code] = 0;
-		}
-		
-		// paths
-		$defaultLang = $translator->getDefaultLanguage()->code . '.ini';
+		$query = 'SELECT * FROM ' . Language::TABLE_NAME . ' LIMIT ' . $this->pagination->start . ', ' . $this->pagination->limit;
 
-		$folders = Language::getLanguageFolders();
-		
-		// scan on each language folder
-		foreach ($folders as $module=>$folder) {
+		return Language::getObjectsByQuery($query);
 
-			// checks that folder and language file exists
-			if (is_dir($folder) and file_exists($folder . '/' . $defaultLang)) {
-				
-				// gets all default language’s keys
-				$langData = parse_ini_file($folder . '/' . $defaultLang);
-				$defaultKeys = array_keys($langData);
-				
-				// translated lines for default
-				$defLines += count($langData);
-				
-				// compares each other language file
-				foreach ($languages as $language) {
-					
-					// initilize details utility property
-					if (!property_exists($language, 'details')) {
-						$language->details = array();
-					}
-					
-					// compares to default language
-					if ($language->code != $translator->getDefaultLanguage()->code) {
-						
-						// details of comparing lines
-						$details = new stdClass();
-						$details->default = count($defaultKeys);
-						
-						$file = $folder . '/' . $language->code . '.ini';
-
-						// sets language details
-						if (file_exists($file)) {
-
-							// scans file and gets all translation keys
-							$langData = parse_ini_file($file);
-							$otherKeys = array_keys($langData);
-	
-							// details of translated lines
-							$details->count	= count($defaultKeys) - count(array_diff($defaultKeys, $otherKeys));
-							$details->perc	= $details->default ? floor(($details->count / $details->default) * 100) : 0;
-							$details->date	= filemtime($file);
-	
-							// sum to other modules for the same language
-							$translated[$language->code] += $details->count;
-	
-						// sets empty detail properties
-						} else {
-							
-							$details->count	= 0;
-							$details->perc	= 0;
-							$details->date	= NULL;
-							
-						}
-						
-						// assigns to a Language property
-						$language->details[$module] = $details;
-						
-					}
-						
-				}
-			
-			}
-			
-		}
-		
-		// sets 100% to default language and zero to the rest
-		foreach ($languages as $language) {
-
-			if ($translator->getDefaultLanguage()->code == $language->code) {
-				$language->perc		= 100.0;
-				$language->complete	= $defLines;
-			} else {
-				$language->perc		= $defLines ? floor(($translated[$language->code] / $defLines * 100)) : 0;
-				$language->complete	= $translated[$language->code];
-			}
-		}
-		
 	}
 
 	/**
-	 * Builds and sets a coloured progress bar as property Object->progressBar by reference.
+	 * Returns count of available objects.
 	 *
-	 * @param	Object	The target object with integer property “perc” (percentual).
+	 * @return	int
 	 */
-	public static function setProgressBar(&$object) {
-	
-		$object->progressBar = '<div class="progress progress-mini">';
-		
-		// perc is not set
-		if (!property_exists($object, 'perc')) {
-			$object->progressBar .= '<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
-				<span>0%</span></div></div>';
+	public function countLanguagescopy() {
+
+		return Language::countAllObjects();
+
+	}
+
+	/**
+	 * Returns the Form object for create/edit Language objects.
+	 * 
+	 * @return Form
+	 */ 
+	public function getLanguageForm() {
+
+		$form = new Form();
 			
-			return;
-		}
-	
-		$green = $red = 215;
-	
-		if (100 == $object->perc) {
-			$red = 0;
-		} else if (50 <= $object->perc) {
-			$red = 255;
-			$green = round(($object->perc / 50) * 110);
-		} else {
-			$green = 0;
-		}
-	
-		$bgColor = 'rgb(' . $red . ',' . $green . ',0)';
-	
-		$object->progressBar .=
-			'<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="' .
-			$object->perc .'" aria-valuemin="0" aria-valuemax="100"' . ' style="background-color:' . 
-			$bgColor . ';width:' . $object->perc . '%"><span>' . $object->perc .
-			'%</span></div></div>';
+		$form->addControlClass('form-control');
+			
+		$form->addInput('id')->setType('hidden');
+		$form->addInput('code')->setMaxLength(7)->setRequired();
+		$form->addInput('nativeName')->setMaxLength(30);
+		$form->addInput('englishName')->setMaxLength(30)->setRequired();
+		
+		return $form;
 		
 	}
-	
+				
 }

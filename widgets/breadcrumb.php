@@ -1,10 +1,5 @@
 <?php 
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
 use Pair\Breadcrumb;
 
 $breadcrumb = Breadcrumb::getInstance();

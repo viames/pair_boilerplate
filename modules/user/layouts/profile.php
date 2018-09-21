@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
 ?><div class="card">
 	<div class="card-header">
 		<h5><?php $this->_('PERSONAL_PROFILE') ?></h5>

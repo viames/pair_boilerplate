@@ -1,11 +1,4 @@
-<?php
-
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
-?><div class="card">
+<div class="card">
 	<div class="card-header">
 		<h5 class="float-left"><?php print $this->_('UPLOAD_NEW_MODULE') ?></h5>
 	</div>

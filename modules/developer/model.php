@@ -1,13 +1,9 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
 use Pair\Application;
 use Pair\Form;
 use Pair\Language;
+use Pair\Locale;
 use Pair\Model;
 use Pair\Translator;
 use Pair\Utilities;
@@ -284,20 +280,20 @@ class DeveloperModel extends Model {
 		try {
 			
 			// reads folders file and dirs as plain array
-			$langs = array_diff(scandir(dirname(__FILE__) . '/languages', 0), $excludes);
+			$translations = array_diff(scandir(dirname(__FILE__) . '/translations', 0), $excludes);
 			
 		} catch (Exception $e) {
 		
-			$this->addError('Language folder can’t be scan in order to return available language');
+			$this->addError('Translations folder is not found');
 			return [];
 		
 		}
 		
-		foreach ($langs as &$l) {
+		foreach ($translations as &$l) {
 			$l = str_replace('.ini', '', $l);
 		}
 		
-		return $langs;
+		return $translations;
 		
 	}
 	
@@ -912,26 +908,26 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 	 * Create and save a language file.
 	 * 
 	 * @param	string	Full path to language translation INI file.
-	 * @param	string	ISO 639-1 language code (ex. “en”).
+	 * @param	string	Language-tag (eg. “en-BR”).
 	 */
-	public function saveLanguage($file, $languageCode) {
+	public function saveLanguage($file, $representation) {
 		
 		// get the Translator singleton
 		$tran = Translator::getInstance();
 		
-		// keep the current language code
-		$currentLang = $tran->getCurrentLanguage();
+		// store the current Locale
+		$currentLocale = $tran->getCurrentLocale();
 
-		// get a new Language object
-		$newLang = Language::getLanguageByCode($languageCode);
+		// get a new Locale object
+		$newLocale = Locale::getByRepresentation($representation);
 		
-		// if language doesn’t exist in application, return
-		if (!$newLang) {
+		// if Locale doesn’t exist in application, return
+		if (!$newLocale) {
 			return;
 		}
 		
-		// set a new language
-		$tran->setLanguage($newLang);
+		// set the new Locale
+		$tran->setLocale($newLocale);
 		
 		$ucObject = strtoupper($this->objectName);
 		
@@ -948,23 +944,23 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 		
 		// here starts code collect
 		if ($this->svnComments) {
-			$content .= '; $Id' . "\$\n; " . $newLang->englishName . " language\n\n";
+			$content .= '; $Id' . "\$\n; " . $newLocale->englishName . " language\n\n";
 		}
 		$content .= strtoupper($this->tableName) . ' = "' . str_replace('_', ' ', ucfirst($this->tableName)) . "\"\n";
-		$content .= $ucObject . '_HAS_BEEN_CREATED = "' . $tran->translate('OBJECT_HAS_BEEN_CREATED', $this->objectName) . "\"\n";
-		$content .= $ucObject . '_HAS_NOT_BEEN_CREATED = "' . $tran->translate('OBJECT_HAS_NOT_BEEN_CREATED', $this->objectName) . "\"\n";
-		$content .= $ucObject . '_HAS_BEEN_CHANGED_SUCCESFULLY = "' . $tran->translate('OBJECT_HAS_BEEN_CHANGED_SUCCESFULLY', $this->objectName) . "\"\n";
-		$content .= $ucObject . '_HAS_BEEN_DELETED_SUCCESFULLY = "' . $tran->translate('OBJECT_HAS_BEEN_DELETED_SUCCESFULLY', $this->objectName) . "\"\n";
-		$content .= 'ERROR_DELETING_' . $ucObject . ' = "' . $tran->translate('ERROR_DELETING_OBJECT', $this->objectName) . "\"\n";
-		$content .= 'NEW_' . strtoupper($this->objectName) . ' = "' . $tran->translate('NEW_OBJECT', $this->objectName) . "\"\n";
-		$content .= 'EDIT_' . strtoupper($this->objectName) . ' = "' . $tran->translate('EDIT_OBJECT', $this->objectName) . "\"\n";
+		$content .= $ucObject . '_HAS_BEEN_CREATED = "' . $tran->get('OBJECT_HAS_BEEN_CREATED', $this->objectName) . "\"\n";
+		$content .= $ucObject . '_HAS_NOT_BEEN_CREATED = "' . $tran->get('OBJECT_HAS_NOT_BEEN_CREATED', $this->objectName) . "\"\n";
+		$content .= $ucObject . '_HAS_BEEN_CHANGED_SUCCESFULLY = "' . $tran->get('OBJECT_HAS_BEEN_CHANGED_SUCCESFULLY', $this->objectName) . "\"\n";
+		$content .= $ucObject . '_HAS_BEEN_DELETED_SUCCESFULLY = "' . $tran->get('OBJECT_HAS_BEEN_DELETED_SUCCESFULLY', $this->objectName) . "\"\n";
+		$content .= 'ERROR_DELETING_' . $ucObject . ' = "' . $tran->get('ERROR_DELETING_OBJECT', $this->objectName) . "\"\n";
+		$content .= 'NEW_' . strtoupper($this->objectName) . ' = "' . $tran->get('NEW_OBJECT', $this->objectName) . "\"\n";
+		$content .= 'EDIT_' . strtoupper($this->objectName) . ' = "' . $tran->get('EDIT_OBJECT', $this->objectName) . "\"\n";
 		$content .= implode("\n", $fields);
 		
-		// writes the code into the file
+		// write the code into the file
 		$this->writeFile($file, $content);
 
-		// sets back the user language
-		$tran->setLanguage($currentLang);
+		// sets back the kept Locale
+		$tran->setLocale($currentLocale);
 		
 	}
 	
@@ -1191,14 +1187,14 @@ class ' . ucfirst($this->moduleName) . 'ViewNew extends View {
 			foreach ($this->tableKey as $index => $k) {
 				$var	= '$' . $this->getCamelCase($k);
 				$vars[]	= $var;
-				$params.= '		' . $var . ' = $route->getParam(' . $index . ");\n";
+				$params.= '		' . $var . ' = Router::get(' . $index . ");\n";
 			}
 			
 			$key = 'array(' . implode(', ', $vars) . ')';
 				
 		} else {
 			$key	= '$' . $this->getCamelCase($this->tableKey);
-			$params	= '		' . $key . ' = $route->getParam(0);';
+			$params	= '		' . $key . ' = Router::get(0);';
 		}		
 
 		// here starts code collect
@@ -1220,7 +1216,6 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 		$this->app->pageTitle = $this->lang(\'EDIT_' . strtoupper($this->objectName) . '\');
 		$this->app->activeMenuItem = \'' . $this->moduleName . '\';
 
-		$route = Router::getInstance();
 ' . $params . '
 		$' . lcfirst($this->objectName) . ' = new ' . $this->objectName . '(' . $key . ');
 

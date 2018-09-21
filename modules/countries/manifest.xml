@@ -1,0 +1,3 @@
+<?xml version="1.0"?>
+<!DOCTYPE xml>
+<manifest><plugin type="Module"><name>countries</name><folder>countries</folder><version>1.0</version><dateReleased>2017-01-01</dateReleased><appVersion>1.0</appVersion><options/><files><file>controller.php</file><file>layouts/default.php</file><file>layouts/edit.php</file><file>layouts/new.php</file><file>manifest.xml</file><file>model.php</file><file>translations/en-GB.ini</file><file>translations/it-IT.ini</file><file>viewDefault.php</file><file>viewEdit.php</file><file>viewNew.php</file></files></plugin></manifest>

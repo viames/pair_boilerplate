@@ -1,11 +1,4 @@
-<?php
-
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
-?><form action="users/userChange" method="post">
+<form action="users/userChange" method="post">
 	<div class="card">
 		<div class="card-header">
 			<h5><?php $this->_('USER_EDIT') ?></h5>
@@ -46,7 +39,7 @@
 			</div>
 			<div class="form-group row">
 				<label class="col-md-3"><?php $this->_('LANGUAGE') ?></label>
-				<div class="col-md-9"><?php print $this->form->renderControl('languageId') ?></div>
+				<div class="col-md-9"><?php print $this->form->renderControl('localeId') ?></div>
 			</div>
 			<div class="form-group row">
 				<label class="col-md-3"><?php $this->_('GROUP') ?></label>

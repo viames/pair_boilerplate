@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
 use Pair\Breadcrumb;
 use Pair\Controller;
 use Pair\Input;
@@ -31,9 +26,7 @@ class DeveloperController extends Controller {
 	
 	public function classWizardAction() {
 		
-		$route = Router::getInstance();
-		
-		if (!$route->getParam(0)) {
+		if (!Router::get(0)) {
 			$this->enqueueError($this->lang('TABLE_NAME_NOT_SPECIFIED'));
 		}
 		
@@ -41,9 +34,7 @@ class DeveloperController extends Controller {
 	
 	public function moduleWizardAction() {
 		
-		$route = Router::getInstance();
-		
-		if (!$route->getParam(0)) {
+		if (!Router::get(0)) {
 			$this->enqueueError($this->lang('TABLE_NAME_NOT_SPECIFIED'));
 		}
 		
@@ -103,7 +94,7 @@ class DeveloperController extends Controller {
 				// module folders
 				$folders = array(
 					$folder,
-					$folder . '/languages/',
+					$folder . '/translations/',
 					$folder . '/layouts/');
 				
 				if (!$commonClass) {
@@ -116,10 +107,10 @@ class DeveloperController extends Controller {
 					umask($old);
 				}
 				
-				// languages
+				// translations
 				$translations = $this->model->getAvailableTranslations();
 				foreach ($translations as $t) {
-					$this->model->saveLanguage($folder . '/languages/' . $t . '.ini', $t);
+					$this->model->saveLanguage($folder . '/translations/' . $t . '.ini', $t);
 				}
 
 				// object class file
@@ -188,7 +179,7 @@ class DeveloperController extends Controller {
 	
 	public function createTableAction() {
 		
-		$tableName = $this->route->getParam(0);
+		$tableName = Router::get(0);
 		
 		$class = $this->model->getClassByTable($tableName);
 		

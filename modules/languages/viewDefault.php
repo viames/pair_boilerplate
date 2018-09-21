@@ -1,46 +1,33 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino */
-
+use Pair\Breadcrumb;
 use Pair\View;
 use Pair\Widget;
 
 class LanguagesViewDefault extends View {
 
 	/**
-	 * {@inheritdoc}
-	 *
-	 * @see View::Render()
+	 * Render HTML of this view.
+	 * {@inheritDoc}
+	 * @see \Pair\View::render()
 	 */
 	public function render() {
-		
+
 		$this->app->pageTitle		= $this->lang('LANGUAGES');
-		$this->app->activeMenuItem	= 'languages/default';
-		
+		$this->app->activeMenuItem	= 'languages';
+
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
 		
 		$widget = new Widget();
 		$this->app->sideMenuWidget = $widget->render('sideMenu');
-
-		// all registered languages
-		$languages = $this->model->getActiveRecordObjects('Pair\Language', 'code');
-
-		// adds translated line count and percentage
-		$this->model->setLanguagePercentage($languages);
 		
-		foreach ($languages as $language) {
-			
-			LanguagesModel::setProgressBar($language);
-			
-			$language->defaultIcon = $language->default ? '<i class="fa fa-lg fa-star text-warning"></i>' : NULL;
-			
-		}
-		
+		$languages = $this->model->getLanguagescopy();
+
+		$this->pagination->count = $this->model->countLanguagescopy();
+
 		$this->assign('languages', $languages);
-		
+
 	}
-	
+
 }

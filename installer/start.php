@@ -311,9 +311,9 @@ class Installer {
 
 		// assemble the query
 		$query =
-			'INSERT INTO `users` (`group_id`, `language_id`, `ldap_user`, `username`, `hash`, `name`,' .
+			'INSERT INTO `users` (`group_id`, `locale_id`, `ldap_user`, `username`, `hash`, `name`,' .
 			'`surname`, `email`, `admin`, `enabled`, `last_login`, `faults`) VALUES ' .
-			'(1, 1, NULL, ?, ?, ?, ?, ?, 1, 1, NULL, 0)';
+			'(1, 82, NULL, ?, ?, ?, ?, ?, 1, 1, NULL, 0)';
 		
 		// query parameters
 		$params = [$v['email'], $hash, $v['name'], $v['surname'], $v['email']];
@@ -672,7 +672,7 @@ $installer = new Installer();
 
 $installer->checkFoldersErrors();
 $installer->checkApacheErrors();
-$installer->checkPhpErrors('5.6', ['fileinfo','json','mcrypt','pcre','PDO','pdo_mysql','Reflection']);
+$installer->checkPhpErrors('5.6', ['fileinfo','json','pcre','PDO','pdo_mysql','Reflection']);
 
 // form is submitted, check if can proceed to install
 if (count($_POST)) {

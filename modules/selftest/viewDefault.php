@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
 use Pair\Database;
 use Pair\Options;
 use Pair\View;
@@ -30,7 +25,7 @@ class SelftestViewDefault extends View {
 		$test = new SelfTest();
 		
 		// php version and config
-		$extensions = array('curl','fileinfo','gd','json','mcrypt','openssl','pcre','PDO','pdo_mysql','Reflection');
+		$extensions = array('fileinfo','json','pcre','PDO','pdo_mysql','Reflection');
 		$label = $this->lang('TEST_PHP_CONFIGURATION', phpversion());
 		$result = $this->model->testPhp($extensions, '5.6.0');
 		$test->assertTrue($label, $result, $this->lang('SERVER'));
@@ -46,7 +41,7 @@ class SelftestViewDefault extends View {
 		$test->assertTrue($label, $result, $this->lang('SERVER'));
 		
 		// test folder permissions
-		$folders = array('languages', 'modules', 'temp', 'templates');
+		$folders = array('translations', 'modules', 'temp', 'templates');
 		$label = $this->lang('TEST_FOLDERS', implode(', ', $folders));
 		$result = $this->model->testFolders($folders);
 		$test->assertTrue($label, $result, $this->lang('APPLICATION'));
@@ -57,10 +52,10 @@ class SelftestViewDefault extends View {
 		$test->assertIsZero($label, $errors, $this->lang('APPLICATION'));
 		
 		// scan all language files
-		$unfound = $this->model->testLanguages();
+		$unfound = $this->model->testTranslations();
 		
 		// unfound folder
-		$label = $unfound['folders'] ? $this->lang('LANGUAGE_FOLDERS_NOT_FOUND', $unfound['folders']) : $this->lang('TEST_LANGUAGE_FOLDERS'); 
+		$label = $unfound['folders'] ? $this->lang('TRANSLATION_FOLDERS_NOT_FOUND', $unfound['folders']) : $this->lang('TEST_TRANSLATION_FOLDERS'); 
 		$test->assertIsZero($label, $unfound['folders'], $this->lang('APPLICATION'));
 		
 		// test plugins

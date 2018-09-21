@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
 use Pair\Breadcrumb;
 use Pair\Group;
 use Pair\Router;
@@ -20,9 +15,7 @@ class UsersViewGroupEdit extends View {
 	 */
 	public function render() {
 		
-		$route	= Router::getInstance();
-
-		$groupId	= $route->getParam(0);
+		$groupId	= Router::get(0);
 		$group		= new Group($groupId);
 		
 		$this->app->pageTitle = $this->lang('GROUP_EDIT');

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
 use Pair\Breadcrumb;
 use Pair\View;
 use Pair\Widget;
@@ -27,7 +22,7 @@ class ToolsViewDefault extends View {
 		
 		// rebuild existent language files
 		$tools[] = array(
-				'title'	=> $this->lang('REBUILD_LANGUAGE_FILES'),
+				'title'	=> $this->lang('REBUILD_TRANSLATION_FILES'),
 				'url'	=> 'tools/rebuildLanguageFiles');
 		
 		// restore db row or manifest file if missing
@@ -35,6 +30,11 @@ class ToolsViewDefault extends View {
 				'title'	=> $this->lang('FIX_PLUGINS'),
 				'url'	=> 'tools/fixPlugins');
 
+		// update files and db to latest Pair version
+		$tools[] = array(
+				'title'	=> $this->lang('UPDATE_PAIR_14'),
+				'url'	=> 'tools/updatePair');
+		
 		$this->assign('tools', $tools);
 	
 	}

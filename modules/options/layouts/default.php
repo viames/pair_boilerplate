@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
 ?><div class="col-lg-12">
 	<form action="options/save" method="post" class="form-horizontal">
 		<fieldset><?php 

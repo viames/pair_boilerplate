@@ -1,11 +1,4 @@
-<?php
-
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
-?><div class="ibox float-e-margins">
+<div class="ibox float-e-margins">
 	<div class="card-header">
 		<h5><?php $this->_('GROUP_EDIT') ?> "<?php print $this->group->name ?>"</h5>
 	</div>

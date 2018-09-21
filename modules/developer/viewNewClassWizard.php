@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
 use Pair\Options;
 use Pair\Router;
 use Pair\View;
@@ -25,14 +20,12 @@ class DeveloperViewNewClassWizard extends View {
 		$widget = new Widget();
 		$this->app->sideMenuWidget = $widget->render('sideMenu');
 
-		$route = Router::getInstance();
-		$tableName = $route->getParam(0);
+		$tableName = Router::get(0);
 
 		$this->model->setupVariables($tableName);
 		
 		$form = $this->model->getClassWizardForm();
 		$form->getControl('objectName')->setValue($this->model->objectName);
-		$form->getControl('commonClass')->setValue(TRUE);
 		$form->getControl('tableName')->setValue($tableName);
 		
 		$this->assign('form', $form);

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
 use Pair\Application;
 use Pair\Controller;
 use Pair\Input;
@@ -64,8 +59,8 @@ class UserController extends Controller {
 					if (isset($landing->module)) {
 						$this->app->redirect($landing->module . '/' . $landing->action);
 					} else {
-						$route = Router::getInstance();
-						$this->app->redirect($route->getDefaultUrl());
+						$router = Router::getInstance();
+						$this->app->redirect($router->getDefaultUrl());
 					}
 
 				// login denied

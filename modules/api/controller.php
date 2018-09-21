@@ -1,13 +1,7 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino 
- */
-
 use Pair\Controller;
 use Pair\Group;
-use Pair\Language;
 use Pair\Router;
 use Pair\Session;
 use Pair\User;
@@ -30,11 +24,9 @@ class ApiController extends Controller {
 	 */
 	public function loginAction() {
 		
-		$route = Router::getInstance();
-		
-		$username = $route->getParam('username');
-		$password = $route->getParam('password');
-		$timezone = $route->getParam('timezone');
+		$username = Router::get('username');
+		$password = Router::get('password');
+		$timezone = Router::get('timezone');
 		
 		if ($username and $password) {
 	
@@ -66,8 +58,7 @@ class ApiController extends Controller {
 	 */
 	public function logoutAction() {
 	
-		$route	= Router::getInstance();
-		$sid	= $route->getParam('sid');
+		$sid	= Router::get('sid');
 		$res	= User::doLogout($sid);
 		
 		if ($res) {
@@ -83,13 +74,12 @@ class ApiController extends Controller {
 	 */
 	public function getUserInformationsAction() {
 		
-		$route = Router::getInstance();
-		$sid = $route->getParam('sid');
+		$sid = Router::get('sid');
 
 		$session	= new Session($sid);
 		$user		= new User($session->idUser);
 		$group		= new Group($user->groupId);
-		$language	= new Language($user->languageId);
+		$locale		= new Locale($user->localeId);
 		
 		$data = new stdClass();
 		$data->name		= $user->name;
@@ -97,7 +87,7 @@ class ApiController extends Controller {
 		$data->fullname	= $user->fullName;
 		$data->username = $user->username;
 		$data->group	= $group->name;
-		$data->language	= $language->englishName;
+		$data->locale	= $locale->englishName;
 		$data->email	= $user->email;
 		$data->timezone	= $user->tzName;
 		
@@ -106,7 +96,7 @@ class ApiController extends Controller {
 	}
 	
 	/**
-	 * Get a parameter from route by its name and return a DateTime object if valid.
+	 * Get a parameter from router by its name and return a DateTime object if valid.
 	 * 
 	 * @param	string	Name of the date param.
 	 * 
@@ -114,8 +104,7 @@ class ApiController extends Controller {
 	 */
 	private function getDateTimeParam($name) {
 		
-		$route = Router::getInstance();
-		$param = $route->getParam($name);
+		$param = Router::get($name);
 		
 		if (!$this->isTimestampValid($param)) {
 			$this->sendError(ucfirst($name) . ' date is not valid');
@@ -215,7 +204,7 @@ class ApiController extends Controller {
 		};
 		
 		// check if return is required to be XML.
-		if ($this->route->getParam('xml')) {
+		if (Router::get('xml')) {
 			
 			// initialize node
 			$baseName = strtolower(PRODUCT_NAME);

@@ -1,12 +1,5 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
-use Pair\Utilities;
-
 if (count($this->groups)) {
 
 ?><div class="row">
@@ -61,6 +54,6 @@ if (count($this->groups)) {
 
 } else {
 
-	Utilities::printNoDataMessageBox();
+	Pair\Utilities::printNoDataMessageBox();
 
 }

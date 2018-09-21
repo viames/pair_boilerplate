@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
 use Pair\Breadcrumb;
 use Pair\Group;
 use Pair\Router;
@@ -16,12 +11,10 @@ class UsersViewUserEdit extends View {
 
 	public function render() {
 		
-		$route = Router::getInstance();
-		
 		$this->app->pageTitle = $this->lang('USER_EDIT');
 		$this->app->activeMenuItem = 'users/userList';
 		
-		$userId	= $route->getParam(0);
+		$userId	= Router::get(0);
 		$user	= new User($userId);
 		
 		$breadcrumb = Breadcrumb::getInstance();

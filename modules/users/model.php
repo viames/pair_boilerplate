@@ -1,15 +1,10 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
 use Pair\Acl;
 use Pair\Application;
 use Pair\Form;
 use Pair\Group;
-use Pair\Language;
+use Pair\Locale;
 use Pair\Model;
 use Pair\Rule;
 use Pair\Translator;
@@ -109,7 +104,15 @@ class UsersModel extends Model {
 
 		// lists for select
 		$groups	= Group::getAllObjects(NULL, 'name');
-		$languages = Language::getAllObjects(NULL, array('englishName'));
+		
+		$query =
+			'SELECT lo.*, CONCAT(la.english_name, " (", co.english_name, ")") AS language_country ' .
+			' FROM `locales` AS lo' .
+			' INNER JOIN languages AS la ON lo.language_id = la.id' .
+			' INNER JOIN countries AS co ON lo.country_id = co.id' .
+			' ORDER BY la.english_name';
+		
+		$locales = Locale::getObjectsByQuery($query);
 		
 		$form	= new Form();
 		$form->addControlClass('form-control');
@@ -124,7 +127,7 @@ class UsersModel extends Model {
 		$form->addInput('password', array('autocomplete'=>'off'))->setType('password')->setMinLength(8);
 		$form->addInput('showPassword')->setType('bool');
 		$form->addSelect('groupId')->setRequired()->setListByObjectArray($groups,'id','name');
-		$form->addSelect('languageId')->setRequired()->setListByObjectArray($languages,'id','englishName');
+		$form->addSelect('localeId')->setRequired()->setListByObjectArray($locales,'id','languageCountry');
 
 		return $form;
 

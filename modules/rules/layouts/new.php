@@ -1,11 +1,4 @@
-<?php
-	
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-	
-?><form action="rules/add" method="post">
+<form action="rules/add" method="post">
 	<div class="card">
 		<div class="card-body">
 			<div class="form-group row">

@@ -1,12 +1,8 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
 use Pair\Application;
 use Pair\Language;
+use Pair\Locale;
 use Pair\Model;
 use Pair\Module;
 use Pair\Options;
@@ -172,7 +168,7 @@ class SelftestModel extends Model {
 		$modules = Module::getAllObjects();
 		
 		foreach ($modules as $module) {
-			$folders[] = 'modules/' . strtolower($module->name) . '/languages';
+			$folders[] = 'modules/' . strtolower($module->name) . '/translations';
 		}
 
 		foreach ($folders as $f) {
@@ -321,20 +317,27 @@ class SelftestModel extends Model {
 	}
 
 	/**
-	 * Test for unfound language files under languages folder for all modules.
+	 * Test for unfound translation files under translations folder for all modules.
 	 *
 	 * @return array
 	 */
-	public function testLanguages() {
+	public function testTranslations() {
 
 		// instance of current language translator
 		$translator = Translator::getInstance();
 		
-		// all registered languages
-		$languages = Language::getAllObjects(NULL, array('code'));
+		// all registered Locales
+		
+		$query =
+			'SELECT lo.*, la.english_name AS language_name, co.english_name AS country_name, CONCAT(la.code, "-", co.code) AS representation' .
+			' FROM `locales` AS lo' .
+			' INNER JOIN languages AS la ON lo.language_id = la.id' .
+			' INNER JOIN countries AS co ON lo.country_id = co.id';
+		
+		$locales = Locale::getObjectsByQuery($query);
 
 		// paths
-		$defaultLang = $translator->getDefaultLanguage()->code . '.ini';
+		$defaultLang = Translator::getDefaultFileName();
 
 		// count of fails
 		$files		= 0;
@@ -343,35 +346,35 @@ class SelftestModel extends Model {
 		$notNeeded	= 0;
 		
 		// common language folder
-		$langFolders = array(APPLICATION_PATH . '/languages');
+		$translationsFolders = array(APPLICATION_PATH . '/translations');
 		
 		$modules = array_diff(scandir('modules'), array('..', '.', '.DS_Store'));
 		
 		// assembles the other language folders
 		foreach ($modules as $module) {
-			$langFolders[] = APPLICATION_PATH . '/modules/' . $module . '/languages';
+			$translationsFolders[] = APPLICATION_PATH . '/modules/' . $module . '/translations';
 		}
 		
 		// scan on each language folder
-		foreach ($langFolders as $langFolder) {
+		foreach ($translationsFolders as $translationsFolder) {
 
 			// checks that folder exists
-			if (is_dir($langFolder)) {
+			if (is_dir($translationsFolder)) {
 
 				// now checks for default language file
-				if (file_exists($langFolder . '/' . $defaultLang)) {
+				if (file_exists($translationsFolder . '/' . $defaultLang)) {
 
 					// gets all default language’s keys
-					$langData = @parse_ini_file($langFolder . '/' . $defaultLang);
+					$langData = @parse_ini_file($translationsFolder . '/' . $defaultLang);
 					$defaultKeys = array_keys($langData);
 
 					// compares each other language file
-					foreach ($languages as $language) {
-
+					foreach ($locales as $locale) {
+						
 						// else if is not default, pass keys to another array
-						if ($language->code != $translator->getDefaultLanguage()->code) {
+						if ($locale->representation != $translator->getDefaultLocale()->getRepresentation()) {
 
-							if (!file_exists($langFolder . '/' . $language->code . '.ini')) {
+							if (!file_exists($translationsFolder . '/' . $locale->representation . '.ini')) {
 	
 								$files++;
 								//$this->logWarning('Unfound ' . $language->englishName . ' language file at this path: ' . $langFolder);
@@ -379,14 +382,14 @@ class SelftestModel extends Model {
 							} else {
 
 								// scans file and gets all translation keys
-								$langData = @parse_ini_file($langFolder . '/' . $language->code . '.ini');
+								$langData = @parse_ini_file($translationsFolder . '/' . $locale->representation . '.ini');
 								$otherKeys = array_keys($langData);
 
 								// untranslated lines
-								$lines += $this->countUntranslated($defaultKeys, $otherKeys, $language->code, $langFolder);
+								$lines += $this->countUntranslated($defaultKeys, $otherKeys, $locale->representation, $translationsFolder);
 
 								// not needed lines
-								$notNeeded += $this->countNotNeeded($defaultKeys, $otherKeys, $language->code, $langFolder);
+								$notNeeded += $this->countNotNeeded($defaultKeys, $otherKeys, $locale->representation, $translationsFolder);
 			
 							}
 							
@@ -397,15 +400,15 @@ class SelftestModel extends Model {
 				} else {
 			
 					$files++;
-					//$this->logWarning('Unfound ' . $defaultLang . ' language file at this path: ' . $langFolder);
 			
 				}
 			
+			/*
 			} else {
 			
 				$folders++;
-				$this->logWarning('Folder language was not found at this path: ' . $langFolder);
-			
+				$this->logWarning('Translation folder was not found at this path: ' . $translationsFolder);
+			*/
 			}
 			
 		}

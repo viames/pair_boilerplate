@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
 use Pair\Options;
 use Pair\Router;
 use Pair\View;
@@ -26,8 +21,7 @@ class DeveloperViewNewModuleWizard extends View {
 		$widget = new Widget();
 		$this->app->sideMenuWidget = $widget->render('sideMenu');
 		
-		$route = Router::getInstance();
-		$tableName = $route->getParam(0);
+		$tableName = Router::get(0);
 
 		$this->model->setupVariables($tableName);
 		

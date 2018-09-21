@@ -1,11 +1,4 @@
-<?php
-
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
-?><div class="row">
+<div class="row">
 	<div class="col-12">
 		<div class="panel panel-inverse">
 			<div class="panel-heading">

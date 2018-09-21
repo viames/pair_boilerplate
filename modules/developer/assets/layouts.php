@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
 // layout della pagina default
 $layouts['default-page'] =
 '<div class="row">

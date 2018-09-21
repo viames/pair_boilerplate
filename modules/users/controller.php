@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
 use Pair\Acl;
 use Pair\Controller;
 use Pair\Group;
@@ -41,17 +36,17 @@ class UsersController extends Controller {
 
 		$group = new Group(Input::get('groupId', 'int'));
 
-		$user				= new User();
-		$user->name			= Input::get('name');
-		$user->surname		= Input::get('surname');
-		$user->email		= Input::get('email') ? Input::get('email') : NULL;
-		$user->ldapUser		= Input::get('ldapUser') ? Input::get('ldapUser') : NULL;
-		$user->username		= $username;
-		$user->enabled		= Input::get('enabled', 'bool');
-		$user->languageId	= Input::get('languageId', 'int');
-		$user->groupId		= Input::get('groupId', 'int');
-		$user->admin		= FALSE;
-		$user->faults		= 0;
+		$user			= new User();
+		$user->name		= Input::get('name');
+		$user->surname	= Input::get('surname');
+		$user->email	= Input::get('email') ? Input::get('email') : NULL;
+		$user->ldapUser	= Input::get('ldapUser') ? Input::get('ldapUser') : NULL;
+		$user->username	= $username;
+		$user->enabled	= Input::get('enabled', 'bool');
+		$user->localeId	= Input::get('localeId', 'int');
+		$user->groupId	= Input::get('groupId', 'int');
+		$user->admin	= FALSE;
+		$user->faults	= 0;
 
 		if ($password) {
 			$user->hash = User::getHashedPasswordWithSalt($password);
@@ -118,14 +113,14 @@ class UsersController extends Controller {
 			$this->app->redirect('users/userList');
 		}
 
-		$user->name			= Input::get('name');
-		$user->surname		= Input::get('surname');
-		$user->email		= Input::get('email') ? Input::get('email') : NULL;
-		$user->ldapUser		= Input::get('ldapUser') ? Input::get('ldapUser') : NULL;
-		$user->username		= Input::get('username');
-		$user->enabled		= Input::get('enabled', 'bool');
-		$user->languageId	= Input::get('languageId', 'int');
-		$user->groupId		= Input::get('groupId', 'int');
+		$user->name		= Input::get('name');
+		$user->surname	= Input::get('surname');
+		$user->email	= Input::get('email') ? Input::get('email') : NULL;
+		$user->ldapUser	= Input::get('ldapUser') ? Input::get('ldapUser') : NULL;
+		$user->username	= Input::get('username');
+		$user->enabled	= Input::get('enabled', 'bool');
+		$user->localeId	= Input::get('localeId', 'int');
+		$user->groupId	= Input::get('groupId', 'int');
 
 		if ($password) {
 			$user->hash = User::getHashedPasswordWithSalt($password);
@@ -144,8 +139,7 @@ class UsersController extends Controller {
 	 */
 	public function userDeleteAction() {
 
-		$route	= Router::getInstance();
-		$user	= new User($route->getParam(0));
+		$user	= new User(Router::get(0));
 		$group	= new Group($user->groupId);
 		
 		$fullName = $user->fullName;
@@ -235,9 +229,7 @@ class UsersController extends Controller {
 	 */
 	public function groupDeleteAction() {
 
-		$route = Router::getInstance();
-
-		$group = new Group($route->getParam(0));
+		$group = new Group(Router::get(0));
 
 		if ($group->canBeDeleted()) {
 
@@ -285,8 +277,7 @@ class UsersController extends Controller {
 	 */
 	public function aclDeleteAction() {
 		
-		$route	= Router::getInstance();
-		$aclId	= $route->getParam(0);
+		$aclId	= Router::get(0);
 		$acl	= new Acl($aclId);
 		
 		if ($acl->isLoaded()) {
@@ -315,9 +306,7 @@ class UsersController extends Controller {
 	 */
 	private function getRequestedUser() {
 	
-		$route = Router::getInstance();
-	
-		$userId = $route->getParam(0);
+		$userId = Router::get(0);
 	
 		if (!$userId) {
 			$this->enqueueError($this->lang('ITEM_TO_EDIT_IS_NOT_VALID'));
@@ -349,9 +338,7 @@ class UsersController extends Controller {
 	 */
 	private function getRequestedGroup() {
 
-		$route = Router::getInstance();
-
-		$groupId = $route->getParam(0);
+		$groupId = Router::get(0);
 
 		if (!$groupId) {
 			$this->enqueueError($this->lang('ITEM_TO_EDIT_IS_NOT_VALID'));

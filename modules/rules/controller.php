@@ -1,13 +1,9 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
 use Pair\Controller;
 use Pair\Input;
 use Pair\Module;
+use Pair\Router;
 use Pair\Rule;
 
 class RulesController extends Controller {
@@ -107,7 +103,7 @@ class RulesController extends Controller {
 	 */
 	public function deleteAction() {
 		
-		$rule = new Rule($this->route->getParam(0));
+		$rule = new Rule(Router::get(0));
 		$moduleName = $rule->getModule()->name;
 		
 		if ($rule->delete()) {

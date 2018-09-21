@@ -40,7 +40,7 @@ $app = Application::getInstance();
 		<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 		<script src="<?php print $this->templatePath ?>js/iziToast.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/pwstrength-bootstrap/2.1.1/pwstrength-bootstrap.min.js"></script>
-	    <script defer src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
+		<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 		<script src="<?php print $this->templatePath ?>js/custom.js" type="text/javascript"></script>
 		<?php print $this->pageScripts ?>
 	</body>    

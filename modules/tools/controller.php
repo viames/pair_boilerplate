@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
 use Pair\Controller;
 
 class ToolsController extends Controller {
@@ -19,8 +14,8 @@ class ToolsController extends Controller {
 
 	public function rebuildLanguageFilesAction() {
 	
-		$res = (int)$this->model->rebuildLanguageFiles();
-		$this->enqueueMessage($this->lang('LANGUAGE_FILES_REBUILT', $res));
+		$res = (int)$this->model->rebuildTranslationFiles();
+		$this->enqueueMessage($this->lang('TRANSLATION_FILES_REBUILT', $res));
 	
 	}
 	
@@ -28,6 +23,24 @@ class ToolsController extends Controller {
 		
 		$res = $this->model->fixPlugins();
 		$this->enqueueMessage($this->lang('PLUGINS_HAVE_BEEN_FIXED', $res));
+		
+	}
+	
+	public function updatePairAction() {
+		
+		$res = $this->model->updatePair14();
+		
+		if ($res) {
+			
+			$this->enqueueMessage($this->lang('PAIR_HAS_BEEN_UPDATED'));
+			
+		} else {
+			
+			$errors = $this->model->getErrors();
+			$msg = count($errors) ? implode("\n ", $errors) : $this->lang('ERROR_ON_LAST_REQUEST');
+			$this->enqueueError($msg);
+			
+		}
 		
 	}
 	
