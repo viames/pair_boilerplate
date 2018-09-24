@@ -26,7 +26,7 @@ class UserViewProfile extends View {
 		$form->getControl('surname')->setDisabled();
 		$form->getControl('email')->setDisabled();
 		$form->getControl('username')->setDisabled();
-		$form->getControl('languageId')->setDisabled();
+		$form->getControl('localeId')->setDisabled();
 		
 		$this->assign('user',  $user);
 		$this->assign('form',  $form);

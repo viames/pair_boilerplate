@@ -1,8 +1,4 @@
-<?php
-
-use Pair\Utilities;
-
-?><div class="row">
+<div class="row">
 	<div class="col-12">
 		<div class="panel panel-inverse">
 			<div class="panel-heading">
@@ -38,7 +34,7 @@ use Pair\Utilities;
 			
 			} else {
 				
-				print Utilities::printNoDataMessageBox();
+				print Pair\Utilities::printNoDataMessageBox();
 				
 			}
 			

@@ -41,7 +41,7 @@ class SelftestViewDefault extends View {
 		$test->assertTrue($label, $result, $this->lang('SERVER'));
 		
 		// test folder permissions
-		$folders = array('translations', 'modules', 'temp', 'templates');
+		$folders = array('modules', 'temp', 'templates', 'translations');
 		$label = $this->lang('TEST_FOLDERS', implode(', ', $folders));
 		$result = $this->model->testFolders($folders);
 		$test->assertTrue($label, $result, $this->lang('APPLICATION'));

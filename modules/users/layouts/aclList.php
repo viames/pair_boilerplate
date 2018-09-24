@@ -38,7 +38,7 @@ use Pair\Utilities;
 								<td class="text-center"><?php print $item->action ? ucfirst($item->action) : 'full access' ?></td>
 								<td class="text-center"><?php
 								// avoid deletion of default ACL
-								if (!$item->default) {
+								if (!$item->default and $item->isDeletable()) {
 									?><a class="btn btn-secondary btn-sm" href="users/aclDelete/<?php print $item->id ?>"><i class="fa fa-times"></i></a><?php
 								} else {
 									?><i class="fa fa-times disabled"></i><?php ;

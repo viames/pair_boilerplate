@@ -1,8 +1,3 @@
-/**
- * @version	$Id$
- * @author	VIames Marino
- */
-
 $(document).ready(function() {
 	
 	// show/hide password content in user edit

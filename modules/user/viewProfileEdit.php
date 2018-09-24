@@ -23,7 +23,6 @@ class UserViewProfileEdit extends View {
 
 		$form = $this->model->getUserForm();
 		$form->setValuesByObject($user);
-		$form->getControl('languageId')->setListByObjectArray($languages,'id','englishName')->setValue($user->languageId);
 		
 		$this->assign('user',	$user);
 		$this->assign('form',	$form);

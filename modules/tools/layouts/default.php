@@ -13,7 +13,7 @@
 						?><tr>
 							<td><?php print $tool['title'] ?></td>
 							<td class="text-right">
-								<a href="<?php print $tool['url'] ?>">
+								<a href="<?php print $tool['url'] ?>"<?php print ($tool['confirm'] ? ' class="confirm-action"' : '') ?>>
 									<button type="submit" class="btn btn-sm btn-primary pull-right m-t-n-xs"><i class="fa fa-play fa-fw"></i> <?php $this->_('RUN')?></button>
 								</a>
 							</td>

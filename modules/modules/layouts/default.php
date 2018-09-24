@@ -1,7 +1,5 @@
 <?php
 
-use Pair\Utilities;
-
 if (count($this->modules)) {
 	
 	?><div class="card">
@@ -47,6 +45,6 @@ if (count($this->modules)) {
 
 } else {
 
-	Utilities::printNoDataMessageBox();
+	Pair\Utilities::printNoDataMessageBox();
 
 }

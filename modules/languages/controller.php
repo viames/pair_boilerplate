@@ -25,17 +25,17 @@ class LanguagesController extends Controller {
 	 */
 	public function addAction() {
 	
-		$languageCopy = new Language();
-		$languageCopy->populateByRequest();
+		$language = new Language();
+		$language->populateByRequest();
 
-		$result = $languageCopy->store();
+		$result = $language->store();
 		
 		if ($result) {
 			$this->enqueueMessage($this->lang('LANGUAGE_HAS_BEEN_CREATED'));
 			$this->redirect('languages');
 		} else {
 			$msg = $this->lang('LANGUAGE_HAS_NOT_BEEN_CREATED') . ':';
-			foreach ($languageCopy->getErrors() as $error) {
+			foreach ($language->getErrors() as $error) {
 				$msg .= " \n" . $error;
 			}
 			$this->enqueueError($msg);
@@ -49,9 +49,9 @@ class LanguagesController extends Controller {
 	 */
 	public function editAction() {
 	
-		$languageCopy = $this->getObjectRequestedById('Pair\Language');
+		$language = $this->getObjectRequestedById('Pair\Language');
 	
-		$this->view = $languageCopy ? 'edit' : 'default';
+		$this->view = $language ? 'edit' : 'default';
 	
 	}
 
@@ -60,11 +60,11 @@ class LanguagesController extends Controller {
 	 */
 	public function changeAction() {
 
-		$languageCopy = new Language(Input::get('id'));
-		$languageCopy->populateByRequest();
+		$language = new Language(Input::get('id'));
+		$language->populateByRequest();
 
 		// apply the update
-		$result = $languageCopy->store();
+		$result = $language->store();
 
 		if ($result) {
 
@@ -75,7 +75,7 @@ class LanguagesController extends Controller {
 		} else {
 
 			// get error list from object
-			$errors = $languageCopy->getErrors();
+			$errors = $language->getErrors();
 
 			if (count($errors)) { 
 				$message = $this->lang('ERROR_ON_LAST_REQUEST') . ": \n" . implode(" \n", $errors);
@@ -94,10 +94,10 @@ class LanguagesController extends Controller {
 	 */
 	public function deleteAction() {
 
-	 	$languageCopy = $this->getObjectRequestedById('Language');
+		$language = $this->getObjectRequestedById('Language');
 
 		// execute deletion
-		$result = $languageCopy->delete();
+		$result = $language->delete();
 
 		if ($result) {
 
@@ -107,7 +107,7 @@ class LanguagesController extends Controller {
 		} else {
 
 			// get error list from object
-			$errors = $languageCopy->getErrors();
+			$errors = $language->getErrors();
 
 			if (count($errors)) { 
 				$message = $this->lang('ERROR_DELETING_LANGUAGE') . ": \n" . implode(" \n", $errors);

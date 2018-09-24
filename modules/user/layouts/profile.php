@@ -1,6 +1,4 @@
-<?php
-
-?><div class="card">
+<div class="card">
 	<div class="card-header">
 		<h5><?php $this->_('PERSONAL_PROFILE') ?></h5>
 	</div>
@@ -24,7 +22,7 @@
 				</div>
 				<div class="form-group row">
 					<label class="col-sm-2"><?php $this->_('LANGUAGE') ?></label>
-					<div class="col-sm-10"><?php print $this->form->renderControl('languageId') ?></div>
+					<div class="col-sm-10"><?php print $this->form->renderControl('localeId') ?></div>
 				</div>
 				<div class="row">
 					<div class="col-sm-10 col-sm-offset-2">

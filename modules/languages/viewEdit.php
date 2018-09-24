@@ -19,7 +19,7 @@ class LanguagesViewEdit extends View {
 		$this->app->activeMenuItem = 'languages';
 
 		$id = Router::get(0);
-		$languageCopy = new Language($id);
+		$language = new Language($id);
 
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
@@ -28,10 +28,10 @@ class LanguagesViewEdit extends View {
 		$this->app->sideMenuWidget = $widget->render('sideMenu');
 		
 		$form = $this->model->getLanguageForm();
-		$form->setValuesByObject($languageCopy);
+		$form->setValuesByObject($language);
 
 		$this->assign('form', $form);
-		$this->assign('languageCopy', $languageCopy);
+		$this->assign('language', $language);
 		
 	}
 	

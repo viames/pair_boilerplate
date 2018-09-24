@@ -22,9 +22,9 @@ class LanguagesViewDefault extends View {
 		$widget = new Widget();
 		$this->app->sideMenuWidget = $widget->render('sideMenu');
 		
-		$languages = $this->model->getLanguagescopy();
+		$languages = $this->model->getLanguages();
 
-		$this->pagination->count = $this->model->countLanguagescopy();
+		$this->pagination->count = $this->model->countLanguages();
 
 		$this->assign('languages', $languages);
 

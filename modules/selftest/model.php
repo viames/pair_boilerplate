@@ -403,12 +403,6 @@ class SelftestModel extends Model {
 			
 				}
 			
-			/*
-			} else {
-			
-				$folders++;
-				$this->logWarning('Translation folder was not found at this path: ' . $translationsFolder);
-			*/
 			}
 			
 		}

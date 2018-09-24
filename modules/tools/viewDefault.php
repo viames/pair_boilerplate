@@ -22,18 +22,23 @@ class ToolsViewDefault extends View {
 		
 		// rebuild existent language files
 		$tools[] = array(
-				'title'	=> $this->lang('REBUILD_TRANSLATION_FILES'),
-				'url'	=> 'tools/rebuildLanguageFiles');
+			'title'		=> $this->lang('REBUILD_TRANSLATION_FILES'),
+			'url'		=> 'tools/rebuildLanguageFiles',
+			'confirm'	=> FALSE
+		);
 		
 		// restore db row or manifest file if missing
 		$tools[] = array(
-				'title'	=> $this->lang('FIX_PLUGINS'),
-				'url'	=> 'tools/fixPlugins');
+			'title'		=> $this->lang('FIX_PLUGINS'),
+			'url'		=> 'tools/fixPlugins',
+			'confirm'	=> FALSE
+		);
 
 		// update files and db to latest Pair version
 		$tools[] = array(
 				'title'	=> $this->lang('UPDATE_PAIR_14'),
-				'url'	=> 'tools/updatePair');
+				'url'	=> 'tools/updatePair',
+				'confirm'	=> TRUE);
 		
 		$this->assign('tools', $tools);
 	

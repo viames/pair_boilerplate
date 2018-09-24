@@ -1,6 +1,4 @@
-<?php
-
-?><div class="row">
+<div class="row">
 	<div class="col-3 order-1 d-none d-xs-none d-sm-block"></div>
 	<div class="col-xs-12 col-sm-6 order-2">
 		<div id="app-logo"></div>

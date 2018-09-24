@@ -11,7 +11,7 @@ class LanguagesModel extends Model {
 	 *
 	 * @return	array:Language
 	 */
-	public function getLanguagescopy() {
+	public function getLanguages() {
 
 		$query = 'SELECT * FROM ' . Language::TABLE_NAME . ' LIMIT ' . $this->pagination->start . ', ' . $this->pagination->limit;
 
@@ -24,7 +24,7 @@ class LanguagesModel extends Model {
 	 *
 	 * @return	int
 	 */
-	public function countLanguagescopy() {
+	public function countLanguages() {
 
 		return Language::countAllObjects();
 

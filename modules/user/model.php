@@ -1,6 +1,7 @@
 <?php
 
 use Pair\Form;
+use Pair\Locale;
 use Pair\Model;
 use Pair\Translator;
 
@@ -150,17 +151,24 @@ class UserModel extends Model {
 		
 		$form->addControlClass('form-control');
 		
-		$locales = Locale::getAllNames();
+		$query =
+			'SELECT lo.*, CONCAT(la.english_name, " (", co.english_name, ")") AS language_country ' .
+			' FROM `locales` AS lo' .
+			' INNER JOIN languages AS la ON lo.language_id = la.id' .
+			' INNER JOIN countries AS co ON lo.country_id = co.id' .
+			' ORDER BY la.english_name';
+		
+		$locales = Locale::getObjectsByQuery($query);
 
 		$form->addInput('name')->setRequired()->setMinLength(2);
 		$form->addInput('surname')->setRequired()->setMinLength(2);
 		$form->addInput('email')->setType('email');
 		$form->addInput('ldapUser')->setMinLength(2);
-		$form->addInput('username')->setRequired()->setMinLength(3);
+		$form->addInput('username')->setRequired()->setMinLength(3)->setPlaceholder('Username');
 		$form->addInput('password', array('autocomplete'=>'off', 'autocorrect'=>'off', 'autocapitalize'=>'off'))
-			->setType('password')->setMinLength(8);
+			->setType('password')->setMinLength(8)->setPlaceholder('Password');
 		$form->addInput('showPassword')->setType('bool');
-		$form->addSelect('languageId')->setListByObjectArray($locales,'id','nativeName')->setRequired();
+		$form->addSelect('localeId')->setRequired()->setListByObjectArray($locales,'id','languageCountry');
 
 		return $form;
 

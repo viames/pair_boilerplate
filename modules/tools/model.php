@@ -160,7 +160,7 @@ class ToolsModel extends Model {
 		foreach ($packages as $package) {
 			if (!Module::pluginExists($package)) {
 				$plugin = new Plugin();
-				$res = $plugin->installPackage($this->rootFolder . '/tools/assets/' . $package . 'Module.zip');
+				$res = $plugin->installPackage(APPLICATION_PATH . '/modules/tools/assets/' . $package . 'Module.zip');
 				if ($res) {
 					$this->logEvent('Table `locales` already exists');
 				} else {
@@ -290,13 +290,13 @@ class ToolsModel extends Model {
 	private function runQueryByFile($file) {
 		
 		// load Pair’s DB dump by SQL file
-		$queries = file_get_contents(APPLICATION_PATH . '/tools/assets/' . $file);
+		$queries = file_get_contents(APPLICATION_PATH . '/modules/tools/assets/' . $file);
 		
 		// create all tables, if not exist
 		try {
-			$this->dbh->exec('USE `' . DB_NAME . '`');
-			$this->dbh->setAttribute(\PDO::ATTR_EMULATE_PREPARES, 1);
-			$this->dbh->exec($queries);
+			$this->db->exec('USE `' . DB_NAME . '`');
+			//$this->db->setAttribute(\PDO::ATTR_EMULATE_PREPARES, 1);
+			$this->db->exec($queries);
 		} catch (Exception $e) {
 			$this->addError('Table creation failed: ' . $e->getMessage());
 			return FALSE;

@@ -120,7 +120,7 @@ class UsersModel extends Model {
 		$form->addInput('id')->setType('hidden');
 		$form->addInput('name')->setRequired()->setMinLength(2);
 		$form->addInput('surname')->setRequired()->setMinLength(2);
-		$form->addInput('email')->setType('email');
+		$form->addInput('email')->setType('email')->setRequired();
 		$form->addInput('enabled')->setType('bool');
 		$form->addInput('ldapUser');
 		$form->addInput('username', array('autocomplete'=>'off'))->setRequired()->setMinLength(3);

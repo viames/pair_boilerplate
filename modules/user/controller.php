@@ -59,8 +59,7 @@ class UserController extends Controller {
 					if (isset($landing->module)) {
 						$this->app->redirect($landing->module . '/' . $landing->action);
 					} else {
-						$router = Router::getInstance();
-						$this->app->redirect($router->getDefaultUrl());
+						$this->app->redirect($this->router->getDefaultUrl());
 					}
 
 				// login denied
@@ -119,7 +118,7 @@ class UserController extends Controller {
 		}
 
 		// we notice just if user changes really
-		if ($form->isValid() and $user->update()) {
+		if ($form->isValid() and $user->store()) {
 			$this->enqueueMessage($this->lang('YOUR_PROFILE_HAS_BEEN_CHANGED'));
 		}
 		
