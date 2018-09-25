@@ -446,7 +446,7 @@ class Installer {
 	
 	            	<div class="col-md-6 mb-3">
 		                <label for="dbPass">Password</label>
-		                <input type="password" class="form-control" name="dbPass" id="dbPass" value="<?php print htmlspecialchars($v['dbPass']) ?>" required>
+		                <input type="password" class="form-control" name="dbPass" id="dbPass" value="<?php print htmlspecialchars($v['dbPass']) ?>">
 		            </div>
 		        </div>
 
