@@ -129,7 +129,7 @@ class Installer {
 	
 		// list of required field names
 		$requiredFields = ['productName', 'productVersion', 'dbHost', 'dbName',
-				'dbUser', 'dbPass', 'name', 'surname', 'email'];
+				'dbUser', 'name', 'surname', 'email'];
 		
 		// check that all fields are submitted
 		foreach ($requiredFields as $f) {

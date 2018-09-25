@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cce13e8f8f496b394a51b421b5a09780",
+    "content-hash": "08a00dd62ea7e6bf872c5722c10eaaf8",
     "packages": [
         {
             "name": "viames/pair",
-            "version": "dev-master",
+            "version": "1.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Viames/Pair.git",
-                "reference": "bf4ef90e179aeae001cbdea38304cc704d8d5521"
+                "reference": "deaa0ab3c043f5b930ce49c5f14012a94d2f2584"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Viames/Pair/zipball/bf4ef90e179aeae001cbdea38304cc704d8d5521",
-                "reference": "bf4ef90e179aeae001cbdea38304cc704d8d5521",
+                "url": "https://api.github.com/repos/Viames/Pair/zipball/deaa0ab3c043f5b930ce49c5f14012a94d2f2584",
+                "reference": "deaa0ab3c043f5b930ce49c5f14012a94d2f2584",
                 "shasum": ""
             },
             "require": {
@@ -60,7 +60,7 @@
                 "rest-api",
                 "router"
             ],
-            "time": "2018-07-06T09:37:28+00:00"
+            "time": "2018-09-24T10:12:05+00:00"
         }
     ],
     "packages-dev": [],

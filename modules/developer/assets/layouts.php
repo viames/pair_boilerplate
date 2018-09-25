@@ -42,7 +42,7 @@ $layouts['default-page'] =
 
 $layouts['default-table-header'] = "\t\t\t\t\t\t\t\t<th>{tableHeader}</th>";
 
-$layouts['default-table-row'] = "\t\t\t\t\t\t\t<tr>\n{tableCells}\n</tr>";
+$layouts['default-table-row'] = "\t\t\t\t\t\t\t<tr>\n{tableCells}\n\t\t\t\t\t\t\t</tr>";
 
 $layouts['default-table-cell'] = "\t\t\t\t\t\t\t\t<td>{tableCell}</td>";
 
