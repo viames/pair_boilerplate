@@ -196,7 +196,7 @@ class SelftestModel extends Model {
 	 * 
 	 * @return int
 	 */
-	public function testActiveRecordClasses(): int {
+	public function testActiveRecordClasses() {
 
 		// the final error count
 		$errors = 0;

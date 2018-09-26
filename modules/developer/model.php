@@ -166,7 +166,7 @@ class DeveloperModel extends Model {
 	 * 
 	 * @todo
 	 */
-	public function createTableByClass(string $class): bool {
+	public function createTableByClass(string $class) {
 
 		$this->addError('Function under development');
 		return FALSE;
@@ -254,7 +254,7 @@ class DeveloperModel extends Model {
 	 * 
 	 * @return	string
 	 */
-	public function getClassByTable(string $tableName): string {
+	public function getClassByTable(string $tableName) {
 		
 		// get all ActiveRecord classes
 		$classes = Utilities::getActiveRecordClasses();
@@ -1280,7 +1280,7 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 		
 	}
 	
-	private function getCamelCase(string $text, bool $capFirst=FALSE): string {
+	private function getCamelCase(string $text, bool $capFirst=FALSE) {
 		
 		$camelCase = str_replace(' ', '', ucwords(str_replace(['_','\\'], ' ', $text)));
 		
@@ -1339,7 +1339,7 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 	 *
 	 * @return	string
 	 */
-	private function replaceHolders(string $layout, array $placeholders): string {
+	private function replaceHolders(string $layout, array $placeholders) {
 		
 		$search = [];
 		$replace = [];
@@ -1474,7 +1474,7 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 	 * 
 	 * @return	bool
 	 */
-	private function isFieldNullable(string $tableName, string $field): bool {
+	private function isFieldNullable(string $tableName, string $field) {
 		
 		$column = $this->db->describeColumn($tableName, $field);
 		return (isset($column->Null) and 'YES' == $column->Null);
