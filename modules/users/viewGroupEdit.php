@@ -15,7 +15,7 @@ class UsersViewGroupEdit extends View {
 	 */
 	public function render() {
 		
-		$groupId	= Router::get(0);
+		$groupId	= Router::get('id');
 		$group		= new Group($groupId);
 		
 		$this->app->pageTitle = $this->lang('GROUP_EDIT');

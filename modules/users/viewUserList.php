@@ -37,7 +37,8 @@ class UsersViewUserList extends View {
 			
 			// everyone edit granted to admin only
 			if ($this->app->currentUser->admin or !$user->admin) {
-				$user->username = '<a href="users/userEdit/' . $user->id . '">' . $user->username . '</a>';
+				$user->username = '<a href="users/edit/' . $user->id . '">' . $user->username . '</a>';
+				$user->fullname = '<a href="users/edit/' . $user->id . '">' . $user->fullName . '</a>';
 			}
 			
 		}

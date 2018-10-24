@@ -19,7 +19,7 @@
 				</div>
 				<div class="buttonBar">
 					<button type="submit" class="btn btn-primary" value="add" name="action"><i class="fa fa-asterisk"></i> <?php $this->_('INSERT') ?></button>
-					<a href="users/groupList" class="btn btn-secondary"><i class="fa fa-times"></i> <?php $this->_('CANCEL') ?></a>
+					<a href="groups" class="btn btn-secondary"><i class="fa fa-times"></i> <?php $this->_('CANCEL') ?></a>
 				</div>
 			</fieldset>
 		</form>

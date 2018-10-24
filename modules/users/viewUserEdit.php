@@ -12,14 +12,14 @@ class UsersViewUserEdit extends View {
 	public function render() {
 		
 		$this->app->pageTitle = $this->lang('USER_EDIT');
-		$this->app->activeMenuItem = 'users/userList';
+		$this->app->activeMenuItem = 'users';
 		
-		$userId	= Router::get(0);
+		$userId	= Router::get('id');
 		$user	= new User($userId);
 		
 		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath($this->lang('USERS'), 'users/userList');
-		$breadcrumb->addPath('Modifica utente ' . $user->fullName);
+		$breadcrumb->addPath($this->lang('USERS'), 'users');
+		$breadcrumb->addPath($this->lang('USER_EDIT') . ' ' . $user->fullName, 'users/edit/' . $user->id);
 		
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');

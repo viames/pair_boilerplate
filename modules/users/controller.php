@@ -306,7 +306,7 @@ class UsersController extends Controller {
 	 */
 	private function getRequestedUser() {
 	
-		$userId = Router::get(0);
+		$userId = Router::get('id');
 	
 		if (!$userId) {
 			$this->enqueueError($this->lang('ITEM_TO_EDIT_IS_NOT_VALID'));
@@ -338,7 +338,7 @@ class UsersController extends Controller {
 	 */
 	private function getRequestedGroup() {
 
-		$groupId = Router::get(0);
+		$groupId = Router::get('id');
 
 		if (!$groupId) {
 			$this->enqueueError($this->lang('ITEM_TO_EDIT_IS_NOT_VALID'));

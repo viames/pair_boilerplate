@@ -1,17 +1,16 @@
 {
 	"name" : "viames/pair_example",
 	"description" : "Skeleton project based on Pair PHP framework",
-	"type": "project",
-	"minimum-stability": "dev",
+	"type" : "project",
+	"minimum-stability" : "dev",
 	"require" : {
 		"viames/pair" : "^1.4",
 		"php" : ">=5.6",
 		"ext-pdo" : "*"
 	},
-	"repositories" : [
-        {
-			"type": "vcs",
-			"url": "https://github.com/Viames/Pair_example"
+	"repositories" : [{
+			"type" : "vcs",
+			"url" : "https://github.com/Viames/Pair_example"
 		}
 	],
 	"license" : "MIT",
@@ -27,8 +26,7 @@
 		"rest-api"
 	],
 	"homepage" : "https://github.com/Viames/Pair_example",
-	"authors" : [
-		{
+	"authors" : [{
 			"name" : "Viames Marino",
 			"homepage" : "https://www.viames.it",
 			"role" : "Developer"

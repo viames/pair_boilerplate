@@ -8,15 +8,15 @@ $translator	= Translator::getInstance();
 
 $menu = new BootstrapMenu();
 
-$menu->addItem('users/userList', $translator->get('USERS'), NULL, 'fa-user');
-$menu->addItem('users/groupList', $translator->get('GROUPS'), NULL, 'fa-users');
+$menu->addItem('users', $translator->get('USERS'), NULL, 'fa-user');
+$menu->addItem('groups', $translator->get('GROUPS'), NULL, 'fa-users');
 $menu->addItem('options', $translator->get('OPTIONS'), NULL, 'fa-sliders-h');
 
 // admin multimenu
 if (is_a($app->currentUser, 'Pair\User') and $app->currentUser->admin) {
 
 	$menu->addItem('locales', $translator->get('LOCALES'), NULL, 'fa-globe');
-	$menu->addItem('countries', $translator->get('COUNTRIES'), NULL, 'fa-globe-africa');
+	$menu->addItem('countries', $translator->get('COUNTRIES'), NULL, 'fa-flag');
 	$menu->addItem('languages', $translator->get('LANGUAGES'), NULL, 'fa-language');
 	$menu->addItem('rules', $translator->get('RULES'), NULL, 'fa-unlock');	
 	$menu->addItem('selftest', $translator->get('SELF_TEST'), NULL, 'fa-check');
