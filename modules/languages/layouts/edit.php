@@ -26,8 +26,8 @@
 						<div class="col-md-push-3 col-md-9">
 							<button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> <?php $this->_('CHANGE') ?></button>
 							<a href="languages" class="btn btn-secondary"><i class="fa fa-times"></i> <?php $this->_('CANCEL') ?></a><?php
-							if ($this->languageCopy->isDeletable()) { ?>
-							<a href="languages/delete/<?php print $this->languageCopy->id ?>" class="btn btn-link confirm-delete pull-right float-right"><i class="fa fa-trash"></i> <?php $this->_('DELETE') ?></a><?php
+							if ($this->language->isDeletable()) { ?>
+							<a href="languages/delete/<?php print $this->language->id ?>" class="btn btn-link confirm-delete pull-right float-right"><i class="fa fa-trash"></i> <?php $this->_('DELETE') ?></a><?php
 							} ?>
 						</div>
 					</div>
