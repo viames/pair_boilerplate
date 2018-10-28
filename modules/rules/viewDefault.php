@@ -16,7 +16,7 @@ class RulesViewDefault extends View {
 		$widget = new Widget();
 		$this->app->sideMenuWidget = $widget->render('sideMenu');
 		
-		$this->pagination->count = $this->model->countModules();
+		$this->pagination->count = $this->model->countListItems();
 
 		// get all rules
 		$rules = $this->model->getAclModelRules();

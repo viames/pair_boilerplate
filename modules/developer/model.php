@@ -740,7 +740,7 @@ class ' . ucfirst($this->moduleName) . 'Model extends Model {
 	 *
 	 * @return	int
 	 */
-	public function count' . ucfirst($this->moduleName) . '() {
+	public function countListItems() {
 
 		return ' . $this->objectName . '::countAllObjects();
 
@@ -905,12 +905,12 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 	}
 
 	/**
-	 * Create and save a language file.
+	 * Create and save a translation file.
 	 * 
-	 * @param	string	Full path to language translation INI file.
+	 * @param	string	Full path to translation INI file.
 	 * @param	string	Language-tag (eg. “en-BR”).
 	 */
-	public function saveLanguage($file, $representation) {
+	public function saveTranslation($file, $representation) {
 		
 		// get the Translator singleton
 		$tran = Translator::getInstance();
@@ -958,7 +958,7 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 		
 		// write the code into the file
 		$this->writeFile($file, $content);
-
+		
 		// sets back the kept Locale
 		$tran->setLocale($currentLocale);
 		
@@ -992,7 +992,7 @@ class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 		
 		$' . $this->getCamelCase($this->tableName) . ' = $this->model->get' .  ucfirst($this->moduleName) . '();
 
-		$this->pagination->count = $this->model->count' . ucfirst($this->moduleName) . '();
+		$this->pagination->count = $this->model->countListItems();
 
 		$this->assign(\'' . $this->getCamelCase($this->tableName) . '\', $' . $this->getCamelCase($this->tableName) . ');
 

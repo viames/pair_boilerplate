@@ -12,12 +12,12 @@
 							<div class="col-md-9"><?php print $this->form->renderControl('languageId') ?></div>
 						</div>
 						<div class="form-group row">
-							<label class="col-md-3"><?php $this->_('COUNTRY') ?></label>
-							<div class="col-md-9"><?php print $this->form->renderControl('countryId') ?></div>
-						</div>
-						<div class="form-group row">
 							<label class="col-md-3"><?php $this->_('OFFICIAL_LANGUAGE') ?></label>
 							<div class="col-md-9"><?php print $this->form->renderControl('officialLanguage') ?></div>
+						</div>
+						<div class="form-group row">
+							<label class="col-md-3"><?php $this->_('COUNTRY') ?></label>
+							<div class="col-md-9"><?php print $this->form->renderControl('countryId') ?></div>
 						</div>
 						<div class="form-group row">
 							<label class="col-md-3"><?php $this->_('DEFAULT_COUNTRY') ?></label>

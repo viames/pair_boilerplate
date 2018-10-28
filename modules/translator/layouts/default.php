@@ -1,18 +1,18 @@
 <div class="card">
-		<div class="card-header">
-			<h5><?php $this->_('TRANSLATIONS') ?></h5>
-			<div class="list-filter">
-				<a href="translator/default/page-1"><?php $this->_('ALL') ?></a><?php
-			
+	<div class="card-header">
+		<h4><?php $this->_('TRANSLATIONS') ?></h4>
+		<div class="list-filter">
+			<a href="translator/default/page-1"><?php $this->_('ALL') ?></a><?php
+		
 			foreach ($this->filter as $f) {
 				?><a href="<?php print $f->href ?>" class="<?php print ($f->active ? 'active' : '') ?>"><?php print $f->text ?></a><?php
 			}
 			
 			?>
-			</div>
 		</div>
-		<div class="card-body">
-			<div class="table-responsive" id="pageTranslator"><?php
+	</div>
+	<div class="card-body">
+		<div class="table-responsive" id="pageTranslator"><?php
 
 if (count($this->locales)) {
 

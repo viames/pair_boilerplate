@@ -17,7 +17,7 @@
 							<div class="col-md-9"><?php print $this->form->renderControl('nativeName') ?></div>
 						</div>
 						<div class="form-group row">
-							<label class="col-md-3"><?php $this->_('CODE') ?></label>
+							<label class="col-md-3"><?php $this->_('ISO_3166_1') ?></label>
 							<div class="col-md-9"><?php print $this->form->renderControl('code') ?></div>
 						</div>
 					</fieldset>

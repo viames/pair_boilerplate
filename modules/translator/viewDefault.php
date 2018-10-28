@@ -25,7 +25,7 @@ class TranslatorViewDefault extends View {
 
 		$locales = $this->model->getLocales();
 
-		$this->pagination->count = $this->model->countLocales();
+		$this->pagination->count = $this->model->countListItems();
 		
 		// adds translated line count and percentage
 		$this->model->setLocalePercentage($locales);

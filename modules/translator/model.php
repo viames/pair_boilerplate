@@ -23,6 +23,7 @@ class TranslatorModel extends Model {
 			$params = [];
 			
 		}
+		
 		$query =
 			'SELECT lo.*, la.english_name AS language_name, co.english_name AS country_name, CONCAT(la.code, "-", co.code) AS representation' .
 			' FROM locales AS lo' .
@@ -35,7 +36,12 @@ class TranslatorModel extends Model {
 
 	}
 	
-	public function countLocales() {
+	/**
+	 * Returns count of available objects.
+
+	 * @return int
+	 */
+	public function countListItems() {
 		
 		$alphaFilter = $this->app->getPersistentState('translatorAlphaFilter');
 		

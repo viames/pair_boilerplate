@@ -4,6 +4,7 @@ use Pair\Breadcrumb;
 use Pair\Controller;
 use Pair\Country;
 use Pair\Input;
+use Pair\Router;
  		
 class CountriesController extends Controller {
 
@@ -16,7 +17,20 @@ class CountriesController extends Controller {
 	protected function init() {
 		
 		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath('Country', 'countries');
+		$breadcrumb->addPath($this->lang('COUNTRIES'), 'countries');
+		
+	}
+	
+	/**
+	 * Check if is requested to apply an alpha filter.
+	 */
+	public function defaultAction() {
+		
+		if (Router::get(0)) {
+			$this->app->setPersistentState('countriesAlphaFilter', Router::get(0));
+		} else {
+			$this->app->unsetPersistentState('countriesAlphaFilter');
+		}
 		
 	}
 	

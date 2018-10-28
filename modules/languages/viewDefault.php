@@ -1,6 +1,7 @@
 <?php
 
 use Pair\Breadcrumb;
+use Pair\Router;
 use Pair\View;
 use Pair\Widget;
 
@@ -24,9 +25,13 @@ class LanguagesViewDefault extends View {
 		
 		$languages = $this->model->getLanguages();
 
-		$this->pagination->count = $this->model->countLanguages();
+		$this->pagination->count = $this->model->countListItems();
+
+		// get an alpha filter list from View parent
+		$filter = $this->getAlphaFilter(Router::get(0));
 
 		$this->assign('languages', $languages);
+		$this->assign('filter', $filter);
 
 	}
 

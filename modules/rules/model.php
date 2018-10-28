@@ -32,7 +32,7 @@ class RulesModel extends Model {
 	 *
 	 * @return	int
 	 */
-	public function countModules() {
+	public function countListItems() {
 
 		$query =
 			' SELECT COUNT(*) '.

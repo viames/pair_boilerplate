@@ -4,6 +4,7 @@ use Pair\Breadcrumb;
 use Pair\Controller;
 use Pair\Input;
 use Pair\Language;
+use Pair\Router;
  		
 class LanguagesController extends Controller {
 
@@ -16,10 +17,23 @@ class LanguagesController extends Controller {
 	protected function init() {
 		
 		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath('Language', 'languages');
+		$breadcrumb->addPath($this->lang('LANGUAGES'), 'languages');
 		
 	}
-	
+
+	/**
+	 * Check if is requested to apply an alpha filter.
+	 */
+	public function defaultAction() {
+		
+		if (Router::get(0)) {
+			$this->app->setPersistentState('languagesAlphaFilter', Router::get(0));
+		} else {
+			$this->app->unsetPersistentState('languagesAlphaFilter');
+		}
+		
+	}
+
 	/**
 	 * Add a new object.
 	 */

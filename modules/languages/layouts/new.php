@@ -8,16 +8,16 @@
 				<form action="languages/add" method="post">
 					<fieldset>
 						<div class="form-group row">
-							<label class="col-md-3"><?php $this->_('CODE') ?></label>
-							<div class="col-md-9"><?php print $this->form->renderControl('code') ?></div>
+							<label class="col-md-3"><?php $this->_('ENGLISH_NAME') ?></label>
+							<div class="col-md-9"><?php print $this->form->renderControl('englishName') ?></div>
 						</div>
 						<div class="form-group row">
 							<label class="col-md-3"><?php $this->_('NATIVE_NAME') ?></label>
 							<div class="col-md-9"><?php print $this->form->renderControl('nativeName') ?></div>
 						</div>
 						<div class="form-group row">
-							<label class="col-md-3"><?php $this->_('ENGLISH_NAME') ?></label>
-							<div class="col-md-9"><?php print $this->form->renderControl('englishName') ?></div>
+							<label class="col-md-3"><?php $this->_('ISO_639_1') ?></label>
+							<div class="col-md-9"><?php print $this->form->renderControl('code') ?></div>
 						</div>
 					</fieldset>
 					<div class="hr-line-dashed"></div>

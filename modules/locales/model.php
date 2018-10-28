@@ -1,5 +1,6 @@
 <?php
 
+use Pair\Database;
 use Pair\Form;
 use Pair\Locale;
 use Pair\Model;
@@ -13,14 +14,32 @@ class LocalesModel extends Model {
 	 */
 	public function getLocales() {
 
+		$alphaFilter = $this->app->getPersistentState('localesAlphaFilter');
+		
+		if ($alphaFilter) {
+			
+			// get a filtered list
+			$where  = ' WHERE la.code LIKE ?';
+			$params = [$alphaFilter . '%'];
+			
+		} else {
+			
+			// get all
+			$where  = '';
+			$params = [];
+			
+		}
+
 		$query =
 			'SELECT lo.*, la.english_name AS language_name, co.english_name AS country_name, CONCAT(la.code, "-", co.code) AS representation' .
 			' FROM `locales` AS lo' .
 			' INNER JOIN languages AS la ON lo.language_id = la.id' . 
 			' INNER JOIN countries AS co ON lo.country_id = co.id' . 
+			$where .
+			' ORDER BY la.code, co.code' .
 			' LIMIT ' . $this->pagination->start . ', ' . $this->pagination->limit;
 
-		return Locale::getObjectsByQuery($query);
+		return Locale::getObjectsByQuery($query, $params);
 
 	}
 
@@ -29,9 +48,26 @@ class LocalesModel extends Model {
 	 *
 	 * @return	int
 	 */
-	public function countLocales() {
+	public function countListItems() {
 
-		return Locale::countAllObjects();
+		$alphaFilter = $this->app->getPersistentState('localesAlphaFilter');
+		
+		if ($alphaFilter) {
+			
+			// get a filtered list
+			$query =
+				'SELECT COUNT(1)' .
+				' FROM locales AS lo' .
+				' INNER JOIN languages AS la ON lo.language_id = la.id' . 
+				' WHERE la.code LIKE ?';
+			return Database::load($query, $alphaFilter . '%', 'count');
+			
+		} else {
+			
+			// get all
+			return Locale::countAllObjects();
+
+		}
 
 	}
 
@@ -42,8 +78,8 @@ class LocalesModel extends Model {
 	 */ 
 	public function getLocaleForm() {
 
-		$language = Pair\Language::getAllObjects();
-		$country = Pair\Country::getAllObjects();
+		$language = Pair\Language::getAllObjects(NULL, 'englishName');
+		$country = Pair\Country::getAllObjects(NULL, 'englishName');
 		$form = new Form();
 			
 		$form->addControlClass('form-control');

@@ -1,6 +1,7 @@
 <?php
 
 use Pair\Country;
+use Pair\Database;
 use Pair\Form;
 use Pair\Model;
 
@@ -12,14 +13,31 @@ class CountriesModel extends Model {
 	 * @return	array:Country
 	 */
 	public function getCountries() {
+		
+		$alphaFilter = $this->app->getPersistentState('countriesAlphaFilter');
+		
+		if ($alphaFilter) {
+			
+			// get a filtered list
+			$where  = ' WHERE english_name LIKE ?';
+			$params = [$alphaFilter . '%'];
+			
+		} else {
+			
+			// get all
+			$where  = '';
+			$params = [];
+			
+		}
 
 		$query =
 			'SELECT *' .
 			' FROM `countries`' .
+			$where .
 			' ORDER BY english_name' .
 			' LIMIT ' . $this->pagination->start . ', ' . $this->pagination->limit;
 
-		return Country::getObjectsByQuery($query);
+		return Country::getObjectsByQuery($query, $params);
 
 	}
 
@@ -28,10 +46,37 @@ class CountriesModel extends Model {
 	 *
 	 * @return	int
 	 */
-	public function countCountries() {
+	public function countListItems() {
+		
+		$alphaFilter = $this->app->getPersistentState('countriesAlphaFilter');
+		
+		if ($alphaFilter) {
+			
+			// get a filtered list
+			$query = 'SELECT COUNT(1) FROM countries WHERE english_name LIKE ?';
+			return Database::load($query, $alphaFilter . '%', 'count');
+			
+		} else {
+			
+			// get all
+			return Country::countAllObjects();
+			
+		}
 
-		return Country::countAllObjects();
-
+	}
+	
+	public function getOfficialLanguages(Country $country) {
+		
+		$query =
+			'SELECT english_name' .
+			' FROM languages AS la' .
+			' INNER JOIN locales AS lo ON la.id = lo.language_id' .
+			' WHERE lo.country_id = ?' .
+			' AND lo.official_language = 1' .
+			' ORDER BY english_name';
+		
+		return Database::load($query, $country->id, 'resultlist');
+		
 	}
 
 	/**
@@ -47,8 +92,8 @@ class CountriesModel extends Model {
 			
 		$form->addInput('id')->setType('hidden');
 		$form->addInput('code')->setRequired()->setMaxLength(3);
-		$form->addInput('nativeName')->setRequired();
-		$form->addInput('englishName')->setRequired();
+		$form->addInput('nativeName')->setRequired()->setMaxLength(100);
+		$form->addInput('englishName')->setRequired()->setMaxLength(100);
 		
 		return $form;
 		

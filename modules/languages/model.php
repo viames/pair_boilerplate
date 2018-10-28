@@ -1,5 +1,6 @@
 <?php
 
+use Pair\Database;
 use Pair\Form;
 use Pair\Language;
 use Pair\Model;
@@ -13,9 +14,34 @@ class LanguagesModel extends Model {
 	 */
 	public function getLanguages() {
 
-		$query = 'SELECT * FROM ' . Language::TABLE_NAME . ' LIMIT ' . $this->pagination->start . ', ' . $this->pagination->limit;
+		$alphaFilter = $this->app->getPersistentState('languagesAlphaFilter');
+		
+		if ($alphaFilter) {
+			
+			// get a filtered list
+			$where  = ' WHERE la.english_name LIKE ?';
+			$params = [$alphaFilter . '%'];
+			
+		} else {
+			
+			// get all
+			$where  = '';
+			$params = [];
+			
+		}
 
-		return Language::getObjectsByQuery($query);
+		$query =
+			'SELECT la.*, IFNULL(c.english_name, NULL) AS default_country,' .
+			' (SELECT COUNT(1) FROM locales WHERE language_id = la.id) AS locale_count' .
+			' FROM ' . Language::TABLE_NAME . ' AS la' .
+			' LEFT JOIN locales AS lo ON (lo.language_id = la.id AND lo.default_country = 1)' .
+			' LEFT JOIN countries AS c ON lo.country_id = c.id' .
+			$where .
+			' GROUP BY la.id' .
+			' ORDER BY la.english_name' .
+			' LIMIT ' . $this->pagination->start . ', ' . $this->pagination->limit;
+
+		return Language::getObjectsByQuery($query, $params);
 
 	}
 
@@ -24,9 +50,22 @@ class LanguagesModel extends Model {
 	 *
 	 * @return	int
 	 */
-	public function countLanguages() {
+	public function countListItems() {
 
-		return Language::countAllObjects();
+		$alphaFilter = $this->app->getPersistentState('languagesAlphaFilter');
+		
+		if ($alphaFilter) {
+			
+			// get a filtered list
+			$query = 'SELECT COUNT(1) FROM languages WHERE english_name LIKE ?';
+			return Database::load($query, $alphaFilter . '%', 'count');
+			
+		} else {
+			
+			// get all
+			return Language::countAllObjects();
+
+		}
 
 	}
 
@@ -42,7 +81,7 @@ class LanguagesModel extends Model {
 		$form->addControlClass('form-control');
 			
 		$form->addInput('id')->setType('hidden');
-		$form->addInput('code')->setMaxLength(7)->setRequired();
+		$form->addInput('code')->setRequired()->setMaxLength(7);
 		$form->addInput('nativeName')->setMaxLength(30);
 		$form->addInput('englishName')->setMaxLength(30)->setRequired();
 		

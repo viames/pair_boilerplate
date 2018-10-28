@@ -4,6 +4,7 @@ use Pair\Breadcrumb;
 use Pair\Controller;
 use Pair\Input;
 use Pair\Locale;
+use Pair\Router;
  		
 class LocalesController extends Controller {
 
@@ -16,10 +17,23 @@ class LocalesController extends Controller {
 	protected function init() {
 		
 		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath('Locale', 'locales');
+		$breadcrumb->addPath($this->lang('LOCALES'), 'locales');
 		
 	}
-	
+
+	/**
+	 * Check if is requested to apply an alpha filter.
+	 */
+	public function defaultAction() {
+		
+		if (Router::get(0)) {
+			$this->app->setPersistentState('localesAlphaFilter', Router::get(0));
+		} else {
+			$this->app->unsetPersistentState('localesAlphaFilter');
+		}
+		
+	}
+
 	/**
 	 * Add a new object.
 	 */
@@ -94,7 +108,12 @@ class LocalesController extends Controller {
 	 */
 	public function deleteAction() {
 
-	 	$locale = $this->getObjectRequestedById('Locale');
+	 	$locale = $this->getObjectRequestedById('Pair\Locale');
+	 	
+	 	if ($locale->appDefault) {
+	 		$message = $this->lang('ERROR_DELETING_LOCALE');
+	 		$this->redirect('locales');
+	 	}
 
 		// execute deletion
 		$result = $locale->delete();

@@ -110,7 +110,7 @@ class DeveloperController extends Controller {
 				// translations
 				$translations = $this->model->getAvailableTranslations();
 				foreach ($translations as $t) {
-					$this->model->saveLanguage($folder . '/translations/' . $t . '.ini', $t);
+					$this->model->saveTranslation($folder . '/translations/' . $t . '.ini', $t);
 				}
 
 				// object class file

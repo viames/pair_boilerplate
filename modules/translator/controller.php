@@ -21,13 +21,9 @@ class TranslatorController extends Controller {
 	public function defaultAction() {
 		
 		if (Router::get(0)) {
-			
 			$this->app->setPersistentState('translatorAlphaFilter', Router::get(0));
-			
 		} else {
-			
 			$this->app->unsetPersistentState('translatorAlphaFilter');
-			
 		}
 		
 	}
