@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "viames/pair",
-            "version": "1.4.2",
+            "version": "1.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Viames/Pair.git",
-                "reference": "4f171285f4da9cea70db9dc97268bb65b6d60e4f"
+                "reference": "dc6953b0a9c079876765ffe44485eccbbe075225"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Viames/Pair/zipball/4f171285f4da9cea70db9dc97268bb65b6d60e4f",
-                "reference": "4f171285f4da9cea70db9dc97268bb65b6d60e4f",
+                "url": "https://api.github.com/repos/Viames/Pair/zipball/dc6953b0a9c079876765ffe44485eccbbe075225",
+                "reference": "dc6953b0a9c079876765ffe44485eccbbe075225",
                 "shasum": ""
             },
             "require": {
@@ -60,7 +60,7 @@
                 "rest-api",
                 "router"
             ],
-            "time": "2018-09-25T13:31:56+00:00"
+            "time": "2018-10-26T08:57:58+00:00"
         }
     ],
     "packages-dev": [],
