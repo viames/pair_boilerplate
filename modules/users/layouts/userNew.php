@@ -49,7 +49,7 @@
 			<div class="form-group row">
 			<div class="col-3 order-1 d-none d-sm-none d-md-block"></div>
 				<div class="col-9 order-2">
-					<button type="submit" class="btn btn-primary" value="add"><i class="fa fa-asterisk"></i> <?php $this->_('INSERT') ?></button>
+					<button type="submit" class="btn btn-primary"><i class="fa fa-asterisk"></i> <?php $this->_('INSERT') ?></button>
 					<a href="users" class="btn btn-secondary"><i class="fa fa-times"></i> <?php $this->_('CANCEL') ?></a>
 				</div>
 			</div>

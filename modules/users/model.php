@@ -105,14 +105,7 @@ class UsersModel extends Model {
 		// lists for select
 		$groups	= Group::getAllObjects(NULL, 'name');
 		
-		$query =
-			'SELECT lo.*, CONCAT(la.english_name, " (", co.english_name, ")") AS language_country ' .
-			' FROM `locales` AS lo' .
-			' INNER JOIN languages AS la ON lo.language_id = la.id' .
-			' INNER JOIN countries AS co ON lo.country_id = co.id' .
-			' ORDER BY la.english_name';
-		
-		$locales = Locale::getObjectsByQuery($query);
+		$locales = Locale::getExistentTranslations(FALSE);
 		
 		$form	= new Form();
 		$form->addControlClass('form-control');
@@ -146,7 +139,7 @@ class UsersModel extends Model {
 		$form->addInput('id')->setType('hidden');
 		$form->addInput('name')->setRequired()->setMinLength(3);
 		$form->addInput('default')->setType('bool');
-		$form->addSelect('defaultAclId');
+		$form->addSelect('defaultAclId')->setRequired();
 
 		return $form;
 

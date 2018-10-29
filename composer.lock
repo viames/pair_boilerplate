@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "08a00dd62ea7e6bf872c5722c10eaaf8",
+    "content-hash": "44a1159dfc510604f810ffa2fac44d41",
     "packages": [
         {
             "name": "viames/pair",
-            "version": "1.4.4",
+            "version": "1.4.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Viames/Pair.git",
-                "reference": "dc6953b0a9c079876765ffe44485eccbbe075225"
+                "reference": "dd8de7cc4e50de0e06c98caaa3376740814336d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Viames/Pair/zipball/dc6953b0a9c079876765ffe44485eccbbe075225",
-                "reference": "dc6953b0a9c079876765ffe44485eccbbe075225",
+                "url": "https://api.github.com/repos/Viames/Pair/zipball/dd8de7cc4e50de0e06c98caaa3376740814336d4",
+                "reference": "dd8de7cc4e50de0e06c98caaa3376740814336d4",
                 "shasum": ""
             },
             "require": {
@@ -60,12 +60,12 @@
                 "rest-api",
                 "router"
             ],
-            "time": "2018-10-26T08:57:58+00:00"
+            "time": "2018-10-29T09:39:59+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,

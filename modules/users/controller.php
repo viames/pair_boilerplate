@@ -34,7 +34,7 @@ class UsersController extends Controller {
 
 		$form = $this->model->getUserForm();
 
-		$group = new Group(Input::get('groupId', 'int'));
+		$group = new Group(Input::getInt('groupId'));
 
 		$user			= new User();
 		$user->name		= Input::get('name');
@@ -42,9 +42,9 @@ class UsersController extends Controller {
 		$user->email	= Input::get('email') ? Input::get('email') : NULL;
 		$user->ldapUser	= Input::get('ldapUser') ? Input::get('ldapUser') : NULL;
 		$user->username	= $username;
-		$user->enabled	= Input::get('enabled', 'bool');
-		$user->localeId	= Input::get('localeId', 'int');
-		$user->groupId	= Input::get('groupId', 'int');
+		$user->enabled	= Input::getBool('enabled');
+		$user->localeId	= Input::getInt('localeId');
+		$user->groupId	= Input::getInt('groupId');
 		$user->admin	= FALSE;
 		$user->faults	= 0;
 
@@ -84,8 +84,8 @@ class UsersController extends Controller {
 	
 		$this->view = 'userList';
 	
-		$user	= new User(Input::get('id', 'int'));
-		$group	= new Group(Input::get('groupId', 'int'));
+		$user	= new User(Input::getInt('id'));
+		$group	= new Group(Input::getInt('groupId'));
 		
 		// controllo validità del form
 		if (!$this->model->getUserForm()->isValid()) {
@@ -118,9 +118,9 @@ class UsersController extends Controller {
 		$user->email	= Input::get('email') ? Input::get('email') : NULL;
 		$user->ldapUser	= Input::get('ldapUser') ? Input::get('ldapUser') : NULL;
 		$user->username	= Input::get('username');
-		$user->enabled	= Input::get('enabled', 'bool');
-		$user->localeId	= Input::get('localeId', 'int');
-		$user->groupId	= Input::get('groupId', 'int');
+		$user->enabled	= Input::getBool('enabled');
+		$user->localeId	= Input::getInt('localeId');
+		$user->groupId	= Input::getInt('groupId');
 
 		if ($password) {
 			$user->hash = User::getHashedPasswordWithSalt($password);
@@ -130,7 +130,7 @@ class UsersController extends Controller {
 			$this->enqueueMessage($this->lang('USER_HAS_BEEN_CHANGED', $user->fullName));
 		}
 		
-		$this->app->redirect('users/userList');
+		$this->app->redirect('users');
 	
 	}
 
@@ -150,7 +150,7 @@ class UsersController extends Controller {
 			$this->enqueueError($this->lang('USER_HAS_NOT_BEEN_DELETED', $fullName));
 		}
 
-		$this->app->redirect('users/userList');
+		$this->app->redirect('users');
 
 	}
 
@@ -168,7 +168,7 @@ class UsersController extends Controller {
 			$this->enqueueError($this->lang('GROUP_HAS_NOT_BEEN_CREATED', $group->name));
 		}
 		
-		$this->app->redirect('users/groupList');
+		$this->app->redirect('groups');
 		
 	}
 	
@@ -192,24 +192,24 @@ class UsersController extends Controller {
 	 */
 	public function groupChangeAction() {
 
-		$group = new Group(Input::get('id', 'int'));
+		$group = new Group(Input::getInt('id'));
 				
 		$form = $this->model->getGroupForm();
 
 		$group->name = Input::get('name');
 				
 		// if this group is default, it will stay
-		$group->default = $group->default ? 1 : Input::get('default', 'bool');
+		$group->default = $group->default ? 1 : Input::getBool('default');
 
 		if ($form->isValid() and $group->update(array('name', 'default'))) {
 
 			// updates related acl to default
-			$group->setDefaultAcl(Input::get('defaultAclId', 'int'));
+			$group->setDefaultAcl(Input::getInt('defaultAclId'));
 			
 			// notice only if group change
 			$this->enqueueMessage($this->lang('GROUP_HAS_BEEN_CHANGED', $group->name));
 
-			$this->app->redirect('users/groupList');
+			$this->app->redirect('groups');
 
 		} else {
 		
@@ -231,7 +231,7 @@ class UsersController extends Controller {
 
 		$group = new Group(Router::get(0));
 
-		if ($group->canBeDeleted()) {
+		if ($group->isDeletable()) {
 
 			$groupName = $group->name;
 
@@ -247,14 +247,13 @@ class UsersController extends Controller {
 
 		}
 		
-		$this->app->redirect('users/groupList');
+		$this->app->redirect('groups');
 		
 	}
 
 	public function aclAddAction() {
 	
-		$route		= Router::getInstance();
-		$groupId	= Input::get('groupId', 'int');
+		$groupId	= Input::getInt('groupId');
 		$group		= new Group($groupId);
 				 
 		foreach ($_POST['aclChecked'] as $c) {

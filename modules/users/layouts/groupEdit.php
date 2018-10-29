@@ -30,7 +30,7 @@
 				<button type="submit" class="btn btn-primary" value="edit" name="action"><i class="fa fa-save"></i> <?php $this->_('CHANGE') ?></button>
 				<a href="groups" class="btn btn-secondary"><i class="fa fa-times"></i> <?php $this->_('CANCEL') ?></a><?php
 	
-				if ($this->group->canBeDeleted()) {
+				if ($this->group->isDeletable()) {
 					?><a href="users/groupDelete/<?php print $this->group->id ?>" class="btn btn-link confirm-delete float-right"><i class="fa fa-trash"></i> <?php $this->_('DELETE') ?></a><?php				
 				}
 	

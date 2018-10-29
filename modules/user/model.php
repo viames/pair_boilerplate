@@ -151,14 +151,7 @@ class UserModel extends Model {
 		
 		$form->addControlClass('form-control');
 		
-		$query =
-			'SELECT lo.*, CONCAT(la.english_name, " (", co.english_name, ")") AS language_country ' .
-			' FROM `locales` AS lo' .
-			' INNER JOIN languages AS la ON lo.language_id = la.id' .
-			' INNER JOIN countries AS co ON lo.country_id = co.id' .
-			' ORDER BY la.english_name';
-		
-		$locales = Locale::getObjectsByQuery($query);
+		$locales = Locale::getExistentTranslations();
 
 		$form->addInput('name')->setRequired()->setMinLength(2);
 		$form->addInput('surname')->setRequired()->setMinLength(2);
