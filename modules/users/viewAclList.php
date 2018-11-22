@@ -10,15 +10,15 @@ class UsersViewAclList extends View {
 
 	public function render() {
 
-		$this->app->activeMenuItem = 'users/groupList';
+		$this->app->activeMenuItem = 'groups';
 
 		$groupId = Router::get(0);
 
 		$group = new Group($groupId);
 
 		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath($this->lang('GROUPS'), 'users/groupList');
-		$breadcrumb->addPath('Gruppo ' . $group->name, 'users/groupEdit/' . $group->id);
+		$breadcrumb->addPath($this->lang('GROUPS'), 'groups');
+		$breadcrumb->addPath('Gruppo ' . $group->name, 'groups/edit/' . $group->id);
 		$breadcrumb->addPath('Access list');
 		
 		$widget = new Widget();

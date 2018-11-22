@@ -93,7 +93,7 @@ class UserController extends Controller {
 		User::doLogout(session_id());
 		
 		// manual redirect because of variables clean-up
-		header('Location: ' . BASE_HREF . 'user/login');
+		header('Location: ' . BASE_HREF . 'login');
 		exit();
 		
 	}
@@ -105,21 +105,31 @@ class UserController extends Controller {
 	
 		$form = $this->model->getUserForm();
 		
-		$user				= new User($this->app->currentUser->id);
-		$user->name			= Input::get('name');
-		$user->surname		= Input::get('surname');
-		$user->email		= Input::get('email') ? Input::get('email') : NULL;
-		$user->ldapUser		= Input::get('ldapUser') ? Input::get('ldapUser') : NULL;
-		$user->username		= Input::get('username');
-		$user->languageId	= Input::get('languageId', 'int');
+		$user			= new User($this->app->currentUser->id);
+		$user->name		= Input::get('name');
+		$user->surname	= Input::get('surname');
+		$user->email	= Input::get('email') ? Input::get('email') : NULL;
+		$user->ldapUser	= Input::get('ldapUser') ? Input::get('ldapUser') : NULL;
+		$user->username	= Input::get('username');
+		$user->localeId	= Input::get('localeId', 'int');
 		
 		if (Input::get('password')) {
 			$user->hash = User::getHashedPasswordWithSalt(Input::get('password'));
 		}
 
+		$res = $user->store();
+
 		// we notice just if user changes really
-		if ($form->isValid() and $user->store()) {
-			$this->enqueueMessage($this->lang('YOUR_PROFILE_HAS_BEEN_CHANGED'));
+		if (!$form->isValid()) {
+			$this->enqueueError($this->lang('ERROR_FORM_IS_NOT_VALID'));
+		} else {
+			if ($res) {
+				$this->enqueueMessage($this->lang('YOUR_PROFILE_HAS_BEEN_CHANGED'));
+			} else {
+				$error = $user->getErrors();
+				$msg = $this->lang('ERROR_ON_LAST_REQUEST') . (count($errors) ? ':' . implode(" \n", $errors) : '');
+				$this->enqueueError($msg);
+			}
 		}
 		
 		$this->app->redirect('user/profile');

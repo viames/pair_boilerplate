@@ -15,10 +15,10 @@ class UsersViewGroupNew extends View {
 	public function render() {
 		
 		$this->app->pageTitle = $this->lang('NEW_GROUP');
-		$this->app->activeMenuItem = 'users/groupList';
+		$this->app->activeMenuItem = 'groups';
 		
 		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath($this->lang('GROUPS'), 'users/groupList');
+		$breadcrumb->addPath($this->lang('GROUPS'), 'groups');
 		
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');

@@ -19,11 +19,11 @@ class UsersViewGroupEdit extends View {
 		$group		= new Group($groupId);
 		
 		$this->app->pageTitle = $this->lang('GROUP_EDIT');
-		$this->app->activeMenuItem = 'users/groupList';
+		$this->app->activeMenuItem = 'groups';
 		
 		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath($this->lang('GROUPS'), 'users/groupList');
-		$breadcrumb->addPath('Gruppo ' . $group->name, 'users/groupEdit/' . $group->id);
+		$breadcrumb->addPath($this->lang('GROUPS'), 'groups');
+		$breadcrumb->addPath('Gruppo ' . $group->name, 'groups/edit/' . $group->id);
 		
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');

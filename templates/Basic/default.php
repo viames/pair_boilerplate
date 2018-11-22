@@ -1,8 +1,6 @@
 <?php
 
-use Pair\Application;
-
-$app = Application::getInstance();
+$app = Pair\Application::getInstance();
 
 ?><!DOCTYPE html>
 <html lang="<?php print $this->langCode ?>">

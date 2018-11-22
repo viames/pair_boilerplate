@@ -16,7 +16,7 @@
 				print $this->form->renderControl('referer');
 				print $this->form->renderControl('timezone');
 	
-				?><button type="submit" class="btn btn-primary block full-width m-b">Login</button>
+				?><button type="submit" class="btn btn-primary block full-width m-b"><?php $this->_('LOGIN') ?></button>
 			</fieldset>
 		</form>
 	</div>
