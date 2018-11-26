@@ -28,7 +28,7 @@ class UserModel extends Model {
 		}
 			
 		// loads user row
-		$this->db->setQuery('SELECT * FROM users WHERE ldap_user=?');
+		$this->db->setQuery('SELECT * FROM `users` WHERE ldap_user=?');
 		$row = $this->db->loadObject(array($username));
 		
 		if (is_object($row)) {

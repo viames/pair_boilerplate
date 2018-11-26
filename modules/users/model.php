@@ -21,8 +21,8 @@ class UsersModel extends Model {
 	
 		$query =
 			'SELECT u.*, g.name AS group_name' .
-			' FROM users AS u' .
-			' INNER JOIN groups AS g ON u.group_id = g.id' .
+			' FROM `users` AS u' .
+			' INNER JOIN `groups` AS g ON u.group_id = g.id' .
 			' ORDER BY u.name ASC' .
 			' LIMIT ' . $this->pagination->start . ', ' . $this->pagination->limit;
 		
@@ -39,9 +39,9 @@ class UsersModel extends Model {
 
 		$query = 
 			'SELECT g.*, m.name AS module_name,' .
-			' (SELECT COUNT(*) FROM users WHERE group_id = g.id) AS user_count,' .
+			' (SELECT COUNT(*) FROM `users` WHERE group_id = g.id) AS user_count,' .
 			' (SELECT COUNT(*) FROM acl WHERE group_id = g.id) AS acl_count' .
-			' FROM groups AS g' .
+			' FROM `groups` AS g' .
 			' LEFT JOIN acl AS a ON (g.id = a.group_id AND a.is_default=1)' .
 			' LEFT JOIN rules AS r ON r.id = a.rule_id' .
 			' LEFT JOIN modules AS m ON m.id = r.module_id' .

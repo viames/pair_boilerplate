@@ -2,7 +2,7 @@
 	"name" : "viames/pair_example",
 	"description" : "Skeleton project based on Pair PHP framework",
 	"type" : "project",
-	"minimum-stability" : "dev",
+	"minimum-stability" : "stable",
 	"require" : {
 		"viames/pair" : ">=1.4.5",
 		"php" : ">=5.6",
