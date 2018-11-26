@@ -33,8 +33,8 @@ class LocalesModel extends Model {
 		$query =
 			'SELECT lo.*, la.english_name AS language_name, co.english_name AS country_name, CONCAT(la.code, "-", co.code) AS representation' .
 			' FROM `locales` AS lo' .
-			' INNER JOIN languages AS la ON lo.language_id = la.id' . 
-			' INNER JOIN countries AS co ON lo.country_id = co.id' . 
+			' INNER JOIN `languages` AS la ON lo.language_id = la.id' . 
+			' INNER JOIN `countries` AS co ON lo.country_id = co.id' . 
 			$where .
 			' ORDER BY la.code, co.code' .
 			' LIMIT ' . $this->pagination->start . ', ' . $this->pagination->limit;
@@ -57,8 +57,8 @@ class LocalesModel extends Model {
 			// get a filtered list
 			$query =
 				'SELECT COUNT(1)' .
-				' FROM locales AS lo' .
-				' INNER JOIN languages AS la ON lo.language_id = la.id' . 
+				' FROM `locales` AS lo' .
+				' INNER JOIN `languages` AS la ON lo.language_id = la.id' . 
 				' WHERE la.code LIKE ?';
 			return Database::load($query, $alphaFilter . '%', 'count');
 			

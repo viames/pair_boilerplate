@@ -32,10 +32,10 @@ class LanguagesModel extends Model {
 
 		$query =
 			'SELECT la.*, IFNULL(c.english_name, NULL) AS default_country,' .
-			' (SELECT COUNT(1) FROM locales WHERE language_id = la.id) AS locale_count' .
-			' FROM ' . Language::TABLE_NAME . ' AS la' .
-			' LEFT JOIN locales AS lo ON (lo.language_id = la.id AND lo.default_country = 1)' .
-			' LEFT JOIN countries AS c ON lo.country_id = c.id' .
+			' (SELECT COUNT(1) FROM `locales` WHERE language_id = la.id) AS locale_count' .
+			' FROM `' . Language::TABLE_NAME . '` AS la' .
+			' LEFT JOIN `locales` AS lo ON (lo.language_id = la.id AND lo.default_country = 1)' .
+			' LEFT JOIN `countries` AS c ON lo.country_id = c.id' .
 			$where .
 			' GROUP BY la.id' .
 			' ORDER BY la.english_name' .
@@ -57,7 +57,7 @@ class LanguagesModel extends Model {
 		if ($alphaFilter) {
 			
 			// get a filtered list
-			$query = 'SELECT COUNT(1) FROM languages WHERE english_name LIKE ?';
+			$query = 'SELECT COUNT(1) FROM `languages` WHERE english_name LIKE ?';
 			return Database::load($query, $alphaFilter . '%', 'count');
 			
 		} else {

@@ -26,9 +26,9 @@ class TranslatorModel extends Model {
 		
 		$query =
 			'SELECT lo.*, la.english_name AS language_name, co.english_name AS country_name, CONCAT(la.code, "-", co.code) AS representation' .
-			' FROM locales AS lo' .
-			' INNER JOIN languages AS la ON lo.language_id = la.id' .
-			' INNER JOIN countries AS co ON lo.country_id = co.id' .
+			' FROM `locales` AS lo' .
+			' INNER JOIN `languages` AS la ON lo.language_id = la.id' .
+			' INNER JOIN `countries` AS co ON lo.country_id = co.id' .
 			$where .
 			' LIMIT ' . $this->pagination->start . ', ' . $this->pagination->limit;
 			
@@ -49,8 +49,8 @@ class TranslatorModel extends Model {
 			
 			$query =
 				'SELECT COUNT(lc.id)' .
-				' FROM locales AS lc' .
-				' INNER JOIN languages AS ln ON lc.language_id = ln.id' .
+				' FROM `locales` AS lc' .
+				' INNER JOIN `languages` AS ln ON lc.language_id = ln.id' .
 				' WHERE ln.english_name LIKE ?';
 			
 			$this->db->setQuery($query);

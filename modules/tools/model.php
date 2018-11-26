@@ -175,7 +175,7 @@ class ToolsModel extends Model {
 		// TODO
 		
 		// check and create countries table
-		$this->db->setQuery('SELECT COUNT(table_name) FROM information_schema.tables WHERE table_schema = "' . DB_NAME . '" AND table_name = "countries"');
+		$this->db->setQuery('SELECT COUNT(table_name) FROM information_schema.`tables` WHERE table_schema = "' . DB_NAME . '" AND table_name = "countries"');
 		$res = $this->db->loadCount();
 		if (!$res) {
 			$this->runQueryByFile('countries.sql');
@@ -186,7 +186,7 @@ class ToolsModel extends Model {
 		
 		// check and remove language fk with user table
 		$this->db->setQuery(
-			'SELECT * FROM information_schema.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_SCHEMA = "' . DB_NAME . '"' .
+			'SELECT * FROM information_schema.`REFERENTIAL_CONSTRAINTS` WHERE CONSTRAINT_SCHEMA = "' . DB_NAME . '"' .
 			' AND TABLE_NAME = "users" AND CONSTRAINT_NAME = "fk_users_languages"');
 		
 		if ($this->db->loadCount()) {
@@ -202,7 +202,7 @@ class ToolsModel extends Model {
 		}
 		
 		// check existence of locales table
-		$this->db->setQuery('SELECT COUNT(table_name) FROM information_schema.tables WHERE table_schema = "' . DB_NAME . '" AND table_name = "locales"');
+		$this->db->setQuery('SELECT COUNT(table_name) FROM information_schema.`tables` WHERE table_schema = "' . DB_NAME . '" AND table_name = "locales"');
 		if (!$this->db->loadCount()) {
 			$this->runQueryByFile('locales.sql');
 			$this->logEvent('Table `locales` has been created and populated');
@@ -269,9 +269,9 @@ class ToolsModel extends Model {
 			
 			$query =
 				'SELECT CONCAT(la.code, "-", co.code) AS representation' .
-				' FROM locales AS lo' .
-				' INNER JOIN languages AS la ON lo.language_id = la.id' .
-				' INNER JOIN countries AS co ON lo.country_id = co.id' .
+				' FROM `locales` AS lo' .
+				' INNER JOIN `languages` AS la ON lo.language_id = la.id' .
+				' INNER JOIN `countries` AS co ON lo.country_id = co.id' .
 				' WHERE la.code = ?' .
 				' AND lo.default_country = 1';
 			

@@ -15,8 +15,8 @@ class RulesModel extends Model {
 
 		$query =
 			' SELECT r.*, m.name '.
-			' FROM rules as r '.
-			' INNER JOIN modules as m ON m.id = r.module_id '.
+			' FROM `rules` as r '.
+			' INNER JOIN `modules` as m ON m.id = r.module_id '.
 			' ORDER BY name ASC ' .
 			' LIMIT ' . $this->pagination->start . ', ' . $this->pagination->limit;
 
@@ -36,8 +36,8 @@ class RulesModel extends Model {
 
 		$query =
 			' SELECT COUNT(*) '.
-			' FROM rules as r '.
-			' INNER JOIN modules as m ON m.id = r.module_id ';
+			' FROM `rules` as r '.
+			' INNER JOIN `modules` as m ON m.id = r.module_id ';
 
 		$this->db->setQuery($query);
 		return (int)$this->db->loadResult();

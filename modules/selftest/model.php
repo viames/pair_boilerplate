@@ -331,8 +331,8 @@ class SelftestModel extends Model {
 		$query =
 			'SELECT lo.*, la.english_name AS language_name, co.english_name AS country_name, CONCAT(la.code, "-", co.code) AS representation' .
 			' FROM `locales` AS lo' .
-			' INNER JOIN languages AS la ON lo.language_id = la.id' .
-			' INNER JOIN countries AS co ON lo.country_id = co.id';
+			' INNER JOIN `languages` AS la ON lo.language_id = la.id' .
+			' INNER JOIN `countries` AS co ON lo.country_id = co.id';
 		
 		$locales = Locale::getObjectsByQuery($query);
 

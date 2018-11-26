@@ -53,7 +53,7 @@ class CountriesModel extends Model {
 		if ($alphaFilter) {
 			
 			// get a filtered list
-			$query = 'SELECT COUNT(1) FROM countries WHERE english_name LIKE ?';
+			$query = 'SELECT COUNT(1) FROM `countries` WHERE english_name LIKE ?';
 			return Database::load($query, $alphaFilter . '%', 'count');
 			
 		} else {
@@ -69,8 +69,8 @@ class CountriesModel extends Model {
 		
 		$query =
 			'SELECT english_name' .
-			' FROM languages AS la' .
-			' INNER JOIN locales AS lo ON la.id = lo.language_id' .
+			' FROM `languages` AS la' .
+			' INNER JOIN `locales` AS lo ON la.id = lo.language_id' .
 			' WHERE lo.country_id = ?' .
 			' AND lo.official_language = 1' .
 			' ORDER BY english_name';

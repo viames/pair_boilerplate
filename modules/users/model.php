@@ -40,11 +40,11 @@ class UsersModel extends Model {
 		$query = 
 			'SELECT g.*, m.name AS module_name,' .
 			' (SELECT COUNT(*) FROM `users` WHERE group_id = g.id) AS user_count,' .
-			' (SELECT COUNT(*) FROM acl WHERE group_id = g.id) AS acl_count' .
+			' (SELECT COUNT(*) FROM `acl` WHERE group_id = g.id) AS acl_count' .
 			' FROM `groups` AS g' .
-			' LEFT JOIN acl AS a ON (g.id = a.group_id AND a.is_default=1)' .
-			' LEFT JOIN rules AS r ON r.id = a.rule_id' .
-			' LEFT JOIN modules AS m ON m.id = r.module_id' .
+			' LEFT JOIN `acl` AS a ON (g.id = a.group_id AND a.is_default=1)' .
+			' LEFT JOIN `rules` AS r ON r.id = a.rule_id' .
+			' LEFT JOIN `modules` AS m ON m.id = r.module_id' .
 			' ORDER BY g.name';
 		
 		return Group::getObjectsByQuery($query);
@@ -63,9 +63,9 @@ class UsersModel extends Model {
 		$query =
 			'SELECT a.*, r.action, m.name AS module_name,' .
 			' CONCAT_WS(" ", m.name, r.action) AS module_action' .
-			' FROM acl AS a' .
-			' INNER JOIN rules AS r ON a.rule_id = r.id' .
-			' INNER JOIN modules AS m ON r.module_id = m.id' .
+			' FROM `acl` AS a' .
+			' INNER JOIN `rules` AS r ON a.rule_id = r.id' .
+			' INNER JOIN `modules` AS m ON r.module_id = m.id' .
 			' WHERE a.group_id = ?' .
 			' ORDER BY m.name ASC, r.action ASC';
 	
@@ -83,8 +83,8 @@ class UsersModel extends Model {
 		$query =
 			'SELECT r.*, m.name AS module_name,' .
 			' CONCAT_WS(" ", m.name, r.action) AS module_action' .
-			' FROM rules AS r' .
-			' INNER JOIN modules AS m ON r.module_id = m.id' .
+			' FROM `rules` AS r' .
+			' INNER JOIN `modules` AS m ON r.module_id = m.id' .
 			' WHERE admin_only = 0' .
 			' ORDER BY m.name ASC, r.action ASC';
 	
