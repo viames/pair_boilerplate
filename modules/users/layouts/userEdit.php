@@ -53,7 +53,7 @@
 					<button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> <?php $this->_('CHANGE')?></button>
 					<a href="users" class="btn btn-secondary"><i class="fa fa-times"></i> <?php $this->_('CANCEL') ?></a><?php
 					if ($this->user->isDeletable()) {
-						?><a href="users/userDelete/<?php print $this->user->id ?>" class="btn btn-link confirm-delete float-right"><i class="fa fa-trash"></i> <?php $this->_('DELETE')?></a><?php
+						?><a href="users/userDelete/<?php print $this->user->id ?>" class="btn btn-link confirm-delete float-right"><i class="fa fa-trash"></i> <?php $this->_('DELETE') ?></a><?php
 					}
 					?>
 				</div>

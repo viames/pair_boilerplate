@@ -1,8 +1,4 @@
-<?php
-
-use Pair\Utilities;
-
-?><div class="row">
+<div class="row">
 	<div class="col-lg-12">
 		<div class="card">
 			<div class="card-header">
@@ -11,7 +7,7 @@ use Pair\Utilities;
 			// show button if acl is not full
 			if ($this->missingAcl) {
 				?>
-				<a class="btn btn-primary btn-sm float-right" href="users/aclNew/<?php print $this->group->id ?>"><button type="button"><i class="fa fa-plus-circle"></i> <?php $this->_('ADD') ?></button></a><?php
+				<a class="btn btn-primary btn-sm float-right" href="users/aclNew/<?php print $this->group->id ?>"><i class="fa fa-plus-circle"></i> <?php $this->_('ADD') ?></a><?php
 			}
 			
 			?>
@@ -52,7 +48,7 @@ use Pair\Utilities;
 
 			} else {
 
-				Utilities::printNoDataMessageBox();
+				Pair\Utilities::printNoDataMessageBox();
 
 			}
 

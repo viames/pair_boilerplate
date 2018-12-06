@@ -3,7 +3,7 @@
 		<div class="card">
 	    	<div class="card-header">
             	<h5 class="float-left"><?php print $this->_('USER_LIST') ?></h5>
-				<a class="btn btn-primary btn-sm float-right" href="users/new"><i class="fa fa-plus-circle"></i> Nuovo utente</a>
+				<a class="btn btn-primary btn-sm float-right" href="users/new"><i class="fa fa-plus-circle"></i> <?php $this->_('NEW_USER') ?></a>
 			</div>
 			<div class="card-body">
 				<?php if (count($this->users)) { ?>
