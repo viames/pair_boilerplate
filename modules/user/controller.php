@@ -126,7 +126,7 @@ class UserController extends Controller {
 			if ($res) {
 				$this->enqueueMessage($this->lang('YOUR_PROFILE_HAS_BEEN_CHANGED'));
 			} else {
-				$error = $user->getErrors();
+				$errors = $user->getErrors();
 				$msg = $this->lang('ERROR_ON_LAST_REQUEST') . (count($errors) ? ':' . implode(" \n", $errors) : '');
 				$this->enqueueError($msg);
 			}

@@ -1,10 +1,8 @@
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40101 SET NAMES utf8 */;
+SET NAMES utf8mb4;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
@@ -34,7 +32,18 @@ CREATE TABLE IF NOT EXISTS `acl` (
 
 LOCK TABLES `acl` WRITE;
 /*!40000 ALTER TABLE `acl` DISABLE KEYS */;
-INSERT INTO `acl` VALUES (2,2,1,0),(3,3,1,0),(4,4,1,0),(5,5,1,0),(6,6,1,0),(7,7,1,0),(8,8,1,0),(9,9,1,0),(10,10,1,1),(11,1,1,0);
+INSERT INTO `acl` (`id`, `rule_id`, `group_id`, `is_default`)
+VALUES
+    (2,2,1,0),
+    (3,3,1,0),
+    (4,4,1,0),
+    (5,5,1,0),
+    (6,6,1,0),
+    (7,7,1,0),
+    (8,8,1,0),
+    (9,9,1,0),
+    (10,10,1,1),
+    (11,1,1,0);
 /*!40000 ALTER TABLE `acl` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -339,7 +348,7 @@ CREATE TABLE IF NOT EXISTS `error_logs` (
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `created_time` (`created_time`),
-  CONSTRAINT `error_logs_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  CONSTRAINT `fk_error_logs_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -372,7 +381,9 @@ CREATE TABLE IF NOT EXISTS `groups` (
 
 LOCK TABLES `groups` WRITE;
 /*!40000 ALTER TABLE `groups` DISABLE KEYS */;
-INSERT INTO `groups` VALUES (1,'Default',1);
+INSERT INTO `groups` (`id`, `name`, `is_default`)
+VALUES
+    (1,'Default',1);
 /*!40000 ALTER TABLE `groups` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -389,7 +400,7 @@ CREATE TABLE IF NOT EXISTS `languages` (
   `english_name` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `code` (`code`)
-) ENGINE=InnoDB AUTO_INCREMENT=136 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -609,9 +620,9 @@ CREATE TABLE `locales` (
   KEY `official_language` (`official_language`),
   KEY `default_country` (`default_country`),
   KEY `app_default` (`app_default`),
-  CONSTRAINT `fk_locales_countries` FOREIGN KEY (`country_id`) REFERENCES `countries` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `fk_locales_languages` FOREIGN KEY (`language_id`) REFERENCES `languages` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=342 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  CONSTRAINT `fk_locales_countries` FOREIGN KEY (`country_id`) REFERENCES `countries` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `fk_locales_languages` FOREIGN KEY (`language_id`) REFERENCES `languages` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1078,7 +1089,22 @@ CREATE TABLE IF NOT EXISTS `modules` (
 
 LOCK TABLES `modules` WRITE;
 /*!40000 ALTER TABLE `modules` DISABLE KEYS */;
-INSERT INTO `modules` VALUES (1,'api','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),(2,'developer','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),(3,'languages','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),(4,'modules','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),(5,'options','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),(6,'rules','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),(7,'selftest','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),(8,'templates','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),(9,'user','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),(10,'users','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),(11,'tools','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),(12,'countries','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),(13,'locales','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),(14,'translator','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00');
+INSERT INTO `modules` (`id`, `name`, `version`, `date_released`, `app_version`, `installed_by`, `date_installed`)
+VALUES
+    (1,'api','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),
+    (2,'developer','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),
+    (3,'languages','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),
+    (4,'modules','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),
+    (5,'options','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),
+    (6,'rules','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),
+    (7,'selftest','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),
+    (8,'templates','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),
+    (9,'user','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),
+    (10,'users','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),
+    (11,'tools','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),
+    (12,'countries','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),
+    (13,'locales','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),
+    (14,'translator','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00');
 /*!40000 ALTER TABLE `modules` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1106,7 +1132,14 @@ CREATE TABLE IF NOT EXISTS `options` (
 
 LOCK TABLES `options` WRITE;
 /*!40000 ALTER TABLE `options` DISABLE KEYS */;
-INSERT INTO `options` VALUES ('development','DEVELOPMENT','bool','1',NULL,'debug'),('pagination_pages','ITEMS_PER_PAGE','int','12',NULL,'site'),('session_time','SESSION_TIME','int','120',NULL,'site'),('show_log','SHOW_LOG','bool','1',NULL,'debug'),('webservice_timeout','WEBSERVICE_TIMEOUT','int','8',NULL,'services'),('admin_emails','ADMIN_EMAILS','text','em@il.address',NULL,'site');
+INSERT INTO `options` (`name`, `label`, `type`, `value`, `list_options`, `group`)
+VALUES
+    ('development','DEVELOPMENT','bool','1',NULL,'debug'),
+    ('pagination_pages','ITEMS_PER_PAGE','int','12',NULL,'site'),
+    ('session_time','SESSION_TIME','int','120',NULL,'site'),
+    ('show_log','SHOW_LOG','bool','1',NULL,'debug'),
+    ('webservice_timeout','WEBSERVICE_TIMEOUT','int','8',NULL,'services'),
+    ('admin_emails','ADMIN_EMAILS','text','em@il.address',NULL,'site');
 /*!40000 ALTER TABLE `options` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1126,7 +1159,7 @@ CREATE TABLE IF NOT EXISTS `rules` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `module_action` (`module_id`,`action`) USING BTREE,
   CONSTRAINT `fk_rules_modules` FOREIGN KEY (`module_id`) REFERENCES `modules` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1135,7 +1168,21 @@ CREATE TABLE IF NOT EXISTS `rules` (
 
 LOCK TABLES `rules` WRITE;
 /*!40000 ALTER TABLE `rules` DISABLE KEYS */;
-INSERT INTO `rules` VALUES (1,NULL,0,1),(2,NULL,1,2),(4,NULL,0,4),(5,NULL,1,5),(6,NULL,1,6),(7,NULL,1,7),(8,NULL,0,8),(9,NULL,0,9),(10,NULL,0,10),(11,NULL,1,11),(12,NULL,1,12),(13,NULL,1,13),(14,NULL,1,14);
+INSERT INTO `rules` (`id`, `action`, `admin_only`, `module_id`)
+VALUES
+    (1,NULL,0,1),
+    (2,NULL,1,2),
+    (4,NULL,0,4),
+    (5,NULL,1,5),
+    (6,NULL,1,6),
+    (7,NULL,1,7),
+    (8,NULL,0,8),
+    (9,NULL,0,9),
+    (10,NULL,0,10),
+    (11,NULL,1,11),
+    (12,NULL,1,12),
+    (13,NULL,1,13),
+    (14,NULL,1,14);
 /*!40000 ALTER TABLE `rules` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1177,7 +1224,7 @@ CREATE TABLE IF NOT EXISTS `templates` (
   UNIQUE KEY `name` (`name`),
   KEY `installed_by` (`installed_by`),
   KEY `date_installed` (`date_installed`),
-  CONSTRAINT `fk_templates_users` FOREIGN KEY (`installed_by`) REFERENCES `users` (`id`)
+  CONSTRAINT `fk_templates_users` FOREIGN KEY (`installed_by`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1187,7 +1234,9 @@ CREATE TABLE IF NOT EXISTS `templates` (
 
 LOCK TABLES `templates` WRITE;
 /*!40000 ALTER TABLE `templates` DISABLE KEYS */;
-INSERT INTO `templates` VALUES (1,'Basic','1.0','2017-01-07 12:00:00','1.0',1,1,'2017-01-07 12:00:00',0,'#1AB394,#1C84C6,#9C9C9C,#636363');
+INSERT INTO `templates` (`id`, `name`, `version`, `date_released`, `app_version`, `is_default`, `installed_by`, `date_installed`, `derived`, `palette`)
+VALUES
+    (1,'Basic','1.0','2017-01-07 12:00:00','1.0',1,1,'2017-01-07 12:00:00',0,'#1AB394,#1C84C6,#9C9C9C,#636363');
 /*!40000 ALTER TABLE `templates` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1217,15 +1266,15 @@ CREATE TABLE IF NOT EXISTS `users` (
   KEY `admin` (`admin`),
   KEY `locale_id` (`locale_id`),
   KEY `ldap_user` (`ldap_user`),
-  CONSTRAINT `fk_users_groups` FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`),
-  CONSTRAINT `fk_users_locales` FOREIGN KEY (`locale_id`) REFERENCES `locales` (`id`)
+  CONSTRAINT `fk_users_groups` FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `fk_users_locales` FOREIGN KEY (`locale_id`) REFERENCES `locales` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;

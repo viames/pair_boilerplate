@@ -703,11 +703,11 @@ class ' . $this->objectName . ' extends ActiveRecord {
 				
 				}
 				
-				// if is not nullable field, set as required
-				if ($this->propType[$property] != 'bool' and !$this->isFieldNullable($this->tableName, $field)) {
-					$control .= '->setRequired()';
-				}
-				
+			}
+			
+			// if is not nullable field, set as required
+			if ($this->propType[$property] != 'bool' and !$this->isFieldNullable($this->tableName, $field)) {
+				$control .= '->setRequired()';
 			}
 			
 			// indentation
