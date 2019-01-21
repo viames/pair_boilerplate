@@ -46,11 +46,10 @@ class DeveloperController extends Controller {
 
 		$tableName   = Input::get('tableName');
 		$objectName  = Input::get('objectName');
-		$svnComments = Input::getBool('svnComments');
 
 		if ($tableName and $objectName) {
 			
-			$this->model->setupVariables($tableName, $objectName, $svnComments);
+			$this->model->setupVariables($tableName, $objectName);
 			
 			$file = APPLICATION_PATH . '/classes/' . $this->model->objectName . '.php';
 
@@ -80,12 +79,11 @@ class DeveloperController extends Controller {
 		$tableName	= Input::get('tableName');
 		$objectName	= Input::get('objectName');
 		$moduleName	= Input::get('moduleName');
-		$svnComments = Input::getBool('svnComments');
 		$commonClass = Input::getBool('commonClass');
 			
 		if ($tableName and $objectName and $moduleName) {
 			
-			$this->model->setupVariables($tableName, $objectName, $svnComments, $moduleName);
+			$this->model->setupVariables($tableName, $objectName, $moduleName);
 			
 			$folder = APPLICATION_PATH . '/modules/' . $this->model->moduleName;
 				

@@ -73,7 +73,7 @@ $layouts['new-page'] =
 		
 $layouts['new-field'] = '
 						<div class="form-group row">
-							<label class="col-md-3">{fieldLabel}</label>
+							<label class="col-md-3 col-form-label">{fieldLabel}</label>
 							<div class="col-md-9">{fieldControl}</div>
 						</div>';
 
@@ -108,6 +108,6 @@ $layouts['edit-page'] =
 
 $layouts['edit-field'] = '
 						<div class="form-group row">
-							<label class="col-md-3">{fieldLabel}</label>
+							<label class="col-md-3 col-form-label">{fieldLabel}</label>
 							<div class="col-md-9">{fieldControl}</div>
 						</div>';

@@ -35,12 +35,6 @@ class DeveloperModel extends Model {
 	protected $objectName;
 	
 	/**
-	 * If TRUE, add comments and SVN $Id$ for auto-properties.
-	 * @var bool
-	 */
-	protected $svnComments;
-	
-	/**
 	 * List of properties type (property_name => type).
 	 * @var array
 	 */
@@ -138,7 +132,6 @@ class DeveloperModel extends Model {
 		$form = new Form();
 		$form->addControlClass('form-control');
 		$form->addInput('objectName')->setRequired();
-		$form->addInput('svnComments')->setType('bool');
 		$form->addInput('tableName')->setType('hidden')->setRequired();
 		return $form;
 		
@@ -150,7 +143,6 @@ class DeveloperModel extends Model {
 		$form->addControlClass('form-control');
 		$form->addInput('objectName')->setRequired();
 		$form->addInput('moduleName')->setRequired();
-		$form->addInput('svnComments')->setType('bool');
 		$form->addInput('commonClass')->setType('bool');
 		$form->addInput('tableName')->setType('hidden')->setRequired();
 		return $form;
@@ -302,10 +294,9 @@ class DeveloperModel extends Model {
 	 * 
 	 * @param	string	Table name all lowercase with underscores.
 	 * @param	string	Optional object name with uppercase first and case sensitive.
-	 * @param	bool	If TRUE, add initial comments and $Id$ for SVN auto-properties.
 	 * @param	string	Optional module name all lowercase alpha chars only.
 	 */
-	public function setupVariables($tableName, $objectName=NULL, $svnComments=FALSE, $moduleName=NULL) {
+	public function setupVariables($tableName, $objectName=NULL, $moduleName=NULL) {
 		
 		$app = Application::getInstance();
 
@@ -323,7 +314,6 @@ class DeveloperModel extends Model {
 		$this->tableName	= $tableName;
 		$this->moduleName	= $moduleName ? $moduleName : strtolower(str_replace('_', '', $tableName));
 		$this->objectName	= $objectName ? $objectName : $this->getSingularObjectName($tableName);
-		$this->svnComments	= $svnComments;
 		$this->author		= $app->currentUser->fullName;
 		$this->package		= PRODUCT_NAME;
 		
@@ -544,8 +534,10 @@ class DeveloperModel extends Model {
 		}
 		
 		// here starts code collect
-		$content = $this->getFileStart() .
-'use Pair\ActiveRecord;
+		$content = 
+'<?php
+
+use Pair\ActiveRecord;
 
 class ' . $this->objectName . ' extends ActiveRecord {
 	
@@ -716,8 +708,10 @@ class ' . $this->objectName . ' extends ActiveRecord {
 		}
 		
 		// here starts code collect
-		$content = $this->getFileStart() .
-'use Pair\Form;
+		$content = 
+'<?php
+
+use Pair\Form;
 use Pair\Model;
 
 class ' . ucfirst($this->moduleName) . 'Model extends Model {
@@ -775,8 +769,10 @@ class ' . ucfirst($this->moduleName) . 'Model extends Model {
 	public function saveController($file) {
 		
 		// here starts code collect
-		$content = $this->getFileStart() .
-'use Pair\Breadcrumb;
+		$content = 
+'<?php
+
+use Pair\Breadcrumb;
 use Pair\Controller;
 use Pair\Input;
  		
@@ -791,7 +787,7 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 	protected function init() {
 		
 		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath(\'' . $this->objectName . '\', \'' . $this->moduleName . '\');
+		$breadcrumb->addPath($this->lang(\'' . strtoupper($this->tableName) . '\'), \'' . $this->moduleName . '\');
 		
 	}
 	
@@ -943,9 +939,6 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 		$content = '';
 		
 		// here starts code collect
-		if ($this->svnComments) {
-			$content .= '; $Id' . "\$\n; " . $newLocale->englishName . " language\n\n";
-		}
 		$content .= strtoupper($this->tableName) . ' = "' . str_replace('_', ' ', ucfirst($this->tableName)) . "\"\n";
 		$content .= $ucObject . '_HAS_BEEN_CREATED = "' . $tran->get('OBJECT_HAS_BEEN_CREATED', $this->objectName) . "\"\n";
 		$content .= $ucObject . '_HAS_NOT_BEEN_CREATED = "' . $tran->get('OBJECT_HAS_NOT_BEEN_CREATED', $this->objectName) . "\"\n";
@@ -967,8 +960,10 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 	public function saveViewDefault($file) {
 		
 		// here starts code collect
-		$content = $this->getFileStart() .
-'use Pair\Breadcrumb;
+		$content = 
+'<?php
+
+use Pair\Breadcrumb;
 use Pair\View;
 use Pair\Widget;
 
@@ -1098,7 +1093,7 @@ class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 		$ph['tableRows']	= $tableRows;
 
 		// replace value on placeholders
-		$content = $this->getFileStart() . '?>' . $this->replaceHolders($this->layouts['default-page'], $ph);
+		$content = $this->replaceHolders($this->layouts['default-page'], $ph);
 
 		// writes the code into the file
 		$this->writeFile($file, $content);
@@ -1108,8 +1103,10 @@ class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 	public function saveViewNew($file) {
 
 		// here starts code collect
-		$content = $this->getFileStart() .
-'use Pair\Breadcrumb;
+		$content = 
+'<?php
+
+use Pair\Breadcrumb;
 use Pair\View;
 use Pair\Widget;
 
@@ -1124,6 +1121,9 @@ class ' . ucfirst($this->moduleName) . 'ViewNew extends View {
 
 		$this->app->pageTitle = $this->lang(\'NEW_' . strtoupper($this->objectName) . '\');
 		$this->app->activeMenuItem = \'' . $this->moduleName . '\';
+
+		$breadcrumb = Breadcrumb::getInstance();
+		$breadcrumb->addPath($this->lang(\'NEW_' . strtoupper($this->objectName) . '\'), \'new\');
 
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render(\'breadcrumb\');
@@ -1169,7 +1169,7 @@ class ' . ucfirst($this->moduleName) . 'ViewNew extends View {
 		$ph['cancelUrl']	= $this->moduleName;
 
 		// replace value on placeholders
-		$content = $this->getFileStart() . '?>' . $this->replaceHolders($this->layouts['new-page'], $ph);
+		$content = $this->replaceHolders($this->layouts['new-page'], $ph);
 		
 		// writes the code into the file
 		$this->writeFile($file, $content);
@@ -1191,15 +1191,19 @@ class ' . ucfirst($this->moduleName) . 'ViewNew extends View {
 			}
 			
 			$key = 'array(' . implode(', ', $vars) . ')';
+			$editId = '$' . lcfirst($this->objectName) . '->' . implode('/', $vars);
 				
 		} else {
 			$key	= '$' . $this->getCamelCase($this->tableKey);
 			$params	= '		' . $key . ' = Router::get(0);';
+			$editId = '$' . lcfirst($this->objectName) . '->' . $this->getCamelCase($this->tableKey);
 		}		
 
 		// here starts code collect
-		$content = $this->getFileStart() .
-'use Pair\Breadcrumb;
+		$content = 
+'<?php
+
+use Pair\Breadcrumb;
 use Pair\Router;
 use Pair\View;
 use Pair\Widget;
@@ -1218,6 +1222,9 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 
 ' . $params . '
 		$' . lcfirst($this->objectName) . ' = new ' . $this->objectName . '(' . $key . ');
+
+		$breadcrumb = Breadcrumb::getInstance();
+		$breadcrumb->addPath($this->lang(\'EDIT_' . strtoupper($this->objectName) . '\'), \'edit/\' . ' . $editId . ');
 
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render(\'breadcrumb\');
@@ -1273,7 +1280,7 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 		$ph['deleteUrl']	=  $this->moduleName . '/delete/<?php print ' . $this->getTableKeyAsCgiParams() . ' ?>';
 		
 		// replace value on placeholders
-		$content = $this->getFileStart() . '?>' . $this->replaceHolders($this->layouts['edit-page'], $ph);
+		$content = $this->replaceHolders($this->layouts['edit-page'], $ph);
 		
 		// writes the code into the file
 		$this->writeFile($file, $content);
@@ -1429,23 +1436,6 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 			
 		}
 		
-	}
-	
-	/**
-	 * Create the file header comments and SVN $Id$ for auto-properties.
-	 * 
-	 * @return string
-	 */
-	private function getFileStart() {
-		
-		$fileStart = "<?php\n\n";
-		
-		if ($this->svnComments) {
-			$fileStart .= "/**\n * @version	\$Id\$\n * @author	" . $this->author . "\n */\n\n";
-		}
-		
-		return $fileStart;
-	
 	}
 	
 	/**
