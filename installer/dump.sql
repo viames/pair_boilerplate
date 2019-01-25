@@ -1241,6 +1241,30 @@ VALUES
 UNLOCK TABLES;
 
 --
+-- Table structure for table `tokens`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `tokens` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `description` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `token` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `enabled` tinyint(1) unsigned NOT NULL DEFAULT '1',
+  `created_by` int(4) unsigned NOT NULL,
+  `creation_date` datetime NOT NULL,
+  `last_use` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `code` (`code`),
+  KEY `token` (`token`),
+  KEY `enabled` (`enabled`),
+  KEY `created_by` (`created_by`),
+  CONSTRAINT `fk_tokens_users` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `users`
 --
 

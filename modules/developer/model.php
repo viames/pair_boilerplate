@@ -702,8 +702,8 @@ class ' . $this->objectName . ' extends ActiveRecord {
 				$control .= '->setRequired()';
 			}
 			
-			// indentation
-			$controls[] = "\t\t" . $control . ";";
+			// indentation and label
+			$controls[] = "\t\t" . $control . "->setLabel('" . strtoupper($field) . "');";
 		
 		}
 		
@@ -1155,7 +1155,7 @@ class ' . ucfirst($this->moduleName) . 'ViewNew extends View {
 			if (!$this->isTableKey($field)) {
 				
 				$search = ['{fieldLabel}', '{fieldControl}'];
-				$replace = ['<?php $this->_(\'' . strtoupper($field) . '\') ?>',
+				$replace = ['<?php $this->form->printLabel(\'' . $property . '\') ?>',
 							'<?php print $this->form->renderControl(\'' . $property . '\') ?>'];
 				$fields[] = str_replace($search, $replace, $this->layouts['new-field']);
 				
@@ -1259,7 +1259,7 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 			if (!$this->isTableKey($field)) {
 				
 				$search = ['{fieldLabel}', '{fieldControl}'];
-				$replace = ['<?php $this->_(\'' . strtoupper($field) . '\') ?>',
+				$replace = ['<?php $this->form->printLabel(\'' . $property . '\') ?>',
 						'<?php print $this->form->renderControl(\'' . $property . '\') ?>'];
 				$fields[] = str_replace($search, $replace, $this->layouts['edit-field']);
 				
