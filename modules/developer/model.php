@@ -330,7 +330,7 @@ class DeveloperModel extends Model {
 		// iterates all found columns
 		foreach ($columns as $column) {
 			
-			$property = $this->getCamelCase($column->Field);
+			$property = Utilities::getCamelCase($column->Field);
 			
 			// set the table key
 			if ('PRI' == $column->Key) {
@@ -596,8 +596,8 @@ class ' . $this->objectName . ' extends ActiveRecord {
 				
 					// some useful variables
 					$tmp		= explode('\\', $fkClass);
-					$fkVar		= '$' . $this->getCamelCase(end($tmp));
-					$fkColumn	= $this->getCamelCase($col->REFERENCED_COLUMN_NAME);
+					$fkVar		= '$' . Utilities::getCamelCase(end($tmp));
+					$fkColumn	= Utilities::getCamelCase($col->REFERENCED_COLUMN_NAME);
 	
 					// add the list of all fk-class objects
 					$lists[] = "\t\t" . $fkVar . ' = ' . $fkClass . "::getAllObjects();\n";
@@ -985,11 +985,11 @@ class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 		$widget = new Widget();
 		$this->app->sideMenuWidget = $widget->render(\'sideMenu\');
 		
-		$' . $this->getCamelCase($this->tableName) . ' = $this->model->get' .  ucfirst($this->moduleName) . '();
+		$' . Utilities::getCamelCase($this->tableName) . ' = $this->model->get' .  ucfirst($this->moduleName) . '();
 
 		$this->pagination->count = $this->model->countListItems();
 
-		$this->assign(\'' . $this->getCamelCase($this->tableName) . '\', $' . $this->getCamelCase($this->tableName) . ');
+		$this->assign(\'' . Utilities::getCamelCase($this->tableName) . '\', $' . $this->getCamelCase($this->tableName) . ');
 
 	}
 
@@ -1049,7 +1049,7 @@ class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 						// search the first string-type field in the class, to use as label
 						$firstTextProp = $this->getFirstTextProperty($fkClass);
 						if (!$firstTextProp) {
-							$firstTextProp = $this->getCamelCase($col->REFERENCED_COLUMN_NAME);
+							$firstTextProp = Utilities::getCamelCase($col->REFERENCED_COLUMN_NAME);
 						}
 						
 						$object = 'htmlspecialchars($o->getRelatedProperty(\'' . $property . '\', \'' . $firstTextProp . '\'))';
@@ -1081,14 +1081,13 @@ class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 		
 		// the cycle that outputs a full table-row
 		$tableRows =
-			'<?php foreach ($this->' . $this->getCamelCase($this->tableName) . ' as $o) {' .
-			"?><tr>\n" . implode("\n", $cells) . "</tr><?php\n" .
-			"} ?>\n";
+			'<?php foreach ($this->' . Utilities::getCamelCase($this->tableName) . ' as $o) {' .
+			" ?>\n<tr>\n" . implode("\n", $cells) . "\n</tr>\n<?php } ?>\n";
 		
 		$ph['pageTitle']	= '<?php $this->_(\'' . strtoupper($this->tableName) . '\') ?>';
 		$ph['linkAdd']		= $this->moduleName . '/new';
 		$ph['newElement']	= '<?php $this->_(\'NEW_' . strtoupper($this->objectName) . '\') ?>';
-		$ph['itemsArray']	= '$this->' . $this->getCamelCase($this->tableName);
+		$ph['itemsArray']	= '$this->' . Utilities::getCamelCase($this->tableName);
 		$ph['tableHeaders']	= implode("\n", $headers);
 		$ph['tableRows']	= $tableRows;
 
@@ -1185,7 +1184,7 @@ class ' . ucfirst($this->moduleName) . 'ViewNew extends View {
 			$vars	= array();
 			
 			foreach ($this->tableKey as $index => $k) {
-				$var	= '$' . $this->getCamelCase($k);
+				$var	= '$' . Utilities::getCamelCase($k);
 				$vars[]	= $var;
 				$params.= '		' . $var . ' = Router::get(' . $index . ");\n";
 			}
@@ -1194,9 +1193,9 @@ class ' . ucfirst($this->moduleName) . 'ViewNew extends View {
 			$editId = '$' . lcfirst($this->objectName) . '->' . implode('/', $vars);
 				
 		} else {
-			$key	= '$' . $this->getCamelCase($this->tableKey);
+			$key	= '$' . Utilities::getCamelCase($this->tableKey);
 			$params	= '		' . $key . ' = Router::get(0);';
-			$editId = '$' . lcfirst($this->objectName) . '->' . $this->getCamelCase($this->tableKey);
+			$editId = '$' . lcfirst($this->objectName) . '->' . Utilities::getCamelCase($this->tableKey);
 		}		
 
 		// here starts code collect
@@ -1287,18 +1286,6 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 		
 	}
 	
-	private function getCamelCase(string $text, bool $capFirst=FALSE) {
-		
-		$camelCase = str_replace(' ', '', ucwords(str_replace(['_','\\'], ' ', $text)));
-		
-		if (!$capFirst) {
-			$camelCase[0] = lcfirst($camelCase[0]);
-		}
-		
-		return $camelCase;
-		
-	}
-	
 	private function getSingularObjectName($tableName) {
 		
 		$tmp = explode('_', $tableName);
@@ -1334,7 +1321,7 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 			$singleName = $tableName;
 		}
 		
-		return $this->getCamelCase($singleName, TRUE);
+		return Utilities::getCamelCase($singleName, TRUE);
 		
 	}
 	
@@ -1425,14 +1412,14 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 			$vars = array();
 			
 			foreach ($this->tableKey as $k) {
-				$vars[] = $object . '->' . $this->getCamelCase($k);
+				$vars[] = $object . '->' . Utilities::getCamelCase($k);
 			}
 			
 			return implode(" . '/' . ", $vars);
 			
 		} else {
 			
-			return $object . '->' . $this->getCamelCase($this->tableKey);
+			return $object . '->' . Utilities::getCamelCase($this->tableKey);
 			
 		}
 		

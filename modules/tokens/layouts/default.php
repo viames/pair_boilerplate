@@ -1,8 +1,9 @@
 <?php
+
 use Pair\Utilities;
-?>
-<div class="row">
-	<div class="col-12">
+
+?><div class="row">
+	<div class="col-lg-12">
 		<div class="card">
 			<div class="card-body">
 				<?php if (count($this->tokens)) { ?>
@@ -21,9 +22,9 @@ use Pair\Utilities;
 							<tbody>
 							<?php foreach ($this->tokens as $o) { ?>
 							<tr>
-								<td><a href="tokens/edit/<?php print $o->id ?>"><?php print htmlspecialchars($o->code) ?></a></td>
-								<td><?php print htmlspecialchars($o->description) ?></td>
-								<td class="text-center"><?php print $o->enabled ?></td>
+								<td><a href="tokens/edit/<?php print $o->id ?>"><?php $o->printHtml('code') ?></a></td>
+								<td><?php $o->printHtml('description') ?></td>
+								<td class="text-center"><?php $o->printHtml('enabled') ?></td>
 								<td class="text-center"><?php print htmlspecialchars($o->getRelated('createdBy')->getFullName()) ?></td>
 								<td class="text-center"><?php print Utilities::getTimeago($o->creationDate) ?></td>
 								<td class="text-center"><?php print Utilities::getTimeago($o->lastUse) ?></td>

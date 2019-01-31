@@ -1,6 +1,7 @@
 <?php
 
 use Pair\Breadcrumb;
+use Pair\Locale;
 use Pair\View;
 use Pair\Widget;
 
@@ -25,6 +26,7 @@ class UsersViewUserNew extends View {
 
 		$form->getControl('enabled')->setValue(TRUE);
 		$form->getControl('password')->setRequired();
+		$form->getControl('localeId')->setValue(Locale::getDefault()->id);
 
 		$this->assign('form', $form);
 		

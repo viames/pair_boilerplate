@@ -4,9 +4,22 @@ use Pair\Controller;
 use Pair\Group;
 use Pair\Router;
 use Pair\Session;
+use Pair\Token;
 use Pair\User;
 
 class ApiController extends Controller {
+	
+	/**
+	 * The token object.
+	 * @var NULL|Pair\Token
+	 */
+	private $token;
+	
+	/**
+	 * The session object.
+	 * @var NULL|Pair\Session
+	 */
+	private $session;
 	
 	/**
 	 * Missing methods.
@@ -16,6 +29,28 @@ class ApiController extends Controller {
 		sleep(3);
 		$name = substr($name, 0, -6);
 		$this->sendError('The requested API method does not exist (' . $name . ')');
+		
+	}
+
+	/**
+	 * Set the valid token.
+	 * 
+	 * @param	Token	The token object.
+	 */
+	public function setToken(Token $token) {
+		
+		$this->token = $token;
+		
+	}
+	
+	/**
+	 * Set the current Session object.
+	 *
+	 * @param	Session	The session object.
+	 */
+	public function setSession(Session $session) {
+		
+		$this->session = $session;
 		
 	}
 
@@ -58,13 +93,16 @@ class ApiController extends Controller {
 	 */
 	public function logoutAction() {
 	
-		$sid	= Router::get('sid');
-		$res	= User::doLogout($sid);
+		if (!isset($this->session->id)) {
+			$this->sendError('Session does not exist');
+		}
+		
+		$res = User::doLogout($this->session->id);
 		
 		if ($res) {
 			$this->sendSuccess();
 		} else {
-			$this->sendError('Session does not exist');
+			$this->sendError('Logout unsuccesfully');
 		}
 		
 	}
@@ -74,10 +112,13 @@ class ApiController extends Controller {
 	 */
 	public function getUserInformationsAction() {
 		
-		$sid = Router::get('sid');
+		$this->checkSession();
+		
+		if (!Router::get('sid')) {
+			$this->sendError('This API method requires an user login');
+		}
 
-		$session	= new Session($sid);
-		$user		= new User($session->idUser);
+		$user		= new User($this->session->idUser);
 		$group		= new Group($user->groupId);
 		$locale		= new Locale($user->localeId);
 		
@@ -135,11 +176,13 @@ class ApiController extends Controller {
 	 * Outputs a JSON error message.
 	 *
 	 * @param	string	Error message to print.
+	 * @param	bool	Error code (optional). 
 	 */
-	public function sendError($message) {
+	public function sendError($message, $code=NULL) {
 
 		$data = new stdClass();
 		$data->error = TRUE;
+		$data->code = $code;
 		$data->message = $message;
 		$this->printout($data);
 				
