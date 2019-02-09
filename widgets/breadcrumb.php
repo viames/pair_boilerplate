@@ -3,6 +3,7 @@
 use Pair\Breadcrumb;
 
 $breadcrumb = Breadcrumb::getInstance();
+$breadcrumb->disableLastUrl();
 
 if (is_a($breadcrumb, 'Pair\Breadcrumb') and count($breadcrumb->getPaths())) {
 	

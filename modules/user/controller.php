@@ -4,7 +4,6 @@ use Pair\Application;
 use Pair\Controller;
 use Pair\Input;
 use Pair\User;
-use Pair\Router;
 
 class UserController extends Controller {
 	
@@ -30,22 +29,7 @@ class UserController extends Controller {
 			// found both username and password
 			if ($username and $password) {
 
-				// choose login source
-				switch (AUTH_SOURCE) {
-					
-					case 'ldap':
-						// TODO move ldap code into User class
-						//$result = User::doLdapLogin($username, $password, $timezone);
-						$this->enqueueError($this->lang('LDAP_IS_NOT_AVAILABLE'));
-						return FALSE;
-						break;
-						
-					default:
-					case 'internal':
-						$result = User::doLogin($username, $password, $timezone);
-						break;
-				
-				}
+				$result = User::doLogin($username, $password, $timezone);
 				
 				// login success
 				if (!$result->error) {
@@ -53,14 +37,20 @@ class UserController extends Controller {
 					// userId of user that is ready logged in
 					$user = new User($result->userId);
 
-					//referer module of this user on current group
+					// get last requested page
+					$page = $this->app->getPersistentState('lastRequestedUrl');
+					$this->app->unsetPersistentState('lastRequestedUrl');
+
+					// even goes to last page
+					if ($page) {
+						$this->app->redirect($page);
+					}
+
+					// get user default landing page
 					$landing = $user->getLanding();
 
-					if (isset($landing->module)) {
-						$this->app->redirect($landing->module . '/' . $landing->action);
-					} else {
-						$this->app->redirect($this->router->getDefaultUrl());
-					}
+					// goes to default landing page
+					$this->app->redirect($landing->module . '/' . $landing->action);
 
 				// login denied
 				} else {

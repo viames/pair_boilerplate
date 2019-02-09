@@ -17,12 +17,12 @@ $app->runApi('api');
 // any session
 $app->manageSession();
 
-// collect all scripts
+// list of common JavaScript
 $scripts = [
 	'pwstrength-bootstrap.min.js'
 ];
 
-// add scripts to application
+// load all JavaScript
 foreach ($scripts as $script) {
 	$app->loadScript($app->templatePath . 'js/' . $script, TRUE);
 }

@@ -23,7 +23,7 @@ if (is_a($app->currentUser, 'Pair\User') and $app->currentUser->admin) {
 	$menu->addItem('tools', $translator->get('TOOLS'), NULL, 'fa-wrench');
 	$menu->addItem('modules/default', $translator->get('MODULES'), NULL, 'fa-puzzle-piece');
 	$menu->addItem('templates/default', $translator->get('TEMPLATES'), NULL, 'fa-puzzle-piece');
-	$menu->addItem('developer', $translator->get('DEVELOPER'), NULL, 'fa-magic');
+	$menu->addItem('developer', $translator->get('DEVELOPER'), NULL, 'fa-laptop-code');
 	$menu->addItem('translator', $translator->get('TRANSLATOR'), NULL, 'fa-magic');
 
 }

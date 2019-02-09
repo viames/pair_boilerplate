@@ -21,12 +21,7 @@ class UserViewProfile extends View {
 		
 		$form = $this->model->getUserForm();
 		$form->setValuesByObject($user);
-
-		$form->getControl('name')->setDisabled();
-		$form->getControl('surname')->setDisabled();
-		$form->getControl('email')->setDisabled();
-		$form->getControl('username')->setDisabled();
-		$form->getControl('localeId')->setDisabled();
+		$form->setAllReadonly();
 		
 		$this->assign('user',  $user);
 		$this->assign('form',  $form);
