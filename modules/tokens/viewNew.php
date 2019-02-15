@@ -27,7 +27,8 @@ class TokensViewNew extends View {
 		$this->app->sideMenuWidget = $widget->render('sideMenu');
 		
 		$form = $this->model->getTokenForm();
-		$form->getControl('token')->setValue(Token::generate(32));
+		$form->getControl('value')->setValue(Token::generate(32));
+		$form->getControl('enabled')->setValue(TRUE);
 		
 		$this->assign('form', $form);
 		

@@ -54,7 +54,7 @@ class TokensController extends Controller {
 	 */
 	public function editAction() {
 	
-		$token = $this->getObjectRequestedById('Token');
+		$token = $this->getObjectRequestedById('Pair\Token');
 	
 		$this->view = $token ? 'edit' : 'default';
 	
@@ -103,7 +103,7 @@ class TokensController extends Controller {
 	 */
 	public function deleteAction() {
 
-	 	$token = $this->getObjectRequestedById('Token');
+	 	$token = $this->getObjectRequestedById('Pair\Token');
 
 		// execute deletion
 		$result = $token->delete();

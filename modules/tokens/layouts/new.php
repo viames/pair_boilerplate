@@ -10,8 +10,8 @@
 				<div class="col-md-9"><?php print $this->form->renderControl('description') ?></div>
 			</div>
 			<div class="form-group row">
-				<label class="col-md-3 col-form-label"><?php $this->form->printLabel('token') ?></label>
-				<div class="col-md-9"><?php print $this->form->renderControl('token') ?></div>
+				<label class="col-md-3 col-form-label"><?php $this->form->printLabel('value') ?></label>
+				<div class="col-md-9"><?php print $this->form->renderControl('value') ?></div>
 			</div>
 			<div class="form-group row">
 				<label class="col-md-3 col-form-label"><?php $this->form->printLabel('enabled') ?></label>
