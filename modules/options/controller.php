@@ -19,8 +19,20 @@ class OptionsController extends Controller {
 
 		$options = Options::getInstance();
 		
+		$error = FALSE;
+		
 		foreach ($options->getAll() as $option) {
-			$options->setValue($option->name, Input::get($option->name, $option->type));
+			
+			if (!$error and $option->type == 'password' and !$options->isCryptAvailable()) {
+				$error = TRUE;
+			}
+			
+			Options::set($option->name, Input::get($option->name, $option->type));
+			
+		}
+		
+		if ($error) {
+			$this->enqueueError($this->lang('CRYPT_KEY_MISSING'));
 		}
 		
 		$this->enqueueMessage($this->lang('CHANGES_SAVED'));

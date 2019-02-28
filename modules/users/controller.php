@@ -4,6 +4,7 @@ use Pair\Acl;
 use Pair\Controller;
 use Pair\Group;
 use Pair\Input;
+use Pair\Options;
 use Pair\Router;
 use Pair\User;
 
@@ -20,8 +21,8 @@ class UsersController extends Controller {
 		$username = Input::get('username');
 		$password = Input::get('password');
 		
-		// password must be 8 chars or over...
-		if (strlen($password) < 8) {
+		// check on minimum password length
+		if (strlen($password) < Options::get('password_min')) {
 			$this->enqueueError($this->lang('SHORT_PASSWORD'));
 			$this->app->redirect('users/userList');
 		}
@@ -33,8 +34,6 @@ class UsersController extends Controller {
 		}
 
 		$form = $this->model->getUserForm();
-
-		$group = new Group(Input::getInt('groupId'));
 
 		$user			= new User();
 		$user->name		= Input::get('name');
@@ -107,8 +106,8 @@ class UsersController extends Controller {
 		
 		$password = Input::get('password');
 		
-		// password must be 8 chars or over...
-		if (strlen($password) > 0 and strlen($password) < 8) {
+		// check on password length
+		if (strlen($password) > 0 and strlen($password) < Options::get('password_min')) {
 			$this->enqueueError($this->lang('SHORT_PASSWORD'));
 			$this->app->redirect('users/userList');
 		}

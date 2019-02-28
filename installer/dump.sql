@@ -336,7 +336,7 @@ UNLOCK TABLES;
 CREATE TABLE IF NOT EXISTS `error_logs` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `created_time` datetime NOT NULL,
-  `user_id` int(10) unsigned DEFAULT NULL,
+  `user_id` int(4) unsigned DEFAULT NULL,
   `module` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
   `action` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
   `get_data` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -612,10 +612,10 @@ CREATE TABLE `locales` (
   `language_id` smallint(3) unsigned NOT NULL,
   `country_id` smallint(3) unsigned NOT NULL,
   `official_language` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `default_country` tinyint(1) unsigned DEFAULT NULL,
+  `default_country` tinyint(1) unsigned NOT NULL,
   `app_default` tinyint(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  KEY `language_id` (`language_id`),
+  UNIQUE KEY `language_id` (`language_id`,`country_id`),
   KEY `country_id` (`country_id`),
   KEY `official_language` (`official_language`),
   KEY `default_country` (`default_country`),
@@ -715,7 +715,7 @@ VALUES
     (79,25,65,1,0,0),
     (80,25,66,1,0,0),
     (81,25,67,1,0,0),
-    (82,25,71,1,0,1),
+    (82,25,71,1,0,0),
     (83,25,72,1,0,0),
     (84,25,75,1,0,0),
     (85,25,76,1,0,0),
@@ -871,7 +871,7 @@ VALUES
     (235,45,7,1,0,0),
     (236,50,99,1,1,0),
     (237,51,38,1,0,0),
-    (238,51,100,1,1,0),
+    (238,51,100,1,1,1),
     (239,51,189,1,0,0),
     (240,53,103,1,1,0),
     (241,56,73,1,1,0),
@@ -1104,7 +1104,8 @@ VALUES
     (11,'tools','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),
     (12,'countries','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),
     (13,'locales','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),
-    (14,'translator','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00');
+    (14,'translator','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00'),
+    (15,'tokens','1.0','2017-01-01 00:00:00','1.0',1,'2017-01-01 00:00:00');
 /*!40000 ALTER TABLE `modules` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1118,7 +1119,7 @@ CREATE TABLE IF NOT EXISTS `options` (
   `name` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `label` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `type` enum('text','textarea','bool','int','list','custom') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'text',
-  `value` varchar(1024) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `value` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `list_options` text COLLATE utf8mb4_unicode_ci,
   `group` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`name`),
@@ -1134,12 +1135,13 @@ LOCK TABLES `options` WRITE;
 /*!40000 ALTER TABLE `options` DISABLE KEYS */;
 INSERT INTO `options` (`name`, `label`, `type`, `value`, `list_options`, `group`)
 VALUES
-    ('development','DEVELOPMENT','bool','1',NULL,'debug'),
-    ('pagination_pages','ITEMS_PER_PAGE','int','12',NULL,'site'),
-    ('session_time','SESSION_TIME','int','120',NULL,'site'),
-    ('show_log','SHOW_LOG','bool','1',NULL,'debug'),
-    ('webservice_timeout','WEBSERVICE_TIMEOUT','int','8',NULL,'services'),
-    ('admin_emails','ADMIN_EMAILS','text','em@il.address',NULL,'site');
+    ('admin_emails','ADMIN_EMAILS','text','em@il.address',NULL,'Config'),
+    ('development','DEVELOPMENT','bool','1',NULL,'Config'),
+    ('pagination_pages','ITEMS_PER_PAGE','int','12',NULL,'Config'),
+    ('session_time','SESSION_TIME','int','120',NULL,'Config'),
+    ('show_log','SHOW_LOG','bool','1',NULL,'Config'),
+    ('webservice_timeout','WEBSERVICE_TIMEOUT','int','8',NULL,'Config'),
+    ('password_min','PASSWORD_MIN','int','3',NULL,'site');
 /*!40000 ALTER TABLE `options` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1182,7 +1184,8 @@ VALUES
     (11,NULL,1,11),
     (12,NULL,1,12),
     (13,NULL,1,13),
-    (14,NULL,1,14);
+    (14,NULL,1,14),
+    (15,NULL,1,15);
 /*!40000 ALTER TABLE `rules` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1250,14 +1253,14 @@ CREATE TABLE `tokens` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `code` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `description` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `token` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `value` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `enabled` tinyint(1) unsigned NOT NULL DEFAULT '1',
   `created_by` int(4) unsigned NOT NULL,
   `creation_date` datetime NOT NULL,
   `last_use` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `code` (`code`),
-  KEY `token` (`token`),
+  KEY `token` (`value`),
   KEY `enabled` (`enabled`),
   KEY `created_by` (`created_by`),
   CONSTRAINT `fk_tokens_users` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE

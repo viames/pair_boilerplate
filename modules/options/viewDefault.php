@@ -60,15 +60,9 @@ class OptionsViewDefault extends View {
 					$form->addSelect($o->name)->setListByObjectArray($o->listItems,'value','text')->setValue($o->value);
 					break;
 
-				/*
-				case 'custom':
-					$func = 'get' . ucfirst($o->name) . 'Field';
-					if (method_exists($this, $func)) {
-						$o->field = $this->$func($o->name, $o->value);
-					} else {
-						$o->field = NULL;
-					}
-				*/	
+				case 'password':
+					$form->addInput($o->name, ['autocomplete'=>'off'])->setType('password')->setValue($o->value);
+					break;
 			}
 		
 		}

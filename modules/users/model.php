@@ -6,6 +6,7 @@ use Pair\Form;
 use Pair\Group;
 use Pair\Locale;
 use Pair\Model;
+use Pair\Options;
 use Pair\Rule;
 use Pair\Translator;
 use Pair\User;
@@ -102,25 +103,31 @@ class UsersModel extends Model {
 		$app	= Application::getInstance();
 		$tran	= Translator::getInstance();
 
+		$minLength = Options::get('password_min');
+
 		// lists for select
 		$groups	= Group::getAllObjects(NULL, 'name');
 		
 		$locales = Locale::getExistentTranslations(FALSE);
 		
-		$form	= new Form();
+		$form = new Form();
 		$form->addControlClass('form-control');
 		
 		$form->addInput('id')->setType('hidden');
-		$form->addInput('name')->setRequired()->setMinLength(2);
-		$form->addInput('surname')->setRequired()->setMinLength(2);
-		$form->addInput('email')->setType('email')->setRequired();
-		$form->addInput('enabled')->setType('bool');
+		$form->addInput('name')->setRequired()->setMinLength(2)->setLabel('NAME');
+		$form->addInput('surname')->setRequired()->setMinLength(2)->setLabel('SURNAME');
+		$form->addInput('email')->setType('email')->setRequired()->setLabel('EMAIL');
+		$form->addInput('enabled')->setType('bool')->setLabel('ENABLED');
 		$form->addInput('ldapUser');
-		$form->addInput('username', array('autocomplete'=>'off'))->setRequired()->setMinLength(3);
-		$form->addInput('password', array('autocomplete'=>'off'))->setType('password')->setMinLength(8);
+		$form->addInput('username', array('autocomplete'=>'off'))->setRequired()->setMinLength(3)
+			->setLabel('USERNAME');
+		$form->addInput('password', array('autocomplete'=>'off', 'autocorrect'=>'off'))
+			->setType('password')->setMinLength($minLength)->addClass('pwstrength')->setLabel('PASSWORD');
 		$form->addInput('showPassword')->setType('bool');
-		$form->addSelect('groupId')->setRequired()->setListByObjectArray($groups,'id','name');
-		$form->addSelect('localeId')->setRequired()->setListByObjectArray($locales,'id','languageCountry');
+		$form->addSelect('groupId')->setRequired()->setListByObjectArray($groups,'id','name')
+			->setLabel('GROUP');
+		$form->addSelect('localeId')->setRequired()->setListByObjectArray($locales,'id','languageCountry')
+			->setLabel('LANGUAGE');
 
 		return $form;
 
