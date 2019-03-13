@@ -2,7 +2,7 @@ RewriteEngine On
 Options +FollowSymLinks -Indexes
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule (.*) index.php
-<FilesMatch "\.(php|xml|ini)">
+<FilesMatch "manifest.xml|\.(php|ini)">
   Order Deny,Allow
   Deny from all
 </FilesMatch>
