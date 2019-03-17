@@ -10,7 +10,7 @@ if (count($this->rules)) {
 		
 		?><form action="users/aclAdd" method="post">
 	
-		<?php print $this->form->renderControl('groupId') ?>
+		<?php $this->form->printControl('groupId') ?>
 	
 		<table class="table table-hover">
 			<thead>

@@ -7,13 +7,13 @@
 			<fieldset>
 				<legend><?php $this->_('LOGIN') ?></legend>
 				<div class="form-group row">
-					<?php print $this->form->renderControl('username') ?>
+					<?php $this->form->printControl('username') ?>
 				</div>
 				<div class="form-group row">
-					<?php print $this->form->renderControl('password') ?>
+					<?php $this->form->printControl('password') ?>
 				</div><?php
 	
-				print $this->form->renderControl('timezone');
+				$this->form->printControl('timezone');
 	
 				?><button type="submit" class="btn btn-primary block full-width m-b"><?php $this->_('LOGIN') ?></button>
 			</fieldset>

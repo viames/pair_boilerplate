@@ -1,22 +1,22 @@
 <form action="tokens/change" method="post">
 	<div class="card">
 		<div class="card-body">
-			<?php print $this->form->renderControl('id') ?>
+			<?php $this->form->printControl('id') ?>
 			<div class="form-group row">
 				<label class="col-md-3 col-form-label"><?php $this->form->printLabel('code') ?></label>
-				<div class="col-md-9"><?php print $this->form->renderControl('code') ?></div>
+				<div class="col-md-9"><?php $this->form->printControl('code') ?></div>
 			</div>
 			<div class="form-group row">
 				<label class="col-md-3 col-form-label"><?php $this->form->printLabel('description') ?></label>
-				<div class="col-md-9"><?php print $this->form->renderControl('description') ?></div>
+				<div class="col-md-9"><?php $this->form->printControl('description') ?></div>
 			</div>
 			<div class="form-group row">
 				<label class="col-md-3 col-form-label"><?php $this->form->printLabel('value') ?></label>
-				<div class="col-md-9"><?php print $this->form->renderControl('value') ?></div>
+				<div class="col-md-9"><?php $this->form->printControl('value') ?></div>
 			</div>
 			<div class="form-group row">
 				<label class="col-md-3 col-form-label"><?php $this->form->printLabel('enabled') ?></label>
-				<div class="col-md-9"><?php print $this->form->renderControl('enabled') ?></div>
+				<div class="col-md-9"><?php $this->form->printControl('enabled') ?></div>
 			</div>
 		</div>
 		<div class="card-footer">

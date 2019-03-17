@@ -1155,7 +1155,7 @@ class ' . ucfirst($this->moduleName) . 'ViewNew extends View {
 				
 				$search = ['{fieldLabel}', '{fieldControl}'];
 				$replace = ['<?php $this->form->printLabel(\'' . $property . '\') ?>',
-							'<?php print $this->form->renderControl(\'' . $property . '\') ?>'];
+							'<?php $this->form->printControl(\'' . $property . '\') ?>'];
 				$fields[] = str_replace($search, $replace, $this->layouts['new-field']);
 				
 			}
@@ -1259,12 +1259,12 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 				
 				$search = ['{fieldLabel}', '{fieldControl}'];
 				$replace = ['<?php $this->form->printLabel(\'' . $property . '\') ?>',
-						'<?php print $this->form->renderControl(\'' . $property . '\') ?>'];
+						'<?php $this->form->printControl(\'' . $property . '\') ?>'];
 				$fields[] = str_replace($search, $replace, $this->layouts['edit-field']);
 				
 			} else {
 				
-				$hiddens[] = '<?php print $this->form->renderControl(\'' . $property . '\') ?>';
+				$hiddens[] = '<?php $this->form->printControl(\'' . $property . '\') ?>';
 			
 			}
 			

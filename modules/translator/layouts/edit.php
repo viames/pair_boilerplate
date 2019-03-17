@@ -5,14 +5,14 @@
 	<div class="card-body">
 		<form action="translator/change" method="post" class="form-horizontal"><?php
 		
-		print $this->form->renderControl('locale');
-		print $this->form->renderControl('module');
+		$this->form->printControl('locale');
+		$this->form->printControl('module');
 		
 		foreach ($this->defStrings as $key=>$value) {
 		
 			?><div class="form-group row">
 				<label class="col-md-3"><?php print htmlspecialchars($this->isDefault ? $key : $value) ?></label>
-				<div class="col-md-9"><?php print $this->form->renderControl($key) ?></div>
+				<div class="col-md-9"><?php $this->form->printControl($key) ?></div>
 			</div><?php 
 					
 		}

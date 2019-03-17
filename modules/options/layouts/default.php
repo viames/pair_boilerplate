@@ -14,7 +14,7 @@
 			
 					?><div class="form-group row">
 						<label class="col-md-3"><?php print $o->label ?><br><small><?php print $o->name ?></small></label>
-						<div class="col-md-9"><?php print $this->form->renderControl($o->name)  ?></div>
+						<div class="col-md-9"><?php $this->form->printControl($o->name)  ?></div>
 					</div><?php
 						
 				}

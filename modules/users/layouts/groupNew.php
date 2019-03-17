@@ -7,15 +7,15 @@
 			<fieldset>
 				<div class="form-group row">
 					<label class="col-sm-2"><?php $this->_('NAME') ?></label>
-					<div class="col-sm-10"><?php print $this->form->renderControl('name') ?></div>
+					<div class="col-sm-10"><?php $this->form->printControl('name') ?></div>
 				</div>
 				<div class="form-group row">
 					<label class="col-sm-2"><?php $this->_('IS_DEFAULT') ?></label>
-					<div class="col-sm-10"><?php print $this->form->renderControl('default') ?></div>
+					<div class="col-sm-10"><?php $this->form->printControl('default') ?></div>
 				</div>
 				<div class="form-group row">
 					<label class="col-sm-2"><?php $this->_('DEFAULT_MODULE') ?></label>
-					<div class="col-sm-10"><?php print $this->form->renderControl('defaultAclId') ?></div>
+					<div class="col-sm-10"><?php $this->form->printControl('defaultAclId') ?></div>
 				</div>
 				<div class="buttonBar">
 					<button type="submit" class="btn btn-primary" value="add" name="action"><i class="fa fa-asterisk"></i> <?php $this->_('INSERT') ?></button>

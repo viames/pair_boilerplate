@@ -12,7 +12,7 @@
 				<form role="form" action="templates/add" method="post" enctype="multipart/form-data">
 					<div class="form-group row">
 						<label><?php print $this->_('SELECT') ?></label> 
-						<?php print $this->form->renderControl('package') ?>
+						<?php $this->form->printControl('package') ?>
 					</div>
 					<div class="form-group row">
 						<div class="col-12">

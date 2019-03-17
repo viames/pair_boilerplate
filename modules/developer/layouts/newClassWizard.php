@@ -10,10 +10,10 @@
 						<fieldset>
 							<div class="form-group">
 								<label class="col-md-3 col-form-label"><?php $this->_('OBJECT_NAME')?></label>
-								<div class="col-md-3"><?php print $this->form->renderControl('objectName') ?></div>
+								<div class="col-md-3"><?php $this->form->printControl('objectName') ?></div>
 								<div class="col-md-6 small"><?php $this->_('OBJECT_NAME_DESCRIPTION')?></div>
 							</div>
-							<?php print $this->form->renderControl('tableName') ?>
+							<?php $this->form->printControl('tableName') ?>
 							<div class="form-group">
 								<div class="col-md-push-3 col-md-9">
 									<button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> <?php $this->_('CREATE_CLASS') ?></button>

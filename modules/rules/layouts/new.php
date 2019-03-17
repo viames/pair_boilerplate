@@ -3,15 +3,15 @@
 		<div class="card-body">
 			<div class="form-group row">
 				<label class="col-md-3"><?php $this->_('MODULE')?></label>
-				<div class="col-md-9"><?php print $this->form->renderControl('moduleId') ?></div>
+				<div class="col-md-9"><?php $this->form->printControl('moduleId') ?></div>
 			</div>
 			<div class="form-group row">
 				<label class="col-md-3"><?php $this->_('ACTION')?></label>
-				<div class="col-md-9"><?php print $this->form->renderControl('actionField') ?></div>
+				<div class="col-md-9"><?php $this->form->printControl('actionField') ?></div>
 			</div>
 			<div class="form-group row">
 				<label class="col-md-3"><?php $this->_('ADMIN_ONLY')?></label>
-				<div class="col-md-9"><?php print $this->form->renderControl('adminOnly') ?></div>
+				<div class="col-md-9"><?php $this->form->printControl('adminOnly') ?></div>
 			</div>
 			</div> 
 		<div class="card-footer">

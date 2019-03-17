@@ -6,19 +6,19 @@
 			</div>
 			<div class="panel-body">
 				<form action="languages/change" method="post">
-					<?php print $this->form->renderControl('id') ?>
+					<?php $this->form->printControl('id') ?>
 					<fieldset>
 						<div class="form-group row">
 							<label class="col-md-3"><?php $this->_('ENGLISH_NAME') ?></label>
-							<div class="col-md-9"><?php print $this->form->renderControl('englishName') ?></div>
+							<div class="col-md-9"><?php $this->form->printControl('englishName') ?></div>
 						</div>
 						<div class="form-group row">
 							<label class="col-md-3"><?php $this->_('NATIVE_NAME') ?></label>
-							<div class="col-md-9"><?php print $this->form->renderControl('nativeName') ?></div>
+							<div class="col-md-9"><?php $this->form->printControl('nativeName') ?></div>
 						</div>
 						<div class="form-group row">
 							<label class="col-md-3"><?php $this->_('ISO_639_1') ?></label>
-							<div class="col-md-9"><?php print $this->form->renderControl('code') ?></div>
+							<div class="col-md-9"><?php $this->form->printControl('code') ?></div>
 						</div>
 					</fieldset>
 					<div class="hr-line-dashed"></div>

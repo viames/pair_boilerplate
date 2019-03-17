@@ -9,23 +9,23 @@
 					<fieldset>
 						<div class="form-group row">
 							<label class="col-md-3"><?php $this->_('LANGUAGE') ?></label>
-							<div class="col-md-9"><?php print $this->form->renderControl('languageId') ?></div>
+							<div class="col-md-9"><?php $this->form->printControl('languageId') ?></div>
 						</div>
 						<div class="form-group row">
 							<label class="col-md-3"><?php $this->_('OFFICIAL_LANGUAGE') ?></label>
-							<div class="col-md-9"><?php print $this->form->renderControl('officialLanguage') ?></div>
+							<div class="col-md-9"><?php $this->form->printControl('officialLanguage') ?></div>
 						</div>
 						<div class="form-group row">
 							<label class="col-md-3"><?php $this->_('COUNTRY') ?></label>
-							<div class="col-md-9"><?php print $this->form->renderControl('countryId') ?></div>
+							<div class="col-md-9"><?php $this->form->printControl('countryId') ?></div>
 						</div>
 						<div class="form-group row">
 							<label class="col-md-3"><?php $this->_('DEFAULT_COUNTRY') ?></label>
-							<div class="col-md-9"><?php print $this->form->renderControl('defaultCountry') ?></div>
+							<div class="col-md-9"><?php $this->form->printControl('defaultCountry') ?></div>
 						</div>
 						<div class="form-group row">
 							<label class="col-md-3"><?php $this->_('APP_DEFAULT') ?></label>
-							<div class="col-md-9"><?php print $this->form->renderControl('appDefault') ?></div>
+							<div class="col-md-9"><?php $this->form->printControl('appDefault') ?></div>
 						</div>
 					</fieldset>
 					<div class="hr-line-dashed"></div>
