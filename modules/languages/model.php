@@ -37,7 +37,6 @@ class LanguagesModel extends Model {
 			' LEFT JOIN `locales` AS lo ON (lo.language_id = la.id AND lo.default_country = 1)' .
 			' LEFT JOIN `countries` AS c ON lo.country_id = c.id' .
 			$where .
-			' GROUP BY la.id' .
 			' ORDER BY la.english_name' .
 			' LIMIT ' . $this->pagination->start . ', ' . $this->pagination->limit;
 
@@ -58,7 +57,7 @@ class LanguagesModel extends Model {
 			
 			// get a filtered list
 			$query = 'SELECT COUNT(1) FROM `languages` WHERE english_name LIKE ?';
-			return Database::load($query, $alphaFilter . '%', 'count');
+			return Database::load($query, [$alphaFilter . '%'], PAIR_DB_COUNT);
 			
 		} else {
 			

@@ -13,7 +13,7 @@ class BootstrapMenu extends Menu {
 	 *
 	 * @return string
 	 */
-	public function render() {
+	public function render(): string {
 		
 		$ret = '';
 		
@@ -22,21 +22,21 @@ class BootstrapMenu extends Menu {
 
 		foreach ($this->items as $item) {
 
-			// check on permissions
-			if (isset($item->url) and !(is_a($app->currentUser, 'Pair\User') and $app->currentUser->canAccess($item->url))) {
-				continue;
-			}
-
 			switch ($item->type) {
 
 				// single menu item rendering
 				case 'single':
 
+					// check permissions
+					if (!isset($item->url) or (is_a($app->currentUser, 'Pair\User') and !$app->currentUser->canAccess($item->url))) {
+						continue 2;
+					}
+		
 					$active = ($item->url == $this->activeItem ? ' class="active"' : '');
 
 					$ret .= '<li' . $active . '><a href="' . $item->url . '"' . ($item->target ? ' target="' . $item->target . '"' : '') .
 						'><i class="fa fa-lg fa-fw ' . $item->class . '"></i> <span class="nav-label">' . $item->title .'</span> ' .
-						'<span class="float-right label label-primary">' . $item->badge . '</span> </a></li>';
+						($item->badge ? '<span class="float-right label label-primary">' . $item->badge . '</span>' : '') . '</a></li>';
 
 					break;
 
@@ -51,7 +51,7 @@ class BootstrapMenu extends Menu {
 					foreach ($item->list as $i) {
 
 						// check on permissions
-						if (isset($i->url) and !(is_a($app->currentUser, 'Pair\User') and $app->currentUser->canAccess($i->url))) {
+						if (isset($i->url) and (!is_a($app->currentUser, 'Pair\User') or !$app->currentUser->canAccess($i->url))) {
 							continue;
 						}
 
@@ -66,7 +66,7 @@ class BootstrapMenu extends Menu {
 						$links .=
 							'<li class="' . $active . '"><a href="' . $i->url . '">' .
 							'<i class="fa fa-fw ' . $i->class . '"></i>' . $i->title .
-							'<span class="float-right label label-primary">' . $i->badge . '</span>' .
+							($i->badge ? '<span class="float-right label label-primary">' . $i->badge . '</span>' : '') .
 							'</a></li>';
 
 					}
@@ -80,9 +80,9 @@ class BootstrapMenu extends Menu {
 					$ret .=
 						'<li class="has-sub ' . $menuClass . '">' .
 						'<a href="javascript:;">
-								<i class="fa fa-th-large fa-fw"></i>
+								<i class="fa fa-fw ' . ($item->class ? $item->class : 'fa-th-large') . '"></i>
 								<span class="nav-label">' . $item->title . '</span>
-								<span class="fa arrow"></span>
+								<span class="fal fa-angle-down float-right"></span>
 						</a>' .
 						'<ul class="nav nav-second-level collapse">' . $links . '</ul></li>';
 					break;

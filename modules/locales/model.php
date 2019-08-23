@@ -19,7 +19,7 @@ class LocalesModel extends Model {
 		if ($alphaFilter) {
 			
 			// get a filtered list
-			$where  = ' WHERE la.code LIKE ?';
+			$where  = ' WHERE la.`code` LIKE ?';
 			$params = [$alphaFilter . '%'];
 			
 		} else {
@@ -60,7 +60,7 @@ class LocalesModel extends Model {
 				' FROM `locales` AS lo' .
 				' INNER JOIN `languages` AS la ON lo.language_id = la.id' . 
 				' WHERE la.code LIKE ?';
-			return Database::load($query, $alphaFilter . '%', 'count');
+			return Database::load($query, [$alphaFilter . '%'], PAIR_DB_COUNT);
 			
 		} else {
 			
@@ -78,15 +78,15 @@ class LocalesModel extends Model {
 	 */ 
 	public function getLocaleForm() {
 
-		$language = Pair\Language::getAllObjects(NULL, 'englishName');
-		$country = Pair\Country::getAllObjects(NULL, 'englishName');
+		$languages = Pair\Language::getAllObjects(NULL, 'englishName');
+		$countries = Pair\Country::getAllObjects(NULL, 'englishName');
 		$form = new Form();
-			
+		
 		$form->addControlClass('form-control');
-			
+		
 		$form->addInput('id')->setType('hidden');
-		$form->addSelect('languageId')->setListByObjectArray($language, 'id', 'englishName');
-		$form->addSelect('countryId')->setListByObjectArray($country, 'id', 'englishName');
+		$form->addSelect('languageId')->setListByObjectArray($languages, 'id', 'englishName');
+		$form->addSelect('countryId')->setListByObjectArray($countries, 'id', 'englishName');
 		$form->addInput('officialLanguage')->setType('bool');
 		$form->addInput('defaultCountry')->setType('bool');
 		$form->addInput('appDefault')->setType('bool');

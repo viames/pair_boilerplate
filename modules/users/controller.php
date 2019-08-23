@@ -1,6 +1,7 @@
 <?php
 
 use Pair\Acl;
+use Pair\Audit;
 use Pair\Controller;
 use Pair\Group;
 use Pair\Input;
@@ -10,16 +11,26 @@ use Pair\User;
 
 class UsersController extends Controller {
 
+	/**
+	 * Run userList action.
+	 */
 	public function defaultAction() {
 		
 		$this->view = 'userList';
 		
+		$this->userListAction();
+
 	}
 	
 	public function userAddAction() {
 		
-		$username = Input::get('username');
-		$password = Input::get('password');
+		// fallback view
+		$this->view = 'userList';
+		
+		$userField = PAIR_AUTH_BY_EMAIL ? 'email' : 'username';
+		
+		$username = Input::getTrim($userField);
+		$password = Input::getTrim('password');
 		
 		// check on minimum password length
 		if (strlen($password) < Options::get('password_min')) {
@@ -28,7 +39,7 @@ class UsersController extends Controller {
 		}
 
 		// check if username exist
-		if (count(User::getAllObjects(array('username'=>$username)))) {
+		if (count(User::getAllObjects(array($userField => $username)))) {
 			$this->enqueueError($this->lang('USER_EXIST', $username));
 			$this->app->redirect('users/userList');
 		}
@@ -39,7 +50,6 @@ class UsersController extends Controller {
 		$user->name		= Input::get('name');
 		$user->surname	= Input::get('surname');
 		$user->email	= Input::get('email') ? Input::get('email') : NULL;
-		$user->ldapUser	= Input::get('ldapUser') ? Input::get('ldapUser') : NULL;
 		$user->username	= $username;
 		$user->enabled	= Input::getBool('enabled');
 		$user->localeId	= Input::getInt('localeId');
@@ -47,9 +57,8 @@ class UsersController extends Controller {
 		$user->admin	= FALSE;
 		$user->faults	= 0;
 
-		if ($password) {
-			$user->hash = User::getHashedPasswordWithSalt($password);
-		}
+		// create hash
+		$user->hash = User::getHashedPasswordWithSalt($password);
 
 		if ($form->isValid() and $user->create()) {
 			$this->enqueueMessage($this->lang('USER_HAS_BEEN_CREATED', $user->fullName));
@@ -84,7 +93,9 @@ class UsersController extends Controller {
 		$this->view = 'userList';
 	
 		$user	= new User(Input::getInt('id'));
-		$group	= new Group(Input::getInt('groupId'));
+
+		// snapshot for Audit
+		$oldUser = clone $user;
 		
 		// controllo validità del form
 		if (!$this->model->getUserForm()->isValid()) {
@@ -93,18 +104,21 @@ class UsersController extends Controller {
 		}
 		
 		// controllo validità utente e gruppo
-		if (!$user->isLoaded() or !$group->isLoaded()) {
+		if (!$user->isLoaded()) {
 			$this->enqueueError($this->lang('USER_HAS_NOT_BEEN_CHANGED', $user->fullName));
 			return;
 		}
 		
-		// limit changes by standard users 
+		// limit changes to non-admin users 
 		if (!$this->app->currentUser->admin and $user->admin) {
 			$this->enqueueError($this->lang('USER_HAS_NOT_BEEN_CHANGED', $user->fullName));
 			return;
 		}
 		
-		$password = Input::get('password');
+		$userField = PAIR_AUTH_BY_EMAIL ? 'email' : 'username';
+		
+		$username = Input::getTrim($userField);
+		$password = Input::getTrim('password');
 		
 		// check on password length
 		if (strlen($password) > 0 and strlen($password) < Options::get('password_min')) {
@@ -115,20 +129,30 @@ class UsersController extends Controller {
 		$user->name		= Input::get('name');
 		$user->surname	= Input::get('surname');
 		$user->email	= Input::get('email') ? Input::get('email') : NULL;
-		$user->ldapUser	= Input::get('ldapUser') ? Input::get('ldapUser') : NULL;
-		$user->username	= Input::get('username');
+		$user->username	= $username;
 		$user->enabled	= Input::getBool('enabled');
 		$user->localeId	= Input::getInt('localeId');
-		$user->groupId	= Input::getInt('groupId');
 
+		// if there’s a new password, set it
 		if ($password) {
 			$user->hash = User::getHashedPasswordWithSalt($password);
 		}
 		
-		if ($user->store()) {
-			$this->enqueueMessage($this->lang('USER_HAS_BEEN_CHANGED', $user->fullName));
+		if (!$user->store()) {
+			$this->raiseError($user);
+			return;
 		}
-		
+
+			
+		// track the user edit
+		Audit::userChanged($oldUser, $user);
+
+		// track user password change
+		if ($password) {
+			Audit::passwordChanged($user);
+		}
+
+		$this->enqueueMessage($this->lang('USER_HAS_BEEN_CHANGED', $user->fullName));
 		$this->app->redirect('users');
 	
 	}
@@ -143,11 +167,12 @@ class UsersController extends Controller {
 		
 		$fullName = $user->fullName;
 
-		if ($user->delete()) {
-			$this->enqueueMessage($this->lang('USER_HAS_BEEN_DELETED', $fullName));
-		} else {
-			$this->enqueueError($this->lang('USER_HAS_NOT_BEEN_DELETED', $fullName));
+		if (!$user->delete()) {
+			$this->raiseError($user);
+			return;
 		}
+
+		$this->enqueueMessage($this->lang('USER_HAS_BEEN_DELETED', $fullName));
 
 		$this->app->redirect('users');
 
