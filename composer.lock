@@ -4,25 +4,25 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "44a1159dfc510604f810ffa2fac44d41",
+    "content-hash": "546acf01f41fb0a26d6e1bc7ddea09ee",
     "packages": [
         {
             "name": "viames/pair",
-            "version": "1.4.5",
+            "version": "1.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Viames/Pair.git",
-                "reference": "dd8de7cc4e50de0e06c98caaa3376740814336d4"
+                "reference": "98e25a9d0de06364fa63d2889434afe387312cf2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Viames/Pair/zipball/dd8de7cc4e50de0e06c98caaa3376740814336d4",
-                "reference": "dd8de7cc4e50de0e06c98caaa3376740814336d4",
+                "url": "https://api.github.com/repos/Viames/Pair/zipball/98e25a9d0de06364fa63d2889434afe387312cf2",
+                "reference": "98e25a9d0de06364fa63d2889434afe387312cf2",
                 "shasum": ""
             },
             "require": {
                 "ext-pdo": "*",
-                "php": ">=5.6"
+                "php": ">=7"
             },
             "suggest": {
                 "ext-xdebug": "*"
@@ -43,12 +43,12 @@
             "authors": [
                 {
                     "name": "Viames Marino",
-                    "homepage": "https://www.viames.it",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "homepage": "https://www.viames.it"
                 }
             ],
             "description": "lightweight PHP framework as the air",
-            "homepage": "https://github.com/Viames/Pair",
+            "homepage": "https://viames.github.io/Pair/",
             "keywords": [
                 "active-record",
                 "framework",
@@ -60,7 +60,7 @@
                 "rest-api",
                 "router"
             ],
-            "time": "2018-10-29T09:39:59+00:00"
+            "time": "2019-07-23T11:47:38+00:00"
         }
     ],
     "packages-dev": [],
@@ -70,7 +70,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.6",
+        "php": ">=7",
         "ext-pdo": "*"
     },
     "platform-dev": []

@@ -180,7 +180,7 @@ class DeveloperModel extends Model {
 		
 		foreach ($class::TABLE_FIELDS as $name => $props) {
 			
-			$escaped = $this->db->escape($name);
+			$escaped = '`' . $name  . '`';
 			
 			// switch on primary keys, indexes and unique columns
 			switch ($props[2]) {
@@ -799,19 +799,15 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 		$' . lcfirst($this->objectName) . ' = new ' . $this->objectName . '();
 		$' . lcfirst($this->objectName) . '->populateByRequest();
 
-		$result = $' . lcfirst($this->objectName) . '->store();
-		
-		if ($result) {
-			$this->enqueueMessage($this->lang(\'' . strtoupper($this->objectName) . '_HAS_BEEN_CREATED\'));
-			$this->redirect(\'' . $this->moduleName . '\');
-		} else {
-			$msg = $this->lang(\'' . strtoupper($this->objectName) . '_HAS_NOT_BEEN_CREATED\') . \':\';
-			foreach ($' . lcfirst($this->objectName) . '->getErrors() as $error) {
-				$msg .= " \n" . $error;
-			}
-			$this->enqueueError($msg);
-			$this->view = \'default\';
+		// create the record
+		if (!$' . lcfirst($this->objectName) . '->store()) {
+			$this->raiseError(' . lcfirst($this->objectName) . ');
+			return;
 		}					
+
+		// notify the creation and redirect
+		$this->enqueueMessage($this->lang(\'' . strtoupper($this->objectName) . '_HAS_BEEN_CREATED\'));
+		$this->redirect(\'' . $this->moduleName . '\');
 
 	}
 
@@ -835,28 +831,14 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 		$' . lcfirst($this->objectName) . '->populateByRequest();
 
 		// apply the update
-		$result = $' . lcfirst($this->objectName) . '->store();
-
-		if ($result) {
-
-			// notify the change and redirect
-			$this->enqueueMessage($this->lang(\'' . strtoupper($this->objectName) . '_HAS_BEEN_CHANGED_SUCCESFULLY\'));
-			$this->redirect(\'' . $this->moduleName . '\');
-
-		} else {
-
-			// get error list from object
-			$errors = $' . lcfirst($this->objectName) . '->getErrors();
-
-			if (count($errors)) { 
-				$message = $this->lang(\'ERROR_ON_LAST_REQUEST\') . ": \n" . implode(" \n", $errors);
-				$this->enqueueError($message);
-				$this->view = \'default\';
-			} else {
-				$this->redirect(\'' . $this->moduleName . '\');
-			}
-
+		if (!$' . lcfirst($this->objectName) . '->store()) {
+			$this->raiseError(' . lcfirst($this->objectName) . ');
+			return;
 		}
+
+		// notify the change and redirect
+		$this->enqueueMessage($this->lang(\'' . strtoupper($this->objectName) . '_HAS_BEEN_CHANGED_SUCCESFULLY\'));
+		$this->redirect(\'' . $this->moduleName . '\');
 
 	}
 
@@ -868,28 +850,14 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 	 	$' . lcfirst($this->objectName) . ' = $this->getObjectRequestedById(\'' . $this->objectName . '\');
 
 		// execute deletion
-		$result = $' . lcfirst($this->objectName) . '->delete();
-
-		if ($result) {
-
-			$this->enqueueMessage($this->lang(\'' . strtoupper($this->objectName) . '_HAS_BEEN_DELETED_SUCCESFULLY\'));
-			$this->redirect(\'' . $this->moduleName . '\');
-
-		} else {
-
-			// get error list from object
-			$errors = $' . lcfirst($this->objectName) . '->getErrors();
-
-			if (count($errors)) { 
-				$message = $this->lang(\'ERROR_DELETING_' . strtoupper($this->objectName) . '\') . ": \n" . implode(" \n", $errors);
-				$this->enqueueError($message);
-				$this->view = \'default\';
-			} else {
-				$this->enqueueError($this->lang(\'ERROR_ON_LAST_REQUEST\'));
-				$this->redirect(\'' . $this->moduleName . '\');
-			}
-
+		if (!$' . lcfirst($this->objectName) . '->delete()) {
+			$this->raiseError(' . lcfirst($this->objectName) . ');
+			return;
 		}
+
+		// notify the deletion and redirect
+		$this->enqueueMessage($this->lang(\'' . strtoupper($this->objectName) . '_HAS_BEEN_DELETED_SUCCESFULLY\'));
+		$this->redirect(\'' . $this->moduleName . '\');
 
 	}
 
@@ -940,13 +908,13 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 		
 		// here starts code collect
 		$content .= strtoupper($this->tableName) . ' = "' . str_replace('_', ' ', ucfirst($this->tableName)) . "\"\n";
-		$content .= $ucObject . '_HAS_BEEN_CREATED = "' . $tran->get('OBJECT_HAS_BEEN_CREATED', $this->objectName) . "\"\n";
-		$content .= $ucObject . '_HAS_NOT_BEEN_CREATED = "' . $tran->get('OBJECT_HAS_NOT_BEEN_CREATED', $this->objectName) . "\"\n";
-		$content .= $ucObject . '_HAS_BEEN_CHANGED_SUCCESFULLY = "' . $tran->get('OBJECT_HAS_BEEN_CHANGED_SUCCESFULLY', $this->objectName) . "\"\n";
-		$content .= $ucObject . '_HAS_BEEN_DELETED_SUCCESFULLY = "' . $tran->get('OBJECT_HAS_BEEN_DELETED_SUCCESFULLY', $this->objectName) . "\"\n";
-		$content .= 'ERROR_DELETING_' . $ucObject . ' = "' . $tran->get('ERROR_DELETING_OBJECT', $this->objectName) . "\"\n";
-		$content .= 'NEW_' . strtoupper($this->objectName) . ' = "' . $tran->get('NEW_OBJECT', $this->objectName) . "\"\n";
-		$content .= 'EDIT_' . strtoupper($this->objectName) . ' = "' . $tran->get('EDIT_OBJECT', $this->objectName) . "\"\n";
+		$content .= $ucObject . '_HAS_BEEN_CREATED = "' . Translator::do('OBJECT_HAS_BEEN_CREATED', $this->objectName) . "\"\n";
+		$content .= $ucObject . '_HAS_NOT_BEEN_CREATED = "' . Translator::do('OBJECT_HAS_NOT_BEEN_CREATED', $this->objectName) . "\"\n";
+		$content .= $ucObject . '_HAS_BEEN_CHANGED_SUCCESFULLY = "' . Translator::do('OBJECT_HAS_BEEN_CHANGED_SUCCESFULLY', $this->objectName) . "\"\n";
+		$content .= $ucObject . '_HAS_BEEN_DELETED_SUCCESFULLY = "' . Translator::do('OBJECT_HAS_BEEN_DELETED_SUCCESFULLY', $this->objectName) . "\"\n";
+		$content .= 'ERROR_DELETING_' . $ucObject . ' = "' . Translator::do('ERROR_DELETING_OBJECT', $this->objectName) . "\"\n";
+		$content .= 'NEW_' . strtoupper($this->objectName) . ' = "' . Translator::do('NEW_OBJECT', $this->objectName) . "\"\n";
+		$content .= 'EDIT_' . strtoupper($this->objectName) . ' = "' . Translator::do('EDIT_OBJECT', $this->objectName) . "\"\n";
 		$content .= implode("\n", $fields);
 		
 		// write the code into the file
@@ -989,7 +957,7 @@ class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 
 		$this->pagination->count = $this->model->countListItems();
 
-		$this->assign(\'' . Utilities::getCamelCase($this->tableName) . '\', $' . $this->getCamelCase($this->tableName) . ');
+		$this->assign(\'' . Utilities::getCamelCase($this->tableName) . '\', $' . Utilities::getCamelCase($this->tableName) . ');
 
 	}
 
@@ -1032,9 +1000,7 @@ class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 					switch ($this->propType[$property]) {
 						case 'date':	 $object = '$o->formatDate(\'' . $property . '\')'; break;
 						case 'datetime': $object = '$o->formatDateTime(\'' . $property . '\')'; break;
-						case 'set':		 $object = 'htmlspecialchars(implode(\', \', $o->' . $property . '))'; break;
-						case 'bool':	 $object = '($o->' . $property . ' ? \'<i class="fa fa-check text-success"></i>\' : \'\')'; break;
-						default:		 $object = 'htmlspecialchars($o->' . $property . ')'; break;
+						default:		 $object = '$o->printHtml(\'' . $property . '\')'; break;
 					}
 					
 				// or get it by the related Pair object

@@ -1,10 +1,10 @@
 <?php
 
+use Pair\Application;
 use Pair\Breadcrumb;
 use Pair\Controller;
 use Pair\Input;
 use Pair\Module;
-use Pair\Options;
 use Pair\Router;
 use Pair\Rule;
 
@@ -12,10 +12,8 @@ class DeveloperController extends Controller {
 	
 	protected function init() {
 		
-		$options = Options::getInstance();
-		
 		// prevents access to instances that are not under development
-		if (!$this->app->currentUser->admin or !$options->getValue('development')) {
+		if (!$this->app->currentUser->admin or !Application::isDevelopmentHost()) {
 			$this->redirect('developer/accessDenied');
 		}
 		

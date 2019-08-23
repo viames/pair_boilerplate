@@ -1,5 +1,6 @@
 <?php
 
+use Pair\Application;
 use Pair\Options;
 use Pair\View;
 use Pair\Widget;
@@ -8,8 +9,6 @@ class DeveloperViewNewClass extends View {
 
 	public function render() {
 
-		$options = Options::getInstance();
-		
 		$this->app->pageTitle = $this->lang('DEVELOPER');
 		$this->app->activeMenuItem = 'developer';
 
@@ -26,7 +25,7 @@ class DeveloperViewNewClass extends View {
 		
 		$unmappedTables = $this->model->getUnmappedTables();
 		
-		$inSviluppo = $options->getValue('development');
+		$inSviluppo = Application::isDevelopmentHost();
 		
 		$this->assign('inSviluppo', $inSviluppo);
 		$this->assign('unmappedTables', $unmappedTables);

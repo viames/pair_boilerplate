@@ -4,7 +4,7 @@
 	"type" : "project",
 	"minimum-stability" : "stable",
 	"require" : {
-		"viames/pair" : ">=1.5",
+		"viames/pair" : "^1.6.0",
 		"php" : ">=7",
 		"ext-pdo" : "*"
 	},
@@ -26,7 +26,8 @@
 		"rest-api"
 	],
 	"homepage" : "https://github.com/Viames/Pair_example",
-	"authors" : [{
+	"authors" : [
+		{
 			"name" : "Viames Marino",
 			"homepage" : "https://www.viames.it",
 			"role" : "Developer"
