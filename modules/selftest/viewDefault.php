@@ -27,7 +27,7 @@ class SelftestViewDefault extends View {
 		// php version and config
 		$extensions = array('fileinfo','json','pcre','PDO','pdo_mysql','Reflection');
 		$label = $this->lang('TEST_PHP_CONFIGURATION', phpversion());
-		$result = $this->model->testPhp($extensions, '5.6.0');
+		$result = $this->model->testPhp($extensions, '7.1.0');
 		$test->assertTrue($label, $result, $this->lang('SERVER'));
 		
 		// mysql version

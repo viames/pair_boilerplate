@@ -1,5 +1,6 @@
 <?php
 
+use Pair\ActiveRecord;
 use Pair\Application;
 use Pair\Language;
 use Pair\Locale;
@@ -24,10 +25,6 @@ class SelftestModel extends Model {
 		$res = TRUE;
 
 		$hiddenExt = array();
-		
-		if ('ldap' == AUTH_SOURCE) {
-			$extensions[] = 'ldap';
-		}
 		
 		switch (DBMS) {
 			case 'mysql':
@@ -63,9 +60,16 @@ class SelftestModel extends Model {
 
 		}
 
+		// check PHP version
 		if (version_compare(phpversion(), $version, "<")) {
 			$res = FALSE;
 			$this->logError('PHP version required is ' . $version . ' or greater. You are using PHP ' . phpversion());
+		}
+
+		// check en_US locales for float storage in DB
+		if (class_exists('ResourceBundle') and !in_array('en_US', ResourceBundle::getLocales(''))) {
+			$res = FALSE;
+			$this->logError('en_US locale is necessary to appropriately convert PHP floats when saving in the DB');
 		}
 
 		return $res;
@@ -143,17 +147,6 @@ class SelftestModel extends Model {
 			$this->logError('In config.ini UTC_DATE constant is FALSE but Timezone results in UTC by php.ini file');
 		}
 
-		if (!defined('AUTH_SOURCE') or ('ldap'!=AUTH_SOURCE and 'internal'!=AUTH_SOURCE and 'none'!=AUTH_SOURCE)) {
-			$ret = FALSE;
-			$this->logError('In config.ini file AUTH_SOURCE constant (ldap|internal|none) is missing.');
-		} else if ('ldap' == AUTH_SOURCE) {
-			if (!defined('LDAP_HOST') or !defined('LDAP_PORT') or !defined('LDAP_BASEDN') or
-					!defined('LDAP_AUTHREALM') or !defined('LDAP_USERBIND') or !defined('LDAP_BINDPW')) {
-						$ret = FALSE;
-						$this->logError('In config.ini file LDAP_HOST, LDAP_PORT, LDAP_BASEDN, LDAP_AUTHREALM, LDAP_USERBIND or LDAP_BINDPW constant is missing.');
-					}
-		}
-		
 		return $ret;
 
 	}
@@ -178,10 +171,10 @@ class SelftestModel extends Model {
 			if (is_dir($folder)) {
 				if (!is_readable($folder)) {
 					$ret = FALSE;
-					$this->logError(PRODUCT_NAME . ' application hasn’t read permission on folder ' . $folder);
-				} else if (!is_writable($folder)) {
+					$this->logError(PRODUCT_NAME . ' application is not allowed to read from the folder ' . $folder);
+				} else if ($this->app->isDevelopmentHost() and !is_writable($folder)) {
 					$ret = FALSE;
-					$this->logError(PRODUCT_NAME . ' application hasn’t write permission on folder ' . $folder);
+					$this->logWarning(PRODUCT_NAME . ' application is not allowed to write to the folder ' . $folder);
 				}
 			}
 
@@ -196,7 +189,7 @@ class SelftestModel extends Model {
 	 * 
 	 * @return int
 	 */
-	public function testActiveRecordClasses() {
+	public function testActiveRecordClasses(): int {
 
 		// the final error count
 		$errors = 0;
@@ -250,11 +243,11 @@ class SelftestModel extends Model {
 	/**
 	 * Test the class couples properties-dbfields. Return the error count.
 	 * 
-	 * @param	multitype	Object to test.
+	 * @param	mixed	Object to test.
 	 *
 	 * @return	int
 	 */
-	public function testClassMaps($object) {
+	public function testClassMaps(ActiveRecord $object): int {
 		
 		$app = Application::getInstance();
 		
