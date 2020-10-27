@@ -10,11 +10,10 @@ $layouts['default-page'] =
 			</div>
 			<div class="panel-body">
 				<a href="{linkAdd}" class="btn btn-primary"><i class="fa fa-plus"></i> {newElement}</a>
-				<hr><?php
-	
-				if (count({itemsArray})) {
-	
-					?><div class="table-responsive">
+				<hr>
+
+				<?php if (count({itemsArray})) { ?>
+					<div class="table-responsive">
 						<table class="table table-hover">
 							<thead>
 								<tr>
@@ -23,28 +22,25 @@ $layouts['default-page'] =
 							</thead>
 							<tbody>
 {tableRows}
-							</tbody>
-						</table>
-					</div><?php
-	
-					print $this->getPaginationBar();
+						</tbody>
+					</table>
+				</div><?php print $this->getPaginationBar();
 						
 				} else {
 						
 					Pair\Utilities::printNoDataMessageBox();
 						
-				}
-			
-			?></div>
+				} ?>
+			</div>
 		</div>
 	</div>
 </div>';
 
-$layouts['default-table-header'] = "\t\t\t\t\t\t\t\t<th>{tableHeader}</th>";
+$layouts['default-table-header'] = "\t\t\t\t\t\t\t\t\t<th>{tableHeader}</th>";
 
 $layouts['default-table-row'] = "\t\t\t\t\t\t\t<tr>\n{tableCells}\n\t\t\t\t\t\t\t</tr>";
 
-$layouts['default-table-cell'] = "\t\t\t\t\t\t\t\t<td>{tableCell}</td>";
+$layouts['default-table-cell'] = "\t\t\t\t\t\t\t\t\t<td>{tableCell}</td>";
 
 // layout della pagina new
 $layouts['new-page'] =

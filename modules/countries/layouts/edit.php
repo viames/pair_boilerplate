@@ -9,25 +9,25 @@
 					<?php $this->form->printControl('id') ?>
 					<fieldset>
 						<div class="form-group row">
-							<label class="col-md-3"><?php $this->_('ENGLISH_NAME') ?></label>
+							<label class="col-md-3 col-form-label"><?php $this->_('ENGLISH_NAME') ?></label>
 							<div class="col-md-9"><?php $this->form->printControl('englishName') ?></div>
 						</div>
 						<div class="form-group row">
-							<label class="col-md-3"><?php $this->_('NATIVE_NAME') ?></label>
+							<label class="col-md-3 col-form-label"><?php $this->_('NATIVE_NAME') ?></label>
 							<div class="col-md-9"><?php $this->form->printControl('nativeName') ?></div>
 						</div>
 						<div class="form-group row">
-							<label class="col-md-3"><?php $this->_('ISO_3166_1') ?></label>
+							<label class="col-md-3 col-form-label"><?php $this->_('ISO_3166_1') ?></label>
 							<div class="col-md-9"><?php $this->form->printControl('code') ?></div>
 						</div>
 					</fieldset>
 					<div class="hr-line-dashed"></div>
 					<div class="form-group row">
 						<div class="col-md-push-3 col-md-9">
-							<button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> <?php $this->_('CHANGE') ?></button>
-							<a href="countries" class="btn btn-secondary"><i class="fa fa-times"></i> <?php $this->_('CANCEL') ?></a><?php
+							<button type="submit" class="btn btn-primary"><?php $this->_('CHANGE') ?></button>
+							<a href="countries" class="btn btn-secondary"><?php $this->_('CANCEL') ?></a><?php
 							if ($this->country->isDeletable()) { ?>
-							<a href="countries/delete/<?php print $this->country->id ?>" class="btn btn-link confirm-delete pull-right float-right"><i class="fa fa-trash"></i> <?php $this->_('DELETE') ?></a><?php
+							<a href="countries/delete/<?php print $this->country->id ?>" class="btn btn-link confirm-delete pull-right float-right"><?php $this->_('DELETE') ?></a><?php
 							} ?>
 						</div>
 					</div>

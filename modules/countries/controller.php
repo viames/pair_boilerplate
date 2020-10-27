@@ -16,8 +16,7 @@ class CountriesController extends Controller {
 	 */
 	protected function init() {
 		
-		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath($this->lang('COUNTRIES'), 'countries');
+		Breadcrumb::path($this->lang('COUNTRIES'), 'countries');
 		
 	}
 	

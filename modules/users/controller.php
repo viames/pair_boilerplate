@@ -29,7 +29,7 @@ class UsersController extends Controller {
 		
 		$userField = PAIR_AUTH_BY_EMAIL ? 'email' : 'username';
 		
-		$username = Input::getTrim($userField);
+		$username = strtolower(Input::getTrim($userField));
 		$password = Input::getTrim('password');
 		
 		// check on minimum password length
@@ -46,26 +46,26 @@ class UsersController extends Controller {
 
 		$form = $this->model->getUserForm();
 
-		$user			= new User();
-		$user->name		= Input::get('name');
-		$user->surname	= Input::get('surname');
-		$user->email	= Input::get('email') ? Input::get('email') : NULL;
-		$user->username	= $username;
-		$user->enabled	= Input::getBool('enabled');
-		$user->localeId	= Input::getInt('localeId');
-		$user->groupId	= Input::getInt('groupId');
-		$user->admin	= FALSE;
-		$user->faults	= 0;
+		$newUser			= new User();
+		$newUser->name		= Input::getTrim('name');
+		$newUser->surname	= Input::getTrim('surname');
+		$newUser->email	= Input::getTrim('email') ? Input::getTrim('email') : NULL;
+		$newUser->username	= $username;
+		$newUser->enabled	= Input::getBool('enabled');
+		$newUser->localeId	= Input::getInt('localeId');
+		$newUser->groupId	= Input::getInt('groupId');
+		$newUser->admin	= FALSE;
+		$newUser->faults	= 0;
 
 		// create hash
-		$user->hash = User::getHashedPasswordWithSalt($password);
+		$newUser->hash = User::getHashedPasswordWithSalt($password);
 
-		if ($form->isValid() and $user->create()) {
-			$this->enqueueMessage($this->lang('USER_HAS_BEEN_CREATED', $user->fullName));
+		if ($form->isValid() and $newUser->create()) {
+			$this->enqueueMessage($this->lang('USER_HAS_BEEN_CREATED', $newUser->fullName));
 			$this->app->redirect('users/userList');
 		} else {
-			$this->enqueueError($this->lang('USER_HAS_NOT_BEEN_CREATED', $user->fullName));
-			foreach ($user->getErrors() as $error) {
+			$this->enqueueError($this->lang('USER_HAS_NOT_BEEN_CREATED', $newUser->fullName));
+			foreach ($newUser->getErrors() as $error) {
 				$this->enqueueError($error);
 			}
 			$this->view = 'userList';
@@ -90,6 +90,7 @@ class UsersController extends Controller {
 	 */
 	public function userChangeAction() {
 	
+		// fall-back
 		$this->view = 'userList';
 	
 		$user	= new User(Input::getInt('id'));
@@ -126,9 +127,9 @@ class UsersController extends Controller {
 			$this->app->redirect('users/userList');
 		}
 
-		$user->name		= Input::get('name');
-		$user->surname	= Input::get('surname');
-		$user->email	= Input::get('email') ? Input::get('email') : NULL;
+		$user->name		= Input::getTrim('name');
+		$user->surname	= Input::getTrim('surname');
+		$user->email	= Input::getTrim('email') ? Input::getTrim('email') : NULL;
 		$user->username	= $username;
 		$user->enabled	= Input::getBool('enabled');
 		$user->localeId	= Input::getInt('localeId');
@@ -143,7 +144,6 @@ class UsersController extends Controller {
 			return;
 		}
 
-			
 		// track the user edit
 		Audit::userChanged($oldUser, $user);
 
@@ -173,7 +173,6 @@ class UsersController extends Controller {
 		}
 
 		$this->enqueueMessage($this->lang('USER_HAS_BEEN_DELETED', $fullName));
-
 		$this->app->redirect('users');
 
 	}
@@ -203,11 +202,7 @@ class UsersController extends Controller {
 
 		$group = $this->getRequestedGroup();
 
-		if ($group) {
-			$this->view = 'groupEdit';
-		} else {
-			$this->view = 'groupList';
-		}
+		$this->view = $group ? 'groupEdit' : 'groupList';
 
 	}
 	
@@ -304,8 +299,6 @@ class UsersController extends Controller {
 		$acl	= new Acl($aclId);
 		
 		if ($acl->isLoaded()) {
-			
-			$group = new Group($acl->groupId);
 			
 			$moduleName	= $acl->getModuleName();
 			$groupId	= $acl->groupId;

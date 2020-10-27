@@ -1,5 +1,6 @@
 <?php
 
+use Pair\Audit;
 use Pair\Application;
 use Pair\Controller;
 use Pair\Input;
@@ -14,62 +15,58 @@ class UserController extends Controller {
 	}
 	
 	/**
-	 * Shows login form or try login action based on the AUTH_SOURCE config param.
+	 * Shows login form or try login action.
 	 */
 	public function loginAction() {
 	
-		// TODO implement internal security token_check
+		$username	= Input::getTrim('username');
+		$password	= Input::getTrim('password');
+		$timezone	= Input::getTrim('timezone');
+		$remember	= Input::getBool('remember');
 
-		$username	= Input::get('username');
-		$password	= Input::get('password');
-		$timezone	= Input::get('timezone');
-
-		if (Input::formPostSubmitted()) {
-			
-			// found both username and password
-			if ($username and $password) {
-
-				$result = User::doLogin($username, $password, $timezone);
-				
-				// login success
-				if (!$result->error) {
-
-					// userId of user that is ready logged in
-					$user = new User($result->userId);
-
-					// get last requested page
-					$page = $this->app->getPersistentState('lastRequestedUrl');
-					$this->app->unsetPersistentState('lastRequestedUrl');
-
-					// even goes to last page
-					if ($page) {
-						$this->app->redirect($page);
-					}
-
-					// get user default landing page
-					$landing = $user->getLanding();
-
-					// goes to default landing page
-					$this->app->redirect($landing->module . '/' . $landing->action);
-
-				// login denied
-				} else {
-					
-					sleep(3);
-					$this->enqueueError($result->message);
-					$this->app->redirect('user/login');
-					
-				}
-			
-			// username or password missing
-			} else {
-				
-				$this->enqueueError($this->lang('AUTHENTICATION_REQUIRES_USERNAME_AND_PASSWORD'));
-				return FALSE;
-				
-			}
-			
+		// if isn’t post submit, render the page
+		if (!Input::formPostSubmitted()) {
+			return;
 		}
+			
+		// username or password missing
+		if (!$username or !$password) {
+			$this->enqueueError($this->lang('AUTHENTICATION_REQUIRES_USERNAME_AND_PASSWORD'));
+			return;
+		}
+		
+		// perform the login and create an user session
+		$result = PgUser::doLogin($username, $password, $timezone);
+		
+		// login denied
+		if ($result->error) {
+			sleep(3);
+			$this->enqueueError($result->message);
+			$this->app->redirect('user/login');
+		}
+		
+		// userId of user that is ready logged in
+		$user = new PgUser($result->userId);
+		
+		// evaluate the remember-me checkbox value
+		if ($remember) {
+			$user->createRememberMe($timezone);
+		}
+
+		// get last requested page
+		$page = $this->app->getPersistentState('lastRequestedUrl');
+		$this->app->unsetPersistentState('lastRequestedUrl');
+
+		// even goes to last page
+		if ($page) {
+			$this->app->redirect($page);
+		}
+
+		// get user default landing page
+		$landing = $user->getLanding();
+
+		// goes to default landing page
+		$this->app->redirect($landing->module . '/' . $landing->action);
 
 	}
 
@@ -78,9 +75,14 @@ class UserController extends Controller {
 	 */
 	public function logoutAction() {
 
-		$app = Application::getInstance();
-		
-		User::doLogout(session_id());
+		$formerUser = Session::current()->getFormerUser();
+
+		PgUser::doLogout(session_id());
+
+		if ($formerUser) {
+			PgUser::loginAs($formerUser, '');
+			$formerUser->redirectToDefault();
+		}
 		
 		// manual redirect because of variables clean-up
 		header('Location: ' . BASE_HREF . 'login');
@@ -96,12 +98,11 @@ class UserController extends Controller {
 		$form = $this->model->getUserForm();
 		
 		$user			= new User($this->app->currentUser->id);
-		$user->name		= Input::get('name');
-		$user->surname	= Input::get('surname');
-		$user->email	= Input::get('email') ? Input::get('email') : NULL;
-		$user->ldapUser	= Input::get('ldapUser') ? Input::get('ldapUser') : NULL;
-		$user->username	= Input::get('username');
-		$user->localeId	= Input::get('localeId', 'int');
+		$user->name		= Input::getTrim('name');
+		$user->surname	= Input::getTrim('surname');
+		$user->email	= Input::getTrim('email') ? Input::getTrim('email') : NULL;
+		$user->username	= Input::getTrim('username');
+		$user->localeId	= Input::getInt('localeId');
 		
 		if (Input::get('password')) {
 			$user->hash = User::getHashedPasswordWithSalt(Input::get('password'));

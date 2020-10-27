@@ -1,5 +1,6 @@
 <?php
 
+// avoid the casting of an incorrect type in the expected scalar
 declare(strict_types=1);
 
 use Pair\Application;
@@ -11,11 +12,11 @@ define ('PAIR_TIMES_ICON', '<i class="fal fa-times fa-lg text-danger"></i>');
 // initialize composer
 require 'vendor/autoload.php';
 
-// initialize project classes
-require 'classes/classLoader.php';
-
 // start the Application
 $app = Application::getInstance();
+
+// initialize project classes
+require 'classes/classLoader.php';
 
 // any API requests
 $app->runApi('api');

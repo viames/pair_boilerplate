@@ -12,7 +12,7 @@ class CountriesModel extends Model {
 	 *
 	 * @return	array:Country
 	 */
-	public function getCountries() {
+	public function getCountries(): array {
 		
 		$alphaFilter = $this->app->getPersistentState('countriesAlphaFilter');
 		
@@ -54,7 +54,7 @@ class CountriesModel extends Model {
 			
 			// get a filtered list
 			$query = 'SELECT COUNT(1) FROM `countries` WHERE english_name LIKE ?';
-			return Database::load($query, $alphaFilter . '%', 'count');
+			return Database::load($query, [$alphaFilter . '%'], PAIR_DB_COUNT);
 			
 		} else {
 			
@@ -75,7 +75,7 @@ class CountriesModel extends Model {
 			' AND lo.official_language = 1' .
 			' ORDER BY english_name';
 		
-		return Database::load($query, $country->id, 'resultlist');
+		return Database::load($query, [$country->id], PAIR_DB_RESULT_LIST);
 		
 	}
 

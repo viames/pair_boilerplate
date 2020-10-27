@@ -4,8 +4,8 @@
 	"type" : "project",
 	"minimum-stability" : "stable",
 	"require" : {
-		"viames/pair" : "^1.6.0",
-		"php" : ">=7",
+		"viames/pair" : "^1.7.8",
+		"php" : "^7",
 		"ext-pdo" : "*"
 	},
 	"repositories" : [{

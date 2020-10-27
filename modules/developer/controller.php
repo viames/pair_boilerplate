@@ -17,8 +17,7 @@ class DeveloperController extends Controller {
 			$this->redirect('developer/accessDenied');
 		}
 		
-		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath('Developer module', 'developer');
+		Breadcrumb::path('Developer module', 'developer');
 		
 	}
 	

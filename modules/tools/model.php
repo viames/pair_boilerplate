@@ -101,7 +101,7 @@ class ToolsModel extends Model {
 					// manifest file is missing
 					if (!file_exists($manifestFile)) {
 
-						$app->logWarning('File manifest.xml is missing for ' . ucfirst($type) . ' plugin at path /' . $folder . '/' . $dir);
+						Logger::warning('File manifest.xml is missing for ' . ucfirst($type) . ' plugin at path /' . $folder . '/' . $dir);
 					
 					} else {
 
@@ -112,7 +112,7 @@ class ToolsModel extends Model {
 						Plugin::createPluginByManifest($manifest);
 						
 						// logging
-						$app->logEvent('Inserted a new plugin record for ' . $type . ' ' . $dir);
+						Logger::event('Inserted a new plugin record for ' . $type . ' ' . $dir);
 						$fixes++;
 
 					}
@@ -135,7 +135,7 @@ class ToolsModel extends Model {
 					$plugin->createManifestFile();
 					
 					// logging
-					$app->logEvent('Created manifest file for ' . $type . ' ' . $pObj->name);
+					Logger::event('Created manifest file for ' . $type . ' ' . $pObj->name);
 					$fixes++;
 					
 				}
@@ -162,12 +162,12 @@ class ToolsModel extends Model {
 				$plugin = new Plugin();
 				$res = $plugin->installPackage(APPLICATION_PATH . '/modules/tools/assets/' . $package . 'Module.zip');
 				if ($res) {
-					$this->logEvent('Table `locales` already exists');
+					Logger::event('Table `locales` already exists');
 				} else {
 					$this->addError('Plugin ' . $package . ' installation failed');
 				}
 			} else {
-				$this->logEvent('Plugin module “' . $package . '” already exists, skip installation');
+				Logger::event('Plugin module “' . $package . '” already exists, skip installation');
 			}
 		}
 		
@@ -179,9 +179,9 @@ class ToolsModel extends Model {
 		$res = $this->db->loadCount();
 		if (!$res) {
 			$this->runQueryByFile('countries.sql');
-			$this->logEvent('Table `countries` has been created');
+			Logger::event('Table `countries` has been created');
 		} else {
-			$this->logEvent('Table `countries` already exists, skip creation');
+			Logger::event('Table `countries` already exists, skip creation');
 		}
 		
 		// check and remove language fk with user table
@@ -205,9 +205,9 @@ class ToolsModel extends Model {
 		$this->db->setQuery('SELECT COUNT(table_name) FROM information_schema.`tables` WHERE table_schema = "' . DB_NAME . '" AND table_name = "locales"');
 		if (!$this->db->loadCount()) {
 			$this->runQueryByFile('locales.sql');
-			$this->logEvent('Table `locales` has been created and populated');
+			Logger::event('Table `locales` has been created and populated');
 		} else {
-			$this->logEvent('Table `locales` already exists, skip installation');
+			Logger::event('Table `locales` already exists, skip installation');
 		}
 		
 		// update the users table
@@ -218,10 +218,10 @@ class ToolsModel extends Model {
 			//$defaultLocale = Locale::getDefault();
 			$this->db->exec('UPDATE `users` SET locale_id = ?', 82); //[$defaultLocale->id]);
 			// change users table struct and create a new fk
-			$res = $this->db->exec('ALTER TABLE users ADD CONSTRAINT fk_users_locales FOREIGN KEY (`locale_id`) REFERENCES `locales` (`id`) ON UPDATE CASCADE');
-			$this->logEvent('Users table has been updated');
+			$res = $this->db->exec('ALTER TABLE `users` ADD CONSTRAINT fk_users_locales FOREIGN KEY (`locale_id`) REFERENCES `locales` (`id`) ON UPDATE CASCADE');
+			Logger::event('Users table has been updated');
 		} else {
-			$this->logEvent('Table `users` is already updated');
+			Logger::event('Table `users` is already updated');
 		}
 		
 		// set a new Pair version in composer.json
@@ -229,7 +229,7 @@ class ToolsModel extends Model {
 		$content = file_get_contents($composerFile);
 		$pattern = '#([\t\s]*"viames/pair"[\t\s]*:[\t\s]*")[^"]+("[\t\s]*[,]?[\t\s]*)#i';
 		file_put_contents($composerFile, preg_replace($pattern, '\1^1.4\2', $content));
-		$this->logEvent('Pair version is updated to ^1.4 in composer.json');
+		Logger::event('Pair version is updated to ^1.4 in composer.json');
 		
 		// rename translation folders
 		$counter = 0;
@@ -250,7 +250,7 @@ class ToolsModel extends Model {
 		}
 		
 		if ($counter) {
-			$this->logEvent('Renamed ' . $counter . ' folders from languages to translations');
+			Logger::event('Renamed ' . $counter . ' folders from languages to translations');
 		}
 		
 		return TRUE;

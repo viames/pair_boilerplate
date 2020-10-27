@@ -19,7 +19,7 @@ class SelftestViewDefault extends View {
 		$this->app->sideMenuWidget = $widget->render('sideMenu');
 
 		// will needs some options
-		$options = Options::getInstance();
+		//$options = Options::getInstance();
 		
 		// starts the test
 		$test = new SelfTest();
@@ -27,7 +27,7 @@ class SelftestViewDefault extends View {
 		// php version and config
 		$extensions = array('fileinfo','json','pcre','PDO','pdo_mysql','Reflection');
 		$label = $this->lang('TEST_PHP_CONFIGURATION', phpversion());
-		$result = $this->model->testPhp($extensions, '7.1.0');
+		$result = $this->model->testPhp($extensions, '7.3.0');
 		$test->assertTrue($label, $result, $this->lang('SERVER'));
 		
 		// mysql version

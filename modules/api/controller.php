@@ -140,10 +140,9 @@ class ApiController extends Controller {
 	 * Get a parameter from router by its name and return a DateTime object if valid.
 	 * 
 	 * @param	string	Name of the date param.
-	 * 
-	 * @return	DateTime
+	 * @return	NULL|DateTime
 	 */
-	private function getDateTimeParam($name) {
+	private function getDateTimeParam($name): ?DateTime {
 		
 		$param = Router::get($name);
 		
@@ -151,9 +150,7 @@ class ApiController extends Controller {
 			$this->sendError(ucfirst($name) . ' date is not valid');
 		}
 		
-		$dateTime = new DateTime('@' . $param);
-		
-		return $dateTime;
+		return new DateTime('@' . $param);
 		
 	}
 
@@ -210,7 +207,7 @@ class ApiController extends Controller {
 		
 	}
 	
-	private function printout($data) {
+	private function printout($data): void {
 		
 		// anonymous function to extract latest SVN
 		$nodeRecursion = function (&$node, $name, $value) use (&$nodeRecursion) {
@@ -259,7 +256,9 @@ class ApiController extends Controller {
 			
 		} else {
 
-			$json = json_encode($data);
+			// DECODE = json_decode($json, false, 512, JSON_UNESCAPED_UNICODE);
+			$json = json_encode($data, JSON_UNESCAPED_UNICODE);
+
 			header('Content-Type: application/json', TRUE);
 			print $json;
 

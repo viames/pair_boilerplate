@@ -6,11 +6,11 @@ use Pair\Utilities;
 $preload = [];
 
 foreach ($preload as $f) {
-	require 'classes/' . $f;
+	require APPLICATION_PATH . '/classes/' . $f;
 }
 
 // get all classes file
-$files = Utilities::getDirectoryFilenames('classes');
+$files = Utilities::getDirectoryFilenames(APPLICATION_PATH . '/classes');
 
 $classLoader = basename(__FILE__);
 
@@ -19,7 +19,7 @@ foreach ($files as $file) {
 	
 	// require if not preloaded and isn’t classLoader
 	if (!in_array($file, $preload) and $file != $classLoader) {
-		require 'classes/' . $file;
+		require APPLICATION_PATH . '/classes/' . $file;
 	}
 	
 }

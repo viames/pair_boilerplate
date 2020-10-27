@@ -4,6 +4,7 @@ use Pair\ActiveRecord;
 use Pair\Application;
 use Pair\Language;
 use Pair\Locale;
+use Pair\Logger;
 use Pair\Model;
 use Pair\Module;
 use Pair\Options;
@@ -35,7 +36,7 @@ class SelftestModel extends Model {
 				break;
 		}
 		
-		$this->app->logEvent('Checking for PHP extensions ' . implode(', ', $extensions));
+		Logger::event('Checking for PHP extensions ' . implode(', ', $extensions));
 
 		// check each library
 		foreach ($extensions as $ext) {
@@ -198,7 +199,8 @@ class SelftestModel extends Model {
 		$classes = Utilities::getActiveRecordClasses();
 		
 		// plain list of Pair framework classes
-		$pairClasses = ['Acl','ErrorLog','Group','Language','Module','Rule','Session','Template','User'];
+		$pairClasses = ['Acl','Audit','Country','ErrorLog','Group','Language','Locale',
+						'Module','Rule','Session','Template','Token','User','UserRemember'];
 		array_walk($pairClasses, function(&$c) { $c = 'Pair\\' . $c; });
 		
 		// list of excluded from test
@@ -370,7 +372,6 @@ class SelftestModel extends Model {
 							if (!file_exists($translationsFolder . '/' . $locale->representation . '.ini')) {
 	
 								$files++;
-								//$this->logWarning('Unfound ' . $language->englishName . ' language file at this path: ' . $langFolder);
 	
 							} else {
 

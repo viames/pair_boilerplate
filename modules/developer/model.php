@@ -38,7 +38,7 @@ class DeveloperModel extends Model {
 	 * List of properties type (property_name => type).
 	 * @var array
 	 */
-	protected $propType;
+	protected $propTypes;
 	
 	/**
 	 * List of values for each enum/set property.
@@ -317,7 +317,7 @@ class DeveloperModel extends Model {
 		$this->author		= $app->currentUser->fullName;
 		$this->package		= PRODUCT_NAME;
 		
-		$this->propType		= array();
+		$this->propTypes		= array();
 		$this->binds		= array();
 		
 		// get table columns list
@@ -363,29 +363,29 @@ class DeveloperModel extends Model {
 			if (1 == $length and in_array($type, ['tinyint', 'smallint', 'mediumint', 'int'])) {
 
 				// int(1) is recognized like bool type
-				$this->propType[$property] = 'bool';
+				$this->propTypes[$property] = 'bool';
 				
 			} else {
 			
 				switch ($type) {
 					
 					case 'date':
-						$this->propType[$property] = 'date';
+						$this->propTypes[$property] = 'date';
 						break;
 						
 					case 'datetime':
 					case 'timestamp':
-						$this->propType[$property] = 'datetime';
+						$this->propTypes[$property] = 'datetime';
 						break;
 
 					case 'bool':
 					case 'boolean':
-						$this->propType[$property] = 'bool';
+						$this->propTypes[$property] = 'bool';
 						break;
 						
 					case 'enum':
 			 		case 'set':
-						$this->propType[$property] = $type;
+						$this->propTypes[$property] = $type;
 						$this->members[$property] = $length ? explode("','", substr($length, 1, -1)) : NULL;
 						break;
 						
@@ -394,7 +394,7 @@ class DeveloperModel extends Model {
 					case 'mediumint':
 					case 'int':
 					case 'year':
-						$this->propType[$property] = 'int';
+						$this->propTypes[$property] = 'int';
 						break;
 					
 					case 'dec':
@@ -405,19 +405,19 @@ class DeveloperModel extends Model {
 			 		case 'float':
 			 		case 'numeric':
 			 		case 'real':
-			 			$this->propType[$property] = 'float';
+			 			$this->propTypes[$property] = 'float';
 			 			break;
 			 			
 			 		case 'tinytext':
 			 		case 'text':
 			 		case 'mediumtext':
 			 		case 'longtext':
-						$this->propType[$property] = 'text';
+						$this->propTypes[$property] = 'text';
 						break;
 						
 					// char, varchar, json, time etc.
 			 		default:
-			 			$this->propType[$property] = 'string';
+			 			$this->propTypes[$property] = 'string';
 			 			break;
 			 			
 				}
@@ -452,7 +452,7 @@ class DeveloperModel extends Model {
 		foreach ($this->binds as $property => $field) {
 			
 			// set the right property type
-			switch ($this->propType[$property]) {
+			switch ($this->propTypes[$property]) {
 				
 				case 'string':
 				case 'text':
@@ -567,18 +567,22 @@ class ' . $this->objectName . ' extends ActiveRecord {
 	 * 
 	 * @param	string	File name with relative path.
 	 */
-	public function saveModel($file) {
+	public function saveModel(string $file) {
 
-		$lists  = [];
-		$fields = [];
+		$lists = [];
 		
 		// columns that are referencing other tables
 		$foreignKeys = $this->db->getForeignKeys($this->tableName);
 		
 		foreach ($this->binds as $property => $field) {
+
+			// internal fields
+			if (in_array($field, ['created_at', 'updated_at'])) {
+			
+				continue;
 			
 			// hidden inputs
-			if ($this->isTableKey($field)) {
+			} else if ($this->isTableKey($field)) {
 				
 				$control = '$form->addInput(\'' . $property . "')->setType('hidden')";
 
@@ -606,7 +610,7 @@ class ' . $this->objectName . ' extends ActiveRecord {
 					$control  = '$form->addSelect(\'' . $property . '\')';
 	
 					// search the first string-type field in the class, to use as label
-					$firstTextProp = $this->getFirstTextProperty($fkClass);
+					$firstTextProp = $this->getFirstTextProperty((string)$fkClass);
 					if (!$firstTextProp) {
 						$firstTextProp = $fkColumn;
 					}
@@ -629,7 +633,7 @@ class ' . $this->objectName . ' extends ActiveRecord {
 			// standard inputs
 			} else {
 				
-				switch ($this->propType[$property]) {
+				switch ($this->propTypes[$property]) {
 					
 					case 'bool':
 						$control = "\$form->addInput('" . $property . "')->setType('bool')";
@@ -698,13 +702,20 @@ class ' . $this->objectName . ' extends ActiveRecord {
 			}
 			
 			// if is not nullable field, set as required
-			if ($this->propType[$property] != 'bool' and !$this->isFieldNullable($this->tableName, $field)) {
+			if ($this->propTypes[$property] != 'bool' and !$this->isFieldNullable($this->tableName, $field)) {
 				$control .= '->setRequired()';
 			}
 			
 			// indentation and label
 			$controls[] = "\t\t" . $control . "->setLabel('" . strtoupper($field) . "');";
 		
+		}
+		
+		// cerca la prima proprietà testuale per aggiungere un ORDER BY
+		foreach ($this->propTypes as $pName => $pType) {
+			if ('string' == $pType) {
+				$orderBy = ' ORDER BY `' . $this->binds[$pName] . '`';
+			}
 		}
 		
 		// here starts code collect
@@ -717,26 +728,15 @@ use Pair\Model;
 class ' . ucfirst($this->moduleName) . 'Model extends Model {
 
 	/**
-	 * Returns object list with pagination.
+	 * Return the query to extract all ActiveRecord’s objects with automatic LIMIT BY for pagination.
 	 *
-	 * @return	array:' . $this->objectName . '
+	 * @return	string
 	 */
-	public function get' . ucfirst($this->moduleName) . '() {
+	public function getQuery(string $class): string {
 
-		$query = \'SELECT * FROM `' . $this->tableName . '` LIMIT \' . $this->pagination->start . \', \' . $this->pagination->limit;
+		$query = \'SELECT * FROM `' . $this->tableName . '`' . (isset($orderBy) ? $orderBy : '') . '\';
 
-		return ' . $this->objectName . '::getObjectsByQuery($query);
-
-	}
-
-	/**
-	 * Returns count of available objects.
-	 *
-	 * @return	int
-	 */
-	public function countListItems() {
-
-		return ' . $this->objectName . '::countAllObjects();
+		return $query;
 
 	}
 
@@ -745,16 +745,17 @@ class ' . ucfirst($this->moduleName) . 'Model extends Model {
 	 * 
 	 * @return Form
 	 */ 
-	public function get' . $this->objectName . 'Form() {
+	public function get' . $this->objectName . 'Form(' . ucfirst($this->objectName) . ' $' . lcfirst($this->objectName) . '): Form {
 
 ' . implode('', $lists) .
 
 '		$form = new Form();
 			
-		$form->addControlClass(\'form-control\');
-			
 ' . implode("\n", $controls) . '
 		
+		$form->addControlClass(\'form-control\');
+		$form->setValuesByObject($' . lcfirst($this->objectName) . ');
+	
 		return $form;
 		
 	}
@@ -786,8 +787,7 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 	 */
 	protected function init() {
 		
-		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath($this->lang(\'' . strtoupper($this->tableName) . '\'), \'' . $this->moduleName . '\');
+		Breadcrumb::path($this->lang(\'' . strtoupper($this->tableName) . '\'), \'' . $this->moduleName . '\');
 		
 	}
 	
@@ -801,7 +801,7 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 
 		// create the record
 		if (!$' . lcfirst($this->objectName) . '->store()) {
-			$this->raiseError(' . lcfirst($this->objectName) . ');
+			$this->raiseError($' . lcfirst($this->objectName) . ');
 			return;
 		}					
 
@@ -832,7 +832,7 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 
 		// apply the update
 		if (!$' . lcfirst($this->objectName) . '->store()) {
-			$this->raiseError(' . lcfirst($this->objectName) . ');
+			$this->raiseError($' . lcfirst($this->objectName) . ');
 			return;
 		}
 
@@ -851,7 +851,7 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 
 		// execute deletion
 		if (!$' . lcfirst($this->objectName) . '->delete()) {
-			$this->raiseError(' . lcfirst($this->objectName) . ');
+			$this->raiseError($' . lcfirst($this->objectName) . ');
 			return;
 		}
 
@@ -872,7 +872,7 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 	 * Create and save a translation file.
 	 * 
 	 * @param	string	Full path to translation INI file.
-	 * @param	string	Language-tag (eg. “en-BR”).
+	 * @param	string	Language-tag (eg. “en-GB”).
 	 */
 	public function saveTranslation($file, $representation) {
 		
@@ -900,6 +900,11 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 		// list of table fields
 		foreach ($this->binds as $field) {
 		
+			// internal fields
+			if (in_array($field, ['created_at', 'updated_at'])) {
+				continue;
+			}
+
 			$fields[] = strtoupper($field) . ' = "' . str_replace('_', ' ', ucfirst($field)) . '"';
 
 		}
@@ -909,10 +914,8 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 		// here starts code collect
 		$content .= strtoupper($this->tableName) . ' = "' . str_replace('_', ' ', ucfirst($this->tableName)) . "\"\n";
 		$content .= $ucObject . '_HAS_BEEN_CREATED = "' . Translator::do('OBJECT_HAS_BEEN_CREATED', $this->objectName) . "\"\n";
-		$content .= $ucObject . '_HAS_NOT_BEEN_CREATED = "' . Translator::do('OBJECT_HAS_NOT_BEEN_CREATED', $this->objectName) . "\"\n";
 		$content .= $ucObject . '_HAS_BEEN_CHANGED_SUCCESFULLY = "' . Translator::do('OBJECT_HAS_BEEN_CHANGED_SUCCESFULLY', $this->objectName) . "\"\n";
 		$content .= $ucObject . '_HAS_BEEN_DELETED_SUCCESFULLY = "' . Translator::do('OBJECT_HAS_BEEN_DELETED_SUCCESFULLY', $this->objectName) . "\"\n";
-		$content .= 'ERROR_DELETING_' . $ucObject . ' = "' . Translator::do('ERROR_DELETING_OBJECT', $this->objectName) . "\"\n";
 		$content .= 'NEW_' . strtoupper($this->objectName) . ' = "' . Translator::do('NEW_OBJECT', $this->objectName) . "\"\n";
 		$content .= 'EDIT_' . strtoupper($this->objectName) . ' = "' . Translator::do('EDIT_OBJECT', $this->objectName) . "\"\n";
 		$content .= implode("\n", $fields);
@@ -953,9 +956,9 @@ class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 		$widget = new Widget();
 		$this->app->sideMenuWidget = $widget->render(\'sideMenu\');
 		
-		$' . Utilities::getCamelCase($this->tableName) . ' = $this->model->get' .  ucfirst($this->moduleName) . '();
+		$' . Utilities::getCamelCase($this->tableName) . ' = $this->model->getItems(\'' .  $this->objectName . '\');
 
-		$this->pagination->count = $this->model->countListItems();
+		$this->pagination->count = $this->model->countItems(\'' .  $this->objectName . '\');
 
 		$this->assign(\'' . Utilities::getCamelCase($this->tableName) . '\', $' . Utilities::getCamelCase($this->tableName) . ');
 
@@ -983,9 +986,14 @@ class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 		
 		// collects table headers and cells
 		foreach ($this->binds as $property=>$field) {
+
+			// internal fields
+			if (in_array($field, ['created_at', 'updated_at'])) {
+
+				continue;
 			
 			// jump the table keys
-			if (!$this->isTableKey($field)) {
+			} else if (!$this->isTableKey($field)) {
 				
 				// replace the table-header placeholder
 				$headers[] = str_replace('{tableHeader}', "<?php \$this->_('" . strtoupper($field) . "') ?>", $this->layouts['default-table-header']);
@@ -997,9 +1005,9 @@ class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 				if (is_null($col)) {
 				
 					// add the date/datetime format method
-					switch ($this->propType[$property]) {
-						case 'date':	 $object = '$o->formatDate(\'' . $property . '\')'; break;
-						case 'datetime': $object = '$o->formatDateTime(\'' . $property . '\')'; break;
+					switch ($this->propTypes[$property]) {
+						case 'date':	 $object = 'print $o->formatDate(\'' . $property . '\')'; break;
+						case 'datetime': $object = 'print $o->formatDateTime(\'' . $property . '\')'; break;
 						default:		 $object = '$o->printHtml(\'' . $property . '\')'; break;
 					}
 					
@@ -1013,24 +1021,24 @@ class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 					if ($fkClass) {
 					
 						// search the first string-type field in the class, to use as label
-						$firstTextProp = $this->getFirstTextProperty($fkClass);
+						$firstTextProp = $this->getFirstTextProperty((string)$fkClass);
 						if (!$firstTextProp) {
 							$firstTextProp = Utilities::getCamelCase($col->REFERENCED_COLUMN_NAME);
 						}
 						
-						$object = 'htmlspecialchars($o->getRelatedProperty(\'' . $property . '\', \'' . $firstTextProp . '\'))';
+						$object = 'print htmlspecialchars($o->getRelatedProperty(\'' . $property . '\', \'' . $firstTextProp . '\'))';
 					
 					// class not found, show a simple field value
 					} else {
 						
-						$object = 'htmlspecialchars($o->' . $property . ')';
+						$object = 'print htmlspecialchars($o->' . $property . ')';
 						
 					}
 					
 				}
 				
 				// complete the property value
-				$replace = '<?php print ' . $object . ' ?>';
+				$replace = '<?php ' . $object . ' ?>';
 				
 				// replace the table-cell placeholder with link on the first item
 				if ($fieldWithLink) {
@@ -1087,8 +1095,7 @@ class ' . ucfirst($this->moduleName) . 'ViewNew extends View {
 		$this->app->pageTitle = $this->lang(\'NEW_' . strtoupper($this->objectName) . '\');
 		$this->app->activeMenuItem = \'' . $this->moduleName . '\';
 
-		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath($this->lang(\'NEW_' . strtoupper($this->objectName) . '\'), \'new\');
+		Breadcrumb::path($this->lang(\'NEW_' . strtoupper($this->objectName) . '\'), \'new\');
 
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render(\'breadcrumb\');
@@ -1096,7 +1103,7 @@ class ' . ucfirst($this->moduleName) . 'ViewNew extends View {
 		$widget = new Widget();
 		$this->app->sideMenuWidget = $widget->render(\'sideMenu\');
 		
-		$form = $this->model->get' . $this->objectName . 'Form();
+		$form = $this->model->get' . $this->objectName . 'Form(new ' . $this->objectName . ');
 		
 		$this->assign(\'form\', $form);
 		
@@ -1117,7 +1124,12 @@ class ' . ucfirst($this->moduleName) . 'ViewNew extends View {
 		// collects fields
 		foreach ($this->binds as $property=>$field) {
 			
-			if (!$this->isTableKey($field)) {
+			// internal fields
+			if (in_array($field, ['created_at', 'updated_at'])) {
+
+				continue;
+			
+			} else if (!$this->isTableKey($field)) {
 				
 				$search = ['{fieldLabel}', '{fieldControl}'];
 				$replace = ['<?php $this->form->printLabel(\'' . $property . '\') ?>',
@@ -1182,14 +1194,13 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 	 */
 	public function render() {
 
-		$this->app->pageTitle = $this->lang(\'EDIT_' . strtoupper($this->objectName) . '\');
-		$this->app->activeMenuItem = \'' . $this->moduleName . '\';
-
 ' . $params . '
 		$' . lcfirst($this->objectName) . ' = new ' . $this->objectName . '(' . $key . ');
 
-		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath($this->lang(\'EDIT_' . strtoupper($this->objectName) . '\'), \'edit/\' . ' . $editId . ');
+		$this->app->pageTitle = $this->lang(\'EDIT_' . strtoupper($this->objectName) . '\');
+		$this->app->activeMenuItem = \'' . $this->moduleName . '\';
+
+		Breadcrumb::path($this->lang(\'EDIT_' . strtoupper($this->objectName) . '\'), \'edit/\' . ' . $editId . ');
 
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render(\'breadcrumb\');
@@ -1197,8 +1208,7 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 		$widget = new Widget();
 		$this->app->sideMenuWidget = $widget->render(\'sideMenu\');
 		
-		$form = $this->model->get' . ucfirst($this->objectName) . 'Form();
-		$form->setValuesByObject($' . lcfirst($this->objectName) . ');
+		$form = $this->model->get' . ucfirst($this->objectName) . 'Form($' . lcfirst($this->objectName) . ');
 
 		$this->assign(\'form\', $form);
 		$this->assign(\'' . lcfirst($this->objectName) . '\', $' . lcfirst($this->objectName) . ');
@@ -1221,7 +1231,12 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 		// collects fields
 		foreach ($this->binds as $property=>$field) {
 			
-			if (!$this->isTableKey($field)) {
+			// internal fields
+			if (in_array($field, ['created_at', 'updated_at'])) {
+
+				continue;
+			
+			} else if (!$this->isTableKey($field)) {
 				
 				$search = ['{fieldLabel}', '{fieldControl}'];
 				$replace = ['<?php $this->form->printLabel(\'' . $property . '\') ?>',
@@ -1242,7 +1257,7 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 		$ph['hiddenFields']	= implode('', $hiddens);
 		$ph['object']		= lcfirst($this->objectName);
 		$ph['cancelUrl']	= $this->moduleName;
-		$ph['deleteUrl']	=  $this->moduleName . '/delete/<?php print ' . $this->getTableKeyAsCgiParams() . ' ?>';
+		$ph['deleteUrl']	= $this->moduleName . '/delete/<?php print ' . $this->getTableKeyAsCgiParams() . ' ?>';
 		
 		// replace value on placeholders
 		$content = $this->replaceHolders($this->layouts['edit-page'], $ph);
@@ -1445,9 +1460,7 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 	/**
 	 * Return the first text property of a class by its name.
 	 */
-	private function getFirstTextProperty($class) {
-		
-		if (!$class) return NULL;
+	private function getFirstTextProperty(string $class) {
 		
 		$obj = new $class();
 		$props = $obj->getAllProperties();

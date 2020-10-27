@@ -11,8 +11,7 @@ class ToolsViewDefault extends View {
 		$this->app->pageTitle = $this->lang('TOOLS');
 		$this->app->activeMenuItem	= 'tools';
 
-		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath($this->lang('TOOLS'));
+		Breadcrumb::path($this->lang('TOOLS'));
 		
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
