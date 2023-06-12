@@ -587,12 +587,27 @@ class Installer {
 			"<?php\n\n// product\n" .
 			"define ('PRODUCT_VERSION', '" . $vars['productVersion'] . "');\n" .
 			"define ('PRODUCT_NAME', '" . $vars['productName'] . "');\n" .
-			"define ('BASE_URI', '" . $vars['baseUri'] . "');\n\n" .
+			"define ('BASE_URI', '" . $vars['baseUri'] . "');\n" .
+			"define ('UTC_DATE', FALSE);\n\n" .
 			"// database\n" .
 			"define ('DB_HOST', '" . $vars['dbHost'] . "');\n" .
 			"define ('DB_NAME', '" . $vars['dbName'] . "');\n" .
 			"define ('DB_USER', '" . $vars['dbUser'] . "');\n" .
-			"define ('DB_PASS', '" . $vars['dbPass'] . "');\n";
+			"define ('DB_PASS', '" . $vars['dbPass'] . "');\n" .
+			"define ('DB_UTF8', TRUE);\n\n" .
+			"// options\n" .
+			"define ('PAIR_DEVELOPMENT', TRUE);" .
+			"define ('PAIR_DEBUG', TRUE);" .
+			"define ('PAIR_AUDIT_PASSWORD_CHANGED', TRUE);" .
+			"define ('PAIR_AUDIT_LOGIN_FAILED', TRUE);" .
+			"define ('PAIR_AUDIT_LOGIN_SUCCESSFUL', TRUE);" .
+			"define ('PAIR_AUDIT_LOGOUT', TRUE);" .
+			"define ('PAIR_AUDIT_SESSION_EXPIRED', TRUE);" .
+			"define ('PAIR_AUDIT_REMEMBER_ME_LOGIN', TRUE);" .
+			"define ('PAIR_AUDIT_USER_CREATED', TRUE);" .
+			"define ('PAIR_AUDIT_USER_DELETED', TRUE);" .
+			"define ('PAIR_AUDIT_USER_CHANGED', TRUE);" .
+			"define ('PAIR_AUDIT_PERMISSIONS_CHANGED', TRUE);";
 		
 		if ($this->forceDbUtf8) {
 			$content .= "define ('DB_UTF8', TRUE);\n";
