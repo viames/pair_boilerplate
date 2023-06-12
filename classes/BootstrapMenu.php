@@ -9,15 +9,19 @@ use Pair\Menu;
 class BootstrapMenu extends Menu {
 
 	/**
+	 * Current selected menu item.
+	 */
+	protected ?string $activeItem;
+
+	/**
 	 * Builds HTML of this menu.
-	 *
-	 * @return string
 	 */
 	public function render(): string {
 		
+		$app = Application::getInstance();
+
 		$ret = '';
 		
-		$app = Application::getInstance();
 		$this->activeItem = $app->activeMenuItem;
 
 		foreach ($this->items as $item) {
@@ -36,7 +40,7 @@ class BootstrapMenu extends Menu {
 
 					$ret .= '<li' . $active . '><a href="' . $item->url . '"' . ($item->target ? ' target="' . $item->target . '"' : '') .
 						'><i class="fa fa-lg fa-fw ' . $item->class . '"></i> <span class="nav-label">' . $item->title .'</span> ' .
-						($item->badge ? '<span class="float-right label label-primary">' . $item->badge . '</span>' : '') . '</a></li>';
+						'<span class="badge float-right">' . $item->badge . '</span> </a></li>';
 
 					break;
 
@@ -65,8 +69,8 @@ class BootstrapMenu extends Menu {
 
 						$links .=
 							'<li class="' . $active . '"><a href="' . $i->url . '">' .
-							'<i class="fa fa-fw ' . $i->class . '"></i>' . $i->title .
-							($i->badge ? '<span class="float-right label label-primary">' . $i->badge . '</span>' : '') .
+							'<i class="fa fa-fw ' . $i->class . '"></i> ' . $i->title .
+							'<span class="badge float-right">' . $i->badge . '</span>' .
 							'</a></li>';
 
 					}
@@ -80,16 +84,18 @@ class BootstrapMenu extends Menu {
 					$ret .=
 						'<li class="has-sub ' . $menuClass . '">' .
 						'<a href="javascript:;">
+								<b class="caret float-right"></b>
 								<i class="fa fa-fw ' . ($item->class ? $item->class : 'fa-th-large') . '"></i>
 								<span class="nav-label">' . $item->title . '</span>
-								<span class="fal fa-angle-down float-right"></span>
 						</a>' .
-						'<ul class="nav nav-second-level collapse">' . $links . '</ul></li>';
+						'<ul class="sub-menu">' . $links . '</ul></li>';
 					break;
 
 			}
 
 		}
+
+		$ret .= '<li><a href="javascript:;" class="sidebar-minify-btn" data-click="sidebar-minify"><i class="fa fa-angle-double-left"></i></a></li>';
 
 		return $ret;
 

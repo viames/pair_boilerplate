@@ -3,10 +3,10 @@
 	"description" : "Skeleton project based on Pair PHP framework",
 	"type" : "project",
 	"minimum-stability" : "stable",
-	"require" : {
-		"viames/pair" : "^1.7.8",
-		"php" : "^7",
-		"ext-pdo" : "*"
+	"prefer-stable": true,
+	"require": {
+		"php": ">=7.4",
+		"viames/pair": "^1.8.23",
 	},
 	"repositories" : [{
 			"type" : "vcs",
@@ -29,7 +29,6 @@
 	"authors" : [
 		{
 			"name" : "Viames Marino",
-			"homepage" : "https://www.viames.it",
 			"role" : "Developer"
 		}
 	]

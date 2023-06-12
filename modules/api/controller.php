@@ -1,7 +1,9 @@
 <?php
 
+use Pair\Audit;
 use Pair\Controller;
-use Pair\Group;
+use Pair\Input;
+use Pair\Options;
 use Pair\Router;
 use Pair\Session;
 use Pair\Token;
@@ -11,31 +13,32 @@ class ApiController extends Controller {
 	
 	/**
 	 * The token object.
-	 * @var NULL|Pair\Token
 	 */
-	private $token;
+	private ?Token $token;
+
+	/**
+	 * The Bearer token string.
+	 */
+	private ?string $bearerToken;
 	
 	/**
 	 * The session object.
-	 * @var NULL|Pair\Session
 	 */
-	private $session;
+	private ?Session $session;
 	
 	/**
 	 * Missing methods.
 	 */
-	public function __call($name, $arguments) {
+	public function __call($name, $arguments): void {
 		
 		sleep(3);
 		$name = substr($name, 0, -6);
-		$this->sendError('The requested API method does not exist (' . $name . ')');
+		$this->sendError(21);
 		
 	}
 
 	/**
 	 * Set the valid token.
-	 * 
-	 * @param	Token	The token object.
 	 */
 	public function setToken(Token $token) {
 		
@@ -45,10 +48,8 @@ class ApiController extends Controller {
 	
 	/**
 	 * Set the current Session object.
-	 *
-	 * @param	Session	The session object.
 	 */
-	public function setSession(Session $session) {
+	public function setSession(Session $session): void {
 		
 		$this->session = $session;
 		
@@ -57,11 +58,11 @@ class ApiController extends Controller {
 	/**
 	 * Do login and send session ID if valid.
 	 */
-	public function loginAction() {
+	public function loginAction(): void {
 		
-		$username = Router::get('username');
-		$password = Router::get('password');
-		$timezone = Router::get('timezone');
+		$username = Input::getTrim('username');
+		$password = Input::getTrim('password');
+		$timezone = Input::getTrim('timezone');
 		
 		if ($username and $password) {
 	
@@ -76,13 +77,13 @@ class ApiController extends Controller {
 			} else {
 				
 				sleep(3);
-				$this->sendError('Authentication failed');
+				$this->sendError(22);
 				
 			}
 				
 		} else {
 			
-			$this->sendError('Both username and password are required');
+			$this->sendError(20);
 						
 		}
 		
@@ -91,18 +92,18 @@ class ApiController extends Controller {
 	/**
 	 * Do logout and delete session ID.
 	 */
-	public function logoutAction() {
+	public function logoutAction(): void {
 	
 		if (!isset($this->session->id)) {
-			$this->sendError('Session does not exist');
+			$this->sendError(27); // 401 The session is invalid
 		}
 		
 		$res = User::doLogout($this->session->id);
 		
 		if ($res) {
-			$this->sendSuccess();
+			$this->sendSuccess(); // 200 logout succesfully
 		} else {
-			$this->sendError('Logout unsuccesfully');
+			$this->sendError(23); // 403 logout unsuccesfully
 		}
 		
 	}
@@ -137,17 +138,34 @@ class ApiController extends Controller {
 	}
 	
 	/**
-	 * Get a parameter from router by its name and return a DateTime object if valid.
-	 * 
-	 * @param	string	Name of the date param.
-	 * @return	NULL|DateTime
+	 * Restituisce l’oggetto JSON inviato allo stream di input.
 	 */
-	private function getDateTimeParam($name): ?DateTime {
+	private function getJsonStream() {
+
+		// receive the RAW post data via the php://input IO stream
+		//$content = file_get_contents("php://input");
+
+		// make sure that it is a POST request and application/json content type
+		if (!isset($_SERVER['REQUEST_METHOD']) or 'POST'!=strtoupper($_SERVER['REQUEST_METHOD']) or
+			!isset($_SERVER['CONTENT_TYPE']) or 'application/json'!=$_SERVER['CONTENT_TYPE']) {
+			$this->sendError(43); // application/json POST is expected
+			return NULL;
+		}
+
+		// receive and convert RAW post data
+		return json_decode(file_get_contents("php://input"));
+
+	}
+
+	/**
+	 * Get a parameter from router by its name and return a DateTime object if valid.
+	 */
+	private function getDateTimeParam($paramName): ?DateTime {
 		
-		$param = Router::get($name);
+		$param = Router::get($paramName);
 		
 		if (!$this->isTimestampValid($param)) {
-			$this->sendError(ucfirst($name) . ' date is not valid');
+			$this->sendError(50, $paramName); // invalid timestamp
 		}
 		
 		return new DateTime('@' . $param);
@@ -156,39 +174,30 @@ class ApiController extends Controller {
 
 	/**
 	 * This method checks if passed timestamp looks valid.
-	 * 
-	 * @param	mixed	Timestamp value.
-	 * 
-	 * @return	boolean
 	 */
 	private function isTimestampValid($timestamp) {
 		
 		return ((string)(int)$timestamp === $timestamp)
-			&& ($timestamp <= PHP_INT_MAX)
-			&& ($timestamp >= ~PHP_INT_MAX);
+			and ($timestamp <= PHP_INT_MAX)
+			and ($timestamp >= ~PHP_INT_MAX);
 		
 	}
 	
 	/**
-	 * Outputs a JSON error message.
-	 *
-	 * @param	string	Error message to print.
-	 * @param	bool	Error code (optional). 
+	 * Outputs a JSON error message with HTTP status code.
 	 */
-	public function sendError($message, $code=NULL) {
+	public function sendError(int $errorNumber, ?array $params=NULL): void {
 
-		$data = new stdClass();
-		$data->error = TRUE;
-		$data->code = $code;
-		$data->message = $message;
-		$this->printout($data);
+		$data = $this->model->getErrorData($errorNumber, $params);
+
+		$this->printOut($data);
 				
 	}
 
 	/**
 	 * Outputs a confirm of task done within a JSON.
 	 */
-	public function sendSuccess() {
+	public function sendSuccess(): void {
 	
 		$data = new stdClass();
 		$data->error = FALSE;
@@ -198,8 +207,6 @@ class ApiController extends Controller {
 	
 	/**
 	 * Outputs a JSON object with (object)data property.
-	 *
-	 * @param	object	Structured object containing data.
 	 */
 	public function sendData($data) {
 	
@@ -207,6 +214,9 @@ class ApiController extends Controller {
 		
 	}
 	
+	/**
+	 * Stampa in output come XML o JSON le informazioni data passate.
+	 */
 	private function printout($data): void {
 		
 		// anonymous function to extract latest SVN

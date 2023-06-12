@@ -10,7 +10,7 @@ use Pair\Rule;
 
 class DeveloperController extends Controller {
 	
-	protected function init() {
+	protected function init(): void {
 		
 		// prevents access to instances that are not under development
 		if (!$this->app->currentUser->admin or !Application::isDevelopmentHost()) {
@@ -21,7 +21,7 @@ class DeveloperController extends Controller {
 		
 	}
 	
-	public function classWizardAction() {
+	public function classWizardAction(): void {
 		
 		if (!Router::get(0)) {
 			$this->enqueueError($this->lang('TABLE_NAME_NOT_SPECIFIED'));
@@ -29,7 +29,7 @@ class DeveloperController extends Controller {
 		
 	}
 	
-	public function moduleWizardAction() {
+	public function moduleWizardAction(): void {
 		
 		if (!Router::get(0)) {
 			$this->enqueueError($this->lang('TABLE_NAME_NOT_SPECIFIED'));
@@ -37,7 +37,7 @@ class DeveloperController extends Controller {
 		
 	}
 
-	public function classCreationAction() {
+	public function classCreationAction(): void {
 		
 		$this->view = 'newClass';
 
@@ -69,7 +69,7 @@ class DeveloperController extends Controller {
 		
 	}
 	
-	public function moduleCreationAction() {
+	public function moduleCreationAction(): void {
 		
 		$this->view = 'default';
 
@@ -87,10 +87,11 @@ class DeveloperController extends Controller {
 			if (!file_exists($folder)) {
 				
 				// module folders
-				$folders = array(
+				$folders = [
 					$folder,
 					$folder . '/translations/',
-					$folder . '/layouts/');
+					$folder . '/layouts/'
+				];
 				
 				if (!$commonClass) {
 					$folders[] = $folder . '/classes/';
@@ -172,7 +173,7 @@ class DeveloperController extends Controller {
 	
 	}
 	
-	public function createTableAction() {
+	public function createTableAction(): void {
 		
 		$tableName = Router::get(0);
 		

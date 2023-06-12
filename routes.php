@@ -9,6 +9,7 @@ use Pair\Router;
 
 Router::addRoute('/login', 'login', 'user');
 Router::addRoute('/logout', 'logout', 'user');
+//Router::addRoute('/oauth2', 'oauth2', 'user', TRUE);
 
 Router::addRoute('/groups', 'groupList', 'users');
 Router::addRoute('/groups/edit/:id([0-9])+', 'groupEdit', 'users');

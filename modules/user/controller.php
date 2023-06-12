@@ -4,6 +4,7 @@ use Pair\Audit;
 use Pair\Application;
 use Pair\Controller;
 use Pair\Input;
+use Pair\Session;
 use Pair\User;
 
 class UserController extends Controller {
@@ -36,7 +37,7 @@ class UserController extends Controller {
 		}
 		
 		// perform the login and create an user session
-		$result = PgUser::doLogin($username, $password, $timezone);
+		$result = User::doLogin($username, $password, $timezone);
 		
 		// login denied
 		if ($result->error) {
@@ -46,7 +47,7 @@ class UserController extends Controller {
 		}
 		
 		// userId of user that is ready logged in
-		$user = new PgUser($result->userId);
+		$user = new User($result->userId);
 		
 		// evaluate the remember-me checkbox value
 		if ($remember) {
@@ -77,10 +78,10 @@ class UserController extends Controller {
 
 		$formerUser = Session::current()->getFormerUser();
 
-		PgUser::doLogout(session_id());
+		User::doLogout(session_id());
 
 		if ($formerUser) {
-			PgUser::loginAs($formerUser, '');
+			User::loginAs($formerUser, '');
 			$formerUser->redirectToDefault();
 		}
 		

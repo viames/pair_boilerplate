@@ -40,8 +40,9 @@ class ToolsModel extends Model {
 			
 				// gets and sets translation strings again 
 				if (file_exists($file) and is_writable($file)) {
-					$strings = $locale->readTranslation($module);
-					$locale->writeTranslation($strings, $module);
+					$mod = is_a($module, 'stdClass') ? NULL : $module;
+					$strings = $locale->readTranslation($mod);
+					$locale->writeTranslation($strings, $mod);
 					$counter++;
 				}
 			
@@ -62,7 +63,7 @@ class ToolsModel extends Model {
 
 		$app	= Application::getInstance();
 		$fixes	= 0;
-		$names	= array();
+		$names	= [];
 
 		// all plugin types
 		$pluginTypes = array(
@@ -73,13 +74,13 @@ class ToolsModel extends Model {
 			
 			// compute names
 			$class	= ($pair ? 'Pair\\' : '') . ucfirst($type);
-			$folder	= $dbtable = strtolower($type . 's');
-			$names	= array();
+			$folder	= strtolower($type . 's');
+			$names	= [];
 			
 			$pluginsFolder = APPLICATION_PATH . '/' . $folder;
 			
 			// main plugins folder scanning
-			$dirs = array_diff(scandir($folder), array('..', '.', '.DS_Store'));
+			$dirs = array_diff(scandir($folder), ['..', '.', '.DS_Store']);
 			
 			// gets db records and makes objects
 			$pObjects = $class::getAllObjects();

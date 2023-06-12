@@ -6,14 +6,17 @@ declare(strict_types=1);
 use Pair\Application;
 
 // true/false icons
-define ('PAIR_CHECK_ICON', '<i class="fal fa-check fa-lg text-success"></i>');
-define ('PAIR_TIMES_ICON', '<i class="fal fa-times fa-lg text-danger"></i>');
+define ('PAIR_CHECK_ICON', '<i class="fa fa-check fa-lg text-success"></i>');
+define ('PAIR_TIMES_ICON', '<i class="fa fa-times fa-lg text-danger"></i>');
 
 // initialize composer
 require 'vendor/autoload.php';
 
 // start the Application
 $app = Application::getInstance();
+
+// percorso ai file temporanei
+define ('TEMP_PATH', APPLICATION_PATH . '/temp/');
 
 // initialize project classes
 require 'classes/classLoader.php';

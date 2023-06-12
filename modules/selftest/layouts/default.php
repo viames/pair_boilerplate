@@ -9,7 +9,7 @@
 				<div class="table-responsive">
 					<table class="table table-hover">
 						<tbody><?php
-	
+		
 						foreach ($this->sections as $name=>$tests) {
 
 							?><tr><th colspan="2"><?php print $name ?></th></tr><?php
@@ -18,11 +18,11 @@
 						
 								?><tr>
 									<td><?php print $item->label ?></td>
-									<td><?php print $item->result ? $this->iconMark : $this->iconCross ?></td>
+									<td><?php print $item->result ? PAIR_CHECK_ICON : PAIR_TIMES_ICON ?></td>
 								</tr><?php
 								
 							}
-							
+		
 						}
 	
 						?></tbody>
