@@ -48,6 +48,25 @@ VALUES
 UNLOCK TABLES;
 
 --
+-- Table structure for table `audit`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `audit` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int unsigned DEFAULT NULL,
+  `event` enum('password_changed','login_failed','login_successful','logout','session_expired','remember_me_login','user_created','user_deleted','user_changed','permissions_changed') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `details` json DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `created_at` (`created_at`),
+  CONSTRAINT `fk_audit_access_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2510 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `countries`
 --
 
@@ -334,17 +353,17 @@ UNLOCK TABLES;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE IF NOT EXISTS `error_logs` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   `created_time` datetime NOT NULL,
-  `user_id` int(4) unsigned DEFAULT NULL,
-  `module` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `action` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `get_data` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `post_data` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `cookie_data` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `user_messages` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `referer` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_id` int unsigned DEFAULT NULL,
+  `path` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `get_data` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `post_data` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `files_data` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `cookie_data` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_messages` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `referer` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `created_time` (`created_time`),
@@ -1118,8 +1137,8 @@ UNLOCK TABLES;
 CREATE TABLE IF NOT EXISTS `options` (
   `name` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `label` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `type` enum('text','textarea','bool','int','list','custom') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'text',
-  `value` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `type` enum('text','textarea','bool','int','list','password') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'text',
+  `value` varchar(1024) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `list_options` text COLLATE utf8mb4_unicode_ci,
   `group` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`name`),
@@ -1138,10 +1157,10 @@ VALUES
     ('admin_emails','ADMIN_EMAILS','text','em@il.address',NULL,'Config'),
     ('development','DEVELOPMENT','bool','1',NULL,'Config'),
     ('pagination_pages','ITEMS_PER_PAGE','int','12',NULL,'Config'),
-    ('session_time','SESSION_TIME','int','120',NULL,'Config'),
+    ('session_time','SESSION_TIME','int','60',NULL,'Config'),
     ('show_log','SHOW_LOG','bool','1',NULL,'Config'),
     ('webservice_timeout','WEBSERVICE_TIMEOUT','int','8',NULL,'Config'),
-    ('password_min','PASSWORD_MIN','int','3',NULL,'site');
+    ('password_min','PASSWORD_MIN','int','8',NULL,'site');
 /*!40000 ALTER TABLE `options` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1201,6 +1220,7 @@ CREATE TABLE IF NOT EXISTS `sessions` (
   `start_time` datetime NOT NULL,
   `timezone_offset` decimal(2,1) DEFAULT NULL,
   `timezone_name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `former_user_id` int unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`id_user`,`start_time`)
 ) ENGINE=MEMORY DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1287,6 +1307,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `enabled` int(1) unsigned NOT NULL,
   `last_login` datetime DEFAULT NULL,
   `faults` int(2) unsigned NOT NULL DEFAULT '0',
+  `pw_reset` varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   KEY `group_id` (`group_id`),
@@ -1295,6 +1316,23 @@ CREATE TABLE IF NOT EXISTS `users` (
   KEY `ldap_user` (`ldap_user`),
   CONSTRAINT `fk_users_groups` FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT `fk_users_locales` FOREIGN KEY (`locale_id`) REFERENCES `locales` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `users_remembers`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `users_remembers` (
+  `user_id` int unsigned NOT NULL,
+  `remember_me` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `created_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`user_id`,`remember_me`),
+  KEY `remember_me` (`remember_me`),
+  KEY `created_at` (`created_at`),
+  CONSTRAINT `fk_users_remembers_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
