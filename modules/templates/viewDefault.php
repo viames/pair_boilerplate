@@ -6,11 +6,6 @@ use Pair\Widget;
 
 class TemplatesViewDefault extends View {
 
-	/**
-	 * {@inheritdoc}
-	 * 
-	 * @see View::Render()
-	 */
 	public function render() {
 
 		$options = Options::getInstance();

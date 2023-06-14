@@ -1,8 +1,8 @@
 <div class="row">
 	<div class="col-12">
-		<div class="panel panel-inverse">
-			<div class="panel-heading">
-				<h4 class="panel-title"><?php $this->_('DEVELOPER') ?></h4>
+		<div class="card">
+			<div class="card-header">
+				<h4 class="card-title"><?php $this->_('DEVELOPER') ?></h4>
 			</div><?php
 		
 			if (count($this->unmappedTables)) {

@@ -36,11 +36,11 @@ class BootstrapMenu extends Menu {
 						continue 2;
 					}
 		
-					$active = ($item->url == $this->activeItem ? ' class="active"' : '');
+					$active = ($item->url == $this->activeItem ? ' active' : '');
 
-					$ret .= '<li' . $active . '><a href="' . $item->url . '"' . ($item->target ? ' target="' . $item->target . '"' : '') .
+					$ret .= '<a class="list-group-item list-group-item-action list-group-item-light p-3' . $active . '" href="' . $item->url . '"' . ($item->target ? ' target="' . $item->target . '"' : '') .
 						'><i class="fa fa-lg fa-fw ' . $item->class . '"></i> <span class="nav-label">' . $item->title .'</span> ' .
-						'<span class="badge float-right">' . $item->badge . '</span> </a></li>';
+						'<span class="badge float-right">' . $item->badge . '</span> </a>';
 
 					break;
 

@@ -4,11 +4,11 @@
 $layouts['default-page'] =
 '<div class="row">
 	<div class="col-12">
-		<div class="panel panel-inverse">
-			<div class="panel-heading">
-				<h4 class="panel-title">{pageTitle}</h4>
+		<div class="card">
+			<div class="card-header">
+				<h4 class="card-title">{pageTitle}</h4>
 			</div>
-			<div class="panel-body">
+			<div class="card-body">
 				<a href="{linkAdd}" class="btn btn-primary"><i class="fa fa-plus"></i> {newElement}</a>
 				<hr>
 
@@ -46,11 +46,11 @@ $layouts['default-table-cell'] = "\t\t\t\t\t\t\t\t\t<td>{tableCell}</td>";
 $layouts['new-page'] =
 '<div class="row">
 	<div class="col-md-12">
-		<div class="panel panel-inverse">
-			<div class="panel-heading">
-				<h4 class="panel-title">{pageTitle}</h4>
+		<div class="card">
+			<div class="card-header">
+				<h4 class="card-title">{pageTitle}</h4>
 			</div>
-			<div class="panel-body">
+			<div class="card-body">
 				<form action="{formAction}" method="post">
 					<fieldset>{fields}
 					</fieldset>
@@ -77,11 +77,11 @@ $layouts['new-field'] = '
 $layouts['edit-page'] =
 '<div class="row">
 	<div class="col-md-12">
-		<div class="panel panel-inverse">
-			<div class="panel-heading">
-				<h4 class="panel-title">{pageTitle}</h4>
+		<div class="card">
+			<div class="card-header">
+				<h4 class="card-title">{pageTitle}</h4>
 			</div>
-			<div class="panel-body">
+			<div class="card-body">
 				<form action="{formAction}" method="post">
 					{hiddenFields}
 					<fieldset>{fields}

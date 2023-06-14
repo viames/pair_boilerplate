@@ -1,17 +1,11 @@
 <?php
 
-use Pair\Locale;
 use Pair\Router;
 use Pair\View;
 use Pair\Widget;
 
 class TranslatorViewDefault extends View {
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @see View::Render()
-	 */
 	public function render() {
 		
 		$this->app->pageTitle		= $this->lang('TRANSLATOR');

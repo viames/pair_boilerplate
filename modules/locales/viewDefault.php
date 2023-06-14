@@ -1,17 +1,11 @@
 <?php
 
-use Pair\Breadcrumb;
 use Pair\Router;
 use Pair\View;
 use Pair\Widget;
 
 class LocalesViewDefault extends View {
 
-	/**
-	 * Render HTML of this view.
-	 * {@inheritDoc}
-	 * @see \Pair\View::render()
-	 */
 	public function render() {
 
 		$this->app->pageTitle		= $this->lang('LOCALES');

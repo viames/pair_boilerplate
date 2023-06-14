@@ -8,12 +8,6 @@ use Pair\Router;
  		
 class CountriesController extends Controller {
 
-	/**
-	 * Initialize the Breadcrumb.
-	 * {@inheritDoc}
-	 *
-	 * @see Pair\Controller::init()
-	 */
 	protected function init() {
 		
 		Breadcrumb::path($this->lang('COUNTRIES'), 'countries');

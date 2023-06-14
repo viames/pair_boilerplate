@@ -2,18 +2,12 @@
 
 use Pair\Breadcrumb;
 use Pair\Locale;
-use Pair\Module;
 use Pair\Router;
 use Pair\View;
 use Pair\Widget;
 
 class TranslatorViewDetails extends View {
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @see View::Render()
-	 */
 	public function render() {
 		
 		$this->app->pageTitle		= $this->lang('TRANSLATOR');
@@ -23,7 +17,7 @@ class TranslatorViewDetails extends View {
 		$locale = new Locale(Router::get(0));
 		
 		// add breadcrumb path
-		Breadcrumb::getInstance()->addPath($this->lang('TRANSLATION_X', $locale->getNativeNames()));
+		Breadcrumb::path($this->lang('TRANSLATION_X', $locale->getNativeNames()));
 				
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');

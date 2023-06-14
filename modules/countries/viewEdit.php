@@ -1,6 +1,5 @@
 <?php
 
-use Pair\Breadcrumb;
 use Pair\Country;
 use Pair\Router;
 use Pair\View;
@@ -8,11 +7,6 @@ use Pair\Widget;
 
 class CountriesViewEdit extends View {
 
-	/**
-	 * Render HTML of this view.
-	 * {@inheritDoc}
-	 * @see \Pair\View::render()
-	 */
 	public function render() {
 
 		$this->app->pageTitle = $this->lang('EDIT_COUNTRY');

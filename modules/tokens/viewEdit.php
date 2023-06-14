@@ -8,11 +8,6 @@ use Pair\Widget;
 
 class TokensViewEdit extends View {
 
-	/**
-	 * Render HTML of this view.
-	 * {@inheritDoc}
-	 * @see \Pair\View::render()
-	 */
 	public function render() {
 
 		$this->app->pageTitle = $this->lang('EDIT_TOKEN');
@@ -21,8 +16,7 @@ class TokensViewEdit extends View {
 		$id = Router::get(0);
 		$token = new Token($id);
 
-		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath($this->lang('EDIT_TOKEN'), 'edit/' . $token->id);
+		Breadcrumb::path($this->lang('EDIT_TOKEN'), 'edit/' . $token->id);
 
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');

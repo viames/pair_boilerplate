@@ -1,8 +1,8 @@
 <div class="row">
 	<div class="col-12">
-		<div class="panel panel-inverse">
-			<div class="panel-heading">
-				<h4 class="panel-title"><?php $this->_('COUNTRIES') ?></h4>
+		<div class="card">
+			<div class="card-header">
+				<h4 class="card-title"><?php $this->_('COUNTRIES') ?></h4>
 				<div class="list-filter">
 					<a href="countries/default/page-1"><?php $this->_('ALL') ?></a><?php
 				
@@ -13,7 +13,7 @@
 				?>
 				</div>
 			</div>
-			<div class="panel-body">
+			<div class="card-body">
 				<hr>
 				<a href="countries/new" class="btn btn-primary"><i class="fa fa-plus"></i> <?php $this->_('NEW_COUNTRY') ?></a>
 				<?php

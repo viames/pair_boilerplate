@@ -12,63 +12,60 @@ class DeveloperModel extends Model {
 
 	/**
 	 * Name of db table.
-	 * @var string
 	 */
-	protected $tableName;
+	protected string $tableName;
 
 	/**
 	 * Db Table primary or compound key.
-	 * @var string|array
 	 */
 	protected $tableKey;
 
 	/**
 	 * List of couples property => db_field.
-	 * @var array
 	 */
-	protected $binds;
+	protected array $binds;
 
 	/**
 	 * Class name with uppercase first char.
-	 * @var string
 	 */
-	protected $objectName;
+	protected string $objectName;
 
 	/**
 	 * List of properties type (property_name => type).
-	 * @var array
 	 */
-	protected $propTypes;
+	protected array $propTypes;
 
 	/**
 	 * List of values for each enum/set property.
-	 * @var array
 	 */
-	private $members;
+	private array $members;
 
 	/**
 	 * Name of CRUD module, all lowercase with no underscore.
-	 * @var string
 	 */
-	protected $moduleName;
+	protected string $moduleName;
 
 	/**
 	 * File author meta tag.
-	 * @var string
 	 */
-	protected $author;
+	protected string $author;
 
 	/**
 	 * File package meta tag.
-	 * @var string
 	 */
-	protected $package;
+	protected string $package;
 
 	/**
 	 * Custom layouts array.
-	 * @var array
 	 */
-	protected $layouts;
+	protected array $layouts = [];
+
+	/**
+	 * Optional list of sortable db fields.
+	 */
+	protected array $orderOptions = [];
+
+	const INTERNAL_FIELDS = ['created_at', 'created_by', 'updated_at', 'updated_at'];
 
 	/**
 	 * Return db tables name that has no classes mapped.
@@ -573,11 +570,9 @@ class ' . $this->objectName . ' extends ActiveRecord {
 	 *
 	 * @param	string	File name with relative path.
 	 */
-	public function saveModel(string $file) {
+	public function saveModel(string $file): void {
 
 		$lists = [];
-
-		$internalFields = ['created_at', 'created_by', 'updated_at', 'updated_by'];
 
 		// columns that are referencing other tables
 		$foreignKeys = $this->db->getForeignKeys($this->tableName);
@@ -585,7 +580,7 @@ class ' . $this->objectName . ' extends ActiveRecord {
 		foreach ($this->binds as $property => $field) {
 
 			// internal fields
-			if (in_array($field, $internalFields)) {
+			if (in_array($field, self::INTERNAL_FIELDS)) {
 
 				continue;
 
@@ -719,10 +714,13 @@ class ' . $this->objectName . ' extends ActiveRecord {
 
 		}
 
-		// cerca la prima proprietà testuale per aggiungere un ORDER BY
+		$orderIndex = 1;
+
+		// look for the first text property to add the sortable headers list
 		foreach ($this->propTypes as $pName => $pType) {
 			if ('string' == $pType) {
-				$orderBy = ' ORDER BY `' . $this->binds[$pName] . '`';
+				$this->orderOptions[$orderIndex++]= '`' . $this->binds[$pName] . '`';
+				$this->orderOptions[$orderIndex++]= '`' . $this->binds[$pName] . '` DESC';
 			}
 		}
 
@@ -735,23 +733,39 @@ use Pair\Model;
 
 class ' . ucfirst($this->moduleName) . 'Model extends Model {
 
-	/**
-	 * Return the query to extract all ActiveRecord’s objects with automatic LIMIT BY for pagination.
-	 *
-	 * @return	string
-	 */
 	public function getQuery(string $class): string {
 
-		$query = \'SELECT * FROM `' . $this->tableName . '`' . (isset($orderBy) ? $orderBy : '') . '\';
+		$query = \'SELECT * FROM `' . $this->tableName . '`\';
 
 		return $query;
 
 	}
+';
 
+		if (count($this->orderOptions)) {
+
+			$content .= '
+
+	protected function getOrderOptions(): array {
+
+		return [
+';
+
+			foreach ($this->orderOptions as $idx => $orderOption) {
+				$content .= "\t\t\t" . $idx . ' => \'' . $orderOption . "',\n";
+			}
+
+			$content .= '
+		];
+
+	}
+';
+
+		}
+
+		$content .= '
 	/**
 	 * Returns the Form object for create/edit ' . $this->objectName . ' objects.
-	 *
-	 * @return Form
 	 */
 	public function get' . $this->objectName . 'Form(' . ucfirst($this->objectName) . ' $' . lcfirst($this->objectName) . '): Form {
 
@@ -903,7 +917,7 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 		foreach ($this->binds as $field) {
 
 			// internal fields
-			if (in_array($field, ['created_at', 'updated_at'])) {
+			if (in_array($field, self::INTERNAL_FIELDS)) {
 				continue;
 			}
 
@@ -969,10 +983,8 @@ class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 
 	/**
 	 * Based on custom layouts, create the PHP layout file for default action.
-	 *
-	 * @param	string	Final file to write.
 	 */
-	public function saveLayoutDefault($file) {
+	public function saveLayoutDefault($file): void {
 
 		// trigger for link on first item
 		$fieldWithLink = TRUE;
@@ -984,7 +996,7 @@ class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 		foreach ($this->binds as $property=>$field) {
 
 			// internal fields
-			if (in_array($field, ['created_at', 'updated_at'])) {
+			if (in_array($field, self::INTERNAL_FIELDS)) {
 
 				continue;
 
@@ -1115,7 +1127,7 @@ class ' . ucfirst($this->moduleName) . 'ViewNew extends View {
 		foreach ($this->binds as $property=>$field) {
 
 			// internal fields
-			if (in_array($field, ['created_at', 'updated_at'])) {
+			if (in_array($field, self::INTERNAL_FIELDS)) {
 
 				continue;
 
@@ -1216,7 +1228,7 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 		foreach ($this->binds as $property=>$field) {
 			
 			// internal fields
-			if (in_array($field, ['created_at', 'updated_at'])) {
+			if (in_array($field, self::INTERNAL_FIELDS)) {
 
 				continue;
 			

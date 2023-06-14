@@ -1,10 +1,10 @@
 <div class="row">
 	<div class="col-md-12">
-		<div class="panel panel-inverse">
-			<div class="panel-heading">
-				<h4 class="panel-title"><?php $this->_('DEVELOPER') ?></h4>
+		<div class="card">
+			<div class="card-header">
+				<h4 class="card-title"><?php $this->_('DEVELOPER') ?></h4>
 			</div>
-			<div class="panel-body">
+			<div class="card-body">
 				<div class="container">
 					<form action="developer/classCreation" method="post" class="form-horizontal"> 
 						<fieldset>

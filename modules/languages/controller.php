@@ -8,12 +8,6 @@ use Pair\Router;
  		
 class LanguagesController extends Controller {
 
-	/**
-	 * Initialize the Breadcrumb.
-	 * {@inheritDoc}
-	 *
-	 * @see Pair\Controller::init()
-	 */
 	protected function init() {
 		
 		$breadcrumb = Breadcrumb::getInstance();

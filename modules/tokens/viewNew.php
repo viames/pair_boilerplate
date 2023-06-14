@@ -7,18 +7,12 @@ use Pair\Widget;
 
 class TokensViewNew extends View {
 
-	/**
-	 * Render HTML of this view.
-	 * {@inheritDoc}
-	 * @see \Pair\View::render()
-	 */
 	public function render() {
 
 		$this->app->pageTitle = $this->lang('NEW_TOKEN');
 		$this->app->activeMenuItem = 'tokens';
 
-		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath($this->lang('NEW_TOKEN'), 'new');
+		Breadcrumb::path($this->lang('NEW_TOKEN'), 'new');
 
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');

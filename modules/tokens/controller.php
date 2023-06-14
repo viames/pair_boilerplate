@@ -7,16 +7,9 @@ use Pair\Token;
  		
 class TokensController extends Controller {
 
-	/**
-	 * Initialize the Breadcrumb.
-	 * {@inheritDoc}
-	 *
-	 * @see Pair\Controller::init()
-	 */
 	protected function init() {
 		
-		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath($this->lang('TOKENS'), 'tokens');
+		Breadcrumb::path($this->lang('TOKENS'), 'tokens');
 		
 	}
 	

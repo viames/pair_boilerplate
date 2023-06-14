@@ -10,11 +10,6 @@ use Pair\Widget;
 
 class TranslatorViewEdit extends View {
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @see View::Render()
-	 */
 	public function render() {
 
 		$this->app->pageTitle		= $this->lang('TRANSLATOR');

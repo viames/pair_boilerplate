@@ -8,16 +8,9 @@ use Pair\Router;
  		
 class LocalesController extends Controller {
 
-	/**
-	 * Initialize the Breadcrumb.
-	 * {@inheritDoc}
-	 *
-	 * @see Pair\Controller::init()
-	 */
 	protected function init() {
 		
-		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath($this->lang('LOCALES'), 'locales');
+		Breadcrumb::path($this->lang('LOCALES'), 'locales');
 		
 	}
 
