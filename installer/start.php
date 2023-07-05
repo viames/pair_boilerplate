@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @version	$Id$
- * @author	Viames Marino
- */
-
 class Installer {
 	
 	/**
@@ -374,7 +369,7 @@ class Installer {
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		<title>Pair example installer</title>
+		<title>Pair sample installer</title>
 	    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 	    <style>
 			body {
@@ -392,7 +387,7 @@ class Installer {
 	    <div class="container">
 	      <div class="py-5 text-center">
 	        <img class="d-block mx-auto mb-4" src="installer/pair-logo.png" alt="" width="160" height="89">
-	        <h2>Example installer</h2>
+	        <h2>Sample installer</h2>
 	        <p class="lead">Please fill-in all required data about your new product based on Pair PHP framework</p>
 	      </div>
 	      <div class="row">
@@ -486,11 +481,11 @@ class Installer {
 	      </div>
 	
 	      <footer class="my-5 pt-5 text-center text-small">
-	        <p class="mb-1"><a href="https://github.com/viames/Pair_example">Pair example</a> - a sample project powered by <a href="https://github.com/viames/Pair">Pair</a> PHP framework</p>
+	        <p class="mb-1"><a href="https://github.com/viames/pair_boilerplate">Pair boilerplate</a> - a sample project powered by <a href="https://github.com/viames/Pair">Pair</a> PHP framework</p>
 	        <ul class="list-inline">
-	          <li class="list-inline-item"><a href="https://github.com/viames/Pair_example/issues">Issues</a></li>
-	          <li class="list-inline-item"><a href="https://github.com/viames/Pair_example/wiki">Wiki</a></li>
-	          <li class="list-inline-item"><a href="https://github.com/Viames/Pair_example/releases">Releases</a></li>
+	          <li class="list-inline-item"><a href="https://github.com/viames/pair_boilerplate/issues">Issues</a></li>
+	          <li class="list-inline-item"><a href="https://github.com/viames/pair_boilerplate/wiki">Wiki</a></li>
+	          <li class="list-inline-item"><a href="https://github.com/viames/pair_boilerplate/releases">Releases</a></li>
 	        </ul>
 	      </footer>
 	    </div>
@@ -513,7 +508,7 @@ class Installer {
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		<title>Pair example installer</title>
+		<title>Pair sample installer</title>
 	    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 	    <style>
 			body {
@@ -531,7 +526,7 @@ class Installer {
 	    <div class="container">
 	      <div class="py-5 text-center">
 	        <img class="d-block mx-auto mb-4" src="installer/pair-logo.png" alt="" width="160" height="89">
-	        <h2>Example installer</h2>
+	        <h2>Sample installer</h2>
 	        <p class="lead">Installation completed succesfully</p>
 	      </div>
 	      <div class="row">
@@ -545,11 +540,11 @@ class Installer {
 	      </div>
 	
 	      <footer class="my-5 pt-5 text-center text-small">
-	        <p class="mb-1"><a href="https://github.com/viames/Pair_example">Pair example</a> - a sample project powered by <a href="https://github.com/viames/Pair">Pair</a> PHP framework</p>
+	        <p class="mb-1"><a href="https://github.com/viames/pair_boilerplate">Pair boilerplate</a> - a sample project powered by <a href="https://github.com/viames/Pair">Pair</a> PHP framework</p>
 	        <ul class="list-inline">
-	          <li class="list-inline-item"><a href="https://github.com/viames/Pair_example/issues">Issues</a></li>
-	          <li class="list-inline-item"><a href="https://github.com/viames/Pair_example/wiki">Wiki</a></li>
-	          <li class="list-inline-item"><a href="https://github.com/Viames/Pair_example/releases">Releases</a></li>
+	          <li class="list-inline-item"><a href="https://github.com/viames/pair_boilerplate/issues">Issues</a></li>
+	          <li class="list-inline-item"><a href="https://github.com/viames/pair_boilerplate/wiki">Wiki</a></li>
+	          <li class="list-inline-item"><a href="https://github.com/viames/pair_boilerplate/releases">Releases</a></li>
 	        </ul>
 	      </footer>
 	    </div>

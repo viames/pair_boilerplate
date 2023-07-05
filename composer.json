@@ -1,16 +1,16 @@
 {
-	"name" : "viames/pair_example",
+	"name" : "viames/pair_boilerplate",
 	"description" : "Skeleton project based on Pair PHP framework",
 	"type" : "project",
 	"minimum-stability" : "stable",
 	"prefer-stable": true,
 	"require": {
 		"php": ">=7.4",
-		"viames/pair": "^1.8.23",
+		"viames/pair": "^1.9.3"
 	},
 	"repositories" : [{
 			"type" : "vcs",
-			"url" : "https://github.com/Viames/Pair_example"
+			"url" : "https://github.com/viames/pair_boilerplate"
 		}
 	],
 	"license" : "MIT",
@@ -25,11 +25,16 @@
 		"router",
 		"rest-api"
 	],
-	"homepage" : "https://github.com/Viames/Pair_example",
+	"homepage" : "https://github.com/viames/pair_boilerplate",
 	"authors" : [
 		{
 			"name" : "Viames Marino",
 			"role" : "Developer"
 		}
-	]
+	],
+	"config": {
+		"allow-plugins": {
+			"php-http/discovery": true
+		}
+	}
 }
