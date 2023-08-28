@@ -10,3 +10,5 @@ RewriteRule (.*) index.php
   Order Allow,Deny
   Allow from all
 </Files>
+RedirectMatch 404 ^/\.git
+RedirectMatch 404 ^/composer\.(json|lock|phar)$
