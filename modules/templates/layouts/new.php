@@ -16,8 +16,8 @@
 					</div>
 					<div class="form-group row">
 						<div class="col-12">
-							<button type="submit" class="btn btn-primary"><i class="fa fa-asterisk"></i> <?php $this->_('INSERT')?></button>
-							<a href="templates/default" class="btn btn-secondary"><i class="fa fa-times"></i> <?php $this->_('CANCEL')?></a>
+							<button type="submit" class="btn btn-primary"><?php $this->_('INSERT')?></button>
+							<a href="templates/default" class="btn btn-link"><?php $this->_('CANCEL')?></a>
 						</div>
 					</div>
 				</form>

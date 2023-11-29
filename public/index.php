@@ -10,7 +10,7 @@ define ('PAIR_CHECK_ICON', '<i class="fa fa-check fa-lg text-success"></i>');
 define ('PAIR_TIMES_ICON', '<i class="fa fa-times fa-lg text-danger"></i>');
 
 // initialize composer
-require 'vendor/autoload.php';
+require dirname(__DIR__) . '/vendor/autoload.php';
 
 // start the Application
 $app = Application::getInstance();
@@ -19,7 +19,7 @@ $app = Application::getInstance();
 define ('TEMP_PATH', APPLICATION_PATH . '/temp/');
 
 // initialize project classes
-require 'classes/classLoader.php';
+require APPLICATION_PATH . '/classes/classLoader.php';
 
 // any API requests
 $app->runApi('api');
@@ -34,7 +34,7 @@ $scripts = [
 
 // load all JavaScript
 foreach ($scripts as $script) {
-	$app->loadScript($app->templatePath . 'js/' . $script, TRUE);
+	$app->loadScript($script, TRUE);
 }
 
 // start controller and then display

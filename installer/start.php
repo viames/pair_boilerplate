@@ -1,94 +1,96 @@
 <?php
 
 class Installer {
-	
+
 	/**
 	 * Absolute path to project root.
 	 * @var string
 	 */
 	private $rootFolder;
-	
+
 	/**
 	 * Subfolder of this project from web-server root.
 	 * @var string
 	 */
 	private $baseUri;
-	
+
 	/**
 	 * DB handler.
 	 * @var PDO
 	 */
 	private $dbh;
-	
+
 	/**
 	 * Flag to set DB_UTF8 constant.
 	 * @var bool
 	 */
 	private $forceDbUtf8 = FALSE;
-	
+
 	/**
 	 * List of installer notifications.
 	 * @var array
 	 */
 	private $notifications = [];
-	
+
 	/**
 	 * List of installer errors.
 	 * @var array
 	 */
 	private $errors = [];
-	
+
 	public function __construct() {
-		
+
 		// the app root
 		$this->rootFolder = dirname(dirname(__FILE__));
-		
+
 		// get the subpath of this project in web-server root
 		$this->baseUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-		
+
 		// remove trailing slash
 		if (substr($this->baseUri, strlen($this->baseUri)-1, 1) == '/') {
 			$this->baseUri = substr($this->baseUri,0, -1);
 		}
-		
+
+		define ('PRODUCT_NAME', 'Pair boilerplate');
+
 	}
-	
+
 	public function addNotification($text) {
-		
+
 		$this->notifications[] = $text;
-		
+
 	}
-	
+
 	public function getNotifications() {
-		
+
 		return $this->notifications;
-		
+
 	}
-	
+
 	public function addError($text) {
-		
+
 		$this->errors[] = $text;
-		
+
 	}
 
 	public function getErrors() {
-		
+
 		return $this->errors;
-		
+
 	}
-	
+
 	public function checkFoldersErrors() {
-	
+
 		// check root folder writable
 		if (!is_writable($this->rootFolder)) {
 			$this->addError('The folder ' . $this->rootFolder . ' is not writable. Please grant ' .
 					'write permission to web-server running this application.');
 		}
-	
+
 	}
-	
+
 	public function checkApacheErrors() {
-		
+
 		// test apache
 		if (function_exists('apache_get_modules')) {
 			$aModules = \apache_get_modules();
@@ -96,49 +98,49 @@ class Installer {
 				$this->addError('Apache mod_rewrite is not loaded.');
 			}
 		}
-		
+
 		// htaccess
 		if (!file_exists($this->rootFolder . '/.htaccess')) {
 			$this->addError('Apache .htaccess file not found in application root folder.');
 		}
-		
+
 	}
-	
+
 	public function checkPhpErrors($requiredVersion, $extensions) {
-		
+
 		// check PHP extensions
 		foreach ($extensions as $ext) {
 			if (!extension_loaded($ext)) {
 				$this->addError('Missing PHP extension ' . $ext);
 			}
 		}
-		
+
 		// check PHP version
 		if (version_compare(phpversion(), $requiredVersion, "<")) {
 			$this->addError('PHP version required is ' . $requiredVersion . ' or greater. This web-server is running PHP ' . phpversion());
 		}
-		
+
 	}
-	
+
 	public function checkRequiredFields() {
-	
+
 		// list of required field names
 		$requiredFields = ['productName', 'productVersion', 'dbHost', 'dbName',
 				'dbUser', 'name', 'surname', 'email'];
-		
+
 		// check that all fields are submitted
 		foreach ($requiredFields as $f) {
 			if (!isset($_POST[$f]) or ''==trim($_POST[$f])) {
 				$this->addError('A valid value for ' . $f . ' is required');
 			}
 		}
-		
+
 	}
-	
+
 	public function connectToDbms() {
-		
+
 		$v = $this->getPostVars();
-		
+
 		try {
 			$this->dbh = new \PDO('mysql:host=' . $v['dbHost'], $v['dbUser'], $v['dbPass']);
 			if (!is_a($this->dbh, 'PDO')) {
@@ -148,42 +150,42 @@ class Installer {
 			$this->addError('MySQL connection failed: ' . $e->getMessage());
 			return FALSE;
 		}
-		
+
 		return TRUE;
-		
+
 	}
-	
+
 	public function checkDbmsVersion($requiredVersion) {
-		
+
 		// check MySQL version
 		$sth = $this->dbh->prepare('SELECT VERSION()');
 		$sth->execute();
-		$version = $sth->fetch(\PDO::FETCH_COLUMN);	
+		$version = $sth->fetch(\PDO::FETCH_COLUMN);
 
 		if (version_compare($version, $requiredVersion) < 0) {
 			$this->addError('MySQL version required is ' . $requiredVersion . ' or greater. You are using MySQL ' . $version);
 		}
-		
+
 	}
-	
+
 	public function checkDbUtf8() {
-		
+
 		// check about charsets and collations
 		$settings = array(
-				'character_set_client'		=> 'utf8mb4',
-				'character_set_connection'	=> 'utf8mb4',
-				'character_set_database'	=> 'utf8mb4',
-				'character_set_results'		=> 'utf8mb4',
-				'character_set_server'		=> 'utf8mb4',
-				'collation_connection'		=> 'utf8mb4_unicode_ci',
-				'collation_database'		=> 'utf8mb4_unicode_ci',
-				'collation_server'			=> 'utf8mb4_unicode_ci');
-		
+			'character_set_client'		=> 'utf8mb4',
+			'character_set_connection'	=> 'utf8mb4',
+			'character_set_database'	=> 'utf8mb4',
+			'character_set_results'		=> 'utf8mb4',
+			'character_set_server'		=> 'utf8mb4',
+			'collation_connection'		=> 'utf8mb4_unicode_ci',
+			'collation_database'		=> 'utf8mb4_unicode_ci',
+			'collation_server'			=> 'utf8mb4_unicode_ci');
+
 		// ask to dbms the current settings
 		$sth = $this->dbh->prepare('SHOW VARIABLES WHERE Variable_name LIKE \'character\_set\_%\' OR Variable_name LIKE \'collation%\'');
 		$sth->execute();
 		$list = $sth->fetchAll(\PDO::FETCH_OBJ);
-		
+
 		// compare settings
 		foreach ($list as $row) {
 			if (array_key_exists($row->Variable_name, $settings)) {
@@ -193,14 +195,14 @@ class Installer {
 				}
 			}
 		}
-		
+
 	}
-	
+
 	public function createDb() {
-		
+
 		// get the variables by http post
 		$v = $this->getPostVars();
-		
+
 		// check if db exists
 		try {
 			$sth = $this->dbh->prepare('SELECT * FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?');
@@ -210,12 +212,12 @@ class Installer {
 			$this->addError('Cannot check if DB exists by information schema: ' . $e->getMessage());
 			return FALSE;
 		}
-		
+
 		// not exists, create a new database
 		if (FALSE === $db) {
-			
+
 			$query = 'CREATE DATABASE `' . $v['dbName'] . '` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci';
-			
+
 			try {
 				if (!$this->dbh->exec($query)) {
 					throw new \PDOException($this->dbh->errorInfo()[2]);
@@ -225,12 +227,12 @@ class Installer {
 				$this->addError('DB `' . $v['dbName'] . '` creation failed: ' . $e->getMessage());
 				return FALSE;
 			}
-			
+
 		// db exists, check if charset and collation are utf8mb4
 		} else if ('utf8mb4'!=$db->DEFAULT_CHARACTER_SET_NAME or 'utf8mb4_unicode_ci'!=$db->DEFAULT_COLLATION_NAME) {
-			
+
 			$query = 'ALTER DATABASE `' . $v['dbName'] . '` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci';
-			
+
 			try {
 				if (!$this->dbh->exec($query)) {
 					throw new \PDOException($this->dbh->errorInfo()[2]);
@@ -240,12 +242,12 @@ class Installer {
 				$this->addError('Change of DB charset and collation failed: ' . $e->getMessage());
 				return FALSE;
 			}
-			
+
 		}
-		
+
 		// load Pair’s DB dump by SQL file
 		$queries = file_get_contents($this->rootFolder . '/installer/dump.sql');
-		
+
 		// create all tables, if not exist
 		try {
 			$this->dbh->exec('USE `' . $v['dbName'] . '`');
@@ -255,17 +257,17 @@ class Installer {
 			$this->addError('Table creation failed: ' . $e->getMessage());
 			return FALSE;
 		}
-		
+
 	}
-	
+
 	/**
 	 * Create and insert a new application user with random password.
 	 */
 	public function createUser() {
-		
+
 		// get the variables by http post
 		$v = $this->getPostVars();
-		
+
 		// check if user exists
 		try {
 			$sth = $this->dbh->prepare('SELECT COUNT(1) FROM `users` WHERE username = ?');
@@ -275,7 +277,7 @@ class Installer {
 			$this->addError('Error while checking if username is already in use: ' . $e->getMessage());
 			$exists = FALSE;
 		}
-		
+
 		if ($exists) {
 			$this->addError('Cannot create a user with username ' . $v['email'] . ' as it already exists');
 			return;
@@ -283,12 +285,12 @@ class Installer {
 
 		// random password
 		$password = '';
-		
+
 		// list all chars/numbers
 		$chars = array_merge(range(0, 9), range('a', 'z'), range('A', 'Z'));
-		
+
 		$charsCount = count($chars);
-		
+
 		// fill in each char of the random password
 		for ($i=1; $i <= 15; $i++) {
 			if (0 == $i%4) {
@@ -297,22 +299,21 @@ class Installer {
 			}
 			$password .= $chars[mt_rand(0, $charsCount-1)];
 		}
-		
+
 		// salt for bcrypt needs to be 22 base64 characters (only [./0-9A-Za-z])
 		$salt = substr(str_replace('+', '.', base64_encode(sha1(microtime(true), true))), 0, 22);
-		
+
 		// 2a = bcrypt algorithm selector, 12 = the workload factor
 		$hash = crypt($password, '$2a$12$' . $salt);
 
 		// assemble the query
 		$query =
-			'INSERT INTO `users` (`group_id`, `locale_id`, `ldap_user`, `username`, `hash`, `name`,' .
-			'`surname`, `email`, `admin`, `enabled`, `last_login`, `faults`) VALUES ' .
-			'(1, 82, NULL, ?, ?, ?, ?, ?, 1, 1, NULL, 0)';
-		
+			'INSERT INTO `users` (`group_id`, `locale_id`, `username`, `hash`, `name`, `surname`, `email`, `admin`, `enabled`, `last_login`, `faults`, `pw_reset`)
+			VALUES (1, 82, ?, ?, ?, ?, ?, 1, 1, NULL, 0, NULL)';
+
 		// query parameters
 		$params = [$v['email'], $hash, $v['name'], $v['surname'], $v['email']];
-		
+
 		// do the query and log
 		try {
 			$sth = $this->dbh->prepare($query);
@@ -323,39 +324,39 @@ class Installer {
 		} catch (Exception $e) {
 			$this->addError('User creation failed: ' . $e->getMessage());
 		}
-		
+
 	}
-	
+
 	public function printNotifications() {
-		
+
 		if (count($this->notifications)) {
-			
+
 			foreach ($this->notifications as $p) {
 				?><div class="alert alert-info" role="alert"><?php print $p ?></div><?php
 			}
 		    ?><hr class="mb-4"><?php
-		    
+
 		}
-	          
+
 	}
-	
+
 	public function printErrors() {
-		
+
 		if (count($this->errors)) {
-			
+
 			foreach ($this->errors as $p) {
 				?><div class="alert alert-danger" role="alert"><?php print $p ?></div><?php
 			}
 		    ?><hr class="mb-4"><?php
-		    
+
 		}
-	          
+
 	}
-	
+
 	public function printSetupPage() {
-		
+
 		$v = $this->getPostVars();
-		
+
 		if (!$v['productVersion']) {
 			$v['productVersion'] = '1.0';
 		}
@@ -376,7 +377,7 @@ class Installer {
 				background: #005AA7;
 				background: -webkit-linear-gradient(to bottom, #005AA7, #EBF9F9);
 				background: linear-gradient(to bottom, #005AA7, #EBF9F9);
-				color: white; 
+				color: white;
 			}
 			.text-muted { color: white !important; opacity: .5; }
 			footer { color: #777; }
@@ -386,7 +387,7 @@ class Installer {
  	<body>
 	    <div class="container">
 	      <div class="py-5 text-center">
-	        <img class="d-block mx-auto mb-4" src="installer/pair-logo.png" alt="" width="160" height="89">
+	        <img class="d-block mx-auto mb-4" src="images/pair-logo.png" alt="" width="160" height="89">
 	        <h2>Sample installer</h2>
 	        <p class="lead">Please fill-in all required data about your new product based on Pair PHP framework</p>
 	      </div>
@@ -400,14 +401,14 @@ class Installer {
 	            <div class="row">
 	              <div class="col-md-9 mb-3">
 	                <label for="productName">Product name</label>
-	                <input type="text" class="form-control" name="productName" id="productName" value="<?php print htmlspecialchars($v['productName']) ?>" required>
+	                <input type="text" class="form-control" name="productName" id="productName" value="<?php print htmlspecialchars((string)$v['productName']) ?>" required>
 	                <div class="invalid-feedback">
 	                  Valid product name is required.
 	                </div>
 	              </div>
 	              <div class="col-md-3 mb-3">
 	                <label for="productVersion">Version</label>
-	                <input type="text" class="form-control" name="productVersion" id="productVersion" value="<?php print htmlspecialchars($v['productVersion']) ?>" required>
+	                <input type="text" class="form-control" name="productVersion" id="productVersion" value="<?php print htmlspecialchars((string)$v['productVersion']) ?>" required>
 	                <div class="invalid-feedback">
 	                  Valid product version is required.
 	                </div>
@@ -418,30 +419,30 @@ class Installer {
 	                <label for="baseUri">URL folder <small class="text-muted">/subpath or empty if installing in web-server root</small></label>
 	                <input type="text" class="form-control" name="baseUri" id="baseUri" value="<?php print htmlspecialchars($this->baseUri) ?>">
 	            </div>
-	            
+
 				<h4 class="mb-3 mt-5">Database</h4>
 
 				<div class="row">
 	            	<div class="col-md-6 mb-3">
 		                <label for="dbHost">Host <small class="text-muted">name or IP address</small></label>
-		                <input type="text" class="form-control" name="dbHost" id="dbHost" value="<?php print htmlspecialchars($v['dbHost']) ?>" required>
+		                <input type="text" class="form-control" name="dbHost" id="dbHost" value="<?php print htmlspecialchars((string)$v['dbHost']) ?>" required>
 		            </div>
-	
+
 	            	<div class="col-md-6 mb-3">
 		                <label for="dbName">Name <small class="text-muted">create if not exists</small></label>
-		                <input type="text" class="form-control" name="dbName" id="dbName" value="<?php print htmlspecialchars($v['dbName']) ?>" required>
+		                <input type="text" class="form-control" name="dbName" id="dbName" value="<?php print htmlspecialchars((string)$v['dbName']) ?>" required>
 		            </div>
 		        </div>
 
 				<div class="row">
 	            	<div class="col-md-6 mb-3">
 		                <label for="dbUser">User</label>
-		                <input type="text" class="form-control" name="dbUser" id="dbUser" value="<?php print htmlspecialchars($v['dbUser']) ?>" required>
+		                <input type="text" class="form-control" name="dbUser" id="dbUser" value="<?php print htmlspecialchars((string)$v['dbUser']) ?>" required>
 		            </div>
-	
+
 	            	<div class="col-md-6 mb-3">
 		                <label for="dbPass">Password</label>
-		                <input type="password" class="form-control" name="dbPass" id="dbPass" value="<?php print htmlspecialchars($v['dbPass']) ?>">
+		                <input type="password" class="form-control" name="dbPass" id="dbPass" value="<?php print htmlspecialchars((string)$v['dbPass']) ?>">
 		            </div>
 		        </div>
 
@@ -450,15 +451,15 @@ class Installer {
 				<div class="row">
 	            	<div class="col-md-6 mb-3">
 		                <label for="name">Name</label>
-		                <input type="text" class="form-control" name="name" id="name" value="<?php print htmlspecialchars($v['name']) ?>" required>
+		                <input type="text" class="form-control" name="name" id="name" value="<?php print htmlspecialchars((string)$v['name']) ?>" required>
 		              <div class="invalid-feedback">
 		                Please enter a valid name.
 		              </div>
 		            </div>
-	
+
 	            	<div class="col-md-6 mb-3">
 		                <label for="surname">Surname</label>
-		                <input type="text" class="form-control" name="surname" id="surname" value="<?php print htmlspecialchars($v['surname']) ?>" required>
+		                <input type="text" class="form-control" name="surname" id="surname" value="<?php print htmlspecialchars((string)$v['surname']) ?>" required>
 		              <div class="invalid-feedback">
 		                Please enter a valid surname.
 		              </div>
@@ -467,19 +468,19 @@ class Installer {
 
 	            <div class="mb-3">
 	              <label for="email">Email</label>
-	              <input type="email" class="form-control" name="email" id="email" value="<?php print htmlspecialchars($v['email']) ?>" required>
+	              <input type="email" class="form-control" name="email" id="email" value="<?php print htmlspecialchars((string)$v['email']) ?>" required>
 	              <div class="invalid-feedback">
 	                Please enter a valid email address for fatal error notification.
 	              </div>
 	            </div>
-	
+
 	            <hr class="mb-4">
 	            <button class="btn btn-primary btn-lg btn-block" type="submit">Apply configuration</button>
 	          </form>
 	        </div>
 	        <div class="col-md-2 order-md-3"></div>
 	      </div>
-	
+
 	      <footer class="my-5 pt-5 text-center text-small">
 	        <p class="mb-1"><a href="https://github.com/viames/pair_boilerplate">Pair boilerplate</a> - a sample project powered by <a href="https://github.com/viames/Pair">Pair</a> PHP framework</p>
 	        <ul class="list-inline">
@@ -494,15 +495,15 @@ class Installer {
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/pwstrength-bootstrap/2.1.1/pwstrength-bootstrap.min.js"></script>
 	    <script defer src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
-	</body>    
+	</body>
 </html><?php
-		
+
 	}
-	
+
 	public function printFinalPage() {
-		
+
 		$v = $this->getPostVars();
-		
+
 ?><!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -515,7 +516,7 @@ class Installer {
 				background: #005AA7;
 				background: -webkit-linear-gradient(to bottom, #005AA7, #EBF9F9);
 				background: linear-gradient(to bottom, #005AA7, #EBF9F9);
-				color: white; 
+				color: white;
 			}
 			.text-muted { color: white !important; opacity: .5; }
 			footer { color: #777; }
@@ -525,7 +526,7 @@ class Installer {
  	<body>
 	    <div class="container">
 	      <div class="py-5 text-center">
-	        <img class="d-block mx-auto mb-4" src="installer/pair-logo.png" alt="" width="160" height="89">
+	        <img class="d-block mx-auto mb-4" src="images/pair-logo.png" alt="" width="160" height="89">
 	        <h2>Sample installer</h2>
 	        <p class="lead">Installation completed succesfully</p>
 	      </div>
@@ -538,7 +539,7 @@ class Installer {
 	        </div>
 	        <div class="col-md-2 order-md-3"></div>
 	      </div>
-	
+
 	      <footer class="my-5 pt-5 text-center text-small">
 	        <p class="mb-1"><a href="https://github.com/viames/pair_boilerplate">Pair boilerplate</a> - a sample project powered by <a href="https://github.com/viames/Pair">Pair</a> PHP framework</p>
 	        <ul class="list-inline">
@@ -553,93 +554,109 @@ class Installer {
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/pwstrength-bootstrap/2.1.1/pwstrength-bootstrap.min.js"></script>
 	    <script defer src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
-	</body>    
+	</body>
 </html><?php
-		
+
 	}
-	
+
 	public function getPostVars() {
-		
+
 		// list of required field names
 		$postVars = ['productName', 'productVersion', 'baseUri', 'dbHost', 'dbName',
 				'dbUser', 'dbPass', 'name', 'surname', 'email'];
-		
+
 		$vars = [];
-		
+
 		foreach ($postVars as $v) {
 			$vars[$v] = isset($_POST[$v]) ? $_POST[$v] : NULL;
 		}
-			
+
 		return $vars;
-		
+
 	}
-	
+
 	public function createConfigFile() {
-		
+
 		$vars = $this->getPostVars();
-		
+
 		$content =
-			"<?php\n\n// product\n" .
-			"define ('PRODUCT_VERSION', '" . $vars['productVersion'] . "');\n" .
-			"define ('PRODUCT_NAME', '" . $vars['productName'] . "');\n" .
-			"define ('BASE_URI', '" . $vars['baseUri'] . "');\n" .
-			"define ('UTC_DATE', FALSE);\n\n" .
-			"// database\n" .
-			"define ('DB_HOST', '" . $vars['dbHost'] . "');\n" .
-			"define ('DB_NAME', '" . $vars['dbName'] . "');\n" .
-			"define ('DB_USER', '" . $vars['dbUser'] . "');\n" .
-			"define ('DB_PASS', '" . $vars['dbPass'] . "');\n" .
-			"define ('DB_UTF8', TRUE);\n\n" .
-			"// options\n" .
-			"define ('PAIR_DEVELOPMENT', TRUE);" .
-			"define ('PAIR_DEBUG', TRUE);" .
-			"define ('PAIR_AUDIT_PASSWORD_CHANGED', TRUE);" .
-			"define ('PAIR_AUDIT_LOGIN_FAILED', TRUE);" .
-			"define ('PAIR_AUDIT_LOGIN_SUCCESSFUL', TRUE);" .
-			"define ('PAIR_AUDIT_LOGOUT', TRUE);" .
-			"define ('PAIR_AUDIT_SESSION_EXPIRED', TRUE);" .
-			"define ('PAIR_AUDIT_REMEMBER_ME_LOGIN', TRUE);" .
-			"define ('PAIR_AUDIT_USER_CREATED', TRUE);" .
-			"define ('PAIR_AUDIT_USER_DELETED', TRUE);" .
-			"define ('PAIR_AUDIT_USER_CHANGED', TRUE);" .
-			"define ('PAIR_AUDIT_PERMISSIONS_CHANGED', TRUE);";
-		
+"<?php
+
+// product
+define ('PRODUCT_VERSION', '" . $vars['productVersion'] . "');
+define ('PRODUCT_NAME', '" . $vars['productName'] . "');
+define ('BASE_URI', '" . $vars['baseUri'] . "');
+define ('UTC_DATE', FALSE);
+
+// database
+define ('DB_HOST', '" . $vars['dbHost'] . "');
+define ('DB_NAME', '" . $vars['dbName'] . "');
+define ('DB_USER', '" . $vars['dbUser'] . "');
+define ('DB_PASS', '" . $vars['dbPass'] . "');
+define ('DB_UTF8', TRUE);
+
+// options
+define ('PAIR_DEVELOPMENT', TRUE);
+define ('PAIR_DEBUG', TRUE);
+define ('PAIR_AUDIT_PASSWORD_CHANGED', TRUE);
+define ('PAIR_AUDIT_LOGIN_FAILED', TRUE);
+define ('PAIR_AUDIT_LOGIN_SUCCESSFUL', TRUE);
+define ('PAIR_AUDIT_LOGOUT', TRUE);
+define ('PAIR_AUDIT_SESSION_EXPIRED', TRUE);
+define ('PAIR_AUDIT_REMEMBER_ME_LOGIN', TRUE);
+define ('PAIR_AUDIT_USER_CREATED', TRUE);
+define ('PAIR_AUDIT_USER_DELETED', TRUE);
+define ('PAIR_AUDIT_USER_CHANGED', TRUE);
+define ('PAIR_AUDIT_PERMISSIONS_CHANGED', TRUE);
+
+// crypt keys
+define ('OPTIONS_CRYPT_KEY', 'ABCD-1234');
+define ('AES_CRYPT_KEY', 'abcd-0000');
+
+// sentry
+define ('SENTRY_DSN', NULL);
+
+// patch for php.ini
+//setlocale(LC_ALL, 'it_IT.UTF-8');
+//date_default_timezone_set('Europe/Rome');
+";
+
 		if ($this->forceDbUtf8) {
 			$content .= "define ('DB_UTF8', TRUE);\n";
 		}
-		
+
 		$res = file_put_contents($this->rootFolder . '/config.php', $content);
-		
+
 		if (FALSE === $res) {
 			$this->addError('Write of config.php file failed');
 		}
-		
+
 	}
-	
+
 	public function createTempFolder() {
-		
+
 		$tempFolder = $this->rootFolder . '/temp';
-		
+
 		if (!(file_exists($tempFolder) and is_dir($tempFolder))) {
 			$old = umask(0);
 			mkdir($tempFolder, 0777, TRUE);
 			umask($old);
 		}
-		
+
 	}
-	
+
 	public static function deleteDir($dirPath) {
-		
+
 		if (!is_dir($dirPath)) {
 			return;
 		}
-		
+
 		if (substr($dirPath, strlen($dirPath) - 1, 1) != '/') {
 			$dirPath .= '/';
 		}
-		
+
 		$files = glob($dirPath . '*', GLOB_MARK);
-		
+
 		foreach ($files as $file) {
 			if (is_dir($file)) {
 				self::deleteDir($file);
@@ -647,84 +664,90 @@ class Installer {
 				unlink($file);
 			}
 		}
-		
+
 		rmdir($dirPath);
 	}
-	
-	public function selfRemove() {
-		
+
+	public function selfRemove(): bool {
+
 		$folder = $this->rootFolder . '/installer';
-		$files = ['dump.sql', 'pair-logo.png', 'start.php'];
+		$files = ['dump.sql', 'start.php'];
 
 		foreach ($files as $file) {
-			try {
-				unlink($folder . '/' . $file);
-			} catch (Exception $e) {
-				$this->addError('File ' . $folder . '/' . $file . 'deletion failed: ' . $e->getMessage());
-				return;
+
+			if (!unlink($folder . '/' . $file)) {
+				$this->addError('File ' . $folder . '/' . $file . ' deletion failed');
+				return FALSE;
 			}
+
 		}
-		
-		try {
-			rmdir($folder);
-		} catch (Exception $e) {
-			$this->addError('Folder ' . $folder . ' deletion failed: ' . $e->getMessage());
-			return;
+
+		if (!Pair\Utilities::deleteFolder($folder)) {
+			$this->addError('Folder ' . $folder . ' deletion failed');
+			return FALSE;
 		}
-		
+
 		$this->addNotification('Installer was deleted');
-		
+
+		return TRUE;
+
 	}
-	
+
 }
 
 $installer = new Installer();
 
 $installer->checkFoldersErrors();
 $installer->checkApacheErrors();
-$installer->checkPhpErrors('5.6', ['fileinfo','json','pcre','PDO','pdo_mysql','Reflection']);
+$installer->checkPhpErrors('8.1', ['fileinfo','json','pcre','PDO','pdo_mysql','Reflection']);
 
 // form is submitted, check if can proceed to install
 if (count($_POST)) {
-	
+
 	$installer->checkRequiredFields();
-	
+
 	$connected = $installer->connectToDbms();
-	
+
 	// only if db connected
 	if ($connected) {
-		
+
 		// check and configure db
 		$installer->checkDbmsVersion('5.6');
 		$installer->createDb();
 		$installer->checkDbUtf8();
 		$installer->createUser();
-		
+
 		if (!count($installer->getErrors())) {
-		
+
 			// create a temporary empty folder
 			$installer->createTempFolder();
-			
+
 			// create config.php file
 			$installer->createConfigFile();
-			
+
 		}
-		
+
 	}
-	
+
 }
 
 // show the setup page
 if (!isset($_POST) or !count($_POST) or count($installer->getErrors())) {
-	
+
 	$installer->printSetupPage();
 
 } else {
-	
+
 	// delete itself
-	$installer->selfRemove();
-	
-	// show all notifications and print link to application root
-	$installer->printFinalPage();
-	
+	if (!$installer->selfRemove()) {
+
+		$installer->printSetupPage();
+
+	} else {
+
+		// show all notifications and print link to application root
+		$installer->printFinalPage();
+
+	}
+
 }

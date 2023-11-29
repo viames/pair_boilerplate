@@ -2,6 +2,7 @@
 
 use Pair\Breadcrumb;
 use Pair\Locale;
+use Pair\Module;
 use Pair\Router;
 use Pair\View;
 use Pair\Widget;
@@ -10,8 +11,7 @@ class TranslatorViewDetails extends View {
 
 	public function render() {
 		
-		$this->app->pageTitle		= $this->lang('TRANSLATOR');
-		$this->app->activeMenuItem	= 'translator/default';
+		$this->app->pageTitle = $this->lang('TRANSLATOR');
 		
 		// get requested Language object
 		$locale = new Locale(Router::get(0));

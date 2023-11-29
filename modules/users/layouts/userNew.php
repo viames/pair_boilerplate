@@ -21,10 +21,6 @@
 				<div class="col-md-9"><?php $this->form->printControl('enabled') ?></div>
 			</div>
 			<div class="form-group row">
-				<label class="col-md-3"><?php $this->_('LDAP_USER') ?></label>
-				<div class="col-md-9"><?php $this->form->printControl('ldapUser') ?></div>
-			</div>
-			<div class="form-group row">
 				<label class="col-md-3"><?php $this->_('USERNAME') ?></label>
 				<div class="col-md-9"><?php $this->form->printControl('username') ?></div>
 			</div>

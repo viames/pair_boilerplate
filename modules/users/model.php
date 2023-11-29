@@ -95,10 +95,8 @@ class UsersModel extends Model {
 
 	/**
 	 * Returns the Form object for create/edit User objects.
-	 *
-	 * @return Form
 	 */
-	public function getUserForm() {
+	public function getUserForm(): Form {
 
 		$app	= Application::getInstance();
 		$tran	= Translator::getInstance();
@@ -118,16 +116,13 @@ class UsersModel extends Model {
 		$form->addInput('surname')->setRequired()->setMinLength(2)->setLabel('SURNAME');
 		$form->addInput('email')->setType('email')->setRequired()->setLabel('EMAIL');
 		$form->addInput('enabled')->setType('bool')->setLabel('ENABLED');
-		$form->addInput('ldapUser');
 		$form->addInput('username', array('autocomplete'=>'off'))->setRequired()->setMinLength(3)
 			->setLabel('USERNAME');
 		$form->addInput('password', array('autocomplete'=>'off', 'autocorrect'=>'off'))
 			->setType('password')->setMinLength($minLength)->addClass('pwstrength')->setLabel('PASSWORD');
 		$form->addInput('showPassword')->setType('bool');
-		$form->addSelect('groupId')->setRequired()->setListByObjectArray($groups,'id','name')
-			->setLabel('GROUP');
-		$form->addSelect('localeId')->setRequired()->setListByObjectArray($locales,'id','languageCountry')
-			->setLabel('LANGUAGE');
+		$form->addSelect('groupId')->setListByObjectArray($groups,'id','name')->setRequired()->setLabel('GROUP');
+		$form->addSelect('localeId')->setListByObjectArray($locales,'id','languageCountry')->setRequired()->setLabel('LANGUAGE');
 
 		return $form;
 

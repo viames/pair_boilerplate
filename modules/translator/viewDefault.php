@@ -8,8 +8,7 @@ class TranslatorViewDefault extends View {
 
 	public function render() {
 		
-		$this->app->pageTitle		= $this->lang('TRANSLATOR');
-		$this->app->activeMenuItem	= 'translator/default';
+		$this->app->pageTitle = $this->lang('TRANSLATOR');
 		
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');

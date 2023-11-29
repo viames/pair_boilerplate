@@ -1,7 +1,7 @@
 <div class="card">
 	<div class="card-header">
 		<h5 class="float-left"><?php print $this->_('TEMPLATE_PLUGINS') ?></h5>
-		<a class="btn btn-primary btn-sm float-right" href="templates/new"><i class="fa fa-plus-circle"></i> <?php print $this->_('NEW_TEMPLATE') ?></a>
+		<a class="btn btn-primary btn-sm float-right" href="templates/new"><i class="fal fa-plus-circle"></i> <?php print $this->_('NEW_TEMPLATE') ?></a>
 	</div>
 	<div class="card-body"><?php
 	

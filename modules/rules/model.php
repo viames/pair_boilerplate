@@ -1,5 +1,6 @@
 <?php
 
+use Pair\Database;
 use Pair\Form;
 use Pair\Model;
 use Pair\Module;
@@ -11,7 +12,7 @@ class RulesModel extends Model {
 	 *
 	 * @return array
 	 */
-	public function getAclModelRules() {
+	public function getAclModelRules(): array {
 
 		$query =
 			' SELECT r.*, m.name '.
@@ -20,10 +21,7 @@ class RulesModel extends Model {
 			' ORDER BY name ASC ' .
 			' LIMIT ' . $this->pagination->start . ', ' . $this->pagination->limit;
 
-		$this->db->setQuery($query);
-		$modules = $this->db->loadObjectList();
-
-		return $modules;
+		return Database::load($query, []);
 
 	}
 
@@ -51,13 +49,14 @@ class RulesModel extends Model {
 	 */ 
 	public function getRulesForm() {
 		
-		$modules = Module::getAllObjects(NULL, array('name'));
+		$modules = Module::getAllObjects(NULL, ['name']);
 
 		$form = new Form();
 		$form->addControlClass('form-control');
 			
 		$form->addInput('id')->setType('hidden');
-		$form->addSelect('moduleId')->setListByObjectArray($modules, 'id', 'name')->setRequired();
+		$form->addSelect('moduleId')->setListByObjectArray($modules, 'id', 'name')->setRequired()
+			->addClass('default-select2');
 		$form->addInput('actionField');
 		$form->addInput('adminOnly')->setType('bool');
 		

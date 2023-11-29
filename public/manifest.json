@@ -1,0 +1,10 @@
+{
+ "name": "Pair boilerplate",
+ "short_name": "Pair",
+ "display": "standalone",
+ "start_url": "/",
+ "background_color": "#ffffff",
+ "theme_color": "#323b44",
+ "Scope": "/",
+ "icons": []
+}

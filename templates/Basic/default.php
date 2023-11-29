@@ -13,9 +13,9 @@ $app = Pair\Application::getInstance();
 		<title><?php print $this->pageTitle ?></title>
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-		<link rel="stylesheet" href="<?php print $this->templatePath ?>css/iziToast.min.css">
-		<link rel="stylesheet" href="<?php print $this->templatePath ?>css/simple-sidebar.css">
-		<link rel="stylesheet" href="<?php print $this->templatePath ?>css/custom.css">
+		<link rel="stylesheet" href="css/iziToast.min.css">
+		<link rel="stylesheet" href="css/simple-sidebar.css">
+		<link rel="stylesheet" href="css/custom.css">
 		<?php print $this->pageStyles ?>
     </head>
     <body>
@@ -68,8 +68,8 @@ $app = Pair\Application::getInstance();
 		<script src="<?php print $this->templatePath ?>js/iziToast.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/pwstrength-bootstrap/2.1.1/pwstrength-bootstrap.min.js"></script>
 		<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
-		<script src="<?php print $this->templatePath ?>js/simple-sidebar.js" type="text/javascript"></script>
-		<script src="<?php print $this->templatePath ?>js/custom.js" type="text/javascript"></script>
+		<script src="js/simple-sidebar.js" type="text/javascript"></script>
+		<script src="js/custom.js" type="text/javascript"></script>
 		<?php print $this->pageScripts ?>
     </body>
 </html>

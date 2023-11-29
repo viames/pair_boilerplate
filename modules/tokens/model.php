@@ -46,7 +46,7 @@ class TokensModel extends Model {
 		$form->addInput('description')->setMaxLength(100)->setRequired()->setLabel('DESCRIPTION');
 		$form->addInput('value')->setMaxLength(64)->setRequired()->setLabel('VALUE');
 		$form->addInput('token')->setMaxLength(64)->setRequired()->setLabel('TOKEN');
-		$form->addInput('enabled')->setType('bool')->addClass('switchery')->setLabel('ENABLED');
+		$form->addInput('enabled')->setType('bool')->setLabel('ENABLED');
 		
 		return $form;
 		

@@ -7,8 +7,7 @@ class RulesViewDefault extends View {
 
 	public function render() {
 
-		$this->app->pageTitle		= $this->lang('RULES');
-		$this->app->activeMenuItem	= 'rules';
+		$this->app->pageTitle = $this->lang('RULES');
 
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');

@@ -10,7 +10,6 @@ class RulesViewEdit extends View {
 	public function render() {
 
 		$this->app->pageTitle = $this->lang('EDIT_RULE');
-		$this->app->activeMenuItem = 'rules';
 
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');

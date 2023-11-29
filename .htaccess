@@ -1,14 +1,3 @@
 RewriteEngine On
-Options +FollowSymLinks -Indexes
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule (.*) index.php
-<FilesMatch "manifest.xml|\.(php|ini)">
-  Order Deny,Allow
-  Deny from all
-</FilesMatch>
-<Files index.php>
-  Order Allow,Deny
-  Allow from all
-</Files>
-RedirectMatch 404 ^/\.git
-RedirectMatch 404 ^/composer\.(json|lock|phar)$
+#RewriteCond %{REQUEST_URI} !^public
+RewriteRule ^(.*)$ public/$1 [L]

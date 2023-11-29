@@ -34,10 +34,8 @@ class UserModel extends Model {
 	
 	/**
 	 * Returns the Form object for create/edit Users objects.
-	 *
-	 * @return Form
 	 */
-	public function getUserForm() {
+	public function getUserForm(): Form {
 
 		$minLength = Options::get('password_min');
 
@@ -50,12 +48,11 @@ class UserModel extends Model {
 		$form->addInput('name')->setRequired()->setMinLength(2);
 		$form->addInput('surname')->setRequired()->setMinLength(2);
 		$form->addInput('email')->setType('email');
-		$form->addInput('ldapUser')->setMinLength(2);
 		$form->addInput('username')->setRequired()->setMinLength(3)->setPlaceholder('Username');
 		$form->addInput('password', array('autocomplete'=>'off', 'autocorrect'=>'off', 'autocapitalize'=>'off'))
 			->setType('password')->setMinLength($minLength)->addClass('pwstrength');
 		$form->addInput('showPassword')->setType('bool');
-		$form->addSelect('localeId')->setRequired()->setListByObjectArray($locales,'id','languageCountry');
+		$form->addSelect('localeId')->setListByObjectArray->setRequired()($locales,'id','languageCountry');
 
 		return $form;
 

@@ -1,4 +1,7 @@
+/.vscode/
+.DS_Store
 *.prefs
 composer.phar
-config.php
-vendor/
+/config.php
+/temp
+/vendor/

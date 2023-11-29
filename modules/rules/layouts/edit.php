@@ -22,7 +22,7 @@
 				<div class="col-3 order-1 d-none d-sm-none d-md-block"></div>
 				<div class="col-9 order-2">
 					<button type="submit" class="btn btn-primary" value="edit"><?php $this->_('CHANGE') ?></button>
-					<a href="rules/default" class="btn btn-secondary"><?php $this->_('CANCEL') ?></a><?php
+					<a href="rules/default" class="btn btn-link"><?php $this->_('CANCEL') ?></a><?php
 					if ($this->rule->isDeletable()) {
 						?><a href="rules/delete/<?php print $this->rule->id ?>" class="btn btn-link confirm-delete float-right"><?php $this->_('DELETE') ?></a><?php
 					}

@@ -19,7 +19,7 @@
 			<div class="col-3 order-1 d-none d-sm-none d-md-block"></div>
 			<div class="col-9 order-2">
 				<button type="submit" class="btn btn-primary" value="add"><?php $this->_('INSERT') ?></button>
-				<a href="rules/default" class="btn btn-secondary"><?php $this->_('CANCEL') ?></a>
+				<a href="rules/default" class="btn btn-link"><?php $this->_('CANCEL') ?></a>
 				</div>
 			</div>
 		</div>

@@ -31,7 +31,7 @@ use Pair\Utilities;
 						?>
 						<tr>
 							<td><a href="rules/edit/<?php print $o->id ?>"><?php print htmlspecialchars($o->name) ?></a></td>
-							<td class="text-center"><?php print htmlspecialchars($o->action) ?></td>
+							<td class="text-center"><?php print htmlspecialchars((string)$o->action) ?></td>
 							<td class="text-center"><?php print $o->adminIcon ?></td>
 						</tr><?php 
 				

@@ -41,7 +41,7 @@ class RulesController extends Controller {
 
 		}  else {
 			
-			$this->enqueueError($this->lang('RULE_EXISTS', array($rule->moduleName, $rule->ruleAction)));
+			$this->enqueueError($this->lang('RULE_EXISTS', [$rule->moduleName, $rule->ruleAction]));
 			$this->view = 'default';
 			
 		}

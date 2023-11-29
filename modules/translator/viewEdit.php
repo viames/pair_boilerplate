@@ -12,9 +12,8 @@ class TranslatorViewEdit extends View {
 
 	public function render() {
 
-		$this->app->pageTitle		= $this->lang('TRANSLATOR');
-		$this->app->activeMenuItem	= 'translator/default';
-		
+		$this->app->pageTitle = $this->lang('TRANSLATOR');
+				
 		// build objects
 		$locale	= new Locale(Router::get(0));
 		
@@ -28,9 +27,8 @@ class TranslatorViewEdit extends View {
 		}
 		
 		// add breadcrumb path
-		Breadcrumb::getInstance()
-			->addPath($this->lang('TRANSLATION_X', $locale->getEnglishNames()), 'translator/details/' . $locale->id)
-			->addPath($this->lang('MODULE_X', ucfirst($module->name)));
+		Breadcrumb::path($this->lang('TRANSLATION_X', $locale->getEnglishNames()), 'translator/details/' . $locale->id);
+		Breadcrumb::path($this->lang('MODULE_X', ucfirst($module->name)));
 		
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
@@ -64,10 +62,10 @@ class TranslatorViewEdit extends View {
 			
 		}
 		
-		$referer = 'translator/details/' . $locale->id . '/' . $module->id;
+		$parent = 'translator/details/' . $locale->id . '/' . $module->id;
 		
 		$this->assign('form',		$form);
-		$this->assign('referer',	$referer);
+		$this->assign('parent',		$parent);
 		$this->assign('defStrings', $defaultStrings);
 		$this->assign('module',		$module);
 		$this->assign('locale',		$locale);

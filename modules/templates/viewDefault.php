@@ -1,5 +1,6 @@
 <?php
 
+use Pair\Application;
 use Pair\Options;
 use Pair\View;
 use Pair\Widget;
@@ -8,10 +9,7 @@ class TemplatesViewDefault extends View {
 
 	public function render() {
 
-		$options = Options::getInstance();
-
-		$this->app->pageTitle		= $this->lang('TEMPLATES');
-		$this->app->activeMenuItem	= 'templates/default';
+		$this->app->pageTitle = $this->lang('TEMPLATES');
 
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
@@ -22,7 +20,7 @@ class TemplatesViewDefault extends View {
 		$templates = $this->model->getActiveRecordObjects('Pair\Template', 'name');
 		
 		// if development mode is switched on, hide the delete button
-		$devMode = ($options->getValue('development') and $this->app->currentUser->admin) ? TRUE : FALSE;
+		$devMode = (Application::isDevelopmentHost() and $this->app->currentUser->admin) ? TRUE : FALSE;
 		
 		foreach ($templates as $template) {
 			

@@ -140,7 +140,7 @@ class DeveloperModel extends Model {
 		$form->addControlClass('form-control');
 		$form->addInput('objectName')->setRequired();
 		$form->addInput('moduleName')->setRequired();
-		$form->addInput('commonClass')->setType('bool')->addClass('switchery');
+		$form->addInput('commonClass')->setType('bool');
 		$form->addInput('tableName')->setType('hidden')->setRequired();
 		return $form;
 

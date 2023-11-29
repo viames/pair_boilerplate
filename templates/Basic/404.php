@@ -12,8 +12,8 @@ $translator = Translator::getInstance();
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title><?php print $this->pageTitle ?></title>
 		<?php print $this->pageStyles ?>
-		<link rel="stylesheet" href="<?php print $this->templatePath ?>css/toastr.css">
-		<link rel="stylesheet" href="<?php print $this->templatePath ?>css/custom.css">
+		<link rel="stylesheet" href="css/toastr.css">
+		<link rel="stylesheet" href="css/custom.css">
 	</head>
 	<body class="page404">
 		<div id="messageArea"></div>
@@ -25,7 +25,7 @@ $translator = Translator::getInstance();
 		</div>
 		<?php print $this->log ?>
 		<?php print $this->pageScripts ?>
-		<script src="<?php print $this->templatePath ?>js/toastr.js" type="text/javascript"></script>
-		<script src="<?php print $this->templatePath ?>js/custom.js" type="text/javascript"></script>
+		<script src="js/toastr.js" type="text/javascript"></script>
+		<script src="js/custom.js" type="text/javascript"></script>
 	</body>
 </html>

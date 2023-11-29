@@ -19,13 +19,12 @@ if (count($this->locales)) {
 	?><table class="table table-hover">
 			<thead>
 				<tr>
+					<th><?php $this->_('REPRESENTATION') ?></th>
 					<th><?php $this->_('LANGUAGE') ?></th>
 					<th><?php $this->_('COUNTRY') ?></th>
-					<th><?php $this->_('REPRESENTATION') ?></th>
 					<th><?php $this->_('PERCENTAGE') ?></th>
 					<th><?php $this->_('TRANSLATED_LINES') ?></th>
 					<th><?php $this->_('DEFAULT') ?></th>
-					<th><?php $this->_('DETAILS') ?></th>
 				</tr>
 			</thead>
 			<tbody><?php
@@ -33,13 +32,17 @@ if (count($this->locales)) {
 			foreach ($this->locales as $locale) {
 				
 				?><tr>
-					<td><?php print htmlspecialchars($locale->languageName) ?>
+					<td>
+						<a href="translator/details/<?php print $locale->id ?>" title="<?php $this->_('SEE_DETAILS') ?>">
+							<?php print $locale->representation ?>
+							
+						</a>
+					</td>
+					<td><?php print htmlspecialchars($locale->languageName) ?></td>
 					<td><?php print htmlspecialchars($locale->countryName) ?></td>
-					<td class="text-center"><?php print $locale->representation ?></td>
 					<td class="text-center" style="width:30%"><?php print $locale->progressBar ?></td>
 					<td class="text-center"><?php print $locale->complete ?></td>
 					<td class="text-center"><?php print $locale->defaultIcon ?></td>
-					<td class="text-center"><a href="translator/details/<?php print $locale->id ?>" title="<?php $this->_('SEE_DETAILS') ?>"><i class="fa fa-eye fa-lg"></i></a>					
 				</tr><?php 
 						
 			}
