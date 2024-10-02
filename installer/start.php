@@ -44,12 +44,7 @@ class Installer {
 		$this->rootFolder = dirname(dirname(__FILE__));
 
 		// get the subpath of this project in web-server root
-		$this->baseUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-
-		// remove trailing slash
-		if (substr($this->baseUri, strlen($this->baseUri)-1, 1) == '/') {
-			$this->baseUri = substr($this->baseUri,0, -1);
-		}
+		$this->baseUri = dirname(dirname(parse_url($_SERVER['PHP_SELF'], PHP_URL_PATH)));
 
 		define ('PRODUCT_NAME', 'Pair boilerplate');
 
@@ -526,7 +521,7 @@ class Installer {
  	<body>
 	    <div class="container">
 	      <div class="py-5 text-center">
-	        <img class="d-block mx-auto mb-4" src="images/pair-logo.png" alt="" width="160" height="89">
+	        <img class="d-block mx-auto mb-4" src="<?php print $this->baseUri ?>/images/pair-logo.png" alt="" width="160" height="89">
 	        <h2>Sample installer</h2>
 	        <p class="lead">Installation completed succesfully</p>
 	      </div>
