@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "99d9186e7026e9aed6dee2f9bcce4f8b",
+    "content-hash": "d9b7ec03bf34e852b3126dac0ab8b4f7",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1829,16 +1829,16 @@
         },
         {
             "name": "viames/pair",
-            "version": "1.9.8",
+            "version": "dev-2.0.0-alpha",
             "source": {
                 "type": "git",
                 "url": "https://github.com/viames/pair.git",
-                "reference": "007140c3498aff4dadbdb7b92293f16729d3adb7"
+                "reference": "cd3887a20d9727925d22f50593bd6e4244d2ac9b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/viames/pair/zipball/007140c3498aff4dadbdb7b92293f16729d3adb7",
-                "reference": "007140c3498aff4dadbdb7b92293f16729d3adb7",
+                "url": "https://api.github.com/repos/viames/pair/zipball/cd3887a20d9727925d22f50593bd6e4244d2ac9b",
+                "reference": "cd3887a20d9727925d22f50593bd6e4244d2ac9b",
                 "shasum": ""
             },
             "require": {
@@ -1854,7 +1854,12 @@
             "autoload": {
                 "psr-4": {
                     "Pair\\": "src/",
-                    "Pair\\Oauth\\": "src/oauth"
+                    "Pair\\Orm\\": "src/Orm",
+                    "Pair\\Core\\": "src/Core",
+                    "Pair\\Html\\": "src/Html",
+                    "Pair\\Models\\": "src/Models",
+                    "Pair\\Support\\": "src/Support",
+                    "Pair\\Services\\": "src/Services"
                 },
                 "classmap": [
                     "src"
@@ -1888,7 +1893,7 @@
                 "source": "https://github.com/viames/pair/tree/master/src",
                 "wiki": "https://github.com/viames/pair/wiki"
             },
-            "time": "2024-09-25T09:23:09+00:00"
+            "time": "2024-10-01T17:47:25+00:00"
         }
     ],
     "packages-dev": [
@@ -3526,8 +3531,10 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
-    "stability-flags": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "viames/pair": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": [],

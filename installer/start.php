@@ -382,7 +382,7 @@ class Installer {
  	<body>
 	    <div class="container">
 	      <div class="py-5 text-center">
-	        <img class="d-block mx-auto mb-4" src="images/pair-logo.png" alt="" width="160" height="89">
+	        <img class="d-block mx-auto mb-4" src="<?php print $this->baseUri ?>/images/pair-logo.png" alt="" width="160" height="89">
 	        <h2>Sample installer</h2>
 	        <p class="lead">Please fill-in all required data about your new product based on Pair PHP framework</p>
 	      </div>
@@ -605,8 +605,8 @@ define ('PAIR_AUDIT_USER_CHANGED', TRUE);
 define ('PAIR_AUDIT_PERMISSIONS_CHANGED', TRUE);
 
 // crypt keys
-define ('OPTIONS_CRYPT_KEY', 'ABCD-1234');
-define ('AES_CRYPT_KEY', 'abcd-0000');
+define ('OPTIONS_CRYPT_KEY', '" . bin2hex(random_bytes(32)) . "');
+define ('AES_CRYPT_KEY', '" . bin2hex(random_bytes(32)) . "');
 
 // sentry
 define ('SENTRY_DSN', NULL);
@@ -677,7 +677,7 @@ define ('SENTRY_DSN', NULL);
 
 		}
 
-		if (!Pair\Utilities::deleteFolder($folder)) {
+		if (!Pair\Support\Utilities::deleteFolder($folder)) {
 			$this->addError('Folder ' . $folder . ' deletion failed');
 			return FALSE;
 		}

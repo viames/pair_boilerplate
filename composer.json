@@ -2,10 +2,10 @@
 	"name" : "viames/pair_boilerplate",
 	"description" : "Skeleton project based on Pair PHP framework",
 	"type" : "project",
-	"minimum-stability" : "stable",
+	"minimum-stability": "dev",
 	"prefer-stable": true,
 	"require": {
-		"viames/pair": "^1.9"
+		"viames/pair": "dev-2.0.0-alpha"
 	},
 	"repositories" : [
 		{
@@ -23,7 +23,8 @@
 		"plugin-system",
 		"pagination",
 		"router",
-		"rest-api"
+		"rest-api",
+		"oauth2"
 	],
 	"homepage" : "https://github.com/viames/pair_boilerplate",
 	"authors" : [
