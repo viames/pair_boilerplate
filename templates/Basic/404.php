@@ -1,6 +1,6 @@
 <?php 
 
-use Pair\Translator;
+use Pair\Support\Translator;
 
 $translator = Translator::getInstance();
 

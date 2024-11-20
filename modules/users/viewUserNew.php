@@ -1,9 +1,9 @@
 <?php
 
-use Pair\Breadcrumb;
-use Pair\Locale;
-use Pair\View;
-use Pair\Widget;
+use Pair\Html\Breadcrumb;
+use Pair\Models\Locale;
+use Pair\Core\View;
+use Pair\Html\Widget;
 
 class UsersViewUserNew extends View {
 
@@ -25,7 +25,7 @@ class UsersViewUserNew extends View {
 		$form = $this->model->getUserForm();
 
 		$form->getControl('enabled')->setValue(TRUE);
-		$form->getControl('password')->setRequired();
+		$form->getControl('password')->required();
 		$form->getControl('localeId')->setValue(Locale::getDefault()->id);
 
 		$this->assign('form', $form);

@@ -1,8 +1,8 @@
 <?php
 
-use Pair\Breadcrumb;
-use Pair\View;
-use Pair\Widget;
+use Pair\Html\Breadcrumb;
+use Pair\Core\View;
+use Pair\Html\Widget;
 
 class ToolsViewDefault extends View {
 

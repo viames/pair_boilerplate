@@ -1,11 +1,11 @@
 <?php 
 
-use Pair\Breadcrumb;
+use Pair\Html\Breadcrumb;
 
 $breadcrumb = Breadcrumb::getInstance();
 $breadcrumb->disableLastUrl();
 
-if (is_a($breadcrumb, 'Pair\Breadcrumb') and count($breadcrumb->getPaths())) {
+if (is_a($breadcrumb, 'Pair\Html\Breadcrumb') and count($breadcrumb->getPaths())) {
 	
 	?>
 	<nav aria-label="breadcrumb">

@@ -1,32 +1,29 @@
 <?php
 
-use Pair\Form;
-use Pair\Locale;
-use Pair\Model;
-use Pair\Options;
-use Pair\Translator;
+use Pair\Core\Model;
+use Pair\Html\Form;
+use Pair\Models\Locale;
+use Pair\Support\Options;
+use Pair\Support\Translator;
 
 class UserModel extends Model {
 
 	/**
 	 * Returns login form.
-	 * 
-	 * @return Form
 	 */
-	public function getLoginForm() {
+	public function getLoginForm(): Form {
 		
-		$tran = Translator::getInstance();
 		$form = new Form();
 		
-		$form->addControlClass('form-control');
+		$form->classForControls('form-control');
 		
-		$form->addInput('username', array('autocorrect'=>'off', 'autocapitalize'=>'off'))
-			->setRequired()->setMinLength(3)->setPlaceholder($tran->get('USERNAME'))
-			->setLabel('USERNAME');
-		$form->addInput('password', array('autocorrect'=>'off', 'autocapitalize'=>'off'))
-			->setType('password')->setRequired()->setPlaceholder($tran->get('PASSWORD'))
-			->setLabel('PASSWORD');
-		$form->addInput('timezone')->setType('hidden');
+		$form->text('username', array('autocorrect'=>'off', 'autocapitalize'=>'off'))
+			->required()->minLength(3)->placeholder(Translator::do('USERNAME'))
+			->label('USERNAME');
+		$form->password('password', array('autocorrect'=>'off', 'autocapitalize'=>'off'))
+			->required()->placeholder(Translator::do('PASSWORD'))
+			->label('PASSWORD');
+		$form->hidden('timezone');
 		
 		return $form;
 		
@@ -41,18 +38,18 @@ class UserModel extends Model {
 
 		$form = new Form();
 		
-		$form->addControlClass('form-control');
+		$form->classForControls('form-control');
 		
 		$locales = Locale::getExistentTranslations();
 
-		$form->addInput('name')->setRequired()->setMinLength(2);
-		$form->addInput('surname')->setRequired()->setMinLength(2);
-		$form->addInput('email')->setType('email');
-		$form->addInput('username')->setRequired()->setMinLength(3)->setPlaceholder('Username');
-		$form->addInput('password', array('autocomplete'=>'off', 'autocorrect'=>'off', 'autocapitalize'=>'off'))
-			->setType('password')->setMinLength($minLength)->addClass('pwstrength');
-		$form->addInput('showPassword')->setType('bool');
-		$form->addSelect('localeId')->setListByObjectArray->setRequired()($locales,'id','languageCountry');
+		$form->text('name')->required()->minLength(2);
+		$form->text('surname')->required()->minLength(2);
+		$form->email('email');
+		$form->text('username')->required()->minLength(3)->placeholder('Username');
+		$form->password('password', array('autocomplete'=>'off', 'autocorrect'=>'off', 'autocapitalize'=>'off'))
+			->minLength($minLength)->class('pwstrength');
+		$form->checkbox('showPassword');
+		$form->select('localeId')->options($locales,'id','languageCountry')->required();
 
 		return $form;
 

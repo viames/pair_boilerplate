@@ -1,9 +1,9 @@
 <?php
 
-use Pair\Breadcrumb;
+use Pair\Html\Breadcrumb;
 use Pair\Group;
-use Pair\View;
-use Pair\Widget;
+use Pair\Core\View;
+use Pair\Html\Widget;
 
 class UsersViewGroupNew extends View {
 
@@ -34,8 +34,8 @@ class UsersViewGroupNew extends View {
 
 		$form = $this->model->getGroupForm();
 		$form->getControl('default')->setValue($isDefault);
-		$form->getControl('defaultAclId')->setRequired()
-			->setListByObjectArray($rules, 'id', 'moduleAction')
+		$form->getControl('defaultAclId')->required()
+			->options($rules, 'id', 'moduleAction')
 			->prependEmpty('- Seleziona -');
 
 		$this->assign('form', $form);

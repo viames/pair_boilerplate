@@ -1,9 +1,9 @@
 <?php
 
-use Pair\Breadcrumb;
+use Pair\Html\Breadcrumb;
 use Pair\Group;
-use Pair\View;
-use Pair\Widget;
+use Pair\Core\View;
+use Pair\Html\Widget;
 
 class UsersViewGroupList extends View {
 

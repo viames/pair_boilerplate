@@ -1,7 +1,7 @@
 <?php
 
-use Pair\Form;
-use Pair\Model;
+use Pair\Html\Form;
+use Pair\Core\Model;
 
 class TemplatesModel extends Model {
 	
@@ -10,8 +10,8 @@ class TemplatesModel extends Model {
 		$accept = 'application/x-compressed,application/x-zip-compressed,application/zip,multipart/x-zip';
 	
 		$form = new Form();
-		$form->addControlClass('form-control');
-		$form->addInput('package')->setType('file')->setAccept($accept).setRequired();
+		$form->classForControls('form-control');
+		$form->file('package')->setAccept($accept)->required();
 		return $form;
 	
 	}

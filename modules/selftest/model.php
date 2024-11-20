@@ -1,18 +1,16 @@
 <?php
 
-use Pair\Locale;
-use Pair\Logger;
-use Pair\Model;
-use Pair\Translator;
+use Pair\Core\Model;
+use Pair\Models\Locale;
+use Pair\Support\Logger;
+use Pair\Support\Translator;
 
 class SelftestModel extends Model {
 
 	/**
 	 * Test for unfound translation files under translations folder for all modules.
-	 *
-	 * @return array
 	 */
-	public function testTranslations() {
+	public function testTranslations(): array {
 
 		// instance of current language translator
 		$translator = Translator::getInstance();

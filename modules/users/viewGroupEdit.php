@@ -1,10 +1,10 @@
 <?php
 
-use Pair\Breadcrumb;
+use Pair\Html\Breadcrumb;
 use Pair\Group;
-use Pair\Router;
-use Pair\View;
-use Pair\Widget;
+use Pair\Core\Router;
+use Pair\Core\View;
+use Pair\Html\Widget;
 
 class UsersViewGroupEdit extends View {
 
@@ -38,7 +38,7 @@ class UsersViewGroupEdit extends View {
 
 		// populate form fields
 		$form = $this->model->getGroupForm();
-		$form->getControl('defaultAclId')->setListByObjectArray($modules,'id','moduleAction');
+		$form->getControl('defaultAclId')->options($modules,'id','moduleAction');
 		$form->setValuesByObject($group);
 
 		if ($group->default) {

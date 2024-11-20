@@ -1,11 +1,11 @@
 <?php
 
 use Pair\ActiveRecord;
-use Pair\Application;
+use Pair\Core\Application;
 use Pair\Database;
-use Pair\Logger;
+use Pair\Support\Logger;
 use Pair\Options;
-use Pair\Utilities;
+use Pair\Support\Utilities;
 
 class SelfTest {
 

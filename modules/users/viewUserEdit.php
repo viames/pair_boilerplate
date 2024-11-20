@@ -1,11 +1,11 @@
 <?php
 
-use Pair\Breadcrumb;
+use Pair\Html\Breadcrumb;
 use Pair\Group;
-use Pair\Router;
+use Pair\Core\Router;
 use Pair\User;
-use Pair\View;
-use Pair\Widget;
+use Pair\Core\View;
+use Pair\Html\Widget;
 
 class UsersViewUserEdit extends View {
 
@@ -33,7 +33,7 @@ class UsersViewUserEdit extends View {
 
 		$form = $this->model->getUserForm();
 		$form->setValuesByObject($user);
-		$form->getControl('id')->setValue($user->id)->setRequired();
+		$form->getControl('id')->setValue($user->id)->required();
 
 		$this->assign('user', $user);
 		$this->assign('form', $form);

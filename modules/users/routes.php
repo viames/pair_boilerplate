@@ -5,7 +5,7 @@
  * first parameter and third optional parameter (module) should be set NULL.
  */
 
-use Pair\Router;
+use Pair\Core\Router;
 
 Router::addRoute('/new', 'userNew');
 Router::addRoute('/edit/:id([0-9])+', 'userEdit');

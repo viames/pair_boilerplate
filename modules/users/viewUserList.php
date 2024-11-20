@@ -1,9 +1,9 @@
 <?php
 
-use Pair\Breadcrumb;
+use Pair\Html\Breadcrumb;
 use Pair\User;
-use Pair\View;
-use Pair\Widget;
+use Pair\Core\View;
+use Pair\Html\Widget;
 
 class UsersViewUserList extends View {
 

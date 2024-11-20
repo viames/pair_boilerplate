@@ -1,7 +1,7 @@
 <?php
 
-use Pair\Application;
-use Pair\Menu;
+use Pair\Core\Application;
+use Pair\Html\Menu;
 
 /**
  * Create a side menu with Bootstrap classes and FontAwesome icons.

@@ -1,9 +1,9 @@
 <?php
 
-use Pair\Application;
+use Pair\Core\Application;
 use Pair\Options;
-use Pair\View;
-use Pair\Widget;
+use Pair\Core\View;
+use Pair\Html\Widget;
 
 class TemplatesViewDefault extends View {
 

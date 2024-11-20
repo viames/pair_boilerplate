@@ -1,10 +1,10 @@
 <?php
 
-use Pair\Breadcrumb;
+use Pair\Html\Breadcrumb;
 use Pair\Group;
-use Pair\Router;
-use Pair\View;
-use Pair\Widget;
+use Pair\Core\Router;
+use Pair\Core\View;
+use Pair\Html\Widget;
 
 class UsersViewAclNew extends View {
 

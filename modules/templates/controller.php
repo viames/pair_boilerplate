@@ -1,8 +1,8 @@
 <?php
 
-use Pair\Breadcrumb;
-use Pair\Controller;
-use Pair\Logger;
+use Pair\Html\Breadcrumb;
+use Pair\Core\Controller;
+use Pair\Support\Logger;
 use Pair\Plugin;
 use Pair\Upload;
 

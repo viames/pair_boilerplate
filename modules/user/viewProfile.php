@@ -1,8 +1,8 @@
 <?php
 
 use Pair\Group;
-use Pair\View;
-use Pair\Widget;
+use Pair\Core\View;
+use Pair\Html\Widget;
 
 class UserViewProfile extends View {
 
