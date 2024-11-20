@@ -52,6 +52,6 @@ if (count($this->groups)) {
 
 } else {
 
-	Pair\Utilities::printNoDataMessageBox();
+	Pair\Support\Utilities::printNoDataMessageBox();
 
 }

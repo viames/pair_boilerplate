@@ -1,11 +1,9 @@
 <?php
 
-use Pair\Audit;
-use Pair\Application;
-use Pair\Controller;
-use Pair\Input;
-use Pair\Session;
-use Pair\User;
+use Pair\Core\Controller;
+use Pair\Models\Session;
+use Pair\Models\User;
+use Pair\Support\Post;
 
 class UserController extends Controller {
 	
@@ -20,13 +18,13 @@ class UserController extends Controller {
 	 */
 	public function loginAction() {
 	
-		$username	= Input::getTrim('username');
-		$password	= Input::getTrim('password');
-		$timezone	= Input::getTrim('timezone');
-		$remember	= Input::getBool('remember');
+		$username	= Post::trim('username');
+		$password	= Post::trim('password');
+		$timezone	= Post::trim('timezone');
+		$remember	= Post::bool('remember');
 
 		// if isn’t post submit, render the page
-		if (!Input::formPostSubmitted()) {
+		if (!Post::submitted()) {
 			return;
 		}
 			
@@ -99,14 +97,14 @@ class UserController extends Controller {
 		$form = $this->model->getUserForm();
 		
 		$user			= new User($this->app->currentUser->id);
-		$user->name		= Input::getTrim('name');
-		$user->surname	= Input::getTrim('surname');
-		$user->email	= Input::getTrim('email') ? Input::getTrim('email') : NULL;
-		$user->username	= Input::getTrim('username');
-		$user->localeId	= Input::getInt('localeId');
+		$user->name		= Post::trim('name');
+		$user->surname	= Post::trim('surname');
+		$user->email	= Post::trim('email') ? Post::trim('email') : NULL;
+		$user->username	= Post::trim('username');
+		$user->localeId	= Post::int('localeId');
 		
-		if (Input::get('password')) {
-			$user->hash = User::getHashedPasswordWithSalt(Input::get('password'));
+		if (Post::get('password')) {
+			$user->hash = User::getHashedPasswordWithSalt(Post::get('password'));
 		}
 
 		$res = $user->store();

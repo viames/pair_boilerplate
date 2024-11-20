@@ -1,24 +1,23 @@
 <?php
 
-use Pair\Breadcrumb;
-use Pair\Controller;
-use Pair\Input;
-use Pair\Language;
-use Pair\Router;
+use Pair\Html\Breadcrumb;
+use Pair\Core\Controller;
+use Pair\Core\Router;
+use Pair\Models\Language;
+use Pair\Support\Post;
  		
 class LanguagesController extends Controller {
 
 	protected function init() {
 		
-		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath($this->lang('LANGUAGES'), 'languages');
+		Breadcrumb::path($this->lang('LANGUAGES'), 'languages');
 		
 	}
 
 	/**
 	 * Check if is requested to apply an alpha filter.
 	 */
-	public function defaultAction() {
+	public function defaultAction(): void {
 		
 		if (Router::get(0)) {
 			$this->app->setPersistentState('languagesAlphaFilter', Router::get(0));
@@ -31,7 +30,7 @@ class LanguagesController extends Controller {
 	/**
 	 * Add a new object.
 	 */
-	public function addAction() {
+	public function addAction(): void {
 	
 		$language = new Language();
 		$language->populateByRequest();
@@ -55,9 +54,9 @@ class LanguagesController extends Controller {
 	/**
 	 * Show form for edit a Language object.
 	 */
-	public function editAction() {
+	public function editAction(): void {
 	
-		$language = $this->getObjectRequestedById('Pair\Language');
+		$language = $this->getObjectRequestedById('Pair\Models\Language');
 	
 		$this->view = $language ? 'edit' : 'default';
 	
@@ -66,9 +65,9 @@ class LanguagesController extends Controller {
 	/**
 	 * Modify a Language object.
 	 */
-	public function changeAction() {
+	public function changeAction(): void {
 
-		$language = new Language(Input::get('id'));
+		$language = new Language(Post::get('id'));
 		$language->populateByRequest();
 
 		// apply the update
@@ -100,7 +99,7 @@ class LanguagesController extends Controller {
 	/**
 	 * Delete a Language object.
 	 */
-	public function deleteAction() {
+	public function deleteAction(): void {
 
 		$language = $this->getObjectRequestedById('Language');
 

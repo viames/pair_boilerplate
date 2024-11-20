@@ -1,18 +1,16 @@
 <?php
 
-use Pair\Locale;
-use Pair\Logger;
-use Pair\Model;
-use Pair\Translator;
+use Pair\Core\Model;
+use Pair\Models\Locale;
+use Pair\Support\Logger;
+use Pair\Support\Translator;
 
 class SelftestModel extends Model {
 
 	/**
 	 * Test for unfound translation files under translations folder for all modules.
-	 *
-	 * @return array
 	 */
-	public function testTranslations() {
+	public function testTranslations(): array {
 
 		// instance of current language translator
 		$translator = Translator::getInstance();
@@ -20,10 +18,10 @@ class SelftestModel extends Model {
 		// all registered Locales
 		
 		$query =
-			'SELECT lo.*, la.english_name AS language_name, co.english_name AS country_name, CONCAT(la.code, "-", co.code) AS representation' .
-			' FROM `locales` AS lo' .
-			' INNER JOIN `languages` AS la ON lo.language_id = la.id' .
-			' INNER JOIN `countries` AS co ON lo.country_id = co.id';
+			'SELECT lo.*, la.english_name AS language_name, co.english_name AS country_name, CONCAT(la.code, "-", co.code) AS representation
+			FROM `locales` AS lo
+			INNER JOIN `languages` AS la ON lo.language_id = la.id
+			INNER JOIN `countries` AS co ON lo.country_id = co.id';
 		
 		$locales = Locale::getObjectsByQuery($query);
 
@@ -115,8 +113,6 @@ class SelftestModel extends Model {
 	 * @param	array	List of comparing language key names.
 	 * @param	string	Two chars language code.
 	 * @param	string	Path to comparing language file.
-	 *
-	 * @return	int
 	 */
 	private function countUntranslated($defaultKeys, $otherKeys, $langCode, $langPath): int {
 
@@ -139,8 +135,6 @@ class SelftestModel extends Model {
 	 * @param	array	List of comparing language key names.
 	 * @param	string	Two chars language code.
 	 * @param	string	Path to comparing language file.
-	 * 
-	 * @return	int
 	 */
 	private function countNotNeeded($defaultKeys, $otherKeys, $langCode, $langPath) {
 

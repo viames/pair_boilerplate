@@ -22,8 +22,8 @@
 			<div class="form-group row">
 			<div class="col-3 order-1 d-none d-sm-none d-md-block"></div>
 				<div class="col-9 order-2">
-					<button type="submit" class="btn btn-primary"><i class="fal fa-asterisk"></i> <?php $this->_('INSERT') ?></button>
-					<a href="tokens" class="btn btn-secondary"><i class="fal fa-times"></i> <?php $this->_('CANCEL') ?></a>
+					<button type="submit" class="btn btn-primary"><?php $this->_('INSERT') ?></button>
+					<a href="tokens" class="btn btn-secondary"><?php $this->_('CANCEL') ?></a>
 				</div>
 			</div>
 		</div>

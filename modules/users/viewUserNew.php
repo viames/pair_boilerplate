@@ -1,9 +1,9 @@
 <?php
 
-use Pair\Breadcrumb;
-use Pair\Locale;
-use Pair\View;
-use Pair\Widget;
+use Pair\Html\Breadcrumb;
+use Pair\Models\Locale;
+use Pair\Core\View;
+use Pair\Html\Widget;
 
 class UsersViewUserNew extends View {
 
@@ -12,9 +12,8 @@ class UsersViewUserNew extends View {
 		$this->app->pageTitle = $this->lang('NEW_USER');
 		$this->app->activeMenuItem = 'users/userList';
 		
-		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath($this->lang('USERS'), 'users');
-		$breadcrumb->addPath($this->lang('NEW_USER'), 'users/new');
+		Breadcrumb::path($this->lang('USERS'), 'users');
+		Breadcrumb::path($this->lang('NEW_USER'), 'users/new');
 		
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
@@ -24,9 +23,9 @@ class UsersViewUserNew extends View {
 
 		$form = $this->model->getUserForm();
 
-		$form->getControl('enabled')->setValue(TRUE);
-		$form->getControl('password')->setRequired();
-		$form->getControl('localeId')->setValue(Locale::getDefault()->id);
+		$form->control('enabled')->value(TRUE);
+		$form->control('password')->required();
+		$form->control('localeId')->value(Locale::getDefault()->id);
 
 		$this->assign('form', $form);
 		

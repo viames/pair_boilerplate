@@ -1,17 +1,14 @@
 <?php
 
-use Pair\Options;
-use Pair\View;
-use Pair\Widget;
+use Pair\Html\Widget;
+use Pair\Core\Application;
+use Pair\Core\View;
 
 class ModulesViewDefault extends View {
 
 	public function render() {
 
-		$options = Options::getInstance();
-
-		$this->app->pageTitle		= $this->lang('MODULES');
-		$this->app->activeMenuItem	= 'modules/default';
+		$this->app->pageTitle = $this->lang('MODULES');
 
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
@@ -19,10 +16,10 @@ class ModulesViewDefault extends View {
 		$widget = new Widget();
 		$this->app->sideMenuWidget = $widget->render('sideMenu');
 		
-		$modules = $this->model->getActiveRecordObjects('Pair\Module', 'name');
+		$modules = $this->model->getActiveRecordObjects('Pair\Models\Module', 'name');
 
-		// if development mode is switched on, hide the delete button
-		$devMode = ($options->getValue('development') and $this->app->currentUser->admin) ? TRUE : FALSE;
+		// if development-mode is enabled and an admin is logged in, objects can be deleted
+		$devMode = (Application::isDevelopmentHost() and $this->app->currentUser->admin) ? TRUE : FALSE;
 
 		foreach ($modules as $module) {
 

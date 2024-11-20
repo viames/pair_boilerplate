@@ -1,9 +1,9 @@
 <?php
 
-use Pair\Breadcrumb;
-use Pair\Controller;
-use Pair\Input;
-use Pair\Token;
+use Pair\Html\Breadcrumb;
+use Pair\Core\Controller;
+use Pair\Models\Token;
+use Pair\Support\Post;
  		
 class TokensController extends Controller {
 
@@ -16,13 +16,13 @@ class TokensController extends Controller {
 	/**
 	 * Add a new object.
 	 */
-	public function addAction() {
+	public function addAction(): void {
 	
 		$token = new Token();
 		$token->populateByRequest();
 		
 		$token->createdBy = $this->app->currentUser->id;
-		$token->creationDate = new DateTime(NULL, $this->app->currentUser->getDateTimeZone());
+		$token->creationDate = new DateTime('now', $this->app->currentUser->getDateTimeZone());
 		$token->lastUse = NULL;
 
 		// create the new record
@@ -45,9 +45,9 @@ class TokensController extends Controller {
 	/**
 	 * Show form for edit a Token object.
 	 */
-	public function editAction() {
+	public function editAction(): void {
 	
-		$token = $this->getObjectRequestedById('Pair\Token');
+		$token = $this->getObjectRequestedById('Pair\Models\Token');
 	
 		$this->view = $token ? 'edit' : 'default';
 	
@@ -56,9 +56,9 @@ class TokensController extends Controller {
 	/**
 	 * Modify a Token object.
 	 */
-	public function changeAction() {
+	public function changeAction(): void {
 
-		$token = new Token(Input::get('id'));
+		$token = new Token(Post::get('id'));
 		$token->populateByRequest();
 		
 		$token->createdBy = $this->app->currentUser->id;
@@ -94,9 +94,9 @@ class TokensController extends Controller {
 	/**
 	 * Delete a Token object.
 	 */
-	public function deleteAction() {
+	public function deleteAction(): void {
 
-	 	$token = $this->getObjectRequestedById('Pair\Token');
+	 	$token = $this->getObjectRequestedById('Pair\Models\Token');
 
 		// execute deletion
 		$result = $token->delete();

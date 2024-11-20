@@ -5,18 +5,18 @@
 				<h4 class="card-title"><?php $this->_('NEW_COUNTRY') ?></h4>
 			</div>
 			<div class="card-body">
-				<form action="countries/add" method="post">
+				<form action="countries/add" method="post" class="form-horizontal">
 					<fieldset>
-						<div class="form-group row">
-							<label class="col-md-3 col-form-label"><?php $this->_('ENGLISH_NAME') ?></label>
+						<div class="form-group">
+							<div class="col-md-3"><?php $this->_('ENGLISH_NAME') ?></div>
 							<div class="col-md-9"><?php $this->form->printControl('englishName') ?></div>
 						</div>
-						<div class="form-group row">
-							<label class="col-md-3 col-form-label"><?php $this->_('NATIVE_NAME') ?></label>
+						<div class="form-group">
+							<div class="col-md-3"><?php $this->_('NATIVE_NAME') ?></div>
 							<div class="col-md-9"><?php $this->form->printControl('nativeName') ?></div>
 						</div>
-						<div class="form-group row">
-							<label class="col-md-3 col-form-label"><?php $this->_('ISO_3166_1') ?></label>
+						<div class="form-group">
+							<div class="col-md-3"><?php $this->_('ISO_3166_1') ?></div>
 							<div class="col-md-9"><?php $this->form->printControl('code') ?></div>
 						</div>
 					</fieldset>

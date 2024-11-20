@@ -1,75 +1,75 @@
 <?php
 
-use Pair\Breadcrumb;
-use Pair\Form;
-use Pair\Options;
-use Pair\View;
-use Pair\Widget;
+use Pair\Core\View;
+use Pair\Html\Breadcrumb;
+use Pair\Html\Form;
+use Pair\Html\Widget;
+use Pair\Support\Options;
 
 class OptionsViewDefault extends View {
 
 	public function render() {
 
+		$this->app->loadScript('js/options.js', TRUE);
+
 		$options = Options::getInstance();
 
 		$this->app->pageTitle = $this->lang('OPTIONS');
 
-		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath($this->lang('OPTIONS'));
+		Breadcrumb::path($this->lang('OPTIONS'));
 
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
-		
+
 		$widget = new Widget();
 		$this->app->sideMenuWidget = $widget->render('sideMenu');
 
 		$form = new Form();
-		$form->addControlClass('form-control');
-		
-		$groupedOptions = array();
-		
+
+		$groupedOptions = [];
+
 		foreach ($options->getAll() as $o) {
-			
+
 			$groupedOptions[$o->group][] = $o;
-			
+
 			// if uppercase, label is a language key
 			if (preg_match('#^[A-Z\_]+$#', $o->label)) {
 				$o->label = $this->lang($o->label);
 			}
-		
+
 			switch ($o->type) {
-		
+
 				default:
 				case 'text':
-					$form->addInput($o->name)->setType('text')->setValue($o->value);
+					$form->text($o->name)->value($o->value)->class('form-control');
 					break;
-		
+
 				case 'textarea':
-					$form->addTextarea($o->name)->setCols(40)->setRows(5)->setValue($o->value);
+					$form->textarea($o->name)->cols(40)->rows(5)->value($o->value)->class('form-control');
 					break;
-					
+
 				case 'int':
-					$form->addInput($o->name)->setType('number')->setValue($o->value);
+					$form->number($o->name)->value($o->value)->class('form-control');
 					break;
-		
+
 				case 'bool':
-					$form->addInput($o->name)->setType('bool')->setValue($o->value);
+					$form->checkbox($o->name, ['role'=>'switch'])->id($o->name)->value($o->value)->class('form-check-input');
 					break;
 
 				case 'list':
-					$form->addSelect($o->name)->setListByObjectArray($o->listItems,'value','text')->setValue($o->value);
+					$form->select($o->name)->options($o->listItems,'value','text')->value($o->value)->class('default-select2 form-control');
 					break;
 
 				case 'password':
-					$form->addInput($o->name, ['autocomplete'=>'off'])->setType('password')->setValue($o->value);
+					$form->password($o->name, ['autocomplete'=>'off'])->value($o->value)->class('form-control');
 					break;
 			}
-		
+
 		}
-		
+
 		$this->assign('form',	$form);
 		$this->assign('groupedOptions',$groupedOptions);
 
 	}
-	
+
 }

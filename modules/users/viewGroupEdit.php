@@ -1,10 +1,10 @@
 <?php
 
-use Pair\Breadcrumb;
-use Pair\Group;
-use Pair\Router;
-use Pair\View;
-use Pair\Widget;
+use Pair\Html\Breadcrumb;
+use Pair\Models\Group;
+use Pair\Core\Router;
+use Pair\Core\View;
+use Pair\Html\Widget;
 
 class UsersViewGroupEdit extends View {
 
@@ -21,9 +21,8 @@ class UsersViewGroupEdit extends View {
 		$this->app->pageTitle = $this->lang('GROUP_EDIT');
 		$this->app->activeMenuItem = 'groups';
 		
-		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath($this->lang('GROUPS'), 'groups');
-		$breadcrumb->addPath('Gruppo ' . $group->name, 'groups/edit/' . $group->id);
+		Breadcrumb::path($this->lang('GROUPS'), 'groups');
+		Breadcrumb::path('Gruppo ' . $group->name, 'groups/edit/' . $group->id);
 		
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
@@ -38,11 +37,11 @@ class UsersViewGroupEdit extends View {
 
 		// populate form fields
 		$form = $this->model->getGroupForm();
-		$form->getControl('defaultAclId')->setListByObjectArray($modules,'id','moduleAction');
-		$form->setValuesByObject($group);
+		$form->control('defaultAclId')->options($modules,'id','moduleAction');
+		$form->values($group);
 
 		if ($group->default) {
-			$form->getControl('default')->setDisabled();
+			$form->control('default')->disabled();
 		}
 
 		// get default acl
@@ -50,7 +49,7 @@ class UsersViewGroupEdit extends View {
 		
 		// set acl value if there’s a default one
 		if ($acl) {
-			$form->getControl('defaultAclId')->setValue($acl->id);
+			$form->control('defaultAclId')->value($acl->id);
 		}
 
 		$this->assign('group',	$group);

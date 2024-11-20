@@ -1,6 +1,6 @@
 <?php
 
-use Pair\Controller;
+use Pair\Core\Controller;
 
 class SelftestController extends Controller {
 

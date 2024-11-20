@@ -29,7 +29,7 @@
 								<td class="cnt"><?php print $user->email ?></td>
 								<td class="small cnt"><?php print $user->groupName ?></td>
 								<td class="text-center"><?php print $user->enabledIcon ?></td>
-								<td class="small text-center"><?php print Pair\Utilities::getTimeago($user->lastLogin) ?></td>
+								<td class="small text-center"><?php print Pair\Support\Utilities::getTimeago($user->lastLogin) ?></td>
 							</tr><?php
 			
 						}
@@ -42,7 +42,7 @@
 
 				} else {
 					
-					Pair\Utilities::printNoDataMessageBox();
+					Pair\Support\Utilities::printNoDataMessageBox();
 					
 				}
 				

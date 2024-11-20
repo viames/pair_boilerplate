@@ -1,7 +1,5 @@
 /.vscode/
 .DS_Store
-*.prefs
-composer.phar
 /config.php
 /temp
 /vendor/

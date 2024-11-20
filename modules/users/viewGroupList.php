@@ -1,9 +1,9 @@
 <?php
 
-use Pair\Breadcrumb;
-use Pair\Group;
-use Pair\View;
-use Pair\Widget;
+use Pair\Html\Breadcrumb;
+use Pair\Models\Group;
+use Pair\Core\View;
+use Pair\Html\Widget;
 
 class UsersViewGroupList extends View {
 
@@ -12,8 +12,7 @@ class UsersViewGroupList extends View {
 		$this->app->pageTitle = $this->lang('GROUPS');
 		$this->app->activeMenuItem = 'groups';
 
-		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath($this->lang('GROUPS'), 'groups');
+		Breadcrumb::path($this->lang('GROUPS'), 'groups');
 
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');

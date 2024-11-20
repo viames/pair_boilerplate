@@ -1,8 +1,8 @@
 <?php
 
-use Pair\Router;
-use Pair\View;
-use Pair\Widget;
+use Pair\Core\Router;
+use Pair\Core\View;
+use Pair\Html\Widget;
 
 class TranslatorViewDefault extends View {
 
@@ -16,9 +16,9 @@ class TranslatorViewDefault extends View {
 		$widget = new Widget();
 		$this->app->sideMenuWidget = $widget->render('sideMenu');
 
-		$locales = $this->model->getLocales();
+		$locales = $this->model->getItems('Pair\Models\Locale');
 
-		$this->pagination->count = $this->model->countListItems();
+		$this->pagination->count = $this->model->countItems('Pair\Models\Locale');
 		
 		// adds translated line count and percentage
 		$this->model->setLocalePercentage($locales);

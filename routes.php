@@ -5,7 +5,7 @@
  * create fake module names that route to real existing modules.
  */
 
-use Pair\Router;
+use Pair\Core\Router;
 
 Router::addRoute('/login', 'login', 'user');
 Router::addRoute('/logout', 'logout', 'user');

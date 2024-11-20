@@ -1,11 +1,11 @@
 <?php
 
-use Pair\Application;
-use Pair\Locale;
-use Pair\Model;
-use Pair\Module;
-use Pair\Plugin;
-use Pair\Utilities;
+use Pair\Core\Application;
+use Pair\Models\Locale;
+use Pair\Core\Model;
+use Pair\Models\Module;
+use Pair\Support\Plugin;
+use Pair\Support\Utilities;
 
 class ToolsModel extends Model {
 

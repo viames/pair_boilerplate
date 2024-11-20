@@ -1,0 +1,24 @@
+<?php
+
+use Pair\Core\View;
+use Pair\Html\Widget;
+
+class CrafterViewNewClass extends View {
+
+	public function render() {
+
+		$this->app->pageTitle = $this->lang('CRAFTER');
+
+		$widget = new Widget();
+		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
+
+		$widget = new Widget();
+		$this->app->sideMenuWidget = $widget->render('sideMenu');
+
+		$unmappedTables = $this->model->getUnmappedTables();
+
+		$this->assign('unmappedTables', $unmappedTables);
+
+	}
+
+}

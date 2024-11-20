@@ -1,31 +1,30 @@
 <?php
 
-$app = Pair\Application::getInstance();
+use Pair\Core\Application;
+
+$app = Application::getInstance();
 
 ?><!DOCTYPE html>
-<html lang="<?php print $this->langCode ?>">
+<html lang="<?php print $app->langCode ?>">
 	<head>
 		<base href="<?php print BASE_HREF ?>" />
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-		<title><?php print $this->pageTitle ?></title>
+		<title><?php print $app->pageTitle ?></title>
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-		<link rel="stylesheet" href="css/iziToast.min.css">
 		<link rel="stylesheet" href="css/simple-sidebar.css">
-		<link rel="stylesheet" href="css/custom.css">
-		<?php print $this->pageStyles ?>
+		<?php print $app->pageStyles ?>
     </head>
     <body>
         <div class="d-flex" id="wrapper">
             <!-- Sidebar-->
             <div class="border-end bg-white" id="sidebar-wrapper">
                 <div class="sidebar-heading border-bottom bg-light"><?php print PRODUCT_NAME ?></div>
-                <div class="list-group list-group-flush">
-					<?php print $this->sideMenuWidget ?>
-                </div>
+                <ul class="nav">
+                    <?php print $app->sideMenuWidget ?>
+                </ul>
             </div>
             <!-- Page content wrapper-->
             <div id="page-content-wrapper">
@@ -55,21 +54,16 @@ $app = Pair\Application::getInstance();
                 <div class="container-fluid">
 					<div id="messageArea"></div>
 					<h2><?php print $app->pageTitle ?></h2>
-					<?php print $this->breadcrumbWidget ?>
-					<?php print $this->pageContent ?>
-					<?php print $this->log ?>
+					<?php print $app->breadcrumbWidget ?>
+					<?php print $app->pageContent ?>
+					<?php print $app->log ?>
                 </div>
             </div>
         </div>
 		<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
-		<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
-		<script src="<?php print $this->templatePath ?>js/iziToast.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/pwstrength-bootstrap/2.1.1/pwstrength-bootstrap.min.js"></script>
-		<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>		<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 		<script src="js/simple-sidebar.js" type="text/javascript"></script>
-		<script src="js/custom.js" type="text/javascript"></script>
-		<?php print $this->pageScripts ?>
+		<?php print $app->pageScripts ?>
     </body>
 </html>

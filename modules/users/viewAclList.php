@@ -1,10 +1,10 @@
 <?php
 
-use Pair\Breadcrumb;
-use Pair\Group;
-use Pair\Router;
-use Pair\View;
-use Pair\Widget;
+use Pair\Core\Router;
+use Pair\Core\View;
+use Pair\Html\Breadcrumb;
+use Pair\Html\Widget;
+use Pair\Models\Group;
 
 class UsersViewAclList extends View {
 
@@ -16,17 +16,16 @@ class UsersViewAclList extends View {
 
 		$group = new Group($groupId);
 
-		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath($this->lang('GROUPS'), 'groups');
-		$breadcrumb->addPath('Gruppo ' . $group->name, 'groups/edit/' . $group->id);
-		$breadcrumb->addPath('Access list');
-		
+		Breadcrumb::path($this->lang('GROUPS'), 'groups');
+		Breadcrumb::path('Gruppo ' . $group->name, 'groups/edit/' . $group->id);
+		Breadcrumb::path('Access list');
+
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
-		
+
 		$widget = new Widget();
 		$this->app->sideMenuWidget = $widget->render('sideMenu');
-		
+
 		$this->app->pageTitle = $this->lang('ACCESS_LIST_OF_GROUP', $group->name);
 
 		$acl = $this->model->getAcl($group->id);

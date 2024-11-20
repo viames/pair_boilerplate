@@ -1,13 +1,15 @@
 <?php
 
-use Pair\Audit;
-use Pair\Controller;
-use Pair\Input;
-use Pair\Options;
-use Pair\Router;
-use Pair\Session;
-use Pair\Token;
-use Pair\User;
+use Pair\Core\Controller;
+use Pair\Core\Router;
+use Pair\Models\Audit;
+use Pair\Models\Session;
+use Pair\Models\Token;
+use Pair\Models\User;
+use Pair\Orm\ActiveRecord;
+use Pair\Support\Post;
+use Pair\Support\Options;
+use Pair\Support\Upload;
 
 class ApiController extends Controller {
 	
@@ -34,13 +36,20 @@ class ApiController extends Controller {
 		sleep(3);
 		$name = substr($name, 0, -6);
 		$this->sendError(21);
-		
+	}
+
+	/**
+	 * Set the Bearer token.
+	 */
+	public function setBearerToken(string $bearerToken): void {
+
+		$this->bearerToken = $bearerToken;
 	}
 
 	/**
 	 * Set the valid token.
 	 */
-	public function setToken(Token $token) {
+	public function setToken(Token $token): void {
 		
 		$this->token = $token;
 		
@@ -57,12 +66,13 @@ class ApiController extends Controller {
 
 	/**
 	 * Do login and send session ID if valid.
+	 * POST /login
 	 */
 	public function loginAction(): void {
 		
-		$username = Input::getTrim('username');
-		$password = Input::getTrim('password');
-		$timezone = Input::getTrim('timezone');
+		$username = Post::trim('username');
+		$password = Post::trim('password');
+		$timezone = Post::trim('timezone');
 		
 		if ($username and $password) {
 	
@@ -73,24 +83,25 @@ class ApiController extends Controller {
 				$data = new stdClass();
 				$data->sessionId = $result->sessionId;
 				$this->sendData($data);
-				
+
 			} else {
-				
+
 				sleep(3);
 				$this->sendError(22);
-				
+
 			}
-				
+
 		} else {
-			
+
 			$this->sendError(20);
-						
+
 		}
-		
+
 	}
-	
+
 	/**
 	 * Do logout and delete session ID.
+	 * GET /logout
 	 */
 	public function logoutAction(): void {
 	
@@ -110,33 +121,57 @@ class ApiController extends Controller {
 	
 	/**
 	 * Sends a JSON object with user name and instance name by user SID.
+	 * Method for users access only.
+	 * GET /getUserInfo
 	 */
-	public function getUserInformationsAction() {
+	public function getUserInformationsAction(): void {
 		
-		$this->checkSession();
+		$user = $this->getUser();
 		
-		if (!Router::get('sid')) {
-			$this->sendError('This API method requires an user login');
+		if (is_null($user)) {
+			$this->sendError(25); // user privileges
 		}
 
-		$user		= new User($this->session->idUser);
-		$group		= new Group($user->groupId);
-		$locale		= new Locale($user->localeId);
-		
 		$data = new stdClass();
+
 		$data->name		= $user->name;
 		$data->surname	= $user->surname;
-		$data->fullname	= $user->fullName;
 		$data->username = $user->username;
-		$data->group	= $group->name;
-		$data->locale	= $locale->englishName;
-		$data->email	= $user->email;
+		$data->group	= $user->getGroup()->name;
+		$data->locale	= $user->getLocale()->getLanguage()->englishName;
 		$data->timezone	= $user->tzName;
+		$data->enabled	= $user->enabled;
+		$data->email	= $user->email;
 		
 		$this->sendData($data);
 		
 	}
-	
+
+	public function deleteAccountAction(): void {
+
+		$user = $this->getUser();
+
+		if (!$user) {
+			$this->sendError(25); // user privileges
+		}
+
+		$user->username	= '';
+		$user->name		= '';
+		$user->surname	= '';
+		$user->email	= NULL;
+		$user->enabled	= FALSE;
+		$user->pwReset	= NULL;
+
+		if (!$user->store()) {
+			$this->sendError(2, [$user->getLastError()]); // unexpected error
+		}
+
+		// TODO eliminare la sessione
+		//Session::current();
+
+		$this->sendSuccess();
+	}
+
 	/**
 	 * Restituisce l’oggetto JSON inviato allo stream di input.
 	 */
@@ -146,8 +181,10 @@ class ApiController extends Controller {
 		//$content = file_get_contents("php://input");
 
 		// make sure that it is a POST request and application/json content type
-		if (!isset($_SERVER['REQUEST_METHOD']) or 'POST'!=strtoupper($_SERVER['REQUEST_METHOD']) or
-			!isset($_SERVER['CONTENT_TYPE']) or 'application/json'!=$_SERVER['CONTENT_TYPE']) {
+		if (
+			!isset($_SERVER['REQUEST_METHOD']) or 'POST' != strtoupper($_SERVER['REQUEST_METHOD']) or
+			!isset($_SERVER['CONTENT_TYPE']) or 'application/json' != $_SERVER['CONTENT_TYPE']
+		) {
 			$this->sendError(43); // application/json POST is expected
 			return NULL;
 		}
@@ -189,7 +226,6 @@ class ApiController extends Controller {
 	public function sendError(int $errorNumber, ?array $params=NULL): void {
 
 		$data = $this->model->getErrorData($errorNumber, $params);
-
 		$this->printOut($data);
 				
 	}

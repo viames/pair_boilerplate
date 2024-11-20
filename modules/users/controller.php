@@ -1,13 +1,13 @@
 <?php
 
-use Pair\Acl;
-use Pair\Audit;
-use Pair\Controller;
-use Pair\Group;
-use Pair\Input;
-use Pair\Options;
-use Pair\Router;
-use Pair\User;
+use Pair\Models\Acl;
+use Pair\Models\Audit;
+use Pair\Core\Controller;
+use Pair\Models\Group;
+use Pair\Support\Post;
+use Pair\Support\Options;
+use Pair\Core\Router;
+use Pair\Models\User;
 
 class UsersController extends Controller {
 
@@ -29,8 +29,8 @@ class UsersController extends Controller {
 		
 		$userField = PAIR_AUTH_BY_EMAIL ? 'email' : 'username';
 		
-		$username = strtolower(Input::getTrim($userField));
-		$password = Input::getTrim('password');
+		$username = strtolower(Post::trim($userField));
+		$password = Post::trim('password');
 		
 		// check on minimum password length
 		if (strlen($password) < Options::get('password_min')) {
@@ -47,13 +47,13 @@ class UsersController extends Controller {
 		$form = $this->model->getUserForm();
 
 		$newUser			= new User();
-		$newUser->name		= Input::getTrim('name');
-		$newUser->surname	= Input::getTrim('surname');
-		$newUser->email	= Input::getTrim('email') ? Input::getTrim('email') : NULL;
+		$newUser->name		= Post::trim('name');
+		$newUser->surname	= Post::trim('surname');
+		$newUser->email	= Post::trim('email') ? Post::trim('email') : NULL;
 		$newUser->username	= $username;
-		$newUser->enabled	= Input::getBool('enabled');
-		$newUser->localeId	= Input::getInt('localeId');
-		$newUser->groupId	= Input::getInt('groupId');
+		$newUser->enabled	= Post::bool('enabled');
+		$newUser->localeId	= Post::int('localeId');
+		$newUser->groupId	= Post::int('groupId');
 		$newUser->admin	= FALSE;
 		$newUser->faults	= 0;
 
@@ -77,7 +77,7 @@ class UsersController extends Controller {
 	
 		$user = $this->getRequestedUser();
 	
-		if (is_a($user, 'Pair\User') and $user->isLoaded()) {
+		if (is_a($user, 'Pair\Models\User') and $user->isLoaded()) {
 			$this->view = 'userEdit';
 		} else {
 			$this->view = 'userList';
@@ -93,7 +93,7 @@ class UsersController extends Controller {
 		// fall-back
 		$this->view = 'userList';
 	
-		$user	= new User(Input::getInt('id'));
+		$user	= new User(Post::int('id'));
 
 		// snapshot for Audit
 		$oldUser = clone $user;
@@ -118,8 +118,8 @@ class UsersController extends Controller {
 		
 		$userField = PAIR_AUTH_BY_EMAIL ? 'email' : 'username';
 		
-		$username = Input::getTrim($userField);
-		$password = Input::getTrim('password');
+		$username = Post::trim($userField);
+		$password = Post::trim('password');
 		
 		// check on password length
 		if (strlen($password) > 0 and strlen($password) < Options::get('password_min')) {
@@ -127,12 +127,12 @@ class UsersController extends Controller {
 			$this->app->redirect('users/userList');
 		}
 
-		$user->name		= Input::getTrim('name');
-		$user->surname	= Input::getTrim('surname');
-		$user->email	= Input::getTrim('email') ? Input::getTrim('email') : NULL;
+		$user->name		= Post::trim('name');
+		$user->surname	= Post::trim('surname');
+		$user->email	= Post::trim('email') ? Post::trim('email') : NULL;
 		$user->username	= $username;
-		$user->enabled	= Input::getBool('enabled');
-		$user->localeId	= Input::getInt('localeId');
+		$user->enabled	= Post::bool('enabled');
+		$user->localeId	= Post::int('localeId');
 
 		// if there’s a new password, set it
 		if ($password) {
@@ -182,8 +182,8 @@ class UsersController extends Controller {
 		$form = $this->model->getGroupForm();
 				
 		$group				= new Group();
-		$group->name		= Input::get('name');
-		$group->default		= Input::get('default', 'bool');
+		$group->name		= Post::get('name');
+		$group->default		= Post::get('default', 'bool');
 
 		if ($form->isValid() and $group->create()) {
 			$this->enqueueMessage($this->lang('GROUP_HAS_BEEN_CREATED',   $group->name));
@@ -211,19 +211,19 @@ class UsersController extends Controller {
 	 */
 	public function groupChangeAction() {
 
-		$group = new Group(Input::getInt('id'));
+		$group = new Group(Post::int('id'));
 				
 		$form = $this->model->getGroupForm();
 
-		$group->name = Input::get('name');
+		$group->name = Post::get('name');
 				
 		// if this group is default, it will stay
-		$group->default = $group->default ? 1 : Input::getBool('default');
+		$group->default = $group->default ? 1 : Post::bool('default');
 
 		if ($form->isValid() and $group->update(array('name', 'default'))) {
 
 			// updates related acl to default
-			$group->setDefaultAcl(Input::getInt('defaultAclId'));
+			$group->setDefaultAcl(Post::int('defaultAclId'));
 			
 			// notice only if group change
 			$this->enqueueMessage($this->lang('GROUP_HAS_BEEN_CHANGED', $group->name));
@@ -272,7 +272,7 @@ class UsersController extends Controller {
 
 	public function aclAddAction() {
 	
-		$groupId	= Input::getInt('groupId');
+		$groupId	= Post::int('groupId');
 		$group		= new Group($groupId);
 				 
 		foreach ($_POST['aclChecked'] as $c) {

@@ -1,15 +1,15 @@
 <?php
 
-use Pair\Form;
-use Pair\Model;
+use Pair\Html\Form;
+use Pair\Core\Model;
 
 class ModulesModel extends Model {
 	
 	public function getModuleForm() {
 	
 		$form = new Form();
-		$form->addControlClass('form-control');
-		$form->addInput('package')->setType('file')->setRequired();
+		$form->classForControls('form-control');
+		$form->file('package')->required();
 		return $form;
 	
 	}

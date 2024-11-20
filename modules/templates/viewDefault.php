@@ -1,9 +1,9 @@
 <?php
 
-use Pair\Application;
-use Pair\Options;
-use Pair\View;
-use Pair\Widget;
+use Pair\Core\Application;
+use Pair\Support\Options;
+use Pair\Core\View;
+use Pair\Html\Widget;
 
 class TemplatesViewDefault extends View {
 
@@ -17,7 +17,7 @@ class TemplatesViewDefault extends View {
 		$widget = new Widget();
 		$this->app->sideMenuWidget = $widget->render('sideMenu');
 		
-		$templates = $this->model->getActiveRecordObjects('Pair\Template', 'name');
+		$templates = $this->model->getActiveRecordObjects('Pair\Models\Template', 'name');
 		
 		// if development mode is switched on, hide the delete button
 		$devMode = (Application::isDevelopmentHost() and $this->app->currentUser->admin) ? TRUE : FALSE;

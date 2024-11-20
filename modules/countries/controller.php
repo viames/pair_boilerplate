@@ -1,10 +1,10 @@
 <?php
 
-use Pair\Breadcrumb;
-use Pair\Controller;
-use Pair\Country;
-use Pair\Input;
-use Pair\Router;
+use Pair\Html\Breadcrumb;
+use Pair\Core\Controller;
+use Pair\Core\Router;
+use Pair\Models\Country;
+use Pair\Support\Post;
  		
 class CountriesController extends Controller {
 
@@ -17,7 +17,7 @@ class CountriesController extends Controller {
 	/**
 	 * Check if is requested to apply an alpha filter.
 	 */
-	public function defaultAction() {
+	public function defaultAction(): void {
 		
 		if (Router::get(0)) {
 			$this->app->setPersistentState('countriesAlphaFilter', Router::get(0));
@@ -30,7 +30,7 @@ class CountriesController extends Controller {
 	/**
 	 * Add a new object.
 	 */
-	public function addAction() {
+	public function addAction(): void {
 	
 		$country = new Country();
 		$country->populateByRequest();
@@ -54,9 +54,9 @@ class CountriesController extends Controller {
 	/**
 	 * Show form for edit a Country object.
 	 */
-	public function editAction() {
+	public function editAction(): void {
 	
-		$country = $this->getObjectRequestedById('Pair\Country');
+		$country = $this->getObjectRequestedById('Pair\Models\Country');
 	
 		$this->view = $country ? 'edit' : 'default';
 	
@@ -65,9 +65,9 @@ class CountriesController extends Controller {
 	/**
 	 * Modify a Country object.
 	 */
-	public function changeAction() {
+	public function changeAction(): void {
 
-		$country = new Country(Input::get('id'));
+		$country = new Country(Post::get('id'));
 		$country->populateByRequest();
 
 		// apply the update
@@ -99,9 +99,9 @@ class CountriesController extends Controller {
 	/**
 	 * Delete a Country object.
 	 */
-	public function deleteAction() {
+	public function deleteAction(): void {
 
-	 	$country = $this->getObjectRequestedById('Pair\Country');
+	 	$country = $this->getObjectRequestedById('Pair\Models\Country');
 
 		// execute deletion
 		$result = $country->delete();

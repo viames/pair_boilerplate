@@ -11,7 +11,7 @@ This base project allows a fast start to develop small to medium PHP application
 With the addition of a few files more, here provided as sample, and an initial database structure, your web project will be up and running in a breeze.
 
 ### Features
-This basic project manages users authentication, creates new custom ActiveRecord classes and [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) modules starting from a DB table by a magic module named `developer`, all thru a friendly route logic.
+This basic project manages users authentication, creates new custom ActiveRecord classes and [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) modules starting from a DB table by a magic module named `crafter`, all thru a friendly route logic.
 Also it acts as REST API server with oAuth2 authentication support.
 
 ## System Setup
@@ -24,8 +24,8 @@ Also it acts as REST API server with oAuth2 authentication support.
 
 ```apache
 <Directory /var/www/html>
-Options Indexes FollowSymLinks
-AllowOverride None
+	Options Indexes FollowSymLinks
+	AllowOverride None
 </Directory>
 ```
 
@@ -113,7 +113,7 @@ The project is ready to accept login and will let you manage users.
 
 #### 3. Expand it according to your needs
 
-Create additional InnoDB tables for database of your project and set the foreign keys properly, these are useful for getting the most out of [ActiveRecord](https://github.com/viames/pair/wiki/ActiveRecord). Then start the built-in [Developer module](https://github.com/viames/pair_boilerplate/wiki/Developer), which will allow you to create a complete CRUD and class module for each of your custom tables.
+Create additional InnoDB tables for database of your project and set the foreign keys properly, these are useful for getting the most out of [ActiveRecord](https://github.com/viames/pair/wiki/ActiveRecord). Then start the built-in [Crafter module](https://github.com/viames/pair_boilerplate/wiki/Developer), which will allow you to create a complete CRUD and class module for each of your custom tables.
 
 #### 4. Customize the template
 
@@ -205,9 +205,9 @@ class UserViewLogin extends View {
 }
 ```
 
-### `developer` module
+### `crafter` module
 
-For the simplified development of a basic module with all CRUD functions, the `developer` module is available. This module scans the database for tables not yet associated with a module and automatically generates the code to manage that table.
+For the simplified development of a basic module with all CRUD functions, the `crafter` module is available. This module scans the database for tables not yet associated with a module and automatically generates the code to manage that table.
 
 For the module to work effectively and for CRUD data to be well-structured, it is necessary to perfectly type the fields of the object table and connect it to the other tables via foreign key relationships.
 
@@ -276,11 +276,11 @@ Always and only use the tab with a size of 4 spaces each for cpon files with the
 In inline instructions, avoid PHP abbreviated tags. For consistency with pre-existing code, use `print` instead of `echo`.
 
 ```php
-// correct
+// preferable
 <?php print $var ?>
 
-// incorrect
-<? print $var ?>
+// avoid
+<? print $var; ?>
 ```
 
 #### Comments

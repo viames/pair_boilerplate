@@ -1,22 +1,22 @@
 <?php
 
-use Pair\Controller;
-use Pair\Input;
-use Pair\Module;
-use Pair\Router;
-use Pair\Rule;
+use Pair\Core\Controller;
+use Pair\Core\Router;
+use Pair\Models\Module;
+use Pair\Models\Rule;
+use Pair\Support\Post;
 
 class RulesController extends Controller {
 
 	/**
 	 * Adds a new object.
 	 */
-	public function addAction() {
+	public function addAction(): void {
 
 		// get input value
-		$moduleId   = Input::get('moduleId', 'int');
-		$action		= Input::get('actionField') ? Input::get('actionField') : NULL;
-		$adminOnly  = Input::get('adminOnly', 'bool');
+		$moduleId   = Post::get('moduleId', 'int');
+		$action		= Post::get('actionField') ? Post::get('actionField') : NULL;
+		$adminOnly  = Post::get('adminOnly', 'bool');
 
 		$rule = Rule::getRuleModuleName($moduleId, $action, $adminOnly);
 
@@ -41,16 +41,16 @@ class RulesController extends Controller {
 
 		}  else {
 			
-			$this->enqueueError($this->lang('RULE_EXISTS', [$rule->moduleName, $rule->ruleAction]));
+			$this->enqueueError($this->lang('RULE_EXISTS', array($rule->moduleName, $rule->ruleAction)));
 			$this->view = 'default';
 			
 		}
 
 	}
 
-	public function editAction() {
+	public function editAction(): void {
 
-		$rules = $this->getObjectRequestedById('Pair\Rule');
+		$rules = $this->getObjectRequestedById('Pair\Models\Rule');
 
 		if ($rules) {
 			$this->view = 'edit';
@@ -61,15 +61,15 @@ class RulesController extends Controller {
 	/**
 	 * Modify or delete an object.
 	 */
-	public function changeAction() {
+	public function changeAction(): void {
 
 		$this->view = 'default';
-		$rule = new Rule(Input::get('id'));
+		$rule = new Rule(Post::get('id'));
 
 		// get input value
-		$moduleId   = Input::get('moduleId');
-		$action		= Input::get('actionField');
-		$adminOnly  = Input::get('adminOnly');
+		$moduleId   = Post::get('moduleId');
+		$action		= Post::get('actionField');
+		$adminOnly  = Post::get('adminOnly');
 
 		// checks if record already exists
 		$checkRule = Rule::getRuleModuleName($moduleId, $action, $adminOnly);
@@ -80,20 +80,16 @@ class RulesController extends Controller {
 		// if nothing found or record has the same ID
 		if (!$checkRule) {
 
-			$rule->moduleId  = Input::get('moduleId');
-			$rule->action	 = Input::get('actionField');
-			$rule->adminOnly = Input::get('adminOnly', 'bool');
+			$rule->moduleId  = Post::get('moduleId');
+			$rule->action	 = Post::get('actionField');
+			$rule->adminOnly = Post::get('adminOnly', 'bool');
 
-			if ($rule->update()) {
+			if ($rule->store()) {
 				$this->enqueueMessage($this->lang('RULE_HAS_BEEN_CHANGED_SUCCESSFULLY', $module->name));
-				$this->redirect('rules');
 			}
 
 		} else {
-			
 			$this->enqueueError($this->lang('RULE_EDIT_EXISTS',array($module->name,$checkRule->ruleAction)));
-			$this->view = 'default';
-			
 		}
 
 	}
@@ -101,18 +97,17 @@ class RulesController extends Controller {
 	/**
 	 * Delete an object.
 	 */
-	public function deleteAction() {
+	public function deleteAction(): void {
 		
 		$rule = new Rule(Router::get(0));
-		$moduleName = $rule->getModule()->name;
 		
 		if ($rule->delete()) {
-			$this->enqueueMessage($this->lang('RULE_HAS_BEEN_DELETED_SUCCESSFULLY', $moduleName));
-			$this->app->redirect('rules/default');
+			$this->enqueueMessage($this->lang('RULE_HAS_BEEN_DELETED_SUCCESSFULLY'));
 		} else {
 			$this->enqueueError($this->lang('ERROR_DELETING_RULES'));
-			$this->view = 'default';
 		}
+
+		$this->app->redirect('rules/default');
 			
 	}
 

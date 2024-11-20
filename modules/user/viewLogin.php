@@ -1,6 +1,6 @@
 <?php
 
-use Pair\View;
+use Pair\Core\View;
 
 class UserViewLogin extends View {
 

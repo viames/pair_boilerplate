@@ -1,9 +1,8 @@
 <?php
 
-use Pair\Database;
-use Pair\Form;
-use Pair\Model;
-use Pair\Module;
+use Pair\Html\Form;
+use Pair\Core\Model;
+use Pair\Models\Module;
 
 class RulesModel extends Model {
 
@@ -12,16 +11,19 @@ class RulesModel extends Model {
 	 *
 	 * @return array
 	 */
-	public function getAclModelRules(): array {
+	public function getAclModelRules() {
 
 		$query =
 			' SELECT r.*, m.name '.
-			' FROM `rules` as r '.
-			' INNER JOIN `modules` as m ON m.id = r.module_id '.
+			' FROM rules as r '.
+			' INNER JOIN modules as m ON m.id = r.module_id '.
 			' ORDER BY name ASC ' .
 			' LIMIT ' . $this->pagination->start . ', ' . $this->pagination->limit;
 
-		return Database::load($query, []);
+		$this->db->setQuery($query);
+		$modules = $this->db->loadObjectList();
+
+		return $modules;
 
 	}
 
@@ -30,12 +32,12 @@ class RulesModel extends Model {
 	 *
 	 * @return	int
 	 */
-	public function countListItems() {
+	public function countModules() {
 
 		$query =
 			' SELECT COUNT(*) '.
-			' FROM `rules` as r '.
-			' INNER JOIN `modules` as m ON m.id = r.module_id ';
+			' FROM rules as r '.
+			' INNER JOIN modules as m ON m.id = r.module_id ';
 
 		$this->db->setQuery($query);
 		return (int)$this->db->loadResult();
@@ -49,16 +51,15 @@ class RulesModel extends Model {
 	 */ 
 	public function getRulesForm() {
 		
-		$modules = Module::getAllObjects(NULL, ['name']);
-
+		$modules = Module::getAllObjects(NULL, array('name'));
+		
 		$form = new Form();
-		$form->addControlClass('form-control');
+		$form->classForControls('form-control');
 			
-		$form->addInput('id')->setType('hidden');
-		$form->addSelect('moduleId')->setListByObjectArray($modules, 'id', 'name')->setRequired()
-			->addClass('default-select2');
-		$form->addInput('actionField');
-		$form->addInput('adminOnly')->setType('bool');
+		$form->hidden('id');
+		$form->select('moduleId')->options($modules, 'id', 'name')->required();
+		$form->text('actionField');
+		$form->checkbox('adminOnly')->class('switchery');
 		
 		return $form;
 		

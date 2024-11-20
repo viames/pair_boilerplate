@@ -45,7 +45,7 @@ if (count($this->rules)) {
 
 } else {
 
-	Pair\Utilities::printNoDataMessageBox();
+	Pair\Support\Utilities::printNoDataMessageBox();
 
 }
 

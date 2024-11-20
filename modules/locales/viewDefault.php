@@ -1,22 +1,21 @@
 <?php
 
-use Pair\Router;
-use Pair\View;
-use Pair\Widget;
+use Pair\Core\Router;
+use Pair\Core\View;
+use Pair\Html\Widget;
 
 class LocalesViewDefault extends View {
 
 	public function render() {
 
-		$this->app->pageTitle		= $this->lang('LOCALES');
-		$this->app->activeMenuItem	= 'locales';
+		$this->app->pageTitle = $this->lang('LOCALES');
 
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
-		
+
 		$widget = new Widget();
 		$this->app->sideMenuWidget = $widget->render('sideMenu');
-		
+
 		$locales = $this->model->getLocales();
 
 		$this->pagination->count = $this->model->countListItems();

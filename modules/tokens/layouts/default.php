@@ -1,8 +1,4 @@
-<?php
-
-use Pair\Utilities;
-
-?><div class="row">
+<div class="row">
 	<div class="col-lg-12">
 		<div class="card">
 			<div class="card-body">
@@ -26,8 +22,8 @@ use Pair\Utilities;
 								<td><?php $o->printHtml('description') ?></td>
 								<td class="text-center"><?php $o->printHtml('enabled') ?></td>
 								<td class="text-center"><?php print htmlspecialchars($o->getRelated('createdBy')->getFullName()) ?></td>
-								<td class="text-center"><?php print Utilities::getTimeago($o->creationDate) ?></td>
-								<td class="text-center"><?php print Utilities::getTimeago($o->lastUse) ?></td>
+								<td class="text-center"><?php print Pair\Support\Utilities::getTimeago($o->creationDate) ?></td>
+								<td class="text-center"><?php print Pair\Support\Utilities::getTimeago($o->lastUse) ?></td>
 							</tr>
 							<?php } ?>
 						</tbody>
@@ -38,7 +34,7 @@ use Pair\Utilities;
 
 				} else {
 						
-					Utilities::printNoDataMessageBox();
+					Pair\Support\Utilities::printNoDataMessageBox();
 					
 				}
 				

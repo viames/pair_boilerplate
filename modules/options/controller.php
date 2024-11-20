@@ -1,8 +1,8 @@
 <?php
 
-use Pair\Controller;
-use Pair\Input;
-use Pair\Options;
+use Pair\Core\Controller;
+use Pair\Support\Post;
+use Pair\Support\Options;
 
 class OptionsController extends Controller {
 	
@@ -15,7 +15,7 @@ class OptionsController extends Controller {
 	/**
 	 * Saves option values.
 	 */
-	public function saveAction() {
+	public function saveAction(): void {
 
 		$options = Options::getInstance();
 		
@@ -27,7 +27,7 @@ class OptionsController extends Controller {
 				$error = TRUE;
 			}
 			
-			Options::set($option->name, Input::get($option->name, $option->type));
+			Options::set($option->name, Post::get($option->name, $option->type));
 			
 		}
 		

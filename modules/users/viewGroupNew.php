@@ -1,9 +1,9 @@
 <?php
 
-use Pair\Breadcrumb;
-use Pair\Group;
-use Pair\View;
-use Pair\Widget;
+use Pair\Html\Breadcrumb;
+use Pair\Models\Group;
+use Pair\Core\View;
+use Pair\Html\Widget;
 
 class UsersViewGroupNew extends View {
 
@@ -17,8 +17,7 @@ class UsersViewGroupNew extends View {
 		$this->app->pageTitle = $this->lang('NEW_GROUP');
 		$this->app->activeMenuItem = 'groups';
 		
-		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath($this->lang('GROUPS'), 'groups');
+		Breadcrumb::path($this->lang('GROUPS'), 'groups');
 		
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
@@ -33,10 +32,10 @@ class UsersViewGroupNew extends View {
 		$isDefault		= $defaultGroup ? 0 : 1;
 
 		$form = $this->model->getGroupForm();
-		$form->getControl('default')->setValue($isDefault);
-		$form->getControl('defaultAclId')->setRequired()
-			->setListByObjectArray($rules, 'id', 'moduleAction')
-			->prependEmpty('- Seleziona -');
+		$form->control('default')->value($isDefault);
+		$form->control('defaultAclId')->required()
+			->options($rules, 'id', 'moduleAction')
+			->empty('- Seleziona -');
 
 		$this->assign('form', $form);
 		
