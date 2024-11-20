@@ -1,9 +1,9 @@
 <?php
 
-use Pair\Breadcrumb;
-use Pair\Controller;
-use Pair\Input;
-use Pair\Token;
+use Pair\Html\Breadcrumb;
+use Pair\Core\Controller;
+use Pair\Models\Token;
+use Pair\Support\Post;
  		
 class TokensController extends Controller {
 
@@ -16,27 +16,27 @@ class TokensController extends Controller {
 	/**
 	 * Add a new object.
 	 */
-	public function addAction() {
+	public function addAction(): void {
 	
 		$token = new Token();
 		$token->populateByRequest();
 		
 		$token->createdBy = $this->app->currentUser->id;
-		$token->creationDate = new DateTime(NULL, $this->app->currentUser->getDateTimeZone());
+		$token->creationDate = new DateTime('now', $this->app->currentUser->getDateTimeZone());
 		$token->lastUse = NULL;
 
 		// create the new record
 		$result = $token->store();
 		
 		if ($result) {
-			$this->enqueueMessage($this->lang('TOKEN_HAS_BEEN_CREATED'));
+			$this->toast($this->lang('TOKEN_HAS_BEEN_CREATED'));
 			$this->redirect('tokens');
 		} else {
 			$msg = $this->lang('TOKEN_HAS_NOT_BEEN_CREATED') . ':';
 			foreach ($token->getErrors() as $error) {
 				$msg .= " \n" . $error;
 			}
-			$this->enqueueError($msg);
+			$this->toastError($msg);
 			$this->view = 'default';
 		}					
 
@@ -45,9 +45,9 @@ class TokensController extends Controller {
 	/**
 	 * Show form for edit a Token object.
 	 */
-	public function editAction() {
+	public function editAction(): void {
 	
-		$token = $this->getObjectRequestedById('Pair\Token');
+		$token = $this->getObjectRequestedById('Pair\Models\Token');
 	
 		$this->view = $token ? 'edit' : 'default';
 	
@@ -56,9 +56,9 @@ class TokensController extends Controller {
 	/**
 	 * Modify a Token object.
 	 */
-	public function changeAction() {
+	public function changeAction(): void {
 
-		$token = new Token(Input::get('id'));
+		$token = new Token(Post::get('id'));
 		$token->populateByRequest();
 		
 		$token->createdBy = $this->app->currentUser->id;
@@ -71,7 +71,7 @@ class TokensController extends Controller {
 		if ($result) {
 
 			// notify the change and redirect
-			$this->enqueueMessage($this->lang('TOKEN_HAS_BEEN_CHANGED_SUCCESFULLY'));
+			$this->toast($this->lang('TOKEN_HAS_BEEN_CHANGED_SUCCESFULLY'));
 			$this->redirect('tokens');
 
 		} else {
@@ -81,7 +81,7 @@ class TokensController extends Controller {
 
 			if (count($errors)) { 
 				$message = $this->lang('ERROR_ON_LAST_REQUEST') . ": \n" . implode(" \n", $errors);
-				$this->enqueueError($message);
+				$this->toastError($message);
 				$this->view = 'default';
 			} else {
 				$this->redirect('tokens');
@@ -94,16 +94,16 @@ class TokensController extends Controller {
 	/**
 	 * Delete a Token object.
 	 */
-	public function deleteAction() {
+	public function deleteAction(): void {
 
-	 	$token = $this->getObjectRequestedById('Pair\Token');
+	 	$token = $this->getObjectRequestedById('Pair\Models\Token');
 
 		// execute deletion
 		$result = $token->delete();
 
 		if ($result) {
 
-			$this->enqueueMessage($this->lang('TOKEN_HAS_BEEN_DELETED_SUCCESFULLY'));
+			$this->toast($this->lang('TOKEN_HAS_BEEN_DELETED_SUCCESFULLY'));
 			$this->redirect('tokens');
 
 		} else {
@@ -113,10 +113,10 @@ class TokensController extends Controller {
 
 			if (count($errors)) { 
 				$message = $this->lang('ERROR_DELETING_TOKEN') . ": \n" . implode(" \n", $errors);
-				$this->enqueueError($message);
+				$this->toastError($message);
 				$this->view = 'default';
 			} else {
-				$this->enqueueError($this->lang('ERROR_ON_LAST_REQUEST'));
+				$this->toastError($this->lang('ERROR_ON_LAST_REQUEST'));
 				$this->redirect('tokens');
 			}
 

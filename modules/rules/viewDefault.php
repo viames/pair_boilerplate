@@ -1,7 +1,7 @@
 <?php
-		
-use Pair\View;
-use Pair\Widget;
+
+use Pair\Core\View;
+use Pair\Html\Widget;
 
 class RulesViewDefault extends View {
 
@@ -11,19 +11,19 @@ class RulesViewDefault extends View {
 
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
-		
+
 		$widget = new Widget();
 		$this->app->sideMenuWidget = $widget->render('sideMenu');
-		
-		$this->pagination->count = $this->model->countListItems();
+
+		$this->pagination->count = $this->model->countModules();
 
 		// get all rules
 		$rules = $this->model->getAclModelRules();
 
 		foreach ($rules as $rule) {
-			$rule->adminIcon = $rule->admin_only ? '<i class="fa fa-check fa-lg text-success"></i>' : '';
+			$rule->adminIcon = $rule->admin_only ? '<i class="fa fa-check text-success fa-lg"></i>' : '';
 		}
-		
+
 		$this->assign('rules', $rules);
 
 	}

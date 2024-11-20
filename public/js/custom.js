@@ -1,110 +1,67 @@
-(function ($) {
+/**
+ * Set a cookie for the active filter.
+ * @param {string} name
+ * @param {string} value
+ */
+function setPersistentState(name, value) {
 
-    // extended functions
-    $.extend(			
+	let cookieName = cookiePrefix + name.charAt(0).toUpperCase() + name.slice(1);
 
-        /**
-         * Display a javascript message box by using iziToast
-         *
-         * @param	string	Message title.
-         * @param	string	Message text.
-         * @param	string	Type (info, success, warning, error)
-         */
-        $.showMessage = function(title, message, type = 'info') {
-			
-        	if ('info'!=type && 'success'!=type && 'warning'!=type && 'error'!=type) {
-        		type = 'info';
-        	}
-        	
-        	iziToast[type]({title: title, message: message});
-        	
-        },
-        	
-        /**
-         * Sets the event list visible or hidden.
-         */
-        $.toggleLogEvents = function() {
-
-        	if ($('#log .events').is(':visible')) {
-        		$('#log .events').hide().addClass('hidden');
-        		$('#logShowEvents').removeClass('active').html('Show <span class="fa fa-caret-down"></span>');
-        		Cookies.set('LogShowEvents', 0, {path: '/'});
-        	} else {
-        		$('#log .events').show().removeClass('hidden');
-        		$('#logShowEvents').addClass('active').html('Hide <span class="fa fa-caret-up"></span>');
-        		Cookies.set('LogShowEvents', 1, {path: '/'});
-        		$('html, body').stop().animate({'scrollTop': $('#log .events').offset().top-60}, 200, 'swing');
-        	}
-        	
-        },
-
-        /**
-         * Sets the queries visible or hidden in log area.
-         */
-        $.toggleLogQueries = function() {
-
-        	var menuItem = $('#log .head .item.database');
-        	
-        	if (menuItem.hasClass('active')) {
-        		menuItem.removeClass('active');
-        		$('#log .query').addClass('hidden');
-        		Cookies.set('LogShowQueries', 0, {path: '/'});
-        	} else {
-        		menuItem.addClass('active');
-        		$('#log .query').removeClass('hidden');
-        		Cookies.set('LogShowQueries', 1, {path: '/'});
-        		if ($('#log .events').is(':hidden')) {
-        			$('#logShowEvents').trigger('click');
-        		}
-        	}
-        	
-        },
-
-        $.addAjaxLog = function(log) {
-        	$('#log > .events').append(log);
-        }
-		
-    );
-
-})(jQuery);
-
-$(document).ready(function() {
-	
-    $("#menu-toggle").click(function(e) {
-        e.preventDefault();
-        $("#wrapper").toggleClass("toggled");
-    });
-
-    /**
-     * Listener for click on log showEvents button.
-     */
-	$('#logShowEvents').click(function() {
-		$.toggleLogEvents();
+	Cookies.set(cookieName, JSON.stringify(value), {
+		path: '/',
+		sameSite: 'strict'
 	});
-	
+
+}
+
+function unsetPersistentState(name) {
+
+	let cookieName = cookiePrefix + name.charAt(0).toUpperCase() + name.slice(1);
+
+	Cookies.remove(cookieName, {
+		path: '/',
+		sameSite: 'strict'
+	});
+
+}
+
+$(document).ready(function () {
+
 	/**
-	 * Show events when clicked the warning item in the log header
+	 * Show a modal dialog with a waiting message.
 	 */
-	$('#log .head a.item.warning').click(function() {
-		if ($('#log .events').is(':hidden')) {
-			$('#logShowEvents').trigger('click');
+	$('.modal-processing').click(function () {
+		Swal.fire({
+			title: "Operazione in corso",
+			text: "Si prega di attendere...",
+			icon: 'info',
+			showConfirmButton: false,
+			allowOutsideClick: false
+		});
+	});
+
+	/**
+	 * Insert a random string in the password field when the button is clicked.
+	 */
+	$('button.password-generator').click(function () {
+		var elements = document.getElementsByClassName('pwstrength');
+		var newPw = createRandomString(10);
+		elements[0].value = newPw; // campo in chiaro
+		elements[1].value = newPw; // campo con asterischi
+	});
+
+	/**
+	 * Create a string with random characters of desired length.
+	 * @param length
+	 * @returns
+	 */
+	function createRandomString(length) {
+		var text = '';
+		var possible = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789-.";
+		for (var i = 0; i < length; i++) {
+			text += possible.charAt(Math.floor(Math.random() * possible.length));
 		}
-	});
-	
-	/**
-	 * Show events when clicked the error item in the log header
-	 */
-	$('#log .head a.item.error').click(function() {
-		if ($('#log .events').is(':hidden')) {
-			$('#logShowEvents').trigger('click');
-		}
-	});
-
-	/**
-	 * Listener for click on log showQueries item.
-	 */
-	$("#log .head .item.database").click(function() {
-		$.toggleLogQueries();
-	});
+		return text;
+	}
 
 });

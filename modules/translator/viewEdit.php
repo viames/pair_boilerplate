@@ -1,19 +1,24 @@
 <?php
 
-use Pair\Breadcrumb;
-use Pair\Form;
-use Pair\Locale;
-use Pair\Module;
-use Pair\Router;
-use Pair\View;
-use Pair\Widget;
+use Pair\Html\Breadcrumb;
+use Pair\Html\Form;
+use Pair\Models\Locale;
+use Pair\Models\Module;
+use Pair\Core\Router;
+use Pair\Core\View;
+use Pair\Html\Widget;
 
 class TranslatorViewEdit extends View {
 
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @see View::Render()
+	 */
 	public function render() {
 
 		$this->app->pageTitle = $this->lang('TRANSLATOR');
-				
+		
 		// build objects
 		$locale	= new Locale(Router::get(0));
 		
@@ -45,19 +50,19 @@ class TranslatorViewEdit extends View {
 		$defaultStrings	= $defaultLocale->readTranslation($module);
 
 		$form = new Form();
-		$form->addControlClass('form-control');
+		$form->classForControls('form-control');
 		
-		$form->addInput('locale')->setType('hidden')->setValue($locale->id);
-		$form->addInput('module')->setType('hidden')->setValue($module->id);
+		$form->hidden('locale')->value($locale->id);
+		$form->hidden('module')->value($module->id);
 		
 		foreach ($defaultStrings as $key=>$value) {
 		
-			$control = $form->addInput($key);
+			$control = $form->text($key);
 			
 			if (isset($strings[$key])) {
-				$control->setValue($strings[$key]);
+				$control->value($strings[$key]);
 			} else {
-				$control->addClass('text-danger');
+				$control->class('text-danger');
 			}
 			
 		}

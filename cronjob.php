@@ -1,10 +1,13 @@
 <?php
 
+// put cronjob in /etc/cron.d/ directory and provide the username to run the task every minute
+// * * * * * {username} php /dev/null /var/www/html/cronjob.php
+ 
 // avoid the casting of an incorrect type in the expected scalar
 declare(strict_types=1);
 
-use Pair\Application;
-use Pair\Schedule;
+use Pair\Core\Application;
+use Pair\Support\Schedule;
 
 // initialize composer
 require 'vendor/autoload.php';
@@ -12,16 +15,10 @@ require 'vendor/autoload.php';
 // start the Application
 $app = Application::getInstance();
 
-// percorso ai file temporanei
-define ('TEMP_PATH', APPLICATION_PATH . '/temp/');
-
 // initialize project classes
-require APPLICATION_PATH . '/classes/classLoader.php';
-
-// italian locale settings
-setlocale(LC_ALL, 'it_IT' . '.UTF-8');
+require 'classes/classLoader.php';
 
 $schedule = new Schedule();
 
-// task to execute everyday at 0:00
-//$schedule->command([MyClass::class, 'functionName'])->daily();
+// enter your scheduled operations after this line
+// e.g. $schedule->command([MyClass::class, 'method'], 'parameter')->everyMinute();

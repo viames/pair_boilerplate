@@ -1,5 +1,5 @@
 <?php
 
-use Pair\Model;
+use Pair\Core\Model;
 
 class OptionsModel extends Model {}

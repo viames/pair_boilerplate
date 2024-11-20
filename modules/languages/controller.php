@@ -1,24 +1,23 @@
 <?php
 
-use Pair\Breadcrumb;
-use Pair\Controller;
-use Pair\Input;
-use Pair\Language;
-use Pair\Router;
+use Pair\Html\Breadcrumb;
+use Pair\Core\Controller;
+use Pair\Core\Router;
+use Pair\Models\Language;
+use Pair\Support\Post;
  		
 class LanguagesController extends Controller {
 
 	protected function init() {
 		
-		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath($this->lang('LANGUAGES'), 'languages');
+		Breadcrumb::path($this->lang('LANGUAGES'), 'languages');
 		
 	}
 
 	/**
 	 * Check if is requested to apply an alpha filter.
 	 */
-	public function defaultAction() {
+	public function defaultAction(): void {
 		
 		if (Router::get(0)) {
 			$this->app->setPersistentState('languagesAlphaFilter', Router::get(0));
@@ -31,7 +30,7 @@ class LanguagesController extends Controller {
 	/**
 	 * Add a new object.
 	 */
-	public function addAction() {
+	public function addAction(): void {
 	
 		$language = new Language();
 		$language->populateByRequest();
@@ -39,14 +38,14 @@ class LanguagesController extends Controller {
 		$result = $language->store();
 		
 		if ($result) {
-			$this->enqueueMessage($this->lang('LANGUAGE_HAS_BEEN_CREATED'));
+			$this->toast($this->lang('LANGUAGE_HAS_BEEN_CREATED'));
 			$this->redirect('languages');
 		} else {
 			$msg = $this->lang('LANGUAGE_HAS_NOT_BEEN_CREATED') . ':';
 			foreach ($language->getErrors() as $error) {
 				$msg .= " \n" . $error;
 			}
-			$this->enqueueError($msg);
+			$this->toastError($msg);
 			$this->view = 'default';
 		}					
 
@@ -55,9 +54,9 @@ class LanguagesController extends Controller {
 	/**
 	 * Show form for edit a Language object.
 	 */
-	public function editAction() {
+	public function editAction(): void {
 	
-		$language = $this->getObjectRequestedById('Pair\Language');
+		$language = $this->getObjectRequestedById('Pair\Models\Language');
 	
 		$this->view = $language ? 'edit' : 'default';
 	
@@ -66,9 +65,9 @@ class LanguagesController extends Controller {
 	/**
 	 * Modify a Language object.
 	 */
-	public function changeAction() {
+	public function changeAction(): void {
 
-		$language = new Language(Input::get('id'));
+		$language = new Language(Post::get('id'));
 		$language->populateByRequest();
 
 		// apply the update
@@ -77,7 +76,7 @@ class LanguagesController extends Controller {
 		if ($result) {
 
 			// notify the change and redirect
-			$this->enqueueMessage($this->lang('LANGUAGE_HAS_BEEN_CHANGED_SUCCESFULLY'));
+			$this->toast($this->lang('LANGUAGE_HAS_BEEN_CHANGED_SUCCESFULLY'));
 			$this->redirect('languages');
 
 		} else {
@@ -87,7 +86,7 @@ class LanguagesController extends Controller {
 
 			if (count($errors)) { 
 				$message = $this->lang('ERROR_ON_LAST_REQUEST') . ": \n" . implode(" \n", $errors);
-				$this->enqueueError($message);
+				$this->toastError($message);
 				$this->view = 'default';
 			} else {
 				$this->redirect('languages');
@@ -100,7 +99,7 @@ class LanguagesController extends Controller {
 	/**
 	 * Delete a Language object.
 	 */
-	public function deleteAction() {
+	public function deleteAction(): void {
 
 		$language = $this->getObjectRequestedById('Language');
 
@@ -109,7 +108,7 @@ class LanguagesController extends Controller {
 
 		if ($result) {
 
-			$this->enqueueMessage($this->lang('LANGUAGE_HAS_BEEN_DELETED_SUCCESFULLY'));
+			$this->toast($this->lang('LANGUAGE_HAS_BEEN_DELETED_SUCCESFULLY'));
 			$this->redirect('languages');
 
 		} else {
@@ -119,10 +118,10 @@ class LanguagesController extends Controller {
 
 			if (count($errors)) { 
 				$message = $this->lang('ERROR_DELETING_LANGUAGE') . ": \n" . implode(" \n", $errors);
-				$this->enqueueError($message);
+				$this->toastError($message);
 				$this->view = 'default';
 			} else {
-				$this->enqueueError($this->lang('ERROR_ON_LAST_REQUEST'));
+				$this->toastError($this->lang('ERROR_ON_LAST_REQUEST'));
 				$this->redirect('languages');
 			}
 

@@ -3,19 +3,20 @@
 		<div class="card">
 			<div class="card-header">
 				<h4 class="card-title"><?php $this->_('LOCALES') ?></h4>
+			</div>
+			<div class="card-body">
 				<div class="list-filter">
 					<a href="locales/default/page-1"><?php $this->_('ALL') ?></a><?php
-				
 				foreach ($this->filter as $f) {
 					?><a href="<?php print $f->href ?>" class="<?php print ($f->active ? 'active' : '') ?>"><?php print $f->text ?></a><?php
 				}
 				
 				?>
 				</div>
-			</div>
-			<div class="card-body">
 				<hr>
-				<a href="locales/new" class="btn btn-primary"><i class="fa fa-plus"></i> <?php $this->_('NEW_LOCALE') ?></a>
+				<div style="overflow:hidden">
+					<a href="locales/new" class="btn btn-primary btn-sm float-right"><?php $this->_('NEW_LOCALE') ?></a>
+				</div>
 				<?php
 	
 				if (count($this->locales)) {
@@ -51,7 +52,7 @@
 						
 				} else {
 						
-					Pair\Utilities::printNoDataMessageBox();
+					Pair\Support\Utilities::printNoDataMessageBox();
 						
 				}
 			

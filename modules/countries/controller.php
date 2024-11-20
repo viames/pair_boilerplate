@@ -1,10 +1,10 @@
 <?php
 
-use Pair\Breadcrumb;
-use Pair\Controller;
-use Pair\Country;
-use Pair\Input;
-use Pair\Router;
+use Pair\Html\Breadcrumb;
+use Pair\Core\Controller;
+use Pair\Core\Router;
+use Pair\Models\Country;
+use Pair\Support\Post;
  		
 class CountriesController extends Controller {
 
@@ -17,7 +17,7 @@ class CountriesController extends Controller {
 	/**
 	 * Check if is requested to apply an alpha filter.
 	 */
-	public function defaultAction() {
+	public function defaultAction(): void {
 		
 		if (Router::get(0)) {
 			$this->app->setPersistentState('countriesAlphaFilter', Router::get(0));
@@ -30,7 +30,7 @@ class CountriesController extends Controller {
 	/**
 	 * Add a new object.
 	 */
-	public function addAction() {
+	public function addAction(): void {
 	
 		$country = new Country();
 		$country->populateByRequest();
@@ -38,14 +38,14 @@ class CountriesController extends Controller {
 		$result = $country->store();
 		
 		if ($result) {
-			$this->enqueueMessage($this->lang('COUNTRY_HAS_BEEN_CREATED'));
+			$this->toast($this->lang('COUNTRY_HAS_BEEN_CREATED'));
 			$this->redirect('countries');
 		} else {
 			$msg = $this->lang('COUNTRY_HAS_NOT_BEEN_CREATED') . ':';
 			foreach ($country->getErrors() as $error) {
 				$msg .= " \n" . $error;
 			}
-			$this->enqueueError($msg);
+			$this->toastError($msg);
 			$this->view = 'default';
 		}					
 
@@ -54,9 +54,9 @@ class CountriesController extends Controller {
 	/**
 	 * Show form for edit a Country object.
 	 */
-	public function editAction() {
+	public function editAction(): void {
 	
-		$country = $this->getObjectRequestedById('Pair\Country');
+		$country = $this->getObjectRequestedById('Pair\Models\Country');
 	
 		$this->view = $country ? 'edit' : 'default';
 	
@@ -65,9 +65,9 @@ class CountriesController extends Controller {
 	/**
 	 * Modify a Country object.
 	 */
-	public function changeAction() {
+	public function changeAction(): void {
 
-		$country = new Country(Input::get('id'));
+		$country = new Country(Post::get('id'));
 		$country->populateByRequest();
 
 		// apply the update
@@ -76,7 +76,7 @@ class CountriesController extends Controller {
 		if ($result) {
 
 			// notify the change and redirect
-			$this->enqueueMessage($this->lang('COUNTRY_HAS_BEEN_CHANGED_SUCCESFULLY'));
+			$this->toast($this->lang('COUNTRY_HAS_BEEN_CHANGED_SUCCESFULLY'));
 			$this->redirect('countries');
 
 		} else {
@@ -86,7 +86,7 @@ class CountriesController extends Controller {
 
 			if (count($errors)) { 
 				$message = $this->lang('ERROR_ON_LAST_REQUEST') . ": \n" . implode(" \n", $errors);
-				$this->enqueueError($message);
+				$this->toastError($message);
 				$this->view = 'default';
 			} else {
 				$this->redirect('countries');
@@ -99,16 +99,16 @@ class CountriesController extends Controller {
 	/**
 	 * Delete a Country object.
 	 */
-	public function deleteAction() {
+	public function deleteAction(): void {
 
-	 	$country = $this->getObjectRequestedById('Pair\Country');
+	 	$country = $this->getObjectRequestedById('Pair\Models\Country');
 
 		// execute deletion
 		$result = $country->delete();
 
 		if ($result) {
 
-			$this->enqueueMessage($this->lang('COUNTRY_HAS_BEEN_DELETED_SUCCESFULLY'));
+			$this->toast($this->lang('COUNTRY_HAS_BEEN_DELETED_SUCCESFULLY'));
 			$this->redirect('countries');
 
 		} else {
@@ -118,10 +118,10 @@ class CountriesController extends Controller {
 
 			if (count($errors)) { 
 				$message = $this->lang('ERROR_DELETING_COUNTRY') . ": \n" . implode(" \n", $errors);
-				$this->enqueueError($message);
+				$this->toastError($message);
 				$this->view = 'default';
 			} else {
-				$this->enqueueError($this->lang('ERROR_ON_LAST_REQUEST'));
+				$this->toastError($this->lang('ERROR_ON_LAST_REQUEST'));
 				$this->redirect('countries');
 			}
 

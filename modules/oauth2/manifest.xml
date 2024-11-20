@@ -1,0 +1,3 @@
+<?xml version="1.0"?>
+<!DOCTYPE xml>
+<manifest><plugin type="Module"><name>oauth2</name><folder>oauth2</folder><version>1.0</version><dateReleased>2021-05-31</dateReleased><appVersion>1.0</appVersion><options/><files><file>controller.php</file><file>model.php</file></files></plugin></manifest>

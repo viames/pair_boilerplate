@@ -1,9 +1,11 @@
 <?php
 
-use Pair\Database;
-use Pair\Form;
-use Pair\Locale;
-use Pair\Model;
+use Pair\Html\Form;
+use Pair\Core\Model;
+use Pair\Models\Country;
+use Pair\Models\Language;
+use Pair\Models\Locale;
+use Pair\Orm\Database;
 
 class LocalesModel extends Model {
 
@@ -19,7 +21,7 @@ class LocalesModel extends Model {
 		if ($alphaFilter) {
 			
 			// get a filtered list
-			$where  = ' WHERE la.`code` LIKE ?';
+			$where  = ' WHERE la.code LIKE ?';
 			$params = [$alphaFilter . '%'];
 			
 		} else {
@@ -60,7 +62,7 @@ class LocalesModel extends Model {
 				' FROM `locales` AS lo' .
 				' INNER JOIN `languages` AS la ON lo.language_id = la.id' . 
 				' WHERE la.code LIKE ?';
-			return Database::load($query, [$alphaFilter . '%'], PAIR_DB_COUNT);
+			return Database::load($query, $alphaFilter . '%', PAIR_DB_COUNT);
 			
 		} else {
 			
@@ -78,18 +80,20 @@ class LocalesModel extends Model {
 	 */ 
 	public function getLocaleForm() {
 
-		$languages = Pair\Language::getAllObjects(NULL, 'englishName');
-		$countries = Pair\Country::getAllObjects(NULL, 'englishName');
+		$languages = Language::getAllObjects(NULL, 'englishName');
+		$countries = Country::getAllObjects(NULL, 'englishName');
 		$form = new Form();
-		
-		$form->addControlClass('form-control');
-		
-		$form->addInput('id')->setType('hidden');
-		$form->addSelect('languageId')->setListByObjectArray($languages, 'id', 'englishName');
-		$form->addSelect('countryId')->setListByObjectArray($countries, 'id', 'englishName');
-		$form->addInput('officialLanguage')->setType('bool');
-		$form->addInput('defaultCountry')->setType('bool');
-		$form->addInput('appDefault')->setType('bool');
+			
+		$form->classForControls('form-control');
+			
+		$form->hidden('id');
+		$form->select('languageId')->options($languages, 'id', 'englishName')
+			->class('default-select2');
+		$form->select('countryId')->options($countries, 'id', 'englishName')
+			->class('default-select2');
+		$form->checkbox('officialLanguage')->class('switchery');
+		$form->checkbox('defaultCountry')->class('switchery');
+		$form->checkbox('appDefault')->class('switchery');
 		
 		return $form;
 		

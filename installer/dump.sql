@@ -48,7 +48,8 @@ VALUES
 	(15,15,1,0),
 	(16,16,1,0),
 	(17,17,1,0),
-	(18,18,1,0);
+	(18,18,1,0),
+	(19,19,1,0);
 
 /*!40000 ALTER TABLE `acl` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1063,6 +1064,24 @@ VALUES
 UNLOCK TABLES;
 
 --
+-- Table structure for table `migrations`
+--
+
+CREATE TABLE `migrations` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `file` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `query_index` int DEFAULT NULL,
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `affected_rows` int DEFAULT NULL,
+  `result` int DEFAULT NULL,
+  `created_at` timestamp NOT NULL,
+  `updated_at` timestamp NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `file` (`file`),
+  KEY `created_at` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
 -- Table structure for table `modules`
 --
 
@@ -1090,7 +1109,7 @@ LOCK TABLES `modules` WRITE;
 INSERT INTO `modules` (`id`, `name`, `version`, `date_released`, `app_version`, `installed_by`, `date_installed`)
 VALUES
 	(1,'api','1.0',NOW(),'1.0',1,NOW()),
-	(2,'developer','1.0',NOW(),'1.0',1,NOW()),
+	(2,'crafter','1.0',NOW(),'1.0',1,NOW()),
 	(3,'languages','1.0',NOW(),'1.0',1,NOW()),
 	(4,'modules','1.0',NOW(),'1.0',1,NOW()),
 	(5,'options','1.0',NOW(),'1.0',1,NOW()),
@@ -1106,7 +1125,8 @@ VALUES
 	(15,'tokens','1.0',NOW(),'1.0',1,NOW()),
 	(16,'audit','1.0',NOW(),'1.0',1,NOW()),
 	(17,'errorlogs','1.0',NOW(),'1.0',1,NOW()),
-	(18,'oauth2','1.0',NOW(),'1.0',1,NOW());
+	(18,'oauth2','1.0',NOW(),'1.0',1,NOW()),
+	(19,'migrations','1.0',NOW(),'1.0',1,NOW());
 
 /*!40000 ALTER TABLE `modules` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1212,7 +1232,11 @@ VALUES
 	(12,NULL,1,12),
 	(13,NULL,1,13),
 	(14,NULL,1,14),
-	(15,NULL,1,15);
+	(15,NULL,1,15),
+	(16,NULL,1,16),
+	(17,NULL,1,17),
+	(18,NULL,1,18),
+	(19,NULL,1,19);
 
 /*!40000 ALTER TABLE `rules` ENABLE KEYS */;
 UNLOCK TABLES;

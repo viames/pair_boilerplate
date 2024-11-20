@@ -1,11 +1,11 @@
 <?php
 
-use Pair\Breadcrumb;
-use Pair\Locale;
-use Pair\Module;
-use Pair\Router;
-use Pair\View;
-use Pair\Widget;
+use Pair\Html\Breadcrumb;
+use Pair\Html\Widget;
+use Pair\Core\Router;
+use Pair\Core\View;
+use Pair\Models\Locale;
+use Pair\Orm\Collection;
 
 class TranslatorViewDetails extends View {
 
@@ -26,7 +26,7 @@ class TranslatorViewDetails extends View {
 		$this->app->sideMenuWidget = $widget->render('sideMenu');
 
 		// get details of each single translation file
-		$this->model->setLocalePercentage(array($locale));
+		$this->model->setLocalePercentage(new Collection([$locale]));
 		
 		foreach ($locale->details as $detail) {
 			

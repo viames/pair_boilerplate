@@ -24,8 +24,8 @@ Also it acts as REST API server with oAuth2 authentication support.
 
 ```apache
 <Directory /var/www/html>
-Options Indexes FollowSymLinks
-AllowOverride None
+	Options Indexes FollowSymLinks
+	AllowOverride None
 </Directory>
 ```
 
@@ -276,11 +276,11 @@ Always and only use the tab with a size of 4 spaces each for cpon files with the
 In inline instructions, avoid PHP abbreviated tags. For consistency with pre-existing code, use `print` instead of `echo`.
 
 ```php
-// correct
+// preferable
 <?php print $var ?>
 
-// incorrect
-<? print $var ?>
+// avoid
+<? print $var; ?>
 ```
 
 #### Comments

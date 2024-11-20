@@ -1,16 +1,15 @@
 <?php
 
-use Pair\Locale;
-use Pair\Router;
-use Pair\View;
-use Pair\Widget;
+use Pair\Models\Locale;
+use Pair\Core\Router;
+use Pair\Core\View;
+use Pair\Html\Widget;
 
 class LocalesViewEdit extends View {
 
 	public function render() {
 
 		$this->app->pageTitle = $this->lang('EDIT_LOCALE');
-		$this->app->activeMenuItem = 'locales';
 
 		$id = Router::get(0);
 		$locale = new Locale($id);
@@ -22,7 +21,7 @@ class LocalesViewEdit extends View {
 		$this->app->sideMenuWidget = $widget->render('sideMenu');
 		
 		$form = $this->model->getLocaleForm();
-		$form->setValuesByObject($locale);
+		$form->values($locale);
 
 		$this->assign('form', $form);
 		$this->assign('locale', $locale);

@@ -1,10 +1,10 @@
 <?php
 
-use Pair\Breadcrumb;
-use Pair\Controller;
-use Pair\Input;
-use Pair\Locale;
-use Pair\Router;
+use Pair\Html\Breadcrumb;
+use Pair\Core\Controller;
+use Pair\Support\Post;
+use Pair\Models\Locale;
+use Pair\Core\Router;
  		
 class LocalesController extends Controller {
 
@@ -17,7 +17,7 @@ class LocalesController extends Controller {
 	/**
 	 * Check if is requested to apply an alpha filter.
 	 */
-	public function defaultAction() {
+	public function defaultAction(): void {
 		
 		if (Router::get(0)) {
 			$this->app->setPersistentState('localesAlphaFilter', Router::get(0));
@@ -30,7 +30,7 @@ class LocalesController extends Controller {
 	/**
 	 * Add a new object.
 	 */
-	public function addAction() {
+	public function addAction(): void {
 	
 		$locale = new Locale();
 		$locale->populateByRequest();
@@ -38,14 +38,14 @@ class LocalesController extends Controller {
 		$result = $locale->store();
 		
 		if ($result) {
-			$this->enqueueMessage($this->lang('LOCALE_HAS_BEEN_CREATED'));
+			$this->toast($this->lang('LOCALE_HAS_BEEN_CREATED'));
 			$this->redirect('locales');
 		} else {
 			$msg = $this->lang('LOCALE_HAS_NOT_BEEN_CREATED') . ':';
 			foreach ($locale->getErrors() as $error) {
 				$msg .= " \n" . $error;
 			}
-			$this->enqueueError($msg);
+			$this->toastError($msg);
 			$this->view = 'default';
 		}					
 
@@ -54,9 +54,9 @@ class LocalesController extends Controller {
 	/**
 	 * Show form for edit a Locale object.
 	 */
-	public function editAction() {
+	public function editAction(): void {
 	
-		$locale = $this->getObjectRequestedById('Pair\Locale');
+		$locale = $this->getObjectRequestedById('Pair\Models\Locale');
 	
 		$this->view = $locale ? 'edit' : 'default';
 	
@@ -65,9 +65,9 @@ class LocalesController extends Controller {
 	/**
 	 * Modify a Locale object.
 	 */
-	public function changeAction() {
+	public function changeAction(): void {
 
-		$locale = new Locale(Input::get('id'));
+		$locale = new Locale(Post::get('id'));
 		$locale->populateByRequest();
 
 		// apply the update
@@ -76,7 +76,7 @@ class LocalesController extends Controller {
 		if ($result) {
 
 			// notify the change and redirect
-			$this->enqueueMessage($this->lang('LOCALE_HAS_BEEN_CHANGED_SUCCESFULLY'));
+			$this->toast($this->lang('LOCALE_HAS_BEEN_CHANGED_SUCCESFULLY'));
 			$this->redirect('locales');
 
 		} else {
@@ -86,7 +86,7 @@ class LocalesController extends Controller {
 
 			if (count($errors)) { 
 				$message = $this->lang('ERROR_ON_LAST_REQUEST') . ": \n" . implode(" \n", $errors);
-				$this->enqueueError($message);
+				$this->toastError($message);
 				$this->view = 'default';
 			} else {
 				$this->redirect('locales');
@@ -99,9 +99,9 @@ class LocalesController extends Controller {
 	/**
 	 * Delete a Locale object.
 	 */
-	public function deleteAction() {
+	public function deleteAction(): void {
 
-	 	$locale = $this->getObjectRequestedById('Pair\Locale');
+	 	$locale = $this->getObjectRequestedById('Pair\Models\Locale');
 	 	
 	 	if ($locale->appDefault) {
 	 		$message = $this->lang('ERROR_DELETING_LOCALE');
@@ -113,7 +113,7 @@ class LocalesController extends Controller {
 
 		if ($result) {
 
-			$this->enqueueMessage($this->lang('LOCALE_HAS_BEEN_DELETED_SUCCESFULLY'));
+			$this->toast($this->lang('LOCALE_HAS_BEEN_DELETED_SUCCESFULLY'));
 			$this->redirect('locales');
 
 		} else {
@@ -123,10 +123,10 @@ class LocalesController extends Controller {
 
 			if (count($errors)) { 
 				$message = $this->lang('ERROR_DELETING_LOCALE') . ": \n" . implode(" \n", $errors);
-				$this->enqueueError($message);
+				$this->toastError($message);
 				$this->view = 'default';
 			} else {
-				$this->enqueueError($this->lang('ERROR_ON_LAST_REQUEST'));
+				$this->toastError($this->lang('ERROR_ON_LAST_REQUEST'));
 				$this->redirect('locales');
 			}
 

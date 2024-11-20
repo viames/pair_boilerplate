@@ -23,10 +23,10 @@
 			<div class="form-group row">
 			<div class="col-3 order-1 d-none d-sm-none d-md-block"></div>
 				<div class="col-9 order-2">
-					<button type="submit" class="btn btn-primary"><i class="fal fa-save"></i> <?php $this->_('CHANGE') ?></button>
-					<a href="tokens" class="btn btn-secondary"><i class="fal fa-times"></i> <?php $this->_('CANCEL') ?></a><?php
+					<button type="submit" class="btn btn-primary"><?php $this->_('CHANGE') ?></button>
+					<a href="tokens" class="btn btn-secondary"><?php $this->_('CANCEL') ?></a><?php
 					if ($this->token->isDeletable()) { ?>
-					<a href="tokens/delete/<?php print $this->token->id ?>" class="btn btn-link confirm-delete float-right"><i class="fal fa-trash"></i> <?php $this->_('DELETE') ?></a><?php
+					<a href="tokens/delete/<?php print $this->token->id ?>" class="btn btn-link confirm-delete float-right text-danger"><?php $this->_('DELETE') ?></a><?php
 					} ?>
 				</div>
 			</div>

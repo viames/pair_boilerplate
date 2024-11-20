@@ -1,9 +1,9 @@
 <?php
 
-use Pair\Database;
-use Pair\Form;
-use Pair\Language;
-use Pair\Model;
+use Pair\Html\Form;
+use Pair\Core\Model;
+use Pair\Models\Language;
+use Pair\Orm\Database;
 
 class LanguagesModel extends Model {
 
@@ -32,10 +32,10 @@ class LanguagesModel extends Model {
 
 		$query =
 			'SELECT la.*, IFNULL(c.english_name, NULL) AS default_country,' .
-			' (SELECT COUNT(1) FROM `locales` WHERE language_id = la.id) AS locale_count' .
-			' FROM `' . Language::TABLE_NAME . '` AS la' .
-			' LEFT JOIN `locales` AS lo ON (lo.language_id = la.id AND lo.default_country = 1)' .
-			' LEFT JOIN `countries` AS c ON lo.country_id = c.id' .
+			' (SELECT COUNT(1) FROM locales WHERE language_id = la.id) AS locale_count' .
+			' FROM ' . Language::TABLE_NAME . ' AS la' .
+			' LEFT JOIN locales AS lo ON (lo.language_id = la.id AND lo.default_country = 1)' .
+			' LEFT JOIN countries AS c ON lo.country_id = c.id' .
 			$where .
 			' ORDER BY la.english_name' .
 			' LIMIT ' . $this->pagination->start . ', ' . $this->pagination->limit;
@@ -56,7 +56,7 @@ class LanguagesModel extends Model {
 		if ($alphaFilter) {
 			
 			// get a filtered list
-			$query = 'SELECT COUNT(1) FROM `languages` WHERE english_name LIKE ?';
+			$query = 'SELECT COUNT(1) FROM languages WHERE english_name LIKE ?';
 			return Database::load($query, [$alphaFilter . '%'], PAIR_DB_COUNT);
 			
 		} else {
@@ -77,12 +77,12 @@ class LanguagesModel extends Model {
 
 		$form = new Form();
 			
-		$form->addControlClass('form-control');
+		$form->classForControls('form-control');
 			
-		$form->addInput('id')->setType('hidden');
-		$form->addInput('code')->setRequired()->setMaxLength(7);
-		$form->addInput('nativeName')->setMaxLength(30);
-		$form->addInput('englishName')->setMaxLength(30)->setRequired();
+		$form->hidden('id');
+		$form->text('code')->required()->maxLength(7);
+		$form->text('nativeName')->maxLength(30);
+		$form->text('englishName')->maxLength(30)->required();
 		
 		return $form;
 		

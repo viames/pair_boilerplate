@@ -1,15 +1,15 @@
 <?php
 
-use Pair\Breadcrumb;
-use Pair\Controller;
-use Pair\Input;
-use Pair\Locale;
-use Pair\Module;
-use Pair\Router;
+use Pair\Html\Breadcrumb;
+use Pair\Core\Controller;
+use Pair\Support\Post;
+use Pair\Models\Locale;
+use Pair\Models\Module;
+use Pair\Core\Router;
 
 class TranslatorController extends Controller {
 
-	protected function init(): void {
+	protected function init() {
 		
 		Breadcrumb::path($this->lang('TRANSLATOR'), 'translator/default');
 		
@@ -18,7 +18,7 @@ class TranslatorController extends Controller {
 	/**
 	 * Check if is requested to apply an alpha filter.
 	 */
-	public function defaultAction() {
+	public function defaultAction(): void {
 		
 		if (Router::get(0)) {
 			$this->app->setPersistentState('translatorAlphaFilter', Router::get(0));
@@ -31,12 +31,12 @@ class TranslatorController extends Controller {
 	/**
 	 * Do the translation strings change.
 	 */
-	public function changeAction() {
+	public function changeAction(): void {
 	
-		$locale = new Locale(Input::get('locale', 'int'));
+		$locale = new Locale(Post::get('locale', 'int'));
 		
-		if (Input::get('module', 'int')) {
-			$module = new Module(Input::get('module', 'int'));
+		if (Post::get('module', 'int')) {
+			$module = new Module(Post::get('module', 'int'));
 		} else {
 			// the fake "common" module
 			$module = new stdClass();
@@ -44,15 +44,15 @@ class TranslatorController extends Controller {
 			$module->name = 'common';
 		}
 
-		$strings = Input::getInputsByRegex('#[A-Z][A-Z_]+#');
+		$strings = Post::byRegex('#[A-Z][A-Z_]+#');
 
 		$res = $locale->writeTranslation($strings, $module);
 
 		// user messages
 		if ($res) {
-			$this->enqueueMessage($this->lang('TRANSLATION_STRINGS_UPDATED', [$locale->getEnglishNames(), ucfirst($module->name)]));
+			$this->toast($this->lang('TRANSLATION_STRINGS_UPDATED', array($locale->getEnglishNames(), ucfirst($module->name))));
 		} else {
-			$this->enqueueError($this->lang('TRANSLATION_STRINGS_NOT_UPDATED', [$locale->getEnglishNames(), ucfirst($module->name)]));
+			$this->toastError($this->lang('TRANSLATION_STRINGS_NOT_UPDATED', array($locale->getEnglishNames(), ucfirst($module->name))));
 		}
 
 		$this->app->redirect('translator/details/' . $locale->id);

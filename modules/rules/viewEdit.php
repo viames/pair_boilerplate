@@ -1,9 +1,9 @@
 <?php
 
-use Pair\Router;
-use Pair\Rule;
-use Pair\View;
-use Pair\Widget;
+use Pair\Html\Widget;
+use Pair\Core\Router;
+use Pair\Core\View;
+use Pair\Models\Rule;
 
 class RulesViewEdit extends View {
 
@@ -20,13 +20,13 @@ class RulesViewEdit extends View {
 		$rule = new Rule(Router::get(0));
 
 		$form = $this->model->getRulesForm();
-		$form->setValuesByObject($rule);
+		$form->values($rule);
 		
 		// necessario per by-pass del router action
-		$form->getControl('actionField')->setValue($rule->action);
+		$form->control('actionField')->value($rule->action);
 		
 		$this->assign('form', $form);
-		$this->assign('rule', $rule);
+		$this->assign('ruleId', $rule->id);
 		
 	}
 	

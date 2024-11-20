@@ -1,8 +1,8 @@
 <?php
 
-use Pair\Form;
-use Pair\Model;
-use Pair\Token;
+use Pair\Html\Form;
+use Pair\Core\Model;
+use Pair\Models\Token;
 
 class TokensModel extends Model {
 
@@ -39,14 +39,15 @@ class TokensModel extends Model {
 
 		$form = new Form();
 			
-		$form->addControlClass('form-control');
+		$form->classForControls('form-control');
 			
-		$form->addInput('id')->setType('hidden')->setRequired()->setLabel('ID');
-		$form->addInput('code')->setMaxLength(10)->setRequired()->setLabel('CODE');
-		$form->addInput('description')->setMaxLength(100)->setRequired()->setLabel('DESCRIPTION');
-		$form->addInput('value')->setMaxLength(64)->setRequired()->setLabel('VALUE');
-		$form->addInput('token')->setMaxLength(64)->setRequired()->setLabel('TOKEN');
-		$form->addInput('enabled')->setType('bool')->setLabel('ENABLED');
+		$form->hidden('id')->required()->label('ID');
+		$form->text('code')->maxLength(10)->required()->label('CODE');
+		$form->text('description')->maxLength(100)->required()->label('DESCRIPTION');
+		$form->textarea('details')->maxLength(1000)->label('DETAILS');
+		$form->text('value')->maxLength(64)->required()->label('VALUE');
+		$form->text('token')->maxLength(64)->required()->label('TOKEN');
+		$form->checkbox('enabled')->class('switchery')->label('ENABLED');
 		
 		return $form;
 		
