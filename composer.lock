@@ -1829,12 +1829,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/viames/pair.git",
-                "reference": "0954c625fd2321ab0739834f08de8d76e481c5c3"
+                "reference": "f552a37af45c7e85792ebc24ee1d8f145219355d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/viames/pair/zipball/0954c625fd2321ab0739834f08de8d76e481c5c3",
-                "reference": "0954c625fd2321ab0739834f08de8d76e481c5c3",
+                "url": "https://api.github.com/repos/viames/pair/zipball/f552a37af45c7e85792ebc24ee1d8f145219355d",
+                "reference": "f552a37af45c7e85792ebc24ee1d8f145219355d",
                 "shasum": ""
             },
             "require": {
@@ -1889,7 +1889,7 @@
                 "source": "https://github.com/viames/pair/tree/master/src",
                 "wiki": "https://github.com/viames/pair/wiki"
             },
-            "time": "2024-11-21T02:59:20+00:00"
+            "time": "2024-11-21T04:26:12+00:00"
         }
     ],
     "packages-dev": [
