@@ -1,8 +1,9 @@
 <?php
 
-use Pair\Orm\Database;
 use Pair\Core\View;
 use Pair\Html\Widget;
+use Pair\Orm\Database;
+use Pair\Support\Utilities;
 
 class SelftestViewDefault extends View {
 
@@ -20,6 +21,11 @@ class SelftestViewDefault extends View {
 		// starts the test
 		$test = new SelfTest();
 		
+		// MySQL Dump
+		$path = Utilities::getExecutablePath('mysqldump', 'MYSQLDUMP_PATH');
+		$label = $this->lang('TEST_MYSQL_DUMP_PATH', $path ?? 'n.a.');
+		$test->assertTrue($label, $path ?? '', $this->lang('SERVER'));
+		
 		// php version and config
 		$label = $this->lang('TEST_PHP_CONFIGURATION', phpversion());
 		$test->assertTrue($label, $test->checkPhp(), $this->lang('SERVER'));
@@ -32,13 +38,30 @@ class SelftestViewDefault extends View {
 		$label = $this->lang('TEST_CONFIG_FILE');
 		$test->assertTrue($label, $test->checkConfigFile(), $this->lang('SERVER'));
 
-		// PDFTK
 		/*
-		$path = $test->getPdftkPath();
+		// PDFTK
+		$path = Utilities::getExecutablePath('pdftk', 'PDFTK_PATH');
 		$label = $this->lang('TEST_PDFTK_PATH', $path ?? 'n.a.');
 		$test->assertTrue($label, $path ?? '', $this->lang('SERVER'));
+
+		// CSV2XLSX
+		$path = Utilities::getExecutablePath('csv2xlsx', 'CSV2XLSX_PATH');
+		$label = $this->lang('TEST_CSV2XLSX_PATH', $path ?? 'n.a.');
+		$test->assertTrue($label, $path ?? '', $this->lang('SERVER'));
 		*/
-		
+
+		// BZIP2
+		$path = Utilities::getExecutablePath('bzip2', 'BZIP2_PATH');
+		$label = $this->lang('TEST_BZIP2_PATH', $path ?? 'n.a.');
+		$test->assertTrue($label, $path ?? '', $this->lang('SERVER'));
+
+		// migrations
+		$label = 'Excecuted migrations';
+		include APPLICATION_PATH . '/modules/migrations/model.php';
+		$migrationModel = new MigrationsModel();
+		$migrationCheck = !(bool)count($migrationModel->getListOfMigrationFiles());
+		$test->assertTrue($label, $migrationCheck, $this->lang('APPLICATION'));
+
 		// test folder permissions
 		$label = $this->lang('TEST_FOLDERS', implode(', ', SelfTest::FOLDERS));
 		$test->assertTrue($label, $test->checkFolders(), $this->lang('APPLICATION'));

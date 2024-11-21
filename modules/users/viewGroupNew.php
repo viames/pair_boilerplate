@@ -17,8 +17,7 @@ class UsersViewGroupNew extends View {
 		$this->app->pageTitle = $this->lang('NEW_GROUP');
 		$this->app->activeMenuItem = 'groups';
 		
-		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath($this->lang('GROUPS'), 'groups');
+		Breadcrumb::path($this->lang('GROUPS'), 'groups');
 		
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');

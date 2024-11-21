@@ -1,10 +1,9 @@
 <?php
 
-use Pair\Orm\ActiveRecord;
 use Pair\Core\Application;
+use Pair\Orm\ActiveRecord;
 use Pair\Orm\Database;
 use Pair\Support\Logger;
-use Pair\Support\Options;
 use Pair\Support\Utilities;
 
 class SelfTest {
@@ -17,7 +16,7 @@ class SelfTest {
 	/**
 	 * Versione minima di PHP necessaria.
 	 */
-	const MIN_PHP_VERSION = '7.4.0';
+	const MIN_PHP_VERSION = '8.2';
 
 	/**
 	 * Versione minima di MySQL necessaria.
@@ -38,9 +37,8 @@ class SelfTest {
 	 * Returns property’s value if set or NULL if not set.
 	 *
 	 * @param	string	Property’s name.
-	 * @return	mixed|NULL
 	 */
-	public function __get(string $name) {
+	public function __get(string $name): mixed {
 
 		if (property_exists($this, $name)) {
 			return $this->$name;
@@ -303,8 +301,6 @@ class SelfTest {
 
 		$ret = TRUE;
 
-		$options = Options::getInstance();
-
 		// check about missing UTC_DATE constant
 		if (!defined('UTC_DATE')) {
 			$ret = FALSE;
@@ -330,22 +326,16 @@ class SelfTest {
 
 			$folder = APPLICATION_PATH . '/' . $f;
 
-			if (!is_dir($folder)) {
-				Logger::error('Folder ' . $folder . ' is missing');
+			if ('temp' == $f and !Application::fixTemporaryFolder()) {
+			
 				$ret = FALSE;
-				continue;
-			}
-
-			if (!is_readable($folder)) {
-				Logger::error(PRODUCT_NAME . ' application is not allowed to read from the folder ' . $folder);
+				Logger::error('Temporary folder is not readable and cannot be fixed');
+			
+			} else if (!is_dir($folder) or !is_readable($folder)) {
+			
 				$ret = FALSE;
-				continue;
-			}
-
-			if (!is_writable($folder)) {
-				Logger::error(PRODUCT_NAME . ' application is not allowed to write to the folder ' . $folder);
-				$ret = FALSE;
-				continue;
+				Logger::error($folder . ' folder is missing or not readable');
+			
 			}
 
 		}
@@ -370,7 +360,7 @@ class SelfTest {
 		// plain list of Pair framework classes with DB mapping
 		$pairClasses = ['Acl','Audit','Country','ErrorLog','Group','Language','Locale',
 						'Module','Rule','Session','Template','Token','User','UserRemember'];
-		array_walk($pairClasses, function(&$c) { $c = 'Pair\\' . $c; });
+		array_walk($pairClasses, function(&$c) { $c = 'Pair\\Models\\' . $c; });
 
 		// list of excluded from test
 		$excludeClasses = [];
@@ -415,11 +405,8 @@ class SelfTest {
 	 * Test the class couples properties-dbfields. Return the error count.
 	 *
 	 * @param	ActiveRecord	Object to test.
-	 * @return	int
 	 */
 	private function checkClassMaps(ActiveRecord $object): int {
-
-		$app = Application::getInstance();
 
 		// count nr of errors found on each class
 		$errorCount = 0;
@@ -484,32 +471,27 @@ class SelfTest {
 	/**
 	 * Compare version of each installed plugin with application version and return FALSE
 	 * if at least one of them is made for older version.
-	 *
-	 * @return	bool
 	 */
 	public function checkPlugins(): bool {
 
 		$ret = TRUE;
 
-		// list of plugin types with namespace (true if Pair framework)
+		// list of plugin types with namespace
 		$pluginTypes = [
-			'module'	=> TRUE,
-			'template'	=> TRUE
+			'Pair\\Models\\Module'	=> TRUE,
+			'Pair\\Models\\Template'	=> TRUE
 		];
 
-		foreach ($pluginTypes as $type => $aFramework) {
-
-			// compute names
-			$class	= ($aFramework ? 'Pair\\' : '') . ucfirst($type);
+		foreach ($pluginTypes as $type => $pair) {
 
 			// load db records and create objects
-			$plugins = $class::getAllObjects();
+			$plugins = $type::all();
 
 			// for each plugin compare version
 			foreach ($plugins as $plugin) {
 
 				if (version_compare(PRODUCT_VERSION, $plugin->appVersion) > 0) {
-					Logger::warning(ucfirst($type) . ' plugin ' . ucfirst($plugin->name) .
+					Logger::warning($type . ' plugin ' . ucfirst($plugin->name) .
 							' is compatible with ' . PRODUCT_NAME . ' v' . $plugin->appVersion);
 					$ret = FALSE;
 				}
@@ -520,18 +502,6 @@ class SelfTest {
 		}
 
 		return $ret;
-
-	}
-
-	public function getPdftkPath(): ?string {
-
-		exec('which pdftk', $output, $return);
-
-		if (!isset($output[0])) {
-			Logger::error('PDFTK is not installed');
-		}
-
-		return ($output[0] ?? NULL);
 
 	}
 

@@ -5,7 +5,7 @@ use Pair\Html\Breadcrumb;
 $breadcrumb = Breadcrumb::getInstance();
 $breadcrumb->disableLastUrl();
 
-if (is_a($breadcrumb, 'Pair\Html\Breadcrumb') and count($breadcrumb->getPaths())) {
+if (is_a($breadcrumb, 'Pair\Html\Breadcrumb') and count($breadcrumb->getPath())) {
 	
 	?>
 	<nav aria-label="breadcrumb">
@@ -25,11 +25,11 @@ if (is_a($breadcrumb, 'Pair\Html\Breadcrumb') and count($breadcrumb->getPaths())
 			print $item->title;
 		}
 		
-		?></li><?php
+	?></li><?php
 		
 	}
 	
-		?></ol>
+	?></ol>
 	</nav><?php
 
 }

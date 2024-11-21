@@ -1,10 +1,10 @@
 <?php
 
-use Pair\Html\Breadcrumb;
-use Pair\Models\Group;
 use Pair\Core\Router;
 use Pair\Core\View;
+use Pair\Html\Breadcrumb;
 use Pair\Html\Widget;
+use Pair\Models\Group;
 
 class UsersViewAclNew extends View {
 
@@ -17,11 +17,10 @@ class UsersViewAclNew extends View {
 		$this->app->pageTitle = 'Aggiungi ACL';
 		$this->app->activeMenuItem = 'groups';
 
-		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath($this->lang('GROUPS'), 'groups');
-		$breadcrumb->addPath('Gruppo ' . $group->name, 'groups/edit/' . $group->id);
-		$breadcrumb->addPath('Access list', 'users/aclList/' . $group->id);
-		$breadcrumb->addPath('Aggiungi ACL');
+		Breadcrumb::path($this->lang('GROUPS'), 'groups');
+		Breadcrumb::path('Gruppo ' . $group->name, 'groups/edit/' . $group->id);
+		Breadcrumb::path('Access list', 'users/aclList/' . $group->id);
+		Breadcrumb::path('Aggiungi ACL');
 		
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');

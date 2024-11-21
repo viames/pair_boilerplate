@@ -49,7 +49,8 @@ VALUES
 	(16,16,1,0),
 	(17,17,1,0),
 	(18,18,1,0),
-	(19,19,1,0);
+	(19,19,1,0),
+	(20,20,1,0);
 
 /*!40000 ALTER TABLE `acl` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1126,7 +1127,8 @@ VALUES
 	(16,'audit','1.0',NOW(),'1.0',1,NOW()),
 	(17,'errorlogs','1.0',NOW(),'1.0',1,NOW()),
 	(18,'oauth2','1.0',NOW(),'1.0',1,NOW()),
-	(19,'migrations','1.0',NOW(),'1.0',1,NOW());
+	(19,'migrations','1.0',NOW(),'1.0',1,NOW()),
+	(20,'oauth2clients','1.0',NOW(),'1.0',1,NOW());
 
 /*!40000 ALTER TABLE `modules` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1236,7 +1238,8 @@ VALUES
 	(16,NULL,1,16),
 	(17,NULL,1,17),
 	(18,NULL,1,18),
-	(19,NULL,1,19);
+	(19,NULL,1,19),
+	(20,NULL,1,20);
 
 /*!40000 ALTER TABLE `rules` ENABLE KEYS */;
 UNLOCK TABLES;

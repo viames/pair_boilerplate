@@ -21,9 +21,8 @@ class UsersViewGroupEdit extends View {
 		$this->app->pageTitle = $this->lang('GROUP_EDIT');
 		$this->app->activeMenuItem = 'groups';
 		
-		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath($this->lang('GROUPS'), 'groups');
-		$breadcrumb->addPath('Gruppo ' . $group->name, 'groups/edit/' . $group->id);
+		Breadcrumb::path($this->lang('GROUPS'), 'groups');
+		Breadcrumb::path('Gruppo ' . $group->name, 'groups/edit/' . $group->id);
 		
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');

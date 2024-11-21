@@ -12,9 +12,8 @@ class UsersViewUserNew extends View {
 		$this->app->pageTitle = $this->lang('NEW_USER');
 		$this->app->activeMenuItem = 'users/userList';
 		
-		$breadcrumb = Breadcrumb::getInstance();
-		$breadcrumb->addPath($this->lang('USERS'), 'users');
-		$breadcrumb->addPath($this->lang('NEW_USER'), 'users/new');
+		Breadcrumb::path($this->lang('USERS'), 'users');
+		Breadcrumb::path($this->lang('NEW_USER'), 'users/new');
 		
 		$widget = new Widget();
 		$this->app->breadcrumbWidget = $widget->render('breadcrumb');

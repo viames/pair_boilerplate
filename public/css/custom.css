@@ -1,8 +1,17 @@
-/* template */
-@media (min-width: 768px) {
-    #page-content-wrapper {
-        background-color: #e2e9e9;
-    }
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --info-color: #17a2b8;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+    --menu-item-color: #4a505d;
+    --menu-item-background-color: rgba(0, 0, 0, 0.1);
+    --menu-item-hover-color: rgba(0, 0, 0, 0.2);
+    --menu-item-hover-background-color: #afcbf0;
+    --menu-heading-color: #4a505d;
 }
 
 .colorSample {
@@ -11,6 +20,44 @@
     height: 10px;
     margin: 3px 1px;
     width: 10px;
+}
+
+.nav {
+    display: block;
+}
+
+.nav li {
+    background-color: var(--menu-item-background-color);
+    line-height: 30px;
+    padding: 9px 21px;
+}
+
+.nav .nav-heading {
+    color: var(--menu-heading-color);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 30px;
+    padding: 9px 21px;
+}
+
+.nav li:not(.nav-heading):hover {
+    background-color: var(--menu-item-hover-background-color);
+}
+
+.nav li a {
+    color: var(--menu-item-color);
+    font-size: 14px;
+    font-weight: 400;
+    text-decoration: none;
+}
+
+.nav li a:hover {
+    color: var(--menu-item-hover-color);
+}
+
+.nav li .fa {
+    font-size: 0.75em;
+    opacity: 0.5;
 }
 
 #log {
@@ -209,4 +256,10 @@ input[type='checkbox'].form-control {
 
 .hidden {
 	display: none;
+}
+
+@media (min-width: 768px) {
+    #page-content-wrapper {
+        background-color: #e2e9e9;
+    }
 }

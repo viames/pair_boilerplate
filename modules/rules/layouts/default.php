@@ -28,9 +28,9 @@
 						foreach ($this->rules as $o) {
 					
 							?><tr>
-								<td><a href="rules/edit/<?php print $o->id ?>"><?php $o->printHtml('name') ?></a></td>
-								<td class="text-center"><?php $o->printHtml('action') ?></td>
-								<td class="text-center"><?php $o->printHtml('adminIcon') ?></td>
+								<td><a href="rules/edit/<?php print $o->id ?>"><?php print $o->name ?></a></td>
+								<td class="text-center"><?php print $o->action ?></td>
+								<td class="text-center"><?php print $o->adminIcon ?></td>
 							</tr><?php 
 							
 						}

@@ -10,7 +10,6 @@ class CountriesModel extends Model {
 
 	/**
 	 * Returns object list with pagination.
-	 * @return Country[]
 	 */
 	public function getCountries(): Collection {
 
@@ -65,9 +64,8 @@ class CountriesModel extends Model {
 
 	/**
 	 * Returns the list of official languages for a Country.
-	 * @return string[]
 	 */
-	public function getOfficialLanguages(Country $country): Collection {
+	public function getOfficialLanguages(Country $country): array {
 
 		$query =
 			'SELECT `english_name`
