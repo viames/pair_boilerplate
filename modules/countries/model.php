@@ -1,7 +1,7 @@
 <?php
 
-use Pair\Html\Form;
 use Pair\Core\Model;
+use Pair\Html\Form;
 use Pair\Models\Country;
 use Pair\Orm\Collection;
 use Pair\Orm\Database;
@@ -67,7 +67,7 @@ class CountriesModel extends Model {
 	 * Returns the list of official languages for a Country.
 	 * @return string[]
 	 */
-	public function getOfficialLanguages(Country $country): array {
+	public function getOfficialLanguages(Country $country): Collection {
 
 		$query =
 			'SELECT `english_name`

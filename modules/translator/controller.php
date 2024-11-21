@@ -50,9 +50,9 @@ class TranslatorController extends Controller {
 
 		// user messages
 		if ($res) {
-			$this->toast($this->lang('TRANSLATION_STRINGS_UPDATED', array($locale->getEnglishNames(), ucfirst($module->name))));
+			$this->enqueueMessage($this->lang('TRANSLATION_STRINGS_UPDATED', array($locale->getEnglishNames(), ucfirst($module->name))));
 		} else {
-			$this->toastError($this->lang('TRANSLATION_STRINGS_NOT_UPDATED', array($locale->getEnglishNames(), ucfirst($module->name))));
+			$this->enqueueError($this->lang('TRANSLATION_STRINGS_NOT_UPDATED', array($locale->getEnglishNames(), ucfirst($module->name))));
 		}
 
 		$this->app->redirect('translator/details/' . $locale->id);

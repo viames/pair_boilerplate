@@ -21,10 +21,10 @@ class MigrationsController extends Controller {
 		$result = $this->model->runMigration();
 
 		if (!$result) {
-			$this->toastError($this->lang('MIGRATIONS_FAILED') . ': ' . implode(', ', $this->model->getErrors()));
+			$this->enqueueError($this->lang('MIGRATIONS_FAILED') . ': ' . implode(', ', $this->model->getErrors()));
 		}
 
-		$this->toast($this->lang('MIGRATIONS_SUCCESSFUL'));
+		$this->enqueueMessage($this->lang('MIGRATIONS_SUCCESSFUL'));
 
 	}
 

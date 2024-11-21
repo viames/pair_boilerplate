@@ -1,7 +1,7 @@
 <?php
 
 use Pair\Html\Breadcrumb;
-use Pair\Group;
+use Pair\Models\Group;
 use Pair\Core\Router;
 use Pair\Core\View;
 use Pair\Html\Widget;
@@ -33,7 +33,7 @@ class UsersViewAclNew extends View {
 
 		$form = $this->model->getAclListForm();
 
-		$form->getControl('groupId')->setValue($group->id);
+		$form->control('groupId')->value($group->id);
 
 		$this->assign('group',	$group);
 		$this->assign('rules',	$rules);

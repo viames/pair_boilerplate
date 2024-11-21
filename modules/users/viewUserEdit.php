@@ -1,9 +1,9 @@
 <?php
 
 use Pair\Html\Breadcrumb;
-use Pair\Group;
+use Pair\Models\Group;
 use Pair\Core\Router;
-use Pair\User;
+use Pair\Models\User;
 use Pair\Core\View;
 use Pair\Html\Widget;
 
@@ -32,8 +32,8 @@ class UsersViewUserEdit extends View {
 		$user->groupName = $groupName->name;
 
 		$form = $this->model->getUserForm();
-		$form->setValuesByObject($user);
-		$form->getControl('id')->setValue($user->id)->required();
+		$form->values($user);
+		$form->control('id')->value($user->id)->required();
 
 		$this->assign('user', $user);
 		$this->assign('form', $form);

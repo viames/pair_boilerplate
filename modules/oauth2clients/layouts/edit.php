@@ -7,11 +7,11 @@
 			<?php $this->form->printControl('id') ?>
 			<fieldset>
 				<div class="form-group">
-					<label class="col-md-3 control-label"><?php $this->form->printLabel('secret') ?></label>
+					<div class="col-md-3"><?php $this->form->printLabel('secret') ?></div>
 					<div class="col-md-9"><?php $this->form->printControl('secret') ?></div>
 				</div>
 				<div class="form-group">
-					<label class="col-md-3 control-label"><?php $this->form->printLabel('enabled') ?></label>
+					<div class="col-md-3"><?php $this->form->printLabel('enabled') ?></div>
 					<div class="col-md-9"><?php $this->form->printControl('enabled') ?></div>
 				</div>
 			</fieldset>

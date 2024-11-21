@@ -38,14 +38,14 @@ class LocalesController extends Controller {
 		$result = $locale->store();
 		
 		if ($result) {
-			$this->toast($this->lang('LOCALE_HAS_BEEN_CREATED'));
+			$this->enqueueMessage($this->lang('LOCALE_HAS_BEEN_CREATED'));
 			$this->redirect('locales');
 		} else {
 			$msg = $this->lang('LOCALE_HAS_NOT_BEEN_CREATED') . ':';
 			foreach ($locale->getErrors() as $error) {
 				$msg .= " \n" . $error;
 			}
-			$this->toastError($msg);
+			$this->enqueueError($msg);
 			$this->view = 'default';
 		}					
 
@@ -76,7 +76,7 @@ class LocalesController extends Controller {
 		if ($result) {
 
 			// notify the change and redirect
-			$this->toast($this->lang('LOCALE_HAS_BEEN_CHANGED_SUCCESFULLY'));
+			$this->enqueueMessage($this->lang('LOCALE_HAS_BEEN_CHANGED_SUCCESFULLY'));
 			$this->redirect('locales');
 
 		} else {
@@ -86,7 +86,7 @@ class LocalesController extends Controller {
 
 			if (count($errors)) { 
 				$message = $this->lang('ERROR_ON_LAST_REQUEST') . ": \n" . implode(" \n", $errors);
-				$this->toastError($message);
+				$this->enqueueError($message);
 				$this->view = 'default';
 			} else {
 				$this->redirect('locales');
@@ -113,7 +113,7 @@ class LocalesController extends Controller {
 
 		if ($result) {
 
-			$this->toast($this->lang('LOCALE_HAS_BEEN_DELETED_SUCCESFULLY'));
+			$this->enqueueMessage($this->lang('LOCALE_HAS_BEEN_DELETED_SUCCESFULLY'));
 			$this->redirect('locales');
 
 		} else {
@@ -123,10 +123,10 @@ class LocalesController extends Controller {
 
 			if (count($errors)) { 
 				$message = $this->lang('ERROR_DELETING_LOCALE') . ": \n" . implode(" \n", $errors);
-				$this->toastError($message);
+				$this->enqueueError($message);
 				$this->view = 'default';
 			} else {
-				$this->toastError($this->lang('ERROR_ON_LAST_REQUEST'));
+				$this->enqueueError($this->lang('ERROR_ON_LAST_REQUEST'));
 				$this->redirect('locales');
 			}
 

@@ -1,13 +1,13 @@
 <?php
 
-use Pair\Acl;
-use Pair\Audit;
+use Pair\Models\Acl;
+use Pair\Models\Audit;
 use Pair\Core\Controller;
-use Pair\Group;
+use Pair\Models\Group;
 use Pair\Support\Post;
-use Pair\Options;
+use Pair\Support\Options;
 use Pair\Core\Router;
-use Pair\User;
+use Pair\Models\User;
 
 class UsersController extends Controller {
 
@@ -77,7 +77,7 @@ class UsersController extends Controller {
 	
 		$user = $this->getRequestedUser();
 	
-		if (is_a($user, 'Pair\User') and $user->isLoaded()) {
+		if (is_a($user, 'Pair\Models\User') and $user->isLoaded()) {
 			$this->view = 'userEdit';
 		} else {
 			$this->view = 'userList';

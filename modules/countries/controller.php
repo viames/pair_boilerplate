@@ -38,14 +38,14 @@ class CountriesController extends Controller {
 		$result = $country->store();
 		
 		if ($result) {
-			$this->toast($this->lang('COUNTRY_HAS_BEEN_CREATED'));
+			$this->enqueueMessage($this->lang('COUNTRY_HAS_BEEN_CREATED'));
 			$this->redirect('countries');
 		} else {
 			$msg = $this->lang('COUNTRY_HAS_NOT_BEEN_CREATED') . ':';
 			foreach ($country->getErrors() as $error) {
 				$msg .= " \n" . $error;
 			}
-			$this->toastError($msg);
+			$this->enqueueError($msg);
 			$this->view = 'default';
 		}					
 
@@ -76,7 +76,7 @@ class CountriesController extends Controller {
 		if ($result) {
 
 			// notify the change and redirect
-			$this->toast($this->lang('COUNTRY_HAS_BEEN_CHANGED_SUCCESFULLY'));
+			$this->enqueueMessage($this->lang('COUNTRY_HAS_BEEN_CHANGED_SUCCESFULLY'));
 			$this->redirect('countries');
 
 		} else {
@@ -86,7 +86,7 @@ class CountriesController extends Controller {
 
 			if (count($errors)) { 
 				$message = $this->lang('ERROR_ON_LAST_REQUEST') . ": \n" . implode(" \n", $errors);
-				$this->toastError($message);
+				$this->enqueueError($message);
 				$this->view = 'default';
 			} else {
 				$this->redirect('countries');
@@ -108,7 +108,7 @@ class CountriesController extends Controller {
 
 		if ($result) {
 
-			$this->toast($this->lang('COUNTRY_HAS_BEEN_DELETED_SUCCESFULLY'));
+			$this->enqueueMessage($this->lang('COUNTRY_HAS_BEEN_DELETED_SUCCESFULLY'));
 			$this->redirect('countries');
 
 		} else {
@@ -118,10 +118,10 @@ class CountriesController extends Controller {
 
 			if (count($errors)) { 
 				$message = $this->lang('ERROR_DELETING_COUNTRY') . ": \n" . implode(" \n", $errors);
-				$this->toastError($message);
+				$this->enqueueError($message);
 				$this->view = 'default';
 			} else {
-				$this->toastError($this->lang('ERROR_ON_LAST_REQUEST'));
+				$this->enqueueError($this->lang('ERROR_ON_LAST_REQUEST'));
 				$this->redirect('countries');
 			}
 

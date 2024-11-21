@@ -23,7 +23,7 @@ class CrafterController extends Controller {
 	public function classWizardAction(): void {
 		
 		if (!Router::get(0)) {
-			$this->toastError($this->lang('TABLE_NAME_NOT_SPECIFIED'));
+			$this->enqueueError($this->lang('TABLE_NAME_NOT_SPECIFIED'));
 		}
 		
 	}
@@ -31,7 +31,7 @@ class CrafterController extends Controller {
 	public function moduleWizardAction(): void {
 		
 		if (!Router::get(0)) {
-			$this->toastError($this->lang('TABLE_NAME_NOT_SPECIFIED'));
+			$this->enqueueError($this->lang('TABLE_NAME_NOT_SPECIFIED'));
 		}
 		
 	}
@@ -55,21 +55,21 @@ class CrafterController extends Controller {
 					$this->model->saveClass($file);
 					$this->model->createMigrationFile();
 				} catch (\Exception $e) {
-					$this->toastError($e->getMessage());
+					$this->enqueueError($e->getMessage());
 					return;
 				}
 
-				$this->toast($this->lang('CLASS_HAS_BEEN_CREATED', $this->model->objectName));
+				$this->enqueueMessage($this->lang('CLASS_HAS_BEEN_CREATED', $this->model->objectName));
 				
 			} else {
 				
-				$this->toastError($this->lang('CLASS_FILE_ALREADY_EXISTS', $this->model->objectName));
+				$this->enqueueError($this->lang('CLASS_FILE_ALREADY_EXISTS', $this->model->objectName));
 				
 			}
 				
 		} else {
 
-			$this->toastError($this->lang('CLASS_HAS_NOT_BEEN_CREATED'));
+			$this->enqueueError($this->lang('CLASS_HAS_NOT_BEEN_CREATED'));
 								
 		}
 		
@@ -86,7 +86,7 @@ class CrafterController extends Controller {
 		$commonClass = Post::bool('commonClass');
 			
 		if (!$tableName or !$objectName or !$moduleName) {
-			$this->toastError($this->lang('MODULE_HAS_NOT_BEEN_CREATED'));
+			$this->enqueueError($this->lang('MODULE_HAS_NOT_BEEN_CREATED'));
 			return;
 		}
 
@@ -110,12 +110,12 @@ class CrafterController extends Controller {
 			
 		} catch (\Exception $e) {
 		
-			$this->toastError($e->getMessage());
+			$this->enqueueError($e->getMessage());
 			return;
 		
 		}
 	
-		$this->toast($this->lang('MODULE_HAS_BEEN_CREATED', $moduleName));
+		$this->enqueueMessage($this->lang('MODULE_HAS_BEEN_CREATED', $moduleName));
 		$this->redirect();
 	
 	}
@@ -127,7 +127,7 @@ class CrafterController extends Controller {
 		$class = $this->model->getClassByTable($tableName);
 		
 		if (!$class) {
-			$this->toastError($this->lang('CLASS_NOT_FOUND_FOR_TABLE', $tableName));
+			$this->enqueueError($this->lang('CLASS_NOT_FOUND_FOR_TABLE', $tableName));
 			$this->view = 'newTable';
 			return;
 		}
@@ -135,11 +135,11 @@ class CrafterController extends Controller {
 		$res = $this->model->createTableByClass($class);
 		
 		if ($res) {
-			$this->toast($this->lang('TABLE_HAS_BEEN_CREATED', $tableName));
+			$this->enqueueMessage($this->lang('TABLE_HAS_BEEN_CREATED', $tableName));
 			$this->redirect('crafter');
 		} else {
 			$errors = $this->model->getErrors();
-			$this->toastError($this->lang('ERROR_ON_LAST_REQUEST') . "\n" . implode("\n", $errors));
+			$this->enqueueError($this->lang('ERROR_ON_LAST_REQUEST') . "\n" . implode("\n", $errors));
 			$this->view = 'newTable';
 		}
 		

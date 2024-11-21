@@ -29,14 +29,14 @@ class TokensController extends Controller {
 		$result = $token->store();
 		
 		if ($result) {
-			$this->toast($this->lang('TOKEN_HAS_BEEN_CREATED'));
+			$this->enqueueMessage($this->lang('TOKEN_HAS_BEEN_CREATED'));
 			$this->redirect('tokens');
 		} else {
 			$msg = $this->lang('TOKEN_HAS_NOT_BEEN_CREATED') . ':';
 			foreach ($token->getErrors() as $error) {
 				$msg .= " \n" . $error;
 			}
-			$this->toastError($msg);
+			$this->enqueueError($msg);
 			$this->view = 'default';
 		}					
 
@@ -71,7 +71,7 @@ class TokensController extends Controller {
 		if ($result) {
 
 			// notify the change and redirect
-			$this->toast($this->lang('TOKEN_HAS_BEEN_CHANGED_SUCCESFULLY'));
+			$this->enqueueMessage($this->lang('TOKEN_HAS_BEEN_CHANGED_SUCCESFULLY'));
 			$this->redirect('tokens');
 
 		} else {
@@ -81,7 +81,7 @@ class TokensController extends Controller {
 
 			if (count($errors)) { 
 				$message = $this->lang('ERROR_ON_LAST_REQUEST') . ": \n" . implode(" \n", $errors);
-				$this->toastError($message);
+				$this->enqueueError($message);
 				$this->view = 'default';
 			} else {
 				$this->redirect('tokens');
@@ -103,7 +103,7 @@ class TokensController extends Controller {
 
 		if ($result) {
 
-			$this->toast($this->lang('TOKEN_HAS_BEEN_DELETED_SUCCESFULLY'));
+			$this->enqueueMessage($this->lang('TOKEN_HAS_BEEN_DELETED_SUCCESFULLY'));
 			$this->redirect('tokens');
 
 		} else {
@@ -113,10 +113,10 @@ class TokensController extends Controller {
 
 			if (count($errors)) { 
 				$message = $this->lang('ERROR_DELETING_TOKEN') . ": \n" . implode(" \n", $errors);
-				$this->toastError($message);
+				$this->enqueueError($message);
 				$this->view = 'default';
 			} else {
-				$this->toastError($this->lang('ERROR_ON_LAST_REQUEST'));
+				$this->enqueueError($this->lang('ERROR_ON_LAST_REQUEST'));
 				$this->redirect('tokens');
 			}
 

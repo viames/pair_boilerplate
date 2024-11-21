@@ -1,6 +1,6 @@
 <?php
 
-use Pair\Language;
+use Pair\Models\Language;
 use Pair\Core\View;
 use Pair\Html\Widget;
 
@@ -22,7 +22,7 @@ class UserViewProfileEdit extends View {
 		$this->app->pageTitle = $this->lang('USER_EDIT', $user->fullName);
 
 		$form = $this->model->getUserForm();
-		$form->setValuesByObject($user);
+		$form->values($user);
 		
 		$this->assign('user',	$user);
 		$this->assign('form',	$form);

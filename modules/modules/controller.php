@@ -49,9 +49,9 @@ class ModulesController extends Controller {
 		$res = $plugin->installPackage($upload->path . $upload->filename);
 
 		if ($res) {
-			$this->toast($this->lang('MODULE_HAS_BEEN_INSTALLED_SUCCESFULLY'));
+			$this->enqueueMessage($this->lang('MODULE_HAS_BEEN_INSTALLED_SUCCESFULLY'));
 		} else {
-			$this->toastError($this->lang('MODULE_HAS_NOT_BEEN_INSTALLED'));
+			$this->enqueueError($this->lang('MODULE_HAS_NOT_BEEN_INSTALLED'));
 		}
 
 	}
@@ -61,10 +61,10 @@ class ModulesController extends Controller {
 		$module = $this->getObjectRequestedById('Pair\Models\Module');
 
 		if ($module->delete()) {
-			$this->toast($this->lang('MODULE_HAS_BEEN_REMOVED_SUCCESFULLY'));
+			$this->enqueueMessage($this->lang('MODULE_HAS_BEEN_REMOVED_SUCCESFULLY'));
 			$this->redirect('modules/default');
 		} else {
-			$this->toastError($this->lang('MODULE_HAS_NOT_BEEN_REMOVED'));
+			$this->enqueueError($this->lang('MODULE_HAS_NOT_BEEN_REMOVED'));
 			$this->view = 'default';
 			$this->router->action = 'default';
 			$this->router->resetParams();

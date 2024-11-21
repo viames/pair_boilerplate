@@ -8,15 +8,15 @@
 				<form action="languages/add" method="post" class="form-horizontal">
 					<fieldset>
 						<div class="form-group">
-							<label class="col-md-3 control-label"><?php $this->_('ENGLISH_NAME') ?></label>
+							<div class="col-md-3"><?php $this->_('ENGLISH_NAME') ?></div>
 							<div class="col-md-9"><?php $this->form->printControl('englishName') ?></div>
 						</div>
 						<div class="form-group">
-							<label class="col-md-3 control-label"><?php $this->_('NATIVE_NAME') ?></label>
+							<div class="col-md-3"><?php $this->_('NATIVE_NAME') ?></div>
 							<div class="col-md-9"><?php $this->form->printControl('nativeName') ?></div>
 						</div>
 						<div class="form-group">
-							<label class="col-md-3 control-label"><?php $this->_('ISO_639_1') ?></label>
+							<div class="col-md-3"><?php $this->_('ISO_639_1') ?></div>
 							<div class="col-md-9"><?php $this->form->printControl('code') ?></div>
 						</div>
 					</fieldset>

@@ -3,8 +3,8 @@
 use Pair\Core\Application;
 use Pair\Models\Locale;
 use Pair\Core\Model;
-use Pair\Module;
-use Pair\Plugin;
+use Pair\Models\Module;
+use Pair\Support\Plugin;
 use Pair\Support\Utilities;
 
 class ToolsModel extends Model {

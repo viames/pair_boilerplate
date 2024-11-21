@@ -113,8 +113,6 @@ class SelftestModel extends Model {
 	 * @param	array	List of comparing language key names.
 	 * @param	string	Two chars language code.
 	 * @param	string	Path to comparing language file.
-	 *
-	 * @return	int
 	 */
 	private function countUntranslated($defaultKeys, $otherKeys, $langCode, $langPath): int {
 
@@ -137,8 +135,6 @@ class SelftestModel extends Model {
 	 * @param	array	List of comparing language key names.
 	 * @param	string	Two chars language code.
 	 * @param	string	Path to comparing language file.
-	 * 
-	 * @return	int
 	 */
 	private function countNotNeeded($defaultKeys, $otherKeys, $langCode, $langPath) {
 

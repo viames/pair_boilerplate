@@ -24,9 +24,9 @@ class UsersViewUserNew extends View {
 
 		$form = $this->model->getUserForm();
 
-		$form->getControl('enabled')->setValue(TRUE);
-		$form->getControl('password')->required();
-		$form->getControl('localeId')->setValue(Locale::getDefault()->id);
+		$form->control('enabled')->value(TRUE);
+		$form->control('password')->required();
+		$form->control('localeId')->value(Locale::getDefault()->id);
 
 		$this->assign('form', $form);
 		

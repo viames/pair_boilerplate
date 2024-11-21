@@ -14,7 +14,7 @@ $menu->item('groups', 'GROUPS', 'fa-users');
 $menu->item('options', 'OPTIONS', 'fa-sliders-h');
 
 // admin multimenu
-if (is_a($app->currentUser, 'Pair\User') and $app->currentUser->admin) {
+if (is_a($app->currentUser, 'Pair\Models\User') and $app->currentUser->admin) {
 
 	$menu->separator('DEVELOPER');
 

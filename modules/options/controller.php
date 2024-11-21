@@ -32,10 +32,10 @@ class OptionsController extends Controller {
 		}
 		
 		if ($error) {
-			$this->toastError($this->lang('CRYPT_KEY_MISSING'));
+			$this->enqueueError($this->lang('CRYPT_KEY_MISSING'));
 		}
 		
-		$this->toast($this->lang('CHANGES_SAVED'));
+		$this->enqueueMessage($this->lang('CHANGES_SAVED'));
 		
 		$this->app->redirect('options/default');
 		

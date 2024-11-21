@@ -1,7 +1,7 @@
 <?php
 
 use Pair\Html\Breadcrumb;
-use Pair\Group;
+use Pair\Models\Group;
 use Pair\Core\Router;
 use Pair\Core\View;
 use Pair\Html\Widget;
@@ -38,11 +38,11 @@ class UsersViewGroupEdit extends View {
 
 		// populate form fields
 		$form = $this->model->getGroupForm();
-		$form->getControl('defaultAclId')->options($modules,'id','moduleAction');
-		$form->setValuesByObject($group);
+		$form->control('defaultAclId')->options($modules,'id','moduleAction');
+		$form->values($group);
 
 		if ($group->default) {
-			$form->getControl('default')->setDisabled();
+			$form->control('default')->disabled();
 		}
 
 		// get default acl
@@ -50,7 +50,7 @@ class UsersViewGroupEdit extends View {
 		
 		// set acl value if there’s a default one
 		if ($acl) {
-			$form->getControl('defaultAclId')->setValue($acl->id);
+			$form->control('defaultAclId')->value($acl->id);
 		}
 
 		$this->assign('group',	$group);

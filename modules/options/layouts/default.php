@@ -19,7 +19,7 @@
 								foreach ($group as $o) {
 									
 									?><div class="form-group">
-										<label class="col-md-3 control-label"><?php print $o->label ?><br><small><?php print $o->name ?></small></label>
+										<div class="col-md-3"><label class="control-label"><?php print $o->label ?><br><small><?php print $o->name ?></small></label></div>
 										<div class="col-md-9"><?php $this->form->printControl($o->name)  ?></div>
 									</div><?php
 									

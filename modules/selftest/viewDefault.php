@@ -1,6 +1,6 @@
 <?php
 
-use Pair\Database;
+use Pair\Orm\Database;
 use Pair\Core\View;
 use Pair\Html\Widget;
 

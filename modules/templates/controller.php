@@ -3,8 +3,8 @@
 use Pair\Html\Breadcrumb;
 use Pair\Core\Controller;
 use Pair\Support\Logger;
-use Pair\Plugin;
-use Pair\Upload;
+use Pair\Support\Plugin;
+use Pair\Support\Upload;
 
 class TemplatesController extends Controller {
 
@@ -23,7 +23,7 @@ class TemplatesController extends Controller {
 
 	public function downloadAction() {
 
-		$object = $this->getObjectRequestedById('Pair\Template');
+		$object = $this->getObjectRequestedById('Pair\Models\Template');
 		$plugin = $object->getPlugin();
 		$plugin->downloadPackage();
 
@@ -62,7 +62,7 @@ class TemplatesController extends Controller {
 
 	public function deleteAction() {
 
-		$template = $this->getObjectRequestedById('Pair\Template');
+		$template = $this->getObjectRequestedById('Pair\Models\Template');
 
 		if ($template->delete()) {
 			$this->enqueueMessage($this->lang('TEMPLATE_HAS_BEEN_REMOVED_SUCCESFULLY'));

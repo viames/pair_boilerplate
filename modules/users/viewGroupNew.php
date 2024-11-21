@@ -1,7 +1,7 @@
 <?php
 
 use Pair\Html\Breadcrumb;
-use Pair\Group;
+use Pair\Models\Group;
 use Pair\Core\View;
 use Pair\Html\Widget;
 
@@ -33,10 +33,10 @@ class UsersViewGroupNew extends View {
 		$isDefault		= $defaultGroup ? 0 : 1;
 
 		$form = $this->model->getGroupForm();
-		$form->getControl('default')->setValue($isDefault);
-		$form->getControl('defaultAclId')->required()
+		$form->control('default')->value($isDefault);
+		$form->control('defaultAclId')->required()
 			->options($rules, 'id', 'moduleAction')
-			->prependEmpty('- Seleziona -');
+			->empty('- Seleziona -');
 
 		$this->assign('form', $form);
 		

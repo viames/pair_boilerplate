@@ -133,9 +133,9 @@ class UsersModel extends Model {
 		$form = new Form();
 		$form->classForControls('form-control');
 
-		$form->addInput('id')->setType('hidden');
-		$form->addInput('name')->required()->minLength(3);
-		$form->addInput('default')->setType('bool');
+		$form->text('id')->setType('hidden');
+		$form->text('name')->required()->minLength(3);
+		$form->text('default')->setType('bool');
 		$form->select('defaultAclId')->required();
 
 		return $form;

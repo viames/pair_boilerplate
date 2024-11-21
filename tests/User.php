@@ -9,7 +9,7 @@ final class UserTest extends TestCase {
     /** @test */
     public function createNewUser(): void {
 
-        $user = new Pair\User();
+        $user = new Pair\Models\User();
 
         $user->groupId = 1;
         $user->localeId = 82;
@@ -29,7 +29,7 @@ final class UserTest extends TestCase {
         $this->assertTrue($result);
         $this->assertTrue($user->areKeysPopulated());
 
-        $user = new Pair\User($user->id);
+        $user = new Pair\Models\User($user->id);
         $user->delete();
     
     }
@@ -37,7 +37,7 @@ final class UserTest extends TestCase {
     /** @test */
     public function createWrongUser(): void {
 
-        $user = new Pair\User();
+        $user = new Pair\Models\User();
 
         // missing required data
 

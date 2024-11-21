@@ -28,7 +28,7 @@ class Oauth2clientsController extends Controller {
 		}
 
 		// notify the creation and redirect
-		$this->toast($this->lang('OAUTH2CLIENT_HAS_BEEN_CREATED'));
+		$this->enqueueMessage($this->lang('OAUTH2CLIENT_HAS_BEEN_CREATED'));
 		$this->redirect($this->router->module);
 
 	}
@@ -59,7 +59,7 @@ class Oauth2clientsController extends Controller {
 		}
 
 		// notify the change and redirect
-		$this->toast($this->lang('OAUTH2CLIENT_HAS_BEEN_CHANGED_SUCCESFULLY'));
+		$this->enqueueMessage($this->lang('OAUTH2CLIENT_HAS_BEEN_CHANGED_SUCCESFULLY'));
 		$this->redirect($this->router->module);
 
 	}
@@ -78,7 +78,7 @@ class Oauth2clientsController extends Controller {
 		}
 
 		// notify the deletion and redirect
-		$this->toast($this->lang('OAUTH2CLIENT_HAS_BEEN_DELETED_SUCCESFULLY'));
+		$this->enqueueMessage($this->lang('OAUTH2CLIENT_HAS_BEEN_DELETED_SUCCESFULLY'));
 		$this->redirect($this->router->module);
 
 	}

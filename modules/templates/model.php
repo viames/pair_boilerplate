@@ -11,7 +11,7 @@ class TemplatesModel extends Model {
 	
 		$form = new Form();
 		$form->classForControls('form-control');
-		$form->file('package')->setAccept($accept)->required();
+		$form->file('package')->accept($accept)->required();
 		return $form;
 	
 	}

@@ -1,6 +1,6 @@
 <?php
 
-use Pair\Group;
+use Pair\Models\Group;
 use Pair\Core\View;
 use Pair\Html\Widget;
 
@@ -20,8 +20,8 @@ class UserViewProfile extends View {
 		$this->app->pageTitle = $this->lang('USER_PROFILE_OF', $user->fullName);
 		
 		$form = $this->model->getUserForm();
-		$form->setValuesByObject($user);
-		$form->setAllReadonly();
+		$form->values($user);
+		$form->allReadonly();
 		
 		$this->assign('user',  $user);
 		$this->assign('form',  $form);

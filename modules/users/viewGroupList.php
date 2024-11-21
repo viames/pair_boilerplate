@@ -1,7 +1,7 @@
 <?php
 
 use Pair\Html\Breadcrumb;
-use Pair\Group;
+use Pair\Models\Group;
 use Pair\Core\View;
 use Pair\Html\Widget;
 
