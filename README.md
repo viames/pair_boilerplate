@@ -75,7 +75,7 @@ sql_mode = STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_B
 
 * Manually copy from the existing installation, the files and folders present in the root of the project:
 
-- `config.php`
+- `.env`
 - `/temp`
 
 * Assign write permissions to the `/temp` folder for the Apache user;
@@ -164,7 +164,7 @@ The project folder structure follows the following tree:
 .htaccess
 composer.json
 composer.lock
-config.php
+.env
 cronjob.php
 README.md
 routes.php

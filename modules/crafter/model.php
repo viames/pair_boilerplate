@@ -1,7 +1,11 @@
 <?php
 
 use Pair\Core\Application;
+use Pair\Core\Config;
 use Pair\Core\Model;
+use Pair\Exceptions\PairException;
+use Pair\Helpers\Translator;
+use Pair\Helpers\Utilities;
 use Pair\Html\Form;
 use Pair\Models\Acl;
 use Pair\Models\Locale;
@@ -10,8 +14,6 @@ use Pair\Models\Module;
 use Pair\Models\Rule;
 use Pair\Orm\ActiveRecord;
 use Pair\Orm\Database;
-use Pair\Support\Translator;
-use Pair\Support\Utilities;
 
 class CrafterModel extends Model {
 
@@ -129,7 +131,7 @@ class CrafterModel extends Model {
 		$folder = APPLICATION_PATH . '/modules/' . $this->moduleName;
 
 		if (file_exists($folder) ) {
-			throw new Exception(Translator::do('MODULE_FOLDER_ALREADY_EXISTS', $this->moduleName));
+			throw new PairException(Translator::do('MODULE_FOLDER_ALREADY_EXISTS', $this->moduleName));
 		}
 
 		// module folders
@@ -172,7 +174,7 @@ class CrafterModel extends Model {
 		
 		// file name with 3 digits next-prefix and module name
 		$prefix = str_pad(++$prefix, 3, '0', STR_PAD_LEFT);
-		$fileName = $prefix . '_' . $this->moduleName . '_module.sql';
+		$fileName = $prefix . '_' . $this->moduleName . '_model.sql';
 		$filePath = APPLICATION_PATH . '/migrations/' . $fileName;
 
 		$lines = [];
@@ -308,11 +310,6 @@ class CrafterModel extends Model {
 
 		$this->db->exec($query);
 
-		if ($this->db->getLastError()) {
-			$this->addError($this->db->getLastError());
-			return FALSE;
-		}
-
 		return TRUE;
 		*/
 	}
@@ -324,7 +321,7 @@ class CrafterModel extends Model {
 	private function getAllTables(): array {
 
 		$query = 'SHOW FULL TABLES WHERE `Table_type` = "BASE TABLE"';
-		return Database::load($query, [], PAIR_DB_RESULT_LIST);
+		return Database::load($query, [], Database::RESULT_LIST);
 
 	}
 
@@ -338,7 +335,7 @@ class CrafterModel extends Model {
 			// reads folders file and dirs as plain array
 			$translations = array_diff(scandir(dirname(__FILE__) . '/translations', 0), $excludes);
 
-		} catch (Exception $e) {
+		} catch (PairException $e) {
 
 			$this->addError('Translations folder is not found');
 			return [];
@@ -632,7 +629,7 @@ class CrafterModel extends Model {
 		$module->name			= $this->moduleName;
 		$module->version		= '1.0';
 		$module->dateReleased	= date('Y-m-d H:i:s');
-		$module->appVersion		= PRODUCT_VERSION;
+		$module->appVersion		= Config::get('PRODUCT_VERSION');
 		$module->installedBy	= $this->app->currentUser->id;
 		$module->dateInstalled	= date('Y-m-d H:i:s');
 		$module->store();
@@ -815,7 +812,7 @@ class ' . $this->objectName . ' extends ActiveRecord {
 
 		// start listing Data Definition Language queries for migrations
 		$tableComment = Translator::do('CREATION_OF_TABLE', $this->tableName);
-		$createTable = Database::load('SHOW CREATE TABLE ' . $this->tableName, [], PAIR_DB_OBJECT);
+		$createTable = Database::load('SHOW CREATE TABLE ' . $this->tableName, [], Database::OBJECT);
 		$this->queries[] = ['comment' => $tableComment,'query' => $createTable->{'Create Table'}.';', 'affectedRows' => 0];
 		
 	}
@@ -827,8 +824,8 @@ class ' . $this->objectName . ' extends ActiveRecord {
 '<?php
 
 use Pair\Core\Controller;
+use Pair\Helpers\Post;
 use Pair\Html\Breadcrumb;
-use Pair\Support\Post;
 
 class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 
@@ -853,7 +850,7 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 		}
 
 		// notify the creation and redirect
-		$this->enqueueMessage($this->lang(\'OBJECT_HAS_BEEN_CREATED\'));
+		$this->toast($this->lang(\'OBJECT_HAS_BEEN_CREATED\'));
 		$this->redirect($this->router->module);
 
 	}
@@ -884,7 +881,7 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 		}
 
 		// notify the change and redirect
-		$this->enqueueMessage($this->lang(\'OBJECT_HAS_BEEN_CHANGED_SUCCESFULLY\'));
+		$this->toast($this->lang(\'OBJECT_HAS_BEEN_CHANGED_SUCCESFULLY\'));
 		$this->redirect($this->router->module);
 
 	}
@@ -903,7 +900,7 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 		}
 
 		// notify the deletion and redirect
-		$this->enqueueMessage($this->lang(\'OBJECT_HAS_BEEN_DELETED_SUCCESFULLY\'));
+		$this->toast($this->lang(\'OBJECT_HAS_BEEN_DELETED_SUCCESFULLY\'));
 		$this->redirect($this->router->module);
 
 	}
@@ -1202,19 +1199,12 @@ class ' . ucfirst($this->moduleName) . 'Model extends Model {
 '<?php
 
 use Pair\Core\View;
-use Pair\Html\Widget;
 
 class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 
-	public function render() {
+	public function render(): void {
 
 		$this->app->pageTitle = $this->lang(\'' . strtoupper($this->tableName) . '\');
-
-		$widget = new Widget();
-		$this->app->breadcrumbWidget = $widget->render(\'breadcrumb\');
-
-		$widget = new Widget();
-		$this->app->sideMenuWidget = $widget->render(\'sideMenu\');
 
 		$' . Utilities::getCamelCase($this->tableName) . ' = $this->model->getItems(\'' .  $this->objectName . '\');
 
@@ -1284,7 +1274,7 @@ class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 							$firstTextProp = Utilities::getCamelCase($col->REFERENCED_COLUMN_NAME);
 						}
 
-						$object = 'print htmlspecialchars($o->getRelatedProperty(\'' . $property . '\', \'' . $firstTextProp . '\'))';
+						$object = 'print htmlspecialchars($o->getParentProperty(\'' . $property . '\', \'' . $firstTextProp . '\'))';
 
 					// class not found, show a simple field value
 					} else {
@@ -1339,21 +1329,14 @@ class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 
 use Pair\Core\View;
 use Pair\Html\Breadcrumb;
-use Pair\Html\Widget;
 
 class ' . ucfirst($this->moduleName) . 'ViewNew extends View {
 
-	public function render() {
+	public function render(): void {
 
 		$this->app->pageTitle = $this->lang(\'NEW_OBJECT\');
 
 		Breadcrumb::path($this->lang(\'NEW_OBJECT\'), \'new\');
-
-		$widget = new Widget();
-		$this->app->breadcrumbWidget = $widget->render(\'breadcrumb\');
-
-		$widget = new Widget();
-		$this->app->sideMenuWidget = $widget->render(\'sideMenu\');
 
 		$form = $this->model->get' . $this->objectName . 'Form(new ' . $this->objectName . ');
 
@@ -1437,11 +1420,10 @@ class ' . ucfirst($this->moduleName) . 'ViewNew extends View {
 use Pair\Core\Router;
 use Pair\Core\View;
 use Pair\Html\Breadcrumb;
-use Pair\Html\Widget;
 
 class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 
-	public function render() {
+	public function render(): void {
 
 ' . $params . '
 		$' . lcfirst($this->objectName) . ' = ' . $this->objectName . '::find(' . $key . ');
@@ -1449,12 +1431,6 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 		$this->app->pageTitle = $this->lang(\'EDIT_OBJECT\');
 
 		Breadcrumb::path($this->lang(\'EDIT_OBJECT\'), \'edit/\' . ' . $editId . ');
-
-		$widget = new Widget();
-		$this->app->breadcrumbWidget = $widget->render(\'breadcrumb\');
-
-		$widget = new Widget();
-		$this->app->sideMenuWidget = $widget->render(\'sideMenu\');
 
 		$form = $this->model->get' . ucfirst($this->objectName) . 'Form($' . lcfirst($this->objectName) . ');
 
@@ -1522,7 +1498,7 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 	 * @param	string	Optional object name with uppercase first and case sensitive.
 	 * @param	string	Optional module name all lowercase alpha chars only.
 	 */
-	public function setupVariables(string $tableName, string $objectName=NULL, string $moduleName=NULL): void {
+	public function setupVariables(string $tableName, ?string $objectName=NULL, ?string $moduleName=NULL): void {
 
 		$app = Application::getInstance();
 
@@ -1541,7 +1517,7 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 		$this->moduleName	= $moduleName ? $moduleName : strtolower(str_replace('_', '', $tableName));
 		$this->objectName	= $objectName ? $objectName : $this->getSingularObjectName($tableName);
 		$this->author		= $app->currentUser->fullName ?? '';
-		$this->package		= PRODUCT_NAME;
+		$this->package		= Config::get('PRODUCT_NAME');
 
 		$this->propTypes	= [];
 		$this->binds		= [];

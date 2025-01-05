@@ -3,12 +3,11 @@
 use Pair\Core\View;
 use Pair\Html\Breadcrumb;
 use Pair\Html\Form;
-use Pair\Html\Widget;
 use Pair\Support\Options;
 
 class OptionsViewDefault extends View {
 
-	public function render() {
+	public function render(): void {
 
 		$this->app->loadScript('js/options.js', TRUE);
 
@@ -18,13 +17,8 @@ class OptionsViewDefault extends View {
 
 		Breadcrumb::path($this->lang('OPTIONS'));
 
-		$widget = new Widget();
-		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
-
-		$widget = new Widget();
-		$this->app->sideMenuWidget = $widget->render('sideMenu');
-
 		$form = new Form();
+		$form->classForControls('form-control');
 
 		$groupedOptions = [];
 
@@ -41,27 +35,27 @@ class OptionsViewDefault extends View {
 
 				default:
 				case 'text':
-					$form->text($o->name)->value($o->value)->class('form-control');
+					$form->text($o->name)->value($o->value);
 					break;
 
 				case 'textarea':
-					$form->textarea($o->name)->cols(40)->rows(5)->value($o->value)->class('form-control');
+					$form->textarea($o->name)->cols(40)->rows(5)->value($o->value);
 					break;
 
 				case 'int':
-					$form->number($o->name)->value($o->value)->class('form-control');
+					$form->number($o->name)->value($o->value);
 					break;
 
 				case 'bool':
-					$form->checkbox($o->name, ['role'=>'switch'])->id($o->name)->value($o->value)->class('form-check-input');
+					$form->checkbox($o->name, ['role'=>'switch'])->value($o->value)->class('form-check-input');
 					break;
 
 				case 'list':
-					$form->select($o->name)->options($o->listItems,'value','text')->value($o->value)->class('default-select2 form-control');
+					$form->select($o->name)->options($o->listItems,'value','text')->value($o->value)->class('default-select2');
 					break;
 
 				case 'password':
-					$form->password($o->name, ['autocomplete'=>'off'])->value($o->value)->class('form-control');
+					$form->password($o->name, ['autocomplete'=>'off'])->value($o->value);
 					break;
 			}
 

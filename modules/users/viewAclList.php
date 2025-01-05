@@ -3,12 +3,12 @@
 use Pair\Core\Router;
 use Pair\Core\View;
 use Pair\Html\Breadcrumb;
-use Pair\Html\Widget;
+
 use Pair\Models\Group;
 
 class UsersViewAclList extends View {
 
-	public function render() {
+	public function render(): void {
 
 		$this->app->activeMenuItem = 'groups';
 
@@ -20,11 +20,9 @@ class UsersViewAclList extends View {
 		Breadcrumb::path('Gruppo ' . $group->name, 'groups/edit/' . $group->id);
 		Breadcrumb::path('Access list');
 
-		$widget = new Widget();
-		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
 
-		$widget = new Widget();
-		$this->app->sideMenuWidget = $widget->render('sideMenu');
+
+
 
 		$this->app->pageTitle = $this->lang('ACCESS_LIST_OF_GROUP', $group->name);
 

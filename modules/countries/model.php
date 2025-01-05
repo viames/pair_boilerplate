@@ -10,6 +10,7 @@ class CountriesModel extends Model {
 
 	/**
 	 * Returns object list with pagination.
+	 * @return Country[]
 	 */
 	public function getCountries(): Collection {
 
@@ -51,7 +52,7 @@ class CountriesModel extends Model {
 
 			// get a filtered list
 			$query = 'SELECT COUNT(1) FROM countries WHERE english_name LIKE ?';
-			return Database::load($query, [$alphaFilter . '%'], PAIR_DB_COUNT);
+			return Database::load($query, [$alphaFilter . '%'], Database::COUNT);
 
 		} else {
 
@@ -64,6 +65,7 @@ class CountriesModel extends Model {
 
 	/**
 	 * Returns the list of official languages for a Country.
+	 * @return string[]
 	 */
 	public function getOfficialLanguages(Country $country): array {
 
@@ -75,7 +77,7 @@ class CountriesModel extends Model {
 			AND lo.`official_language` = 1
 			ORDER BY `english_name`';
 
-		return Database::load($query, [$country->id], PAIR_DB_RESULT_LIST);
+		return Database::load($query, [$country->id], Database::RESULT_LIST);
 
 	}
 

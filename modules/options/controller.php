@@ -6,7 +6,7 @@ use Pair\Support\Options;
 
 class OptionsController extends Controller {
 	
-	protected function init() {
+	protected function init(): void {
 		
 		$this->view = 'default';
 		
@@ -32,10 +32,10 @@ class OptionsController extends Controller {
 		}
 		
 		if ($error) {
-			$this->enqueueError($this->lang('CRYPT_KEY_MISSING'));
+			$this->toastError($this->lang('CRYPT_KEY_MISSING'));
 		}
 		
-		$this->enqueueMessage($this->lang('CHANGES_SAVED'));
+		$this->toast($this->lang('CHANGES_SAVED'));
 		
 		$this->app->redirect('options/default');
 		

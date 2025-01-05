@@ -3,28 +3,19 @@
 use Pair\Html\Breadcrumb;
 use Pair\Models\User;
 use Pair\Core\View;
-use Pair\Html\Widget;
 
-class UsersViewUserList extends View {
+class UsersViewDefault extends View {
 
 	/**
 	 * Computes data and assigns values to layout.
-	 *
-	 * @see View::render()
 	 */
-	public function render() {
+	public function render(): void {
 
 		$this->app->pageTitle = $this->lang('USERS');
 		$this->app->activeMenuItem = 'users/userList';
 
 		Breadcrumb::path($this->lang('USERS'), 'users/userList');
 		
-		$widget = new Widget();
-		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
-		
-		$widget = new Widget();
-		$this->app->sideMenuWidget = $widget->render('sideMenu');
-
 		$users = $this->model->getUsers();
 
 		$this->pagination->count = User::countAllObjects(array('admin'=>0));

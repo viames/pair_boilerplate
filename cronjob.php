@@ -7,7 +7,7 @@
 declare(strict_types=1);
 
 use Pair\Core\Application;
-use Pair\Support\Schedule;
+use Pair\Helpers\Schedule;
 
 // initialize composer
 require 'vendor/autoload.php';

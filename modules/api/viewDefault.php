@@ -4,6 +4,6 @@ use Pair\Core\View;
 
 class ApiViewDefault extends View {
 
-	public function render() {}
+	public function render(): void {}
 
 }

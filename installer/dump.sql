@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS `audit` (
 	`id` int unsigned NOT NULL AUTO_INCREMENT,
 	`user_id` int unsigned DEFAULT NULL,
 	`event` enum('password_changed','login_failed','login_successful','logout','session_expired','remember_me_login','user_created','user_deleted','user_changed','permissions_changed') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-	`created_at` timestamp NULL DEFAULT NULL,
+	`created_at` timestamp NOT NULL,
 	`details` json DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	KEY `user_id` (`user_id`),
@@ -354,19 +354,20 @@ UNLOCK TABLES;
 
 CREATE TABLE IF NOT EXISTS `error_logs` (
 	`id` int unsigned NOT NULL AUTO_INCREMENT,
-	`created_time` datetime NOT NULL,
+	`level` int unsigned DEFAULT '8',
 	`user_id` int unsigned DEFAULT NULL,
 	`path` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
 	`get_data` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
 	`post_data` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
 	`files_data` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
 	`cookie_data` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-	`description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+	`description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
 	`user_messages` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
 	`referer` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+	`created_at` timestamp NOT NULL,
 	PRIMARY KEY (`id`),
 	KEY `user_id` (`user_id`),
-	KEY `created_time` (`created_time`),
+	KEY `created_at` (`created_at`),
 	CONSTRAINT `fk_error_logs_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -1245,6 +1246,22 @@ VALUES
 UNLOCK TABLES;
 
 --
+-- Table structure for table `schedule_logs`
+--
+
+CREATE TABLE `schedule_logs` (
+	`id` int unsigned NOT NULL AUTO_INCREMENT,
+	`job` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+	`result` tinyint unsigned NOT NULL,
+	`info` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+	`created_at` timestamp NOT NULL,
+	PRIMARY KEY (`id`),
+	KEY `created_at` (`created_at`),
+	KEY `job` (`job`),
+	KEY `result` (`result`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
 -- Table structure for table `sessions`
 --
 
@@ -1351,7 +1368,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 CREATE TABLE IF NOT EXISTS `users_remembers` (
 	`user_id` int unsigned NOT NULL,
 	`remember_me` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-	`created_at` timestamp NULL DEFAULT NULL,
+	`created_at` timestamp NOT NULL,
 	PRIMARY KEY (`user_id`,`remember_me`),
 	KEY `remember_me` (`remember_me`),
 	KEY `created_at` (`created_at`),

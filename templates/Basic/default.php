@@ -1,6 +1,7 @@
 <?php
 
 use Pair\Core\Application;
+use Pair\Core\Config;
 
 $app = Application::getInstance();
 
@@ -15,13 +16,13 @@ $app = Application::getInstance();
 		<title><?php print $app->pageTitle ?></title>
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
 		<link rel="stylesheet" href="css/simple-sidebar.css">
-		<?php print $app->pageStyles ?>
+		<?php $app->printStyles() ?>
     </head>
     <body>
         <div class="d-flex" id="wrapper">
             <!-- Sidebar-->
             <div class="border-end bg-white" id="sidebar-wrapper">
-                <div class="sidebar-heading border-bottom bg-light"><?php print PRODUCT_NAME ?></div>
+                <div class="sidebar-heading border-bottom bg-light"><?php print Config::get('PRODUCT_NAME') ?></div>
                 <ul class="nav">
                     <?php print $app->sideMenuWidget ?>
                 </ul>
@@ -56,7 +57,7 @@ $app = Application::getInstance();
 					<h2><?php print $app->pageTitle ?></h2>
 					<?php print $app->breadcrumbWidget ?>
 					<?php print $app->pageContent ?>
-					<?php print $app->log ?>
+					<?php if ($app->log) { print $app->log; } ?>
                 </div>
             </div>
         </div>
@@ -64,6 +65,6 @@ $app = Application::getInstance();
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>		<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 		<script src="js/simple-sidebar.js" type="text/javascript"></script>
-		<?php print $app->pageScripts ?>
+		<?php $app->printScripts() ?>
     </body>
 </html>

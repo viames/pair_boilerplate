@@ -8,7 +8,7 @@ use Pair\Support\Post;
  		
 class LanguagesController extends Controller {
 
-	protected function init() {
+	protected function init(): void {
 		
 		Breadcrumb::path($this->lang('LANGUAGES'), 'languages');
 		
@@ -38,14 +38,14 @@ class LanguagesController extends Controller {
 		$result = $language->store();
 		
 		if ($result) {
-			$this->enqueueMessage($this->lang('LANGUAGE_HAS_BEEN_CREATED'));
+			$this->toast($this->lang('LANGUAGE_HAS_BEEN_CREATED'));
 			$this->redirect('languages');
 		} else {
 			$msg = $this->lang('LANGUAGE_HAS_NOT_BEEN_CREATED') . ':';
 			foreach ($language->getErrors() as $error) {
 				$msg .= " \n" . $error;
 			}
-			$this->enqueueError($msg);
+			$this->toastError($msg);
 			$this->view = 'default';
 		}					
 
@@ -76,7 +76,7 @@ class LanguagesController extends Controller {
 		if ($result) {
 
 			// notify the change and redirect
-			$this->enqueueMessage($this->lang('LANGUAGE_HAS_BEEN_CHANGED_SUCCESFULLY'));
+			$this->toast($this->lang('LANGUAGE_HAS_BEEN_CHANGED_SUCCESFULLY'));
 			$this->redirect('languages');
 
 		} else {
@@ -86,7 +86,7 @@ class LanguagesController extends Controller {
 
 			if (count($errors)) { 
 				$message = $this->lang('ERROR_ON_LAST_REQUEST') . ": \n" . implode(" \n", $errors);
-				$this->enqueueError($message);
+				$this->toastError($message);
 				$this->view = 'default';
 			} else {
 				$this->redirect('languages');
@@ -108,7 +108,7 @@ class LanguagesController extends Controller {
 
 		if ($result) {
 
-			$this->enqueueMessage($this->lang('LANGUAGE_HAS_BEEN_DELETED_SUCCESFULLY'));
+			$this->toast($this->lang('LANGUAGE_HAS_BEEN_DELETED_SUCCESFULLY'));
 			$this->redirect('languages');
 
 		} else {
@@ -118,10 +118,10 @@ class LanguagesController extends Controller {
 
 			if (count($errors)) { 
 				$message = $this->lang('ERROR_DELETING_LANGUAGE') . ": \n" . implode(" \n", $errors);
-				$this->enqueueError($message);
+				$this->toastError($message);
 				$this->view = 'default';
 			} else {
-				$this->enqueueError($this->lang('ERROR_ON_LAST_REQUEST'));
+				$this->toastError($this->lang('ERROR_ON_LAST_REQUEST'));
 				$this->redirect('languages');
 			}
 

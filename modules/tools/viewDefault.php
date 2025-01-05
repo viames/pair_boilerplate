@@ -2,21 +2,14 @@
 
 use Pair\Html\Breadcrumb;
 use Pair\Core\View;
-use Pair\Html\Widget;
 
 class ToolsViewDefault extends View {
 
-	public function render() {
+	public function render(): void {
 
 		$this->app->pageTitle = $this->lang('TOOLS');
 
 		Breadcrumb::path($this->lang('TOOLS'));
-
-		$widget = new Widget();
-		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
-
-		$widget = new Widget();
-		$this->app->sideMenuWidget = $widget->render('sideMenu');
 
 		// rebuild existent language files
 		$tools[] = [

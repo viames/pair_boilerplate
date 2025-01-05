@@ -1,22 +1,15 @@
 <?php
 
 use Pair\Core\View;
-use Pair\Html\Widget;
 use Pair\Orm\Database;
 use Pair\Support\Utilities;
 
 class SelftestViewDefault extends View {
 
-	public function render() {
+	public function render(): void {
 		
 		$db = Database::getInstance();
 		$this->app->pageTitle = $this->lang('SELF_TEST');
-
-		$widget = new Widget();
-		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
-		
-		$widget = new Widget();
-		$this->app->sideMenuWidget = $widget->render('sideMenu');
 
 		// starts the test
 		$test = new SelfTest();

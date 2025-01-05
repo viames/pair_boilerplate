@@ -1,46 +1,35 @@
 <?php
 
-use Pair\Html\Form;
 use Pair\Core\Model;
+use Pair\Html\Form;
 use Pair\Models\Module;
+use Pair\Orm\Database;
 
 class RulesModel extends Model {
 
 	/**
 	 * Returns the modules
-	 *
-	 * @return array
 	 */
-	public function getAclModelRules() {
+	public function getAclModelRules(): array {
 
-		$query =
-			' SELECT r.*, m.name '.
-			' FROM rules as r '.
-			' INNER JOIN modules as m ON m.id = r.module_id '.
-			' ORDER BY name ASC ' .
-			' LIMIT ' . $this->pagination->start . ', ' . $this->pagination->limit;
+		$query = 'SELECT r.*, m.`name`
+			FROM `rules` as r
+			INNER JOIN `modules` as m ON m.`id` = r.`module_id`
+			ORDER BY `name` ASC
+			LIMIT ' . $this->pagination->start . ', ' . $this->pagination->limit;
 
-		$this->db->setQuery($query);
-		$modules = $this->db->loadObjectList();
-
-		return $modules;
+		return Database::load($query, [], Database::OBJECT);
 
 	}
 
 	/**
 	 * Returns records count.
-	 *
-	 * @return	int
 	 */
 	public function countModules() {
 
-		$query =
-			' SELECT COUNT(*) '.
-			' FROM rules as r '.
-			' INNER JOIN modules as m ON m.id = r.module_id ';
+		$query = 'SELECT COUNT(*) FROM `rules` as r INNER JOIN `modules` as m ON m.`id` = r.`module_id`';
 
-		$this->db->setQuery($query);
-		return (int)$this->db->loadResult();
+		return (int)Database::load($query, [], Database::COUNT);
 
 	}
 

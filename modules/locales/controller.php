@@ -8,7 +8,7 @@ use Pair\Core\Router;
  		
 class LocalesController extends Controller {
 
-	protected function init() {
+	protected function init(): void {
 		
 		Breadcrumb::path($this->lang('LOCALES'), 'locales');
 		
@@ -38,14 +38,14 @@ class LocalesController extends Controller {
 		$result = $locale->store();
 		
 		if ($result) {
-			$this->enqueueMessage($this->lang('LOCALE_HAS_BEEN_CREATED'));
+			$this->toast($this->lang('LOCALE_HAS_BEEN_CREATED'));
 			$this->redirect('locales');
 		} else {
 			$msg = $this->lang('LOCALE_HAS_NOT_BEEN_CREATED') . ':';
 			foreach ($locale->getErrors() as $error) {
 				$msg .= " \n" . $error;
 			}
-			$this->enqueueError($msg);
+			$this->toastError($msg);
 			$this->view = 'default';
 		}					
 
@@ -76,7 +76,7 @@ class LocalesController extends Controller {
 		if ($result) {
 
 			// notify the change and redirect
-			$this->enqueueMessage($this->lang('LOCALE_HAS_BEEN_CHANGED_SUCCESFULLY'));
+			$this->toast($this->lang('LOCALE_HAS_BEEN_CHANGED_SUCCESFULLY'));
 			$this->redirect('locales');
 
 		} else {
@@ -86,7 +86,7 @@ class LocalesController extends Controller {
 
 			if (count($errors)) { 
 				$message = $this->lang('ERROR_ON_LAST_REQUEST') . ": \n" . implode(" \n", $errors);
-				$this->enqueueError($message);
+				$this->toastError($message);
 				$this->view = 'default';
 			} else {
 				$this->redirect('locales');
@@ -113,7 +113,7 @@ class LocalesController extends Controller {
 
 		if ($result) {
 
-			$this->enqueueMessage($this->lang('LOCALE_HAS_BEEN_DELETED_SUCCESFULLY'));
+			$this->toast($this->lang('LOCALE_HAS_BEEN_DELETED_SUCCESFULLY'));
 			$this->redirect('locales');
 
 		} else {
@@ -123,10 +123,10 @@ class LocalesController extends Controller {
 
 			if (count($errors)) { 
 				$message = $this->lang('ERROR_DELETING_LOCALE') . ": \n" . implode(" \n", $errors);
-				$this->enqueueError($message);
+				$this->toastError($message);
 				$this->view = 'default';
 			} else {
-				$this->enqueueError($this->lang('ERROR_ON_LAST_REQUEST'));
+				$this->toastError($this->lang('ERROR_ON_LAST_REQUEST'));
 				$this->redirect('locales');
 			}
 

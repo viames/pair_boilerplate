@@ -3,12 +3,12 @@
 use Pair\Core\Router;
 use Pair\Core\View;
 use Pair\Html\Breadcrumb;
-use Pair\Html\Widget;
+
 use Pair\Models\Group;
 
 class UsersViewAclNew extends View {
 
-	public function render() {
+	public function render(): void {
 
 		$groupId = Router::get(0);
 
@@ -22,11 +22,9 @@ class UsersViewAclNew extends View {
 		Breadcrumb::path('Access list', 'users/aclList/' . $group->id);
 		Breadcrumb::path('Aggiungi ACL');
 		
-		$widget = new Widget();
-		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
+
 		
-		$widget = new Widget();
-		$this->app->sideMenuWidget = $widget->render('sideMenu');
+
 
 		$rules = $group->getAllNotExistRules();
 

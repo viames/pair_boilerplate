@@ -3,11 +3,10 @@
 use Pair\Html\Breadcrumb;
 use Pair\Models\Locale;
 use Pair\Core\View;
-use Pair\Html\Widget;
 
 class UsersViewUserNew extends View {
 
-	public function render() {
+	public function render(): void {
 		
 		$this->app->pageTitle = $this->lang('NEW_USER');
 		$this->app->activeMenuItem = 'users/userList';
@@ -15,12 +14,6 @@ class UsersViewUserNew extends View {
 		Breadcrumb::path($this->lang('USERS'), 'users');
 		Breadcrumb::path($this->lang('NEW_USER'), 'users/new');
 		
-		$widget = new Widget();
-		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
-		
-		$widget = new Widget();
-		$this->app->sideMenuWidget = $widget->render('sideMenu');
-
 		$form = $this->model->getUserForm();
 
 		$form->control('enabled')->value(TRUE);

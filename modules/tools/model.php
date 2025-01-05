@@ -102,7 +102,7 @@ class ToolsModel extends Model {
 					// manifest file is missing
 					if (!file_exists($manifestFile)) {
 
-						Logger::warning('File manifest.xml is missing for ' . ucfirst($type) . ' plugin at path /' . $folder . '/' . $dir);
+						LogBar::warning('File manifest.xml is missing for ' . ucfirst($type) . ' plugin at path /' . $folder . '/' . $dir);
 
 					} else {
 
@@ -113,7 +113,7 @@ class ToolsModel extends Model {
 						Plugin::createPluginByManifest($manifest);
 
 						// logging
-						Logger::event('Inserted a new plugin record for ' . $type . ' ' . $dir);
+						LogBar::event('Inserted a new plugin record for ' . $type . ' ' . $dir);
 						$fixes++;
 
 					}
@@ -136,7 +136,7 @@ class ToolsModel extends Model {
 					$plugin->createManifestFile();
 
 					// logging
-					Logger::event('Created manifest file for ' . $type . ' ' . $pObj->name);
+					LogBar::event('Created manifest file for ' . $type . ' ' . $pObj->name);
 					$fixes++;
 
 				}

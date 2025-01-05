@@ -7,7 +7,7 @@ use Pair\Support\Post;
 
 class UserController extends Controller {
 	
-	public function defaultAction() {
+	public function defaultAction(): void {
 		
 		$this->view = 'login';
 		
@@ -21,7 +21,7 @@ class UserController extends Controller {
 		$username	= Post::trim('username');
 		$password	= Post::trim('password');
 		$timezone	= Post::trim('timezone');
-		$remember	= Post::bool('remember');
+		$remember	= Post::bool('remember', FALSE);
 
 		// if isn’t post submit, render the page
 		if (!Post::submitted()) {
@@ -30,7 +30,7 @@ class UserController extends Controller {
 			
 		// username or password missing
 		if (!$username or !$password) {
-			$this->enqueueError($this->lang('AUTHENTICATION_REQUIRES_USERNAME_AND_PASSWORD'));
+			$this->toastError($this->lang('AUTHENTICATION_REQUIRES_USERNAME_AND_PASSWORD'));
 			return;
 		}
 		
@@ -40,7 +40,7 @@ class UserController extends Controller {
 		// login denied
 		if ($result->error) {
 			sleep(3);
-			$this->enqueueError($result->message);
+			$this->toastError($result->message);
 			$this->app->redirect('user/login');
 		}
 		
@@ -54,7 +54,7 @@ class UserController extends Controller {
 
 		// get last requested page
 		$page = $this->app->getPersistentState('lastRequestedUrl');
-		$this->app->unsetPersistentState('lastRequestedUrl');
+		$this->unsetPersistentState('lastRequestedUrl');
 
 		// even goes to last page
 		if ($page) {
@@ -72,7 +72,7 @@ class UserController extends Controller {
 	/**
 	 * Do the logout action.
 	 */
-	public function logoutAction() {
+	public function logoutAction(): void {
 
 		$formerUser = Session::current()->getFormerUser();
 
@@ -92,11 +92,20 @@ class UserController extends Controller {
 	/**
 	 * Do the user profile change.
 	 */
-	public function profileChangeAction() {
+	public function profileChangeAction(): void {
 	
-		$form = $this->model->getUserForm();
-		
-		$user			= new User($this->app->currentUser->id);
+		$user = new User($this->app->currentUser->id);
+
+		// snapshot for Audit
+		$oldUser = clone $user;
+
+		$form = $this->model->getUserForm($user);
+
+		if (!$form->isValid()) {
+			$this->toastError($this->lang('ERROR_FORM_IS_NOT_VALID'));
+			return;
+		}
+
 		$user->name		= Post::trim('name');
 		$user->surname	= Post::trim('surname');
 		$user->email	= Post::trim('email') ? Post::trim('email') : NULL;
@@ -107,21 +116,20 @@ class UserController extends Controller {
 			$user->hash = User::getHashedPasswordWithSalt(Post::get('password'));
 		}
 
-		$res = $user->store();
-
-		// we notice just if user changes really
-		if (!$form->isValid()) {
-			$this->enqueueError($this->lang('ERROR_FORM_IS_NOT_VALID'));
-		} else {
-			if ($res) {
-				$this->enqueueMessage($this->lang('YOUR_PROFILE_HAS_BEEN_CHANGED'));
-			} else {
-				$errors = $user->getErrors();
-				$msg = $this->lang('ERROR_ON_LAST_REQUEST') . (count($errors) ? ':' . implode(" \n", $errors) : '');
-				$this->enqueueError($msg);
-			}
+		if (!$user->store()) {
+			$this->raiseError($user);
+			return;
 		}
-		
+
+		// track the user edit
+		Audit::userChanged($oldUser, $user);
+
+		// track user password change
+		if (Post::get('password')) {
+			Audit::passwordChanged($user);
+		}
+
+		$this->toast($this->lang('YOUR_PROFILE_HAS_BEEN_CHANGED'));
 		$this->app->redirect('user/profile');
 	
 	}

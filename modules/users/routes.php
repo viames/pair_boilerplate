@@ -9,4 +9,4 @@ use Pair\Core\Router;
 
 Router::addRoute('/new', 'userNew');
 Router::addRoute('/edit/:id([0-9])+', 'userEdit');
-Router::addRoute('/list', 'userList');
+Router::addRoute('/list', 'default');

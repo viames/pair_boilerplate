@@ -4,6 +4,10 @@
 declare(strict_types=1);
 
 use Pair\Core\Application;
+use Pair\Exceptions\PairException;
+
+// disable xdebug exception trace
+ini_set('xdebug.show_exception_trace', 0);
 
 // initialize composer
 require 'vendor/autoload.php';
@@ -17,10 +21,13 @@ $model = new MigrationsModel();
 print "Migrating data...\n";
 
 // migrate data
-if (!$model->runMigration()) {
-    print "Migration failed: " . implode(', ', $model->getErrors()) . "\n";
-    exit(1);
-} else {
-    print "Migration successful\n";
-    exit(0);
+try {
+
+    $model->runMigration();
+    print 'Migration successful' . PHP_EOL;
+
+} catch (PairException $e) {
+    
+    print 'Migration failed' . PHP_EOL . $e->getMessage() . PHP_EOL;
+
 }

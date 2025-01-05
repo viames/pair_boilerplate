@@ -2,20 +2,13 @@
 
 use Pair\Models\Language;
 use Pair\Core\View;
-use Pair\Html\Widget;
 
 class UserViewProfileEdit extends View {
 
-	public function render() {
+	public function render(): void {
 
 		$this->app->activeMenuItem = 'users/userList';
 
-		$widget = new Widget();
-		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
-		
-		$widget = new Widget();
-		$this->app->sideMenuWidget = $widget->render('sideMenu');
-		
 		$user		= $this->app->currentUser;
 		$languages	= Language::getAllObjects(NULL, array('englishName'));
 

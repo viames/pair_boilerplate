@@ -19,18 +19,12 @@
 								foreach ($group as $o) {
 									
 									?><div class="form-group">
-										<div class="col-md-3">
-											<label class="control-label">
-												<?php print $o->label ?><br>
-												<small><?php print $o->name ?></small>
-											</label>
-										</div>
+										<div class="col-md-3"><label class="control-label"><?php print $o->label ?><br><small><?php print $o->name ?></small></label></div>
 										<div class="col-md-9"><?php
 
 									if (is_a($this->form->control($o->name), 'Pair\Html\FormControls\Checkbox')) {
 									
-										?><div class="form-check form-switch">
-											<?php $this->form->printControl($o->name) ?>
+										?><div class="form-check form-switch"><?php $this->form->printControl($o->name) ?>
 											<label class="form-check-label" for="<?php print $o->name ?>">True</label>
 										</div><?php
 

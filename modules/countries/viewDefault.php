@@ -2,20 +2,13 @@
 
 use Pair\Core\Router;
 use Pair\Core\View;
-use Pair\Html\Widget;
 
 class CountriesViewDefault extends View {
 
-	public function render() {
+	public function render(): void {
 
 		$this->app->pageTitle = $this->lang('COUNTRIES');
 
-		$widget = new Widget();
-		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
-		
-		$widget = new Widget();
-		$this->app->sideMenuWidget = $widget->render('sideMenu');
-		
 		$countries = $this->model->getCountries();
 
 		$this->pagination->count = $this->model->countListItems();

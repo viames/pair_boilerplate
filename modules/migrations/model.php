@@ -1,6 +1,8 @@
 <?php
 
 use Pair\Core\Model;
+use Pair\Exceptions\DatabaseException;
+use Pair\Exceptions\PairException;
 use Pair\Models\Migration;
 use Pair\Orm\Database;
 
@@ -46,7 +48,7 @@ class MigrationsModel extends Model {
 		// richiede al DB un eventuale riga con result = 0 (migrazione incompleta)
 		$query = 'SELECT `file`, `query_index` FROM `migrations` WHERE `result` = 0 ORDER BY `file`, `query_index`';
 
-		$incomplete = Database::load($query, [], PAIR_DB_OBJECT);
+		$incomplete = Database::load($query, [], Database::OBJECT);
 
 		// se c’è una riga con result = 0, esegue il relativo file a partire dalla riga con result = 0
 		if ($incomplete) {
@@ -65,7 +67,7 @@ class MigrationsModel extends Model {
 		// verifica se esiste la tabella `migrations` nel DB
 		$query = 'SHOW TABLES LIKE "migrations"';
 
-		$result = (bool)Database::load($query, [], PAIR_DB_RESULT);
+		$result = (bool)Database::load($query, [], Database::RESULT);
 
 		// crea la tabella migrations se non esiste
 		if (!$result) {
@@ -97,7 +99,7 @@ class MigrationsModel extends Model {
 		foreach ($files as $file) {
 
 			// verifica se il file è già stato eseguito
-			if (!(bool)Database::load($query, [$file], PAIR_DB_RESULT)) {
+			if (!(bool)Database::load($query, [$file], Database::RESULT)) {
 				$migrationFiles[] = $file;
 			}
 
@@ -110,6 +112,8 @@ class MigrationsModel extends Model {
 	/**
 	 * Applica tutte le query di un file. Se indicato un indice di partenza,
 	 * esegue solo le query a partire da quell’indice.
+	 * 
+	 * @throws PairException
 	 */
 	private function migrateFile(string $file, int $index=1): void {
 
@@ -121,22 +125,24 @@ class MigrationsModel extends Model {
 			// fissa il tempo di inizio, senza salvare
 			$migration = new Migration();
 			$migration->file = $file;
-			$migration->createdAt = new DateTime();
-
-			$affectedRows = Database::run($m->sql);
-
-			$result = FALSE === $this->db->getLastError() ? TRUE : FALSE;
-
-			// si può salvare il record solo dopo la creazione della tabella
 			$migration->queryIndex = $index;
 			$migration->description = $m->description;
-			$migration->result = $result;
-			$migration->affectedRows = $affectedRows;
-			$migration->store();
+			$migration->createdAt = new DateTime();
 
-			// esce se c’è stato un errore
-			if (!$result) {
-				return;
+			try {
+
+				$migration->result = TRUE;
+				$migration->affectedRows = Database::run($m->sql);
+				$migration->store();
+
+			} catch (DatabaseException $e) {
+
+				$migration->result = FALSE;
+				$migration->affectedRows = 0;
+				$migration->store();
+
+				throw new PairException($e);
+
 			}
 
 			$index++;
@@ -145,7 +151,7 @@ class MigrationsModel extends Model {
 
 	}
 
-	public function runMigration(): bool {
+	public function runMigration(): void {
 
 		// verifica l’esistenza della tabella `migrations`
 		$this->checkMigrationTable();
@@ -157,10 +163,14 @@ class MigrationsModel extends Model {
 		$migrationFiles = $this->getListOfMigrationFiles();
 
 		foreach ($migrationFiles as $file) {
-			$this->migrateFile($file);
-		}
 
-		return TRUE;
+			try {
+				$this->migrateFile($file);
+			} catch (PairException $e) {
+				throw new Exception('Migration failed on file ' . $file . '. ' . $e->getMessage());
+			}
+
+		}
 
 	}
 

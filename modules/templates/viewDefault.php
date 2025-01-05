@@ -1,26 +1,19 @@
 <?php
 
 use Pair\Core\Application;
-use Pair\Support\Options;
+use Pair\Core\Config;
 use Pair\Core\View;
-use Pair\Html\Widget;
 
 class TemplatesViewDefault extends View {
 
-	public function render() {
+	public function render(): void {
 
 		$this->app->pageTitle = $this->lang('TEMPLATES');
 
-		$widget = new Widget();
-		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
-		
-		$widget = new Widget();
-		$this->app->sideMenuWidget = $widget->render('sideMenu');
-		
 		$templates = $this->model->getActiveRecordObjects('Pair\Models\Template', 'name');
 		
-		// if development mode is switched on, hide the delete button
-		$devMode = (Application::isDevelopmentHost() and $this->app->currentUser->admin) ? TRUE : FALSE;
+		// if development-mode is enabled and an admin is logged in, objects can be deleted
+		$devMode = ('development' == Application::getEnvironment() and $this->app->currentUser->admin) ? TRUE : FALSE;
 		
 		foreach ($templates as $template) {
 			
@@ -31,13 +24,13 @@ class TemplatesViewDefault extends View {
 			}
 
 			// check if plugin is compatible with current application version
-			$template->compatible = (version_compare(PRODUCT_VERSION, $template->appVersion) <= 0) ?
+			$template->compatible = (version_compare(Config::get('PRODUCT_VERSION'), $template->appVersion) <= 0) ?
 				'<span class="fa fa-check fa-lg text-success"></span>' :
 				'<div style="color:red">v' . $template->appVersion . '</div>';
 			
-			$template->defaultIcon = $template->default ? '<span class="fa fa-star"></span>' : '';
+			$template->defaultIcon = $template->default ? '<span class="fa fa-star fa-lg text-warning"></span>' : '';
 			
-			$template->derivedIcon = $template->derived ? '<span class="fa fa-check"></span>' : '';
+			$template->derivedIcon = $template->derived ? '<span class="fa fa-check fa-lg text-success"></span>' : '';
 
 			$template->downloadIcon = '<a href="templates/download/'. $template->id .'">'.
 					'<span class="fa fa-lg fa-download"></span></a>';

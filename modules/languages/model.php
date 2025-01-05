@@ -57,7 +57,7 @@ class LanguagesModel extends Model {
 			
 			// get a filtered list
 			$query = 'SELECT COUNT(1) FROM languages WHERE english_name LIKE ?';
-			return Database::load($query, [$alphaFilter . '%'], PAIR_DB_COUNT);
+			return Database::load($query, [$alphaFilter . '%'], Database::COUNT);
 			
 		} else {
 			

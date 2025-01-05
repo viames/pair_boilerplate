@@ -1,7 +1,6 @@
 <?php
 
 use Pair\Html\Breadcrumb;
-use Pair\Html\Widget;
 use Pair\Core\Router;
 use Pair\Core\View;
 use Pair\Models\Locale;
@@ -9,7 +8,7 @@ use Pair\Orm\Collection;
 
 class TranslatorViewDetails extends View {
 
-	public function render() {
+	public function render(): void {
 		
 		$this->app->pageTitle = $this->lang('TRANSLATOR');
 		
@@ -19,12 +18,6 @@ class TranslatorViewDetails extends View {
 		// add breadcrumb path
 		Breadcrumb::path($this->lang('TRANSLATION_X', $locale->getNativeNames()));
 				
-		$widget = new Widget();
-		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
-		
-		$widget = new Widget();
-		$this->app->sideMenuWidget = $widget->render('sideMenu');
-
 		// get details of each single translation file
 		$this->model->setLocalePercentage(new Collection([$locale]));
 		

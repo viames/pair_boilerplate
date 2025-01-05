@@ -11,7 +11,7 @@ if (is_a($breadcrumb, 'Pair\Html\Breadcrumb') and count($breadcrumb->getPath()))
 	<nav aria-label="breadcrumb">
 		<ol class="breadcrumb"><?php
 	
-	foreach ($breadcrumb->getPaths() as $item) {
+	foreach ($breadcrumb->getPath() as $item) {
 		
 		if (property_exists($item,'active') and $item->active) {
 			?><li class="breadcrumb-item"><?php

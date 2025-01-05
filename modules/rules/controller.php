@@ -32,16 +32,16 @@ class RulesController extends Controller {
 			$rules->module = $module->name;
 
 			if ($rules->create()) {
-				$this->enqueueMessage($this->lang('RULE_HAS_BEEN_CREATED', $module->name));
+				$this->toast($this->lang('RULE_HAS_BEEN_CREATED', $module->name));
 				$this->redirect('rules/default');
 			} else {
-				$this->enqueueError($this->lang('RULE_HAS_NOT_BEEN_CREATED'));
+				$this->toastError($this->lang('RULE_HAS_NOT_BEEN_CREATED'));
 				$this->view = 'default';
 			}
 
 		}  else {
 			
-			$this->enqueueError($this->lang('RULE_EXISTS', array($rule->moduleName, $rule->ruleAction)));
+			$this->toastError($this->lang('RULE_EXISTS', array($rule->moduleName, $rule->ruleAction)));
 			$this->view = 'default';
 			
 		}
@@ -85,11 +85,11 @@ class RulesController extends Controller {
 			$rule->adminOnly = Post::get('adminOnly', 'bool');
 
 			if ($rule->store()) {
-				$this->enqueueMessage($this->lang('RULE_HAS_BEEN_CHANGED_SUCCESSFULLY', $module->name));
+				$this->toast($this->lang('RULE_HAS_BEEN_CHANGED_SUCCESSFULLY', $module->name));
 			}
 
 		} else {
-			$this->enqueueError($this->lang('RULE_EDIT_EXISTS',array($module->name,$checkRule->ruleAction)));
+			$this->toastError($this->lang('RULE_EDIT_EXISTS',array($module->name,$checkRule->ruleAction)));
 		}
 
 	}
@@ -102,9 +102,9 @@ class RulesController extends Controller {
 		$rule = new Rule(Router::get(0));
 		
 		if ($rule->delete()) {
-			$this->enqueueMessage($this->lang('RULE_HAS_BEEN_DELETED_SUCCESSFULLY'));
+			$this->toast($this->lang('RULE_HAS_BEEN_DELETED_SUCCESSFULLY'));
 		} else {
-			$this->enqueueError($this->lang('ERROR_DELETING_RULES'));
+			$this->toastError($this->lang('ERROR_DELETING_RULES'));
 		}
 
 		$this->app->redirect('rules/default');

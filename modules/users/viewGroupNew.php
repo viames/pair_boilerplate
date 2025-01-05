@@ -3,7 +3,6 @@
 use Pair\Html\Breadcrumb;
 use Pair\Models\Group;
 use Pair\Core\View;
-use Pair\Html\Widget;
 
 class UsersViewGroupNew extends View {
 
@@ -12,18 +11,12 @@ class UsersViewGroupNew extends View {
 	 * 
 	 * @see View::render()
 	 */
-	public function render() {
+	public function render(): void {
 		
 		$this->app->pageTitle = $this->lang('NEW_GROUP');
 		$this->app->activeMenuItem = 'groups';
 		
 		Breadcrumb::path($this->lang('GROUPS'), 'groups');
-		
-		$widget = new Widget();
-		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
-		
-		$widget = new Widget();
-		$this->app->sideMenuWidget = $widget->render('sideMenu');
 		
 		$rules = $this->model->getRules();
 

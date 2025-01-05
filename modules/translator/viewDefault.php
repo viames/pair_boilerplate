@@ -2,20 +2,13 @@
 
 use Pair\Core\Router;
 use Pair\Core\View;
-use Pair\Html\Widget;
 
 class TranslatorViewDefault extends View {
 
-	public function render() {
+	public function render(): void {
 		
 		$this->app->pageTitle = $this->lang('TRANSLATOR');
 		
-		$widget = new Widget();
-		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
-		
-		$widget = new Widget();
-		$this->app->sideMenuWidget = $widget->render('sideMenu');
-
 		$locales = $this->model->getItems('Pair\Models\Locale');
 
 		$this->pagination->count = $this->model->countItems('Pair\Models\Locale');

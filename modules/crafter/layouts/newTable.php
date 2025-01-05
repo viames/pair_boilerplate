@@ -1,6 +1,6 @@
 <?php
 
-use Pair\Support\Utilities;
+use Pair\Helpers\Utilities;
 
 ?><div class="row">
 	<div class="col-12">

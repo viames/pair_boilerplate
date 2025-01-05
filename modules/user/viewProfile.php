@@ -2,18 +2,11 @@
 
 use Pair\Models\Group;
 use Pair\Core\View;
-use Pair\Html\Widget;
 
 class UserViewProfile extends View {
 
-	public function render() {
+	public function render(): void {
 		
-		$widget = new Widget();
-		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
-		
-		$widget = new Widget();
-		$this->app->sideMenuWidget = $widget->render('sideMenu');
-
 		$user	= $this->app->currentUser;
 		$group	= new Group($user->groupId);
 

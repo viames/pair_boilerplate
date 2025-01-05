@@ -4,7 +4,6 @@ use Pair\Html\Breadcrumb;
 use Pair\Models\Group;
 use Pair\Core\Router;
 use Pair\Core\View;
-use Pair\Html\Widget;
 
 class UsersViewGroupEdit extends View {
 
@@ -13,7 +12,7 @@ class UsersViewGroupEdit extends View {
 	 * 
 	 * @see View::render()
 	 */
-	public function render() {
+	public function render(): void {
 		
 		$groupId	= Router::get('id');
 		$group		= new Group($groupId);
@@ -24,12 +23,6 @@ class UsersViewGroupEdit extends View {
 		Breadcrumb::path($this->lang('GROUPS'), 'groups');
 		Breadcrumb::path('Gruppo ' . $group->name, 'groups/edit/' . $group->id);
 		
-		$widget = new Widget();
-		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
-		
-		$widget = new Widget();
-		$this->app->sideMenuWidget = $widget->render('sideMenu');
-
 		$modules = $this->model->getAcl($group->id);
 
 		// check if acls exist

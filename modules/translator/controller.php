@@ -9,7 +9,7 @@ use Pair\Core\Router;
 
 class TranslatorController extends Controller {
 
-	protected function init() {
+	protected function init(): void {
 		
 		Breadcrumb::path($this->lang('TRANSLATOR'), 'translator/default');
 		
@@ -50,9 +50,9 @@ class TranslatorController extends Controller {
 
 		// user messages
 		if ($res) {
-			$this->enqueueMessage($this->lang('TRANSLATION_STRINGS_UPDATED', array($locale->getEnglishNames(), ucfirst($module->name))));
+			$this->toast($this->lang('TRANSLATION_STRINGS_UPDATED', array($locale->getEnglishNames(), ucfirst($module->name))));
 		} else {
-			$this->enqueueError($this->lang('TRANSLATION_STRINGS_NOT_UPDATED', array($locale->getEnglishNames(), ucfirst($module->name))));
+			$this->toastError($this->lang('TRANSLATION_STRINGS_NOT_UPDATED', array($locale->getEnglishNames(), ucfirst($module->name))));
 		}
 
 		$this->app->redirect('translator/details/' . $locale->id);

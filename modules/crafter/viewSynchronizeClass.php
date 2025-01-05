@@ -2,19 +2,12 @@
 
 use Pair\Core\Application;
 use Pair\Core\View;
-use Pair\Html\Widget;
 
 class CrafterViewNewClass extends View {
 
-	public function render() {
+	public function render(): void {
 
 		$this->app->pageTitle = $this->lang('CRAFTER');
-
-		$widget = new Widget();
-		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
-
-		$widget = new Widget();
-		$this->app->sideMenuWidget = $widget->render('sideMenu');
 
 		// prevents access to instances that are not under development
 		if (!$this->app->currentUser->admin) {

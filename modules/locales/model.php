@@ -62,7 +62,7 @@ class LocalesModel extends Model {
 				' FROM `locales` AS lo' .
 				' INNER JOIN `languages` AS la ON lo.language_id = la.id' . 
 				' WHERE la.code LIKE ?';
-			return Database::load($query, $alphaFilter . '%', PAIR_DB_COUNT);
+			return Database::load($query, $alphaFilter . '%', Database::COUNT);
 			
 		} else {
 			

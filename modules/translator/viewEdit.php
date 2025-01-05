@@ -6,7 +6,6 @@ use Pair\Models\Locale;
 use Pair\Models\Module;
 use Pair\Core\Router;
 use Pair\Core\View;
-use Pair\Html\Widget;
 
 class TranslatorViewEdit extends View {
 
@@ -15,7 +14,7 @@ class TranslatorViewEdit extends View {
 	 *
 	 * @see View::Render()
 	 */
-	public function render() {
+	public function render(): void {
 
 		$this->app->pageTitle = $this->lang('TRANSLATOR');
 		
@@ -35,12 +34,6 @@ class TranslatorViewEdit extends View {
 		Breadcrumb::path($this->lang('TRANSLATION_X', $locale->getEnglishNames()), 'translator/details/' . $locale->id);
 		Breadcrumb::path($this->lang('MODULE_X', ucfirst($module->name)));
 		
-		$widget = new Widget();
-		$this->app->breadcrumbWidget = $widget->render('breadcrumb');
-		
-		$widget = new Widget();
-		$this->app->sideMenuWidget = $widget->render('sideMenu');
-
 		$defaultLocale = Locale::getDefault();
 		
 		$isDefault = ($defaultLocale->id == $locale->id);

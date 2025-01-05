@@ -121,7 +121,7 @@ class SelftestModel extends Model {
 		$differences = array_diff($defaultKeys, $otherKeys);
 
 		foreach ($differences as $diff) {
-			Logger::warning('Untranslated “' . $diff . '” key for “' . $langCode . '.ini” at this path: ' . $langPath);
+			LogBar::warning('Untranslated “' . $diff . '” key for “' . $langCode . '.ini” at this path: ' . $langPath);
 		}
 
 		return count($differences);
@@ -136,12 +136,12 @@ class SelftestModel extends Model {
 	 * @param	string	Two chars language code.
 	 * @param	string	Path to comparing language file.
 	 */
-	private function countNotNeeded($defaultKeys, $otherKeys, $langCode, $langPath) {
+	private function countNotNeeded($defaultKeys, $otherKeys, $langCode, $langPath): int {
 
 		$differences = array_diff($otherKeys, $defaultKeys);
 		
 		foreach ($differences as $diff) {
-			Logger::warning('Key  “' . $diff . '” is not needed for language “' . $langCode . '.ini” at this path: ' . $langPath);
+			$app->logBarWarning('Key  “' . $diff . '” is not needed for language “' . $langCode . '.ini” at this path: ' . $langPath);
 		}
 
 		return count($differences);

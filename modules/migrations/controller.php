@@ -21,10 +21,10 @@ class MigrationsController extends Controller {
 		$result = $this->model->runMigration();
 
 		if (!$result) {
-			$this->enqueueError($this->lang('MIGRATIONS_FAILED') . ': ' . implode(', ', $this->model->getErrors()));
+			$this->modal('Errore', $this->lang('MIGRATIONS_FAILED') . ': ' . implode(', ', $this->model->getErrors()), 'error')->confirm('Chiudi');
 		}
 
-		$this->enqueueMessage($this->lang('MIGRATIONS_SUCCESSFUL'));
+		$this->modal('Eseguito', $this->lang('MIGRATIONS_SUCCESSFUL'))->confirm('Chiudi');
 
 	}
 

@@ -10,17 +10,6 @@ use Pair\Core\Router;
 use Pair\Models\User;
 
 class UsersController extends Controller {
-
-	/**
-	 * Run userList action.
-	 */
-	public function defaultAction() {
-		
-		$this->view = 'userList';
-		
-		$this->userListAction();
-
-	}
 	
 	public function userAddAction() {
 		
@@ -34,13 +23,13 @@ class UsersController extends Controller {
 		
 		// check on minimum password length
 		if (strlen($password) < Options::get('password_min')) {
-			$this->enqueueError($this->lang('SHORT_PASSWORD'));
+			$this->toastError($this->lang('SHORT_PASSWORD'));
 			$this->app->redirect('users/userList');
 		}
 
 		// check if username exist
 		if (count(User::getAllObjects(array($userField => $username)))) {
-			$this->enqueueError($this->lang('USER_EXIST', $username));
+			$this->toastError($this->lang('USER_EXIST', $username));
 			$this->app->redirect('users/userList');
 		}
 
@@ -61,12 +50,12 @@ class UsersController extends Controller {
 		$newUser->hash = User::getHashedPasswordWithSalt($password);
 
 		if ($form->isValid() and $newUser->create()) {
-			$this->enqueueMessage($this->lang('USER_HAS_BEEN_CREATED', $newUser->fullName));
+			$this->toast($this->lang('USER_HAS_BEEN_CREATED', $newUser->fullName));
 			$this->app->redirect('users/userList');
 		} else {
-			$this->enqueueError($this->lang('USER_HAS_NOT_BEEN_CREATED', $newUser->fullName));
+			$this->toastError($this->lang('USER_HAS_NOT_BEEN_CREATED', $newUser->fullName));
 			foreach ($newUser->getErrors() as $error) {
-				$this->enqueueError($error);
+				$this->toastError($error);
 			}
 			$this->view = 'userList';
 		}
@@ -100,19 +89,19 @@ class UsersController extends Controller {
 		
 		// controllo validità del form
 		if (!$this->model->getUserForm()->isValid()) {
-			$this->enqueueError($this->lang('USER_HAS_NOT_BEEN_CHANGED', $user->fullName));
+			$this->toastError($this->lang('USER_HAS_NOT_BEEN_CHANGED', $user->fullName));
 			return;
 		}
 		
 		// controllo validità utente e gruppo
 		if (!$user->isLoaded()) {
-			$this->enqueueError($this->lang('USER_HAS_NOT_BEEN_CHANGED', $user->fullName));
+			$this->toastError($this->lang('USER_HAS_NOT_BEEN_CHANGED', $user->fullName));
 			return;
 		}
 		
 		// limit changes to non-admin users 
 		if (!$this->app->currentUser->admin and $user->admin) {
-			$this->enqueueError($this->lang('USER_HAS_NOT_BEEN_CHANGED', $user->fullName));
+			$this->toastError($this->lang('USER_HAS_NOT_BEEN_CHANGED', $user->fullName));
 			return;
 		}
 		
@@ -123,7 +112,7 @@ class UsersController extends Controller {
 		
 		// check on password length
 		if (strlen($password) > 0 and strlen($password) < Options::get('password_min')) {
-			$this->enqueueError($this->lang('SHORT_PASSWORD'));
+			$this->toastError($this->lang('SHORT_PASSWORD'));
 			$this->app->redirect('users/userList');
 		}
 
@@ -152,7 +141,7 @@ class UsersController extends Controller {
 			Audit::passwordChanged($user);
 		}
 
-		$this->enqueueMessage($this->lang('USER_HAS_BEEN_CHANGED', $user->fullName));
+		$this->toast($this->lang('USER_HAS_BEEN_CHANGED', $user->fullName));
 		$this->app->redirect('users');
 	
 	}
@@ -172,7 +161,7 @@ class UsersController extends Controller {
 			return;
 		}
 
-		$this->enqueueMessage($this->lang('USER_HAS_BEEN_DELETED', $fullName));
+		$this->toast($this->lang('USER_HAS_BEEN_DELETED', $fullName));
 		$this->app->redirect('users');
 
 	}
@@ -186,9 +175,9 @@ class UsersController extends Controller {
 		$group->default		= Post::get('default', 'bool');
 
 		if ($form->isValid() and $group->create()) {
-			$this->enqueueMessage($this->lang('GROUP_HAS_BEEN_CREATED',   $group->name));
+			$this->toast($this->lang('GROUP_HAS_BEEN_CREATED',   $group->name));
 		} else {
-			$this->enqueueError($this->lang('GROUP_HAS_NOT_BEEN_CREATED', $group->name));
+			$this->toastError($this->lang('GROUP_HAS_NOT_BEEN_CREATED', $group->name));
 		}
 		
 		$this->app->redirect('groups');
@@ -226,7 +215,7 @@ class UsersController extends Controller {
 			$group->setDefaultAcl(Post::int('defaultAclId'));
 			
 			// notice only if group change
-			$this->enqueueMessage($this->lang('GROUP_HAS_BEEN_CHANGED', $group->name));
+			$this->toast($this->lang('GROUP_HAS_BEEN_CHANGED', $group->name));
 
 			$this->app->redirect('groups');
 
@@ -234,7 +223,7 @@ class UsersController extends Controller {
 		
 			// warn of possible errors
 			foreach ($group->getErrors() as $error) {
-				$this->enqueueError($error);
+				$this->toastError($error);
 			}
 			
 			$this->view = 'groupList';
@@ -255,14 +244,14 @@ class UsersController extends Controller {
 			$groupName = $group->name;
 
 			if ($group->delete()) {
-				$this->enqueueMessage($this->lang('GROUP_HAS_BEEN_DELETED', $groupName));
+				$this->toast($this->lang('GROUP_HAS_BEEN_DELETED', $groupName));
 			} else {
-				$this->enqueueError($this->lang('GROUP_HAS_NOT_BEEN_DELETED', $groupName));
+				$this->toastError($this->lang('GROUP_HAS_NOT_BEEN_DELETED', $groupName));
 			}
 
 		} else {
 
-			$this->enqueueError($this->lang('GROUP_CAN_NOT_BEEN_DELETED', $group->name));
+			$this->toastError($this->lang('GROUP_CAN_NOT_BEEN_DELETED', $group->name));
 
 		}
 		
@@ -285,7 +274,7 @@ class UsersController extends Controller {
 	
 		}
 	
-		$this->enqueueMessage($this->lang('NEW_ACCESS_PERMISSION_HAS_BEEN_CREATED'));
+		$this->toast($this->lang('NEW_ACCESS_PERMISSION_HAS_BEEN_CREATED'));
 		$this->redirect('users/aclList/' . $group->id);
 	
 	}
@@ -304,9 +293,9 @@ class UsersController extends Controller {
 			$groupId	= $acl->groupId;
 
 			if ($acl->delete()) {
-				$this->enqueueMessage($this->lang('ACCESS_PERMISSION_HAS_BEEN_DELETED', $moduleName));
+				$this->toast($this->lang('ACCESS_PERMISSION_HAS_BEEN_DELETED', $moduleName));
 			} else {
-				$this->enqueueError($this->lang('ACCESS_PERMISSION_HAS_NOT_BEEN_DELETED', $moduleName));
+				$this->toastError($this->lang('ACCESS_PERMISSION_HAS_NOT_BEEN_DELETED', $moduleName));
 			}
 						
 		}
@@ -325,7 +314,7 @@ class UsersController extends Controller {
 		$userId = Router::get('id');
 	
 		if (!$userId) {
-			$this->enqueueError($this->lang('ITEM_TO_EDIT_IS_NOT_VALID'));
+			$this->toastError($this->lang('ITEM_TO_EDIT_IS_NOT_VALID'));
 			return NULL;
 		}
 			
@@ -339,8 +328,8 @@ class UsersController extends Controller {
 		// not loaded
 		} else {
 	
-			$this->enqueueError($this->lang('ITEM_TO_EDIT_IS_NOT_VALID'));
-			$this->logError('User id=' . $userId . ' has not been loaded');
+			$this->toastError($this->lang('ITEM_TO_EDIT_IS_NOT_VALID'));
+			$app->logBarError('User id=' . $userId . ' has not been loaded');
 			return NULL;
 	
 		}
@@ -357,7 +346,7 @@ class UsersController extends Controller {
 		$groupId = Router::get('id');
 
 		if (!$groupId) {
-			$this->enqueueError($this->lang('ITEM_TO_EDIT_IS_NOT_VALID'));
+			$this->toastError($this->lang('ITEM_TO_EDIT_IS_NOT_VALID'));
 			return NULL;
 		}
 
@@ -370,8 +359,8 @@ class UsersController extends Controller {
 		// not loaded
 		} else {
 
-			$this->enqueueError($this->lang('ITEM_TO_EDIT_IS_NOT_VALID'));
-			$this->logError('Group id=' . $groupId . ' has not been loaded');
+			$this->toastError($this->lang('ITEM_TO_EDIT_IS_NOT_VALID'));
+			$app->logBarError('Group id=' . $groupId . ' has not been loaded');
 			return NULL;
 
 		}

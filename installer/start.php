@@ -575,55 +575,59 @@ class Installer {
 		$vars = $this->getPostVars();
 
 		$content =
-"<?php
+'# Product
+PRODUCT_VERSION = ' . $vars['productVersion'] . '
+PRODUCT_NAME = ' . $vars['productName'] . '
+BASE_URI = ' . $vars['baseUri'] . '
+UTC_DATE = FALSE
 
-// product
-define ('PRODUCT_VERSION', '" . $vars['productVersion'] . "');
-define ('PRODUCT_NAME', '" . $vars['productName'] . "');
-define ('BASE_URI', '" . $vars['baseUri'] . "');
-define ('UTC_DATE', FALSE);
+# database
+DB_HOST = ' . $vars['dbHost'] . '
+DB_NAME = ' . $vars['dbName'] . '
+DB_USER = ' . $vars['dbUser'] . '
+DB_PASS = ' . $vars['dbPass'] . '
+DB_UTF8 = TRUE
 
-// database
-define ('DB_HOST', '" . $vars['dbHost'] . "');
-define ('DB_NAME', '" . $vars['dbName'] . "');
-define ('DB_USER', '" . $vars['dbUser'] . "');
-define ('DB_PASS', '" . $vars['dbPass'] . "');
-define ('DB_UTF8', TRUE);
+# Date in locale format
+PAIR_FORM_DATE_FORMAT =
+PAIR_FORM_DATETIME_FORMAT =
 
-// options
-define ('PAIR_DEVELOPMENT', TRUE);
-define ('PAIR_DEBUG', TRUE);
-define ('PAIR_AUDIT_PASSWORD_CHANGED', TRUE);
-define ('PAIR_AUDIT_LOGIN_FAILED', TRUE);
-define ('PAIR_AUDIT_LOGIN_SUCCESSFUL', TRUE);
-define ('PAIR_AUDIT_LOGOUT', TRUE);
-define ('PAIR_AUDIT_SESSION_EXPIRED', TRUE);
-define ('PAIR_AUDIT_REMEMBER_ME_LOGIN', TRUE);
-define ('PAIR_AUDIT_USER_CREATED', TRUE);
-define ('PAIR_AUDIT_USER_DELETED', TRUE);
-define ('PAIR_AUDIT_USER_CHANGED', TRUE);
-define ('PAIR_AUDIT_PERMISSIONS_CHANGED', TRUE);
+# Options
+PAIR_ENVIRONMENT = development
+PAIR_AUDIT_PASSWORD_CHANGED = TRUE
+PAIR_AUDIT_LOGIN_FAILED = TRUE
+PAIR_AUDIT_LOGIN_SUCCESSFUL = TRUE
+PAIR_AUDIT_LOGOUT = TRUE
+PAIR_AUDIT_SESSION_EXPIRED = TRUE
+PAIR_AUDIT_REMEMBER_ME_LOGIN = TRUE
+PAIR_AUDIT_USER_CREATED = TRUE
+PAIR_AUDIT_USER_DELETED = TRUE
+PAIR_AUDIT_USER_CHANGED = TRUE
+PAIR_AUDIT_PERMISSIONS_CHANGED = TRUE
+PAIR_SINGLE_SESSION = TRUE
+PAIR_AUTH_BY_EMAIL = TRUE
 
-// crypt keys
-define ('OPTIONS_CRYPT_KEY', '" . bin2hex(random_bytes(32)) . "');
-define ('AES_CRYPT_KEY', '" . bin2hex(random_bytes(32)) . "');
+# Crypt keys
+OPTIONS_CRYPT_KEY = ' . bin2hex(random_bytes(32)) . '
+AES_CRYPT_KEY = ' . bin2hex(random_bytes(32)) . '
 
-// sentry
-define ('SENTRY_DSN', NULL);
+# Sentry
+SENTRY_DSN =
 
-// patch for php.ini
-//setlocale(LC_ALL, 'it_IT.UTF-8');
-//date_default_timezone_set('Europe/Rome');
-";
+# BugSnag
+BUGSNAG_API_KEY =
+
+# MySqlDump
+MYSQLDUMP_PATH = ';
 
 		if ($this->forceDbUtf8) {
 			$content .= "define ('DB_UTF8', TRUE);\n";
 		}
 
-		$res = file_put_contents($this->rootFolder . '/config.php', $content);
+		$res = file_put_contents($this->rootFolder . '/.env', $content);
 
 		if (FALSE === $res) {
-			$this->addError('Write of config.php file failed');
+			$this->addError('Write of .env file failed');
 		}
 
 	}
@@ -717,7 +721,7 @@ if (count($_POST)) {
 			// create a temporary empty folder
 			$installer->createTempFolder();
 
-			// create config.php file
+			// create .env file
 			$installer->createConfigFile();
 
 		}

@@ -8,7 +8,7 @@ use Pair\Support\Upload;
 
 class ModulesController extends Controller {
 
-	protected function init() {
+	protected function init(): void {
 
 		// removes files older than 30 minutes
 		Plugin::removeOldFiles();
@@ -34,10 +34,10 @@ class ModulesController extends Controller {
 
 		// checks for common upload errors
 		if ($upload->getLastError()) {
-			Logger::error($this->lang('ERROR_ON_UPLOADED_FILE'));
+			LogBar::error($this->lang('ERROR_ON_UPLOADED_FILE'));
 			return;
 		} else if ('zip'!=$upload->type) {
-			Logger::error($this->lang('UPLOADED_FILE_IS_NOT_ZIP'));
+			LogBar::error($this->lang('UPLOADED_FILE_IS_NOT_ZIP'));
 			return;
 		}
 
@@ -49,9 +49,9 @@ class ModulesController extends Controller {
 		$res = $plugin->installPackage($upload->path . $upload->filename);
 
 		if ($res) {
-			$this->enqueueMessage($this->lang('MODULE_HAS_BEEN_INSTALLED_SUCCESFULLY'));
+			$this->toast($this->lang('MODULE_HAS_BEEN_INSTALLED_SUCCESFULLY'));
 		} else {
-			$this->enqueueError($this->lang('MODULE_HAS_NOT_BEEN_INSTALLED'));
+			$this->toastError($this->lang('MODULE_HAS_NOT_BEEN_INSTALLED'));
 		}
 
 	}
@@ -61,10 +61,10 @@ class ModulesController extends Controller {
 		$module = $this->getObjectRequestedById('Pair\Models\Module');
 
 		if ($module->delete()) {
-			$this->enqueueMessage($this->lang('MODULE_HAS_BEEN_REMOVED_SUCCESFULLY'));
+			$this->toast($this->lang('MODULE_HAS_BEEN_REMOVED_SUCCESFULLY'));
 			$this->redirect('modules/default');
 		} else {
-			$this->enqueueError($this->lang('MODULE_HAS_NOT_BEEN_REMOVED'));
+			$this->toastError($this->lang('MODULE_HAS_NOT_BEEN_REMOVED'));
 			$this->view = 'default';
 			$this->router->action = 'default';
 			$this->router->resetParams();
