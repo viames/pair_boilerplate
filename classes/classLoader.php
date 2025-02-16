@@ -1,6 +1,6 @@
 <?php
 
-use Pair\Support\Utilities;
+use Pair\Helpers\Utilities;
 
 // classes to load before any other
 $preload = [];

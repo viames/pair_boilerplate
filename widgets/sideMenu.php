@@ -2,7 +2,7 @@
 
 use Pair\Core\Application;
 use Pair\Html\BootstrapMenu;
-use Pair\Support\Translator;
+use Pair\Helpers\Translator;
 
 $app = Application::getInstance();
 $translator	= Translator::getInstance();

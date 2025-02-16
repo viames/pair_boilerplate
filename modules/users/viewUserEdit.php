@@ -10,7 +10,7 @@ class UsersViewUserEdit extends View {
 
 	public function render(): void {
 		
-		$this->app->pageTitle = $this->lang('USER_EDIT');
+		$this->setPageTitle($this->lang('USER_EDIT'));
 		
 		$userId	= Router::get('id');
 		$user	= new User($userId);

@@ -8,7 +8,7 @@ class RulesViewEdit extends View {
 
 	public function render(): void {
 
-		$this->app->pageTitle = $this->lang('EDIT_RULE');
+		$this->setPageTitle($this->lang('EDIT_RULE'));
 
 		$rule = new Rule(Router::get(0));
 

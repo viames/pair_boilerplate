@@ -8,9 +8,9 @@ use Pair\Models\Session;
 use Pair\Models\Token;
 use Pair\Models\User;
 use Pair\Orm\ActiveRecord;
-use Pair\Support\Post;
-use Pair\Support\Options;
-use Pair\Support\Upload;
+use Pair\Helpers\Post;
+use Pair\Helpers\Options;
+use Pair\Helpers\Upload;
 
 class ApiController extends Controller {
 	

@@ -9,7 +9,7 @@ class TemplatesViewNew extends View {
 
 		Breadcrumb::path($this->lang('NEW_TEMPLATE'), 'templates/new');
 
-		$this->app->pageTitle = $this->lang('NEW_TEMPLATE');
+		$this->setPageTitle($this->lang('NEW_TEMPLATE'));
 		
 		$form = $this->model->getTemplateForm();
 		$this->assign('form', $form);

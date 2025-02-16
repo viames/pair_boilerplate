@@ -16,7 +16,7 @@ class TranslatorViewEdit extends View {
 	 */
 	public function render(): void {
 
-		$this->app->pageTitle = $this->lang('TRANSLATOR');
+		$this->setPageTitle($this->lang('TRANSLATOR'));
 		
 		// build objects
 		$locale	= new Locale(Router::get(0));

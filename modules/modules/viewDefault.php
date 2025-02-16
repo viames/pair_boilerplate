@@ -8,7 +8,7 @@ class ModulesViewDefault extends View {
 
 	public function render(): void {
 
-		$this->app->pageTitle = $this->lang('MODULES');
+		$this->setPageTitle($this->lang('MODULES'));
 
 		$modules = $this->model->getActiveRecordObjects('Pair\Models\Module', 'name');
 

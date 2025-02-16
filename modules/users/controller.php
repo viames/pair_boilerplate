@@ -4,8 +4,8 @@ use Pair\Models\Acl;
 use Pair\Models\Audit;
 use Pair\Core\Controller;
 use Pair\Models\Group;
-use Pair\Support\Post;
-use Pair\Support\Options;
+use Pair\Helpers\Post;
+use Pair\Helpers\Options;
 use Pair\Core\Router;
 use Pair\Models\User;
 

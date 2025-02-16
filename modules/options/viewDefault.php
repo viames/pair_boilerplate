@@ -3,7 +3,7 @@
 use Pair\Core\View;
 use Pair\Html\Breadcrumb;
 use Pair\Html\Form;
-use Pair\Support\Options;
+use Pair\Helpers\Options;
 
 class OptionsViewDefault extends View {
 
@@ -13,7 +13,7 @@ class OptionsViewDefault extends View {
 
 		$options = Options::getInstance();
 
-		$this->app->pageTitle = $this->lang('OPTIONS');
+		$this->setPageTitle($this->lang('OPTIONS'));
 
 		Breadcrumb::path($this->lang('OPTIONS'));
 

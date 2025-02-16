@@ -36,7 +36,7 @@ if (count($this->locale->details)) {
 				
 } else {
 			
-	Pair\Support\Utilities::printNoDataMessageBox();
+	Pair\Helpers\Utilities::printNoDataMessageBox();
 			
 }	
 	

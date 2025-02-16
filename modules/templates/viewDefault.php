@@ -8,7 +8,7 @@ class TemplatesViewDefault extends View {
 
 	public function render(): void {
 
-		$this->app->pageTitle = $this->lang('TEMPLATES');
+		$this->setPageTitle($this->lang('TEMPLATES'));
 
 		$templates = $this->model->getActiveRecordObjects('Pair\Models\Template', 'name');
 		

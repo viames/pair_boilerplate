@@ -4,7 +4,7 @@ use Pair\Core\Controller;
 use Pair\Core\Router;
 use Pair\Models\Module;
 use Pair\Models\Rule;
-use Pair\Support\Post;
+use Pair\Helpers\Post;
 
 class RulesController extends Controller {
 

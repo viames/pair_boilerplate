@@ -24,7 +24,7 @@ class UsersViewAclList extends View {
 
 
 
-		$this->app->pageTitle = $this->lang('ACCESS_LIST_OF_GROUP', $group->name);
+		$this->setPageTitle($this->lang('ACCESS_LIST_OF_GROUP', $group->name));
 
 		$acl = $this->model->getAcl($group->id);
 

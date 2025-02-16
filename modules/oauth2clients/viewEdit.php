@@ -12,7 +12,7 @@ class Oauth2clientsViewEdit extends View {
 		$id = (string)Router::get(0);
 		$oauth2Client = Oauth2Client::find($id);
 
-		$this->app->pageTitle = $this->lang('EDIT_OAUTH2CLIENT');
+		$this->setPageTitle($this->lang('EDIT_OAUTH2CLIENT'));
 
 		Breadcrumb::path($this->lang('EDIT_OAUTH2CLIENT'), 'edit/' . $oauth2Client->id);
 

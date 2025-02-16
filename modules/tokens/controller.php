@@ -3,7 +3,7 @@
 use Pair\Html\Breadcrumb;
 use Pair\Core\Controller;
 use Pair\Models\Token;
-use Pair\Support\Post;
+use Pair\Helpers\Post;
  		
 class TokensController extends Controller {
 

@@ -742,11 +742,12 @@ class CrafterModel extends Model {
 				$db = Database::getInstance();
 				$column = $db->describeColumn($this->tableName, $columnName);
 				$phpType = ' ' . ('YES'==$column->Null ? '?' : '') . $phpType;
+				$defaultNull = ('YES'==$column->Null) ? ' = NULL' : '';
 			}
 
 			// assembles property declaration
 			$properties[] = "\t/**\n\t * This property maps “" . $columnName . "” column.\n\t */\n" .
-							"\tprotected" . $phpType . " $" . $propertyName . ";";
+							"\tprotected" . $phpType . " $" . $propertyName . $defaultNull . ";";
 
 		}
 
@@ -1204,7 +1205,7 @@ class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 
 	public function render(): void {
 
-		$this->app->pageTitle = $this->lang(\'' . strtoupper($this->tableName) . '\');
+		$this->setPageTitle($this->lang(\'' . strtoupper($this->tableName) . '\'));
 
 		$' . Utilities::getCamelCase($this->tableName) . ' = $this->model->getItems(\'' .  $this->objectName . '\');
 
@@ -1334,7 +1335,7 @@ class ' . ucfirst($this->moduleName) . 'ViewNew extends View {
 
 	public function render(): void {
 
-		$this->app->pageTitle = $this->lang(\'NEW_OBJECT\');
+		$this->setPageTitle($this->lang(\'NEW_OBJECT\'));
 
 		Breadcrumb::path($this->lang(\'NEW_OBJECT\'), \'new\');
 
@@ -1428,7 +1429,7 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 ' . $params . '
 		$' . lcfirst($this->objectName) . ' = ' . $this->objectName . '::find(' . $key . ');
 
-		$this->app->pageTitle = $this->lang(\'EDIT_OBJECT\');
+		$this->setPageTitle($this->lang(\'EDIT_OBJECT\'));
 
 		Breadcrumb::path($this->lang(\'EDIT_OBJECT\'), \'edit/\' . ' . $editId . ');
 

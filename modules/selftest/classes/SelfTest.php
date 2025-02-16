@@ -4,8 +4,8 @@ use Pair\Core\Application;
 use Pair\Core\Config;
 use Pair\Orm\ActiveRecord;
 use Pair\Orm\Database;
-use Pair\Support\Logger;
-use Pair\Support\Utilities;
+use Pair\Helpers\Logger;
+use Pair\Helpers\Utilities;
 
 class SelfTest {
 

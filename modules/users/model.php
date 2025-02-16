@@ -9,8 +9,8 @@ use Pair\Models\Locale;
 use Pair\Models\Rule;
 use Pair\Models\User;
 use Pair\Orm\Collection;
-use Pair\Support\Options;
-use Pair\Support\Translator;
+use Pair\Helpers\Options;
+use Pair\Helpers\Translator;
 
 class UsersModel extends Model {
 

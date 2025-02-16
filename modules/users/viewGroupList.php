@@ -9,7 +9,7 @@ class UsersViewGroupList extends View {
 
 	public function render(): void {
 
-		$this->app->pageTitle = $this->lang('GROUPS');
+		$this->setPageTitle($this->lang('GROUPS'));
 		$this->app->activeMenuItem = 'groups';
 
 		Breadcrumb::path($this->lang('GROUPS'), 'groups');

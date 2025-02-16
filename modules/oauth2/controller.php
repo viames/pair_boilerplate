@@ -3,7 +3,7 @@
 use Pair\Core\Controller;
 use Pair\Models\Oauth2Client;
 use Pair\Models\Oauth2Token;
-use Pair\Support\Post;
+use Pair\Helpers\Post;
 
 class Oauth2Controller extends Controller {
 

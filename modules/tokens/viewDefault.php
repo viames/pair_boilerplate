@@ -6,7 +6,7 @@ class TokensViewDefault extends View {
 
 	public function render(): void {
 
-		$this->app->pageTitle = $this->lang('TOKENS');
+		$this->setPageTitle($this->lang('TOKENS'));
 
 		$tokens = $this->model->getTokens();
 

@@ -2,14 +2,14 @@
 
 use Pair\Core\View;
 use Pair\Orm\Database;
-use Pair\Support\Utilities;
+use Pair\Helpers\Utilities;
 
 class SelftestViewDefault extends View {
 
 	public function render(): void {
 		
 		$db = Database::getInstance();
-		$this->app->pageTitle = $this->lang('SELF_TEST');
+		$this->setPageTitle($this->lang('SELF_TEST'));
 
 		// starts the test
 		$test = new SelfTest();

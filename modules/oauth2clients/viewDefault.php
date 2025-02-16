@@ -6,7 +6,7 @@ class Oauth2clientsViewDefault extends View {
 
 	public function render(): void {
 
-		$this->app->pageTitle = $this->lang('OAUTH2CLIENTS');
+		$this->setPageTitle($this->lang('OAUTH2CLIENTS'));
 
 		$oauth2Clients = $this->model->getItems('Pair\Models\Oauth2Client');
 

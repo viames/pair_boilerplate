@@ -9,7 +9,7 @@ class UserViewLogin extends View {
 
 		$this->app->style = 'login';
 
-		$this->app->pageTitle = Config::get('PRODUCT_NAME');
+		$this->setPageTitle(Config::get('PRODUCT_NAME'));
 		
 		$form = $this->model->getLoginForm();
 		

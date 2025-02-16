@@ -3,8 +3,8 @@
 use Pair\Core\Model;
 use Pair\Html\Form;
 use Pair\Models\Locale;
-use Pair\Support\Options;
-use Pair\Support\Translator;
+use Pair\Helpers\Options;
+use Pair\Helpers\Translator;
 
 class UserModel extends Model {
 

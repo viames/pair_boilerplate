@@ -2,9 +2,9 @@
 
 use Pair\Core\Controller;
 use Pair\Html\Breadcrumb;
-use Pair\Support\Logger;
-use Pair\Support\Plugin;
-use Pair\Support\Upload;
+use Pair\Helpers\Logger;
+use Pair\Helpers\Plugin;
+use Pair\Helpers\Upload;
 
 class TemplatesController extends Controller {
 

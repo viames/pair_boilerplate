@@ -681,7 +681,7 @@ MYSQLDUMP_PATH = ';
 
 		}
 
-		if (!Pair\Support\Utilities::deleteFolder($folder)) {
+		if (!Pair\Helpers\Utilities::deleteFolder($folder)) {
 			$this->addError('Folder ' . $folder . ' deletion failed');
 			return FALSE;
 		}

@@ -7,7 +7,7 @@ class CountriesViewDefault extends View {
 
 	public function render(): void {
 
-		$this->app->pageTitle = $this->lang('COUNTRIES');
+		$this->setPageTitle($this->lang('COUNTRIES'));
 
 		$countries = $this->model->getCountries();
 

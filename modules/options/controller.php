@@ -1,8 +1,8 @@
 <?php
 
 use Pair\Core\Controller;
-use Pair\Support\Post;
-use Pair\Support\Options;
+use Pair\Helpers\Post;
+use Pair\Helpers\Options;
 
 class OptionsController extends Controller {
 	

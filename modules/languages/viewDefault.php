@@ -7,7 +7,7 @@ class LanguagesViewDefault extends View {
 
 	public function render(): void {
 
-		$this->app->pageTitle = $this->lang('LANGUAGES');
+		$this->setPageTitle($this->lang('LANGUAGES'));
 
 		$languages = $this->model->getLanguages();
 

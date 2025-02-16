@@ -6,7 +6,7 @@ class RulesViewDefault extends View {
 
 	public function render(): void {
 
-		$this->app->pageTitle = $this->lang('RULES');
+		$this->setPageTitle($this->lang('RULES'));
 
 		$this->pagination->count = $this->model->countModules();
 

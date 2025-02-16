@@ -2,7 +2,7 @@
 
 use Pair\Html\Breadcrumb;
 use Pair\Core\Controller;
-use Pair\Support\Post;
+use Pair\Helpers\Post;
 use Pair\Models\Locale;
 use Pair\Models\Module;
 use Pair\Core\Router;

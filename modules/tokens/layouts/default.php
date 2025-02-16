@@ -22,8 +22,8 @@
 								<td><?php $o->printHtml('description') ?></td>
 								<td class="text-center"><?php $o->printHtml('enabled') ?></td>
 								<td class="text-center"><?php print htmlspecialchars($o->getRelated('createdBy')->getFullName()) ?></td>
-								<td class="text-center"><?php print Pair\Support\Utilities::getTimeago($o->creationDate) ?></td>
-								<td class="text-center"><?php print Pair\Support\Utilities::getTimeago($o->lastUse) ?></td>
+								<td class="text-center"><?php print Pair\Helpers\Utilities::getTimeago($o->creationDate) ?></td>
+								<td class="text-center"><?php print Pair\Helpers\Utilities::getTimeago($o->lastUse) ?></td>
 							</tr>
 							<?php } ?>
 						</tbody>
@@ -34,7 +34,7 @@
 
 				} else {
 						
-					Pair\Support\Utilities::printNoDataMessageBox();
+					Pair\Helpers\Utilities::printNoDataMessageBox();
 					
 				}
 				

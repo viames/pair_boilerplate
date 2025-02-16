@@ -2,7 +2,7 @@
 
 use Pair\Core\Application;
 use Pair\Core\Config;
-use Pair\Support\Translator;
+use Pair\Helpers\Translator;
 
 class Assets {
 

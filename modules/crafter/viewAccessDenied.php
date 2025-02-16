@@ -6,7 +6,7 @@ class CrafterViewAccessDenied extends View {
 
 	public function render(): void {
 
-		$this->app->pageTitle = $this->lang('CRAFTER');
+		$this->setPageTitle($this->lang('CRAFTER'));
 
 	}
 

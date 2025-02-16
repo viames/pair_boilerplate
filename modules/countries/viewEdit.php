@@ -8,7 +8,7 @@ class CountriesViewEdit extends View {
 
 	public function render(): void {
 
-		$this->app->pageTitle = $this->lang('EDIT_COUNTRY');
+		$this->setPageTitle($this->lang('EDIT_COUNTRY'));
 
 		$id = Router::get(0);
 		$country = new Country($id);

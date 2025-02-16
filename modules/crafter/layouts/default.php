@@ -1,22 +1,29 @@
 <div class="row">
-	<div class="col-12">
+<div class="col-6">
 		<div class="card">
 			<div class="card-header">
-				<h4 class="card-title">Modulo per sviluppatori</h4>
+				<h4 class="card-title">Developer module</h4>
 			</div>
 			<div class="card-body">
-				<div class="crafter-container">
-					<div>
-						<p><?php $this->_('CREATE_CLASS_OR_MODULE_DESCRIPTION') ?></p>
-						<a href="crafter/newClass" class="btn btn-primary"><?php $this->_('START') ?></a>
-					</div>
-					<div class="text-center">
-						<a href="crafter/playground">
-							<i class="fa fa-circle-play"></i>
-							Playground
-						</a>
-					</div>
+				<div>
+					<p><?php $this->_('CREATE_CLASS_OR_MODULE_DESCRIPTION') ?></p>
+					<a class="btn btn-primary btn-block" href="crafter/newClass">
+						<?php $this->_('START') ?>
+					</a>
 				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-6">
+		<div class="card">
+			<div class="card-header">
+				<h4 class="card-title">Test area</h4>
+			</div>
+			<div class="card-body">
+				<p>Test area for launching experimental PHP code lines, with DB interaction.</p>
+				<a class="btn btn-success btn-block" href="crafter/playground">
+					Playground
+				</a>
 			</div>
 		</div>
 	</div>

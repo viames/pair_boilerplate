@@ -1,9 +1,9 @@
 <?php
 
 use Pair\Core\Controller;
+use Pair\Helpers\Post;
 use Pair\Models\Session;
 use Pair\Models\User;
-use Pair\Support\Post;
 
 class UserController extends Controller {
 	
@@ -16,7 +16,7 @@ class UserController extends Controller {
 	/**
 	 * Shows login form or try login action.
 	 */
-	public function loginAction() {
+	public function loginAction(): void {
 	
 		$username	= Post::trim('username');
 		$password	= Post::trim('password');
@@ -53,19 +53,19 @@ class UserController extends Controller {
 		}
 
 		// get last requested page
-		$page = $this->app->getPersistentState('lastRequestedUrl');
+		$page = $this->getPersistentState('lastRequestedUrl');
 		$this->unsetPersistentState('lastRequestedUrl');
 
 		// even goes to last page
 		if ($page) {
-			$this->app->redirect($page);
+			$this->redirect($page);
 		}
 
 		// get user default landing page
 		$landing = $user->getLanding();
 
 		// goes to default landing page
-		$this->app->redirect($landing->module . '/' . $landing->action);
+		$this->redirect($landing->module . '/' . $landing->action);
 
 	}
 
@@ -96,7 +96,7 @@ class UserController extends Controller {
 	
 		$user = new User($this->app->currentUser->id);
 
-		// snapshot for Audit
+		// clone user for Audit
 		$oldUser = clone $user;
 
 		$form = $this->model->getUserForm($user);
@@ -130,7 +130,7 @@ class UserController extends Controller {
 		}
 
 		$this->toast($this->lang('YOUR_PROFILE_HAS_BEEN_CHANGED'));
-		$this->app->redirect('user/profile');
+		$this->redirect('user/profile');
 	
 	}
 

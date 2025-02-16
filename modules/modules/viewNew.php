@@ -9,7 +9,7 @@ class ModulesViewNew extends View {
 
 		Breadcrumb::path($this->lang('NEW_MODULE'), 'modules/new');
 
-		$this->app->pageTitle = $this->lang('NEW_MODULE');
+		$this->setPageTitle($this->lang('NEW_MODULE'));
 
 		$form = $this->model->getModuleForm();
 		$this->assign('form', $form);

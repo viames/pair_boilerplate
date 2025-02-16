@@ -8,7 +8,7 @@ class LocalesViewEdit extends View {
 
 	public function render(): void {
 
-		$this->app->pageTitle = $this->lang('EDIT_LOCALE');
+		$this->setPageTitle($this->lang('EDIT_LOCALE'));
 
 		$id = Router::get(0);
 		$locale = new Locale($id);

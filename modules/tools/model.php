@@ -4,8 +4,8 @@ use Pair\Core\Application;
 use Pair\Models\Locale;
 use Pair\Core\Model;
 use Pair\Models\Module;
-use Pair\Support\Plugin;
-use Pair\Support\Utilities;
+use Pair\Helpers\Plugin;
+use Pair\Helpers\Utilities;
 
 class ToolsModel extends Model {
 

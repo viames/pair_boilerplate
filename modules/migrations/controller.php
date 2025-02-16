@@ -18,6 +18,15 @@ class MigrationsController extends Controller {
 
 		$this->view = 'default';
 
+		if (!$this->model->dbTableCheck()) {
+			$this->modal(
+				$this->lang('ERROR'),
+				$this->lang('MIGRATIONS_TABLE_NOT_FOUND'),
+				'error')->confirm($this->lang('CLOSE')
+			);
+			return;
+		}
+
 		$result = $this->model->runMigration();
 
 		if (!$result) {

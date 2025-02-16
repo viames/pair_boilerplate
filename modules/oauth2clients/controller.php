@@ -1,9 +1,9 @@
 <?php
 
 use Pair\Core\Controller;
+use Pair\Helpers\Post;
 use Pair\Html\Breadcrumb;
 use Pair\Models\Oauth2Client;
-use Pair\Support\Post;
 
 class Oauth2clientsController extends Controller {
 

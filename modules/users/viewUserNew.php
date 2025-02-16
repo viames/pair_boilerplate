@@ -8,7 +8,7 @@ class UsersViewUserNew extends View {
 
 	public function render(): void {
 		
-		$this->app->pageTitle = $this->lang('NEW_USER');
+		$this->setPageTitle($this->lang('NEW_USER'));
 		$this->app->activeMenuItem = 'users/userList';
 		
 		Breadcrumb::path($this->lang('USERS'), 'users');

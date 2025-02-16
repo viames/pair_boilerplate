@@ -4,7 +4,7 @@ use Pair\Html\Breadcrumb;
 use Pair\Core\Controller;
 use Pair\Core\Router;
 use Pair\Models\Language;
-use Pair\Support\Post;
+use Pair\Helpers\Post;
  		
 class LanguagesController extends Controller {
 

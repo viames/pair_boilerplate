@@ -7,7 +7,7 @@ class TranslatorViewDefault extends View {
 
 	public function render(): void {
 		
-		$this->app->pageTitle = $this->lang('TRANSLATOR');
+		$this->setPageTitle($this->lang('TRANSLATOR'));
 		
 		$locales = $this->model->getItems('Pair\Models\Locale');
 

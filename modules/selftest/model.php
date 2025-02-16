@@ -2,8 +2,8 @@
 
 use Pair\Core\Model;
 use Pair\Models\Locale;
-use Pair\Support\Logger;
-use Pair\Support\Translator;
+use Pair\Helpers\Logger;
+use Pair\Helpers\Translator;
 
 class SelftestModel extends Model {
 

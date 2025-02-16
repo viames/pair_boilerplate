@@ -5,7 +5,7 @@
 	"minimum-stability": "dev",
 	"prefer-stable": true,
 	"require": {
-		"viames/pair": "dev-2.0.0-alpha"
+		"viames/pair": "dev-main"
 	},
 	"scripts": {
         "post-install-cmd": [

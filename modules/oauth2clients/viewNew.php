@@ -8,7 +8,7 @@ class Oauth2clientsViewNew extends View {
 
 	public function render(): void {
 
-		$this->app->pageTitle = $this->lang('NEW_OAUTH2CLIENT');
+		$this->setPageTitle($this->lang('NEW_OAUTH2CLIENT'));
 
 		Breadcrumb::path($this->lang('NEW_OAUTH2CLIENT'), 'new');
 

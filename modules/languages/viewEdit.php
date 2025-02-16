@@ -8,7 +8,7 @@ class LanguagesViewEdit extends View {
 
 	public function render(): void {
 
-		$this->app->pageTitle = $this->lang('EDIT_LANGUAGE');
+		$this->setPageTitle($this->lang('EDIT_LANGUAGE'));
 
 		$id = Router::get(0);
 		$language = new Language($id);
