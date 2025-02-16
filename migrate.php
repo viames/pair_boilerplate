@@ -18,7 +18,12 @@ $app = Application::getInstance();
 include 'modules/migrations/model.php';
 $model = new MigrationsModel();
 
-print "Migrating data...\n";
+if (!$model->dbTableCheck()) {
+    print 'Migrations table not found' . PHP_EOL;
+    exit;
+}
+
+print 'Migrating data...' . PHP_EOL;
 
 // migrate data
 try {

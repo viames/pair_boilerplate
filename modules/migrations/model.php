@@ -18,6 +18,25 @@ class MigrationsModel extends Model {
 	 */
 	const CREATE_MIGRATION_TABLE_FILE = '001_create_migrations_table.sql';
 
+	/**
+	 * Check if database can connect and the `migrations` table exists.
+	 */
+	public function dbTableCheck(): bool {
+
+		if (!$this->db->isConnected()) {
+			return FALSE;
+		}
+
+		try {
+			$res = $this->db->tableExists('migrations');
+		} catch (\Exception $e) {
+			return FALSE;
+		}
+
+		return $res;
+
+	}
+
 	public function getQuery(string $class): string {
 
 		return 'SELECT *, `created_at` - `updated_at` AS `execution_time` FROM `migrations`';
@@ -27,8 +46,8 @@ class MigrationsModel extends Model {
 	protected function getOrderOptions(): array {
 
 		return [
-			1  => '`created_at`',
-			2  => '`created_at` DESC',
+			1  => '`created_at` DESC, `id` DESC',
+			2  => '`created_at`, `id`',
 			3  => '`file`, `query_index`',
 			4  => '`file` DESC, `query_index` DESC',
 			5  => '`description`',
@@ -60,21 +79,15 @@ class MigrationsModel extends Model {
 	}
 
 	/**
-	 * Verifica se esiste la tabella `migrations` nel DB, altrimenti la crea.
+	 * Create the `migrations` table if migration file exists.
 	 */
-	private function checkMigrationTable(): void {
+	private function createMigrationTable(): void {
 
-		// verifica se esiste la tabella `migrations` nel DB
-		$query = 'SHOW TABLES LIKE "migrations"';
-
-		$result = (bool)Database::load($query, [], Database::RESULT);
-
-		// crea la tabella migrations se non esiste
-		if (!$result) {
-
-			$this->migrateFile(self::CREATE_MIGRATION_TABLE_FILE);
-
+		if (!file_exists($this->folder . self::CREATE_MIGRATION_TABLE_FILE)) {
+			throw new PairException('Migration file ' . self::CREATE_MIGRATION_TABLE_FILE . ' not found.');			
 		}
+
+		$this->migrateFile(self::CREATE_MIGRATION_TABLE_FILE);
 
 	}
 
@@ -153,8 +166,14 @@ class MigrationsModel extends Model {
 
 	public function runMigration(): void {
 
-		// verifica l’esistenza della tabella `migrations`
-		$this->checkMigrationTable();
+		// check if the `migrations` table exists
+		if (!$this->db->isConnected()) {
+			throw new Exception('Database connection failed.');
+		}
+
+		if (!$this->dbTableCheck()) {
+			$this->createMigrationTable();
+		}
 
 		// esegue un’eventuale migrazione incompleta
 		$this->continueIncompleteMigration();
