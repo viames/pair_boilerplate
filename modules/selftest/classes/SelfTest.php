@@ -2,10 +2,10 @@
 
 use Pair\Core\Application;
 use Pair\Core\Config;
+use Pair\Core\Logger;
+use Pair\Helpers\Utilities;
 use Pair\Orm\ActiveRecord;
 use Pair\Orm\Database;
-use Pair\Helpers\Logger;
-use Pair\Helpers\Utilities;
 
 class SelfTest {
 
@@ -201,7 +201,7 @@ class SelfTest {
 
 		$hiddenExt = [];
 
-		LogBar::event('Checking for PHP extensions ' . implode(', ', self::REQUIRED_PHP_EXT));
+		Logger::notice('Checking for PHP extensions ' . implode(', ', self::REQUIRED_PHP_EXT));
 
 		// check each library
 		foreach (self::REQUIRED_PHP_EXT as $ext) {
@@ -220,7 +220,7 @@ class SelfTest {
 
 				// enqueue failure and show error message
 				$res = FALSE;
-				LogBar::error('Missing PHP extension ' . $ext);
+				Logger::error('Missing PHP extension ' . $ext);
 
 			}
 
@@ -229,13 +229,13 @@ class SelfTest {
 		// check PHP version
 		if (version_compare(phpversion(), self::MIN_PHP_VERSION, "<")) {
 			$res = FALSE;
-			LogBar::error('PHP version required is ' . self::MIN_PHP_VERSION . ' or greater. You are using PHP ' . phpversion());
+			Logger::error('PHP version required is ' . self::MIN_PHP_VERSION . ' or greater. You are using PHP ' . phpversion());
 		}
 
 		// check en_US locales for float storage in DB
 		if (class_exists('ResourceBundle') and !in_array('en_US', ResourceBundle::getLocales(''))) {
 			$res = FALSE;
-			LogBar::error('en_US locale is necessary to appropriately convert PHP floats when saving in the DB');
+			Logger::error('en_US locale is necessary to appropriately convert PHP floats when saving in the DB');
 		}
 
 		return $res;
@@ -256,7 +256,7 @@ class SelfTest {
 		$version = $db->getMysqlVersion();
 
 		if (version_compare($version, self::MIN_MYSQL_VERSION) < 0) {
-			LogBar::error('MySQL version required is ' . self::MIN_MYSQL_VERSION . ' or greater. You are using MySQL ' . $version);
+			Logger::error('MySQL version required is ' . self::MIN_MYSQL_VERSION . ' or greater. You are using MySQL ' . $version);
 			$ret = FALSE;
 		}
 
@@ -281,7 +281,7 @@ class SelfTest {
 			if (array_key_exists($row->Variable_name, $settings)) {
 
 				if ($settings[$row->Variable_name] != $row->Value) {
-					LogBar::warning('DBMS setting parameter ' . $row->Variable_name . ' value is ' . $row->Value . ' should be ' . $settings[$row->Variable_name]);
+					Logger::warning('DBMS setting parameter ' . $row->Variable_name . ' value is ' . $row->Value . ' should be ' . $settings[$row->Variable_name]);
 					$ret = FALSE;
 				}
 
@@ -303,11 +303,11 @@ class SelfTest {
 		// check about missing UTC_DATE constant
 		if (is_null(Config::get('UTC_DATE'))) {
 			$ret = FALSE;
-			LogBar::error('In .env configuration file the UTC_DATE option is missing');
+			Logger::error('In .env configuration file the UTC_DATE option is missing');
 		// or check on fall-back timezone
 		} else if (Config::get('UTC_DATE') and 'UTC' == date_default_timezone_get()) {
 			$ret = FALSE;
-			LogBar::error('In .env configuration file the UTC_DATE option is FALSE but Timezone results in UTC by php.ini file');
+			Logger::error('In .env configuration file the UTC_DATE option is FALSE but Timezone results in UTC by php.ini file');
 		}
 
 		return $ret;
@@ -328,12 +328,12 @@ class SelfTest {
 			if ('temp' == $f and !Application::fixTemporaryFolder()) {
 			
 				$ret = FALSE;
-				LogBar::error('Temporary folder is not readable and cannot be fixed');
+				Logger::error('Temporary folder is not readable and cannot be fixed');
 			
 			} else if (!is_dir($folder) or !is_readable($folder)) {
 			
 				$ret = FALSE;
-				LogBar::error($folder . ' folder is missing or not readable');
+				Logger::error($folder . ' folder is missing or not readable');
 			
 			}
 
@@ -423,7 +423,7 @@ class SelfTest {
 		// all db fields
 		if (!$db->tableExists($class::TABLE_NAME)) {
 			$errorCount++;
-			LogBar::error('DB Table ' . $class::TABLE_NAME . ' doesn’t exist');
+			Logger::error('DB Table ' . $class::TABLE_NAME . ' doesn’t exist');
 			return $errorCount;
 		}
 
@@ -443,12 +443,12 @@ class SelfTest {
 			// looks for object declared property and db bind field
 			if (!in_array($property, $properties)) {
 				$errorCount++;
-				LogBar::error('Class ' . $class . ' is missing property “' . $property . '”');
+				Logger::error('Class ' . $class . ' is missing property “' . $property . '”');
 			}
 
 			if (!array_search($field, $fieldList)) {
 				$errorCount++;
-				LogBar::error('Class ' . $class . ' is managing unexistent field “' . $field . '”');
+				Logger::error('Class ' . $class . ' is managing unexistent field “' . $field . '”');
 			}
 
 		}
@@ -458,7 +458,7 @@ class SelfTest {
 
 			if (!$class::getMappedProperty($field)) {
 				$errorCount++;
-				LogBar::error('Class ' . $class . ' is not binding “' . $field . '” in method getBinds()');
+				Logger::error('Class ' . $class . ' is not binding “' . $field . '” in method getBinds()');
 			}
 
 		}
@@ -490,7 +490,7 @@ class SelfTest {
 			foreach ($plugins as $plugin) {
 
 				if (version_compare(Config::get('PRODUCT_VERSION'), $plugin->appVersion) > 0) {
-					LogBar::warning($type . ' plugin ' . ucfirst($plugin->name) .
+					Logger::warning($type . ' plugin ' . ucfirst($plugin->name) .
 							' is compatible with ' . Config::get('PRODUCT_NAME') . ' v' . $plugin->appVersion);
 					$ret = FALSE;
 				}

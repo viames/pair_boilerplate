@@ -120,7 +120,7 @@ class Installer {
 	public function checkRequiredFields() {
 
 		// list of required field names
-		$requiredFields = ['productName', 'productVersion', 'dbHost', 'dbName',
+		$requiredFields = ['productName', 'dbHost', 'dbName',
 				'dbUser', 'name', 'surname', 'email'];
 
 		// check that all fields are submitted
@@ -352,10 +352,6 @@ class Installer {
 
 		$v = $this->getPostVars();
 
-		if (!$v['productVersion']) {
-			$v['productVersion'] = '1.0';
-		}
-
 		if (!$v['baseUri']) {
 			$v['baseUri'] = $this->baseUri;
 		}
@@ -394,21 +390,13 @@ class Installer {
 	          <form action="<?php print $this->baseUri ?>/" method="post">
 
 	            <div class="row">
-	              <div class="col-md-9 mb-3">
+	              <div class="col-md-12 mb-3">
 	                <label for="productName">Product name</label>
 	                <input type="text" class="form-control" name="productName" id="productName" value="<?php print htmlspecialchars((string)$v['productName']) ?>" required>
 	                <div class="invalid-feedback">
 	                  Valid product name is required.
 	                </div>
 	              </div>
-	              <div class="col-md-3 mb-3">
-	                <label for="productVersion">Version</label>
-	                <input type="text" class="form-control" name="productVersion" id="productVersion" value="<?php print htmlspecialchars((string)$v['productVersion']) ?>" required>
-	                <div class="invalid-feedback">
-	                  Valid product version is required.
-	                </div>
-	              </div>
-	            </div>
 
 	            <div class="mb-3">
 	                <label for="baseUri">URL folder <small class="text-muted">/subpath or empty if installing in web-server root</small></label>
@@ -530,7 +518,7 @@ class Installer {
 	        <div class="col-md-8 order-md-2">
 	        	<?php $this->printErrors() ?>
 	        	<?php $this->printNotifications() ?>
-	        	<p>You can now use <?php print $v['productName'] . ' v' . $v['productVersion'] ?>. Please login at url: <a href="<?php print htmlspecialchars($this->baseUri) ?>"><?php print htmlspecialchars($this->baseUri) ?></a></p>
+	        	<p>You can now use <?php print $v['productName'] ?> v1. Please login at url: <a href="<?php print htmlspecialchars($this->baseUri) ?>"><?php print htmlspecialchars($this->baseUri) ?></a></p>
 	        </div>
 	        <div class="col-md-2 order-md-3"></div>
 	      </div>
@@ -557,7 +545,7 @@ class Installer {
 	public function getPostVars() {
 
 		// list of required field names
-		$postVars = ['productName', 'productVersion', 'baseUri', 'dbHost', 'dbName',
+		$postVars = ['productName', 'baseUri', 'dbHost', 'dbName',
 				'dbUser', 'dbPass', 'name', 'surname', 'email'];
 
 		$vars = [];
@@ -576,7 +564,7 @@ class Installer {
 
 		$content =
 '# Product
-PRODUCT_VERSION = ' . $vars['productVersion'] . '
+PRODUCT_VERSION = 1.0.0
 PRODUCT_NAME = ' . $vars['productName'] . '
 BASE_URI = ' . $vars['baseUri'] . '
 UTC_DATE = FALSE

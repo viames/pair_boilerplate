@@ -6,14 +6,14 @@ use Pair\Core\Config;
 $app = Application::getInstance();
 
 ?><!DOCTYPE html>
-<html lang="<?php print $app->langCode ?>">
+<html lang="{{langCode}}" dir="ltr">
 	<head>
 		<base href="<?php print BASE_HREF ?>" />
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-		<title><?php print $app->pageTitle ?></title>
+	    <title>{{title}}</title>
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
 		<link rel="stylesheet" href="css/simple-sidebar.css">
 		<?php $app->printStyles() ?>
@@ -24,7 +24,7 @@ $app = Application::getInstance();
             <div class="border-end bg-white" id="sidebar-wrapper">
                 <div class="sidebar-heading border-bottom bg-light"><?php print Config::get('PRODUCT_NAME') ?></div>
                 <ul class="nav">
-                    <?php print $app->sideMenuWidget ?>
+                    <?php $app->printWidget('sideMenu') ?>
                 </ul>
             </div>
             <!-- Page content wrapper-->
@@ -55,9 +55,9 @@ $app = Application::getInstance();
                 <div class="container-fluid">
 					<div id="messageArea"></div>
 					<h2><?php print $app->pageTitle ?></h2>
-					<?php print $app->breadcrumbWidget ?>
-					<?php print $app->pageContent ?>
-					<?php if ($app->log) { print $app->log; } ?>
+					<div class="float-right"><?php $app->printWidget('breadcrumb') ?></div>
+					{{content}}
+					{{logBar}}
                 </div>
             </div>
         </div>

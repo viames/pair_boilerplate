@@ -5,11 +5,16 @@ use Pair\Core\View;
 
 class UserViewLogin extends View {
 
+	protected function init(): void {
+		
+		$this->app->style = 'login';
+	
+		$this->setPageTitle(Config::get('PRODUCT_NAME'));
+		
+	}
+
 	public function render(): void {
 
-		$this->app->style = 'login';
-
-		$this->setPageTitle(Config::get('PRODUCT_NAME'));
 		
 		$form = $this->model->getLoginForm();
 		

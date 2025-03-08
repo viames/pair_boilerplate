@@ -1,28 +1,27 @@
 <?php
 
 use Pair\Core\Application;
-use Pair\Models\Locale;
+use Pair\Core\Logger;
 use Pair\Core\Model;
+use Pair\Models\Locale;
 use Pair\Models\Module;
 use Pair\Helpers\Plugin;
-use Pair\Helpers\Utilities;
 
 class ToolsModel extends Model {
 
 	/**
 	 * Reads all existent translations files and then put quotes, remove duplicates and compact them.
-	 *
-	 * @return	int		Count of rebuilt files.
+	 * @return int Count of rebuilt files.
 	 */
-	public function rebuildTranslationFiles() {
+	public function rebuildTranslationFiles(): int {
 
 		$counter = 0;
 
 		// all registered Locales
-		$locales = Locale::getAllObjects();
+		$locales = Locale::all();
 
 		// all available modules
-		$modules = Module::getAllObjects(NULL, 'name');
+		$modules = Module::getAllObjects([], 'name');
 
 		// the fake "common" module
 		$common = new stdClass();
@@ -30,7 +29,7 @@ class ToolsModel extends Model {
 		$common->name = 'common';
 
 		// patch for common translation file
-		array_unshift($modules, $common);
+		$modules->unshift($common);
 
 		foreach ($locales as $locale) {
 
@@ -56,34 +55,32 @@ class ToolsModel extends Model {
 
 	/**
 	 * Creates both manifest.xml files or db records of existent plugins.
-	 *
-	 * @return	int
 	 */
-	public function fixPlugins() {
+	public function fixPlugins(): int {
 
-		$app	= Application::getInstance();
 		$fixes	= 0;
 		$names	= [];
 
 		// all plugin types
-		$pluginTypes = array(
-				'module'	=> TRUE,
-				'template'	=> TRUE);
+		$pluginTypes = [
+			'module'	=> TRUE,
+			'template'	=> TRUE
+		];
 
 		foreach ($pluginTypes as $type => $pair) {
 
 			// compute names
-			$class	= ($pair ? 'Pair\\' : '') . ucfirst($type);
+			$class	= ($pair ? 'Pair\\Models\\' : '') . ucfirst($type);
 			$folder	= strtolower($type . 's');
 			$names	= [];
 
 			$pluginsFolder = APPLICATION_PATH . '/' . $folder;
 
 			// main plugins folder scanning
-			$dirs = array_diff(scandir($folder), ['..', '.', '.DS_Store']);
+			$dirs = array_diff(scandir($pluginsFolder), ['..', '.', '.DS_Store']);
 
 			// gets db records and makes objects
-			$pObjects = $class::getAllObjects();
+			$pObjects = $class::all();
 
 			// collects name only
 			foreach ($pObjects as $pObj) {
@@ -102,7 +99,7 @@ class ToolsModel extends Model {
 					// manifest file is missing
 					if (!file_exists($manifestFile)) {
 
-						LogBar::warning('File manifest.xml is missing for ' . ucfirst($type) . ' plugin at path /' . $folder . '/' . $dir);
+						Logger::warning('File manifest.xml is missing for ' . ucfirst($type) . ' plugin at path /' . $folder . '/' . $dir);
 
 					} else {
 
@@ -113,7 +110,7 @@ class ToolsModel extends Model {
 						Plugin::createPluginByManifest($manifest);
 
 						// logging
-						LogBar::event('Inserted a new plugin record for ' . $type . ' ' . $dir);
+						Logger::notice('Inserted a new plugin record for ' . $type . ' ' . $dir);
 						$fixes++;
 
 					}
@@ -136,7 +133,7 @@ class ToolsModel extends Model {
 					$plugin->createManifestFile();
 
 					// logging
-					LogBar::event('Created manifest file for ' . $type . ' ' . $pObj->name);
+					Logger::notice('Created manifest file for ' . $type . ' ' . $pObj->name);
 					$fixes++;
 
 				}
