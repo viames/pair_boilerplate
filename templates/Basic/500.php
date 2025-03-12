@@ -15,10 +15,10 @@ $translator = Translator::getInstance();
 		<title>{{title}}</title>
 		<?php $app->printStyles() ?>
 	</head>
-	<body class="page404">
+	<body class="page500">
 		<div class="wrapper">
 			<div class="box">
-				<h3 class="animated fadeInDown"><?php print Translator::do('RESOURCE_NOT_FOUND') ?></h3>
+				<h3 class="animated fadeInDown"><?php print Translator::do('INTERNAL_SERVER_ERROR') ?></h3>
 				<div class="icon animated fadeInUp"></div>
 			</div>
 		</div>

@@ -1,8 +1,8 @@
 <?php
 
+use Pair\Core\Logger;
 use Pair\Core\Model;
 use Pair\Models\Locale;
-use Pair\Helpers\Logger;
 use Pair\Helpers\Translator;
 
 class SelftestModel extends Model {
@@ -141,7 +141,7 @@ class SelftestModel extends Model {
 		$differences = array_diff($otherKeys, $defaultKeys);
 		
 		foreach ($differences as $diff) {
-			$app->logBarWarning('Key  “' . $diff . '” is not needed for language “' . $langCode . '.ini” at this path: ' . $langPath);
+			Logger::warning('Key  “' . $diff . '” is not needed for language “' . $langCode . '.ini” at this path: ' . $langPath);
 		}
 
 		return count($differences);

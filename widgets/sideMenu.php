@@ -17,7 +17,7 @@ $menu->item('options', 'OPTIONS', 'fa-sliders-h');
 // admin multimenu
 if (is_a($app->currentUser, 'Pair\Models\User') and $app->currentUser->admin) {
 
-	$menu->separator('CRAFTER');
+	$menu->separator('DEVELOPMENT');
 
 	$menu->item('locales', 'LOCALES', 'fa-globe');
 	$menu->item('countries', 'COUNTRIES', 'fa-flag');

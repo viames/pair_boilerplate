@@ -6,11 +6,14 @@ use Pair\Helpers\Utilities;
 
 class SelftestViewDefault extends View {
 
-	public function render(): void {
+	protected function init(): void {
 		
-		$db = Database::getInstance();
 		$this->setPageTitle($this->lang('SELF_TEST'));
+		
+	}
 
+	public function render(): void {
+				
 		// starts the test
 		$test = new SelfTest();
 		
@@ -24,6 +27,7 @@ class SelftestViewDefault extends View {
 		$test->assertTrue($label, $test->checkPhp(), $this->lang('SERVER'));
 		
 		// mysql version
+		$db = Database::getInstance();
 		$label = $this->lang('TEST_MYSQL_VERSION', $db->getMysqlVersion());
 		$test->assertTrue($label, $test->checkMysql(), $this->lang('SERVER'));
 		
