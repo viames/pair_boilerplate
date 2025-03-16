@@ -4,39 +4,33 @@ class Installer {
 
 	/**
 	 * Absolute path to project root.
-	 * @var string
 	 */
-	private $rootFolder;
+	private string $rootFolder;
 
 	/**
 	 * Subfolder of this project from web-server root.
-	 * @var string
 	 */
-	private $baseUri;
+	private string $baseUri;
 
 	/**
 	 * DB handler.
-	 * @var PDO
 	 */
-	private $dbh;
+	private ?PDO $dbh;
 
 	/**
 	 * Flag to set DB_UTF8 constant.
-	 * @var bool
 	 */
-	private $forceDbUtf8 = FALSE;
+	private bool $forceDbUtf8 = FALSE;
 
 	/**
 	 * List of installer notifications.
-	 * @var array
 	 */
-	private $notifications = [];
+	private array $notifications = [];
 
 	/**
 	 * List of installer errors.
-	 * @var array
 	 */
-	private $errors = [];
+	private array $errors = [];
 
 	public function __construct() {
 
@@ -45,8 +39,6 @@ class Installer {
 
 		// get the subpath of this project in web-server root
 		$this->baseUri = dirname(dirname(parse_url($_SERVER['PHP_SELF'], PHP_URL_PATH)));
-
-		define ('PRODUCT_NAME', 'Pair boilerplate');
 
 	}
 
@@ -352,10 +344,6 @@ class Installer {
 
 		$v = $this->getPostVars();
 
-		if (!$v['baseUri']) {
-			$v['baseUri'] = $this->baseUri;
-		}
-
 ?><!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -397,11 +385,7 @@ class Installer {
 	                  Valid product name is required.
 	                </div>
 	              </div>
-
-	            <div class="mb-3">
-	                <label for="baseUri">URL folder <small class="text-muted">/subpath or empty if installing in web-server root</small></label>
-	                <input type="text" class="form-control" name="baseUri" id="baseUri" value="<?php print htmlspecialchars($this->baseUri) ?>">
-	            </div>
+				</div>
 
 				<h4 class="mb-3 mt-5">Database</h4>
 
@@ -545,7 +529,7 @@ class Installer {
 	public function getPostVars() {
 
 		// list of required field names
-		$postVars = ['productName', 'baseUri', 'dbHost', 'dbName',
+		$postVars = ['productName', 'dbHost', 'dbName',
 				'dbUser', 'dbPass', 'name', 'surname', 'email'];
 
 		$vars = [];
@@ -566,15 +550,14 @@ class Installer {
 '# Product
 PRODUCT_VERSION = 1.0.0
 PRODUCT_NAME = ' . $vars['productName'] . '
-BASE_URI = ' . $vars['baseUri'] . '
 UTC_DATE = FALSE
 
-# database
+# Database
 DB_HOST = ' . $vars['dbHost'] . '
 DB_NAME = ' . $vars['dbName'] . '
 DB_USER = ' . $vars['dbUser'] . '
 DB_PASS = ' . $vars['dbPass'] . '
-DB_UTF8 = TRUE
+DB_UTF8 = ' . ($this->forceDbUtf8 ? 'TRUE' : 'FALSE') . '
 
 # Date in locale format
 PAIR_FORM_DATE_FORMAT =
@@ -594,6 +577,10 @@ PAIR_AUDIT_USER_CHANGED = TRUE
 PAIR_AUDIT_PERMISSIONS_CHANGED = TRUE
 PAIR_SINGLE_SESSION = TRUE
 PAIR_AUTH_BY_EMAIL = TRUE
+PAIR_LOGGER_EMAIL_RECIPIENTS = 
+PAIR_LOGGER_EMAIL_THRESHOLD = 4
+PAIR_LOGGER_TELEGRAM_CHAT_IDS = 
+PAIR_LOGGER_TELEGRAM_THRESHOLD = 4
 
 # Crypt keys
 OPTIONS_CRYPT_KEY = ' . bin2hex(random_bytes(32)) . '
@@ -602,15 +589,12 @@ AES_CRYPT_KEY = ' . bin2hex(random_bytes(32)) . '
 # Sentry
 SENTRY_DSN =
 
-# BugSnag
-BUGSNAG_API_KEY =
+# Insight Hub
+INSIGHT_HUB_API_KEY = 
+INSIGHT_HUB_PERFORMANCE = 
 
 # MySqlDump
 MYSQLDUMP_PATH = ';
-
-		if ($this->forceDbUtf8) {
-			$content .= "define ('DB_UTF8', TRUE);\n";
-		}
 
 		$res = file_put_contents($this->rootFolder . '/.env', $content);
 
@@ -686,7 +670,7 @@ $installer = new Installer();
 
 $installer->checkFoldersErrors();
 $installer->checkApacheErrors();
-$installer->checkPhpErrors('8.1', ['fileinfo','json','pcre','PDO','pdo_mysql','Reflection']);
+$installer->checkPhpErrors('8.3', ['fileinfo','json','pcre','PDO','pdo_mysql','Reflection']);
 
 // form is submitted, check if can proceed to install
 if (count($_POST)) {
@@ -699,7 +683,7 @@ if (count($_POST)) {
 	if ($connected) {
 
 		// check and configure db
-		$installer->checkDbmsVersion('5.6');
+		$installer->checkDbmsVersion('8.0');
 		$installer->createDb();
 		$installer->checkDbUtf8();
 		$installer->createUser();
