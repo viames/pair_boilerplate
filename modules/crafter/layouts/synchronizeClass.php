@@ -34,7 +34,7 @@
 			
 			} else {
 				
-				print Pair\Helpers\Utilities::printNoDataMessageBox();
+				print $this->noData();
 				
 			}
 			

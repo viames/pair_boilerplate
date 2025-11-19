@@ -4,13 +4,14 @@ use Pair\Core\Model;
 use Pair\Html\Form;
 use Pair\Models\Module;
 use Pair\Orm\Database;
+use Pair\Orm\Collection;
 
 class RulesModel extends Model {
 
 	/**
 	 * Returns the modules
 	 */
-	public function getAclModelRules(): array {
+	public function getAclModelRules(): Collection {
 
 		$query = 'SELECT r.*, m.`name`
 			FROM `rules` as r
@@ -18,7 +19,7 @@ class RulesModel extends Model {
 			ORDER BY `name` ASC
 			LIMIT ' . $this->pagination->start . ', ' . $this->pagination->limit;
 
-		return Database::load($query, [], Database::OBJECT);
+		return Database::load($query, [], Database::COLLECTION);
 
 	}
 

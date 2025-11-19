@@ -8,7 +8,7 @@ class MigrationsViewDefault extends View {
 
 	public function render(): void {
 
-		$this->setPageTitle($this->lang('MIGRATIONS'));
+		$this->pageTitle($this->lang('MIGRATIONS'));
 
 		if (!$this->model->dbTableCheck()) {
 			$this->assign('migrations', new Collection);

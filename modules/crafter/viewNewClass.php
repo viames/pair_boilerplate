@@ -4,9 +4,9 @@ use Pair\Core\View;
 
 class CrafterViewNewClass extends View {
 
-	public function render(): void {
+	protected function render(): void {
 
-		$this->setPageTitle($this->lang('CRAFTER'));
+		$this->pageHeading($this->lang('CRAFTER'));
 
 		$unmappedTables = $this->model->getUnmappedTables();
 

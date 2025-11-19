@@ -1267,13 +1267,13 @@ CREATE TABLE `schedule_logs` (
 
 CREATE TABLE IF NOT EXISTS `sessions` (
 	`id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-	`id_user` int unsigned DEFAULT NULL,
+	`user_id` int unsigned DEFAULT NULL,
 	`start_time` datetime NOT NULL,
 	`timezone_offset` decimal(2,1) DEFAULT NULL,
 	`timezone_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
 	`former_user_id` int unsigned DEFAULT NULL,
 	PRIMARY KEY (`id`),
-	KEY `user_id` (`id_user`,`start_time`)
+	KEY `user_id` (`user_id`,`start_time`)
 ) ENGINE=MEMORY DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --

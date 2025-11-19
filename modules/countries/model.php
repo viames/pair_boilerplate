@@ -10,11 +10,10 @@ class CountriesModel extends Model {
 
 	/**
 	 * Returns object list with pagination.
-	 * @return Country[]
 	 */
 	public function getCountries(): Collection {
 
-		$alphaFilter = $this->app->getPersistentState('countriesAlphaFilter');
+		$alphaFilter = $this->getPersistentState('countriesAlphaFilter');
 
 		if ($alphaFilter) {
 
@@ -46,7 +45,7 @@ class CountriesModel extends Model {
 	 */
 	public function countListItems(): int {
 
-		$alphaFilter = $this->app->getPersistentState('countriesAlphaFilter');
+		$alphaFilter = $this->getPersistentState('countriesAlphaFilter');
 
 		if ($alphaFilter) {
 

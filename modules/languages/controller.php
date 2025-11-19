@@ -8,7 +8,7 @@ use Pair\Helpers\Post;
  		
 class LanguagesController extends Controller {
 
-	protected function init(): void {
+	protected function _init(): void {
 		
 		Breadcrumb::path($this->lang('LANGUAGES'), 'languages');
 		
@@ -46,7 +46,7 @@ class LanguagesController extends Controller {
 				$msg .= " \n" . $error;
 			}
 			$this->toastError($msg);
-			$this->view = 'default';
+			$this->setView('default');
 		}					
 
 	}
@@ -87,7 +87,7 @@ class LanguagesController extends Controller {
 			if (count($errors)) { 
 				$message = $this->lang('ERROR_ON_LAST_REQUEST') . ": \n" . implode(" \n", $errors);
 				$this->toastError($message);
-				$this->view = 'default';
+				$this->setView('default');
 			} else {
 				$this->redirect('languages');
 			}
@@ -119,7 +119,7 @@ class LanguagesController extends Controller {
 			if (count($errors)) { 
 				$message = $this->lang('ERROR_DELETING_LANGUAGE') . ": \n" . implode(" \n", $errors);
 				$this->toastError($message);
-				$this->view = 'default';
+				$this->setView('default');
 			} else {
 				$this->toastError($this->lang('ERROR_ON_LAST_REQUEST'));
 				$this->redirect('languages');

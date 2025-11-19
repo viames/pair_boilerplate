@@ -12,7 +12,7 @@ class UserViewProfileEdit extends View {
 		$user		= $this->app->currentUser;
 		$languages	= Language::getAllObjects(NULL, array('englishName'));
 
-		$this->setPageTitle($this->lang('USER_EDIT', $user->fullName));
+		$this->pageTitle($this->lang('USER_EDIT', $user->fullName));
 
 		$form = $this->model->getUserForm();
 		$form->values($user);

@@ -2,7 +2,7 @@
 
 use Pair\Core\Model;
 use Pair\Html\Form;
-use Pair\Models\Oauth2Client;
+use Pair\Models\OAuth2Client;
 
 class Oauth2clientsModel extends Model {
 
@@ -28,9 +28,9 @@ class Oauth2clientsModel extends Model {
 	}
 
 	/**
-	 * Returns the Form object for create/edit Oauth2client objects.
+	 * Returns the Form object for create/edit OAuth2client objects.
 	 */
-	public function getOauth2ClientForm(Oauth2Client $oauth2Client): Form {
+	public function getOAuth2ClientForm(OAuth2Client $oauth2Client): Form {
 
 		$form = new Form();
 

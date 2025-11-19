@@ -10,24 +10,20 @@ define ('PAIR_CHECK_ICON', '<i class="fa fa-check fa-lg text-success"></i>');
 define ('PAIR_TIMES_ICON', '<i class="fa fa-times fa-lg text-danger"></i>');
 
 // initialize composer
-require dirname(__DIR__) . '/vendor/autoload.php';
+try {
+	@require dirname(__DIR__) . '/vendor/autoload.php';
+} catch (Throwable $e) {
+	die('Composer is not installed.');
+}
 
-// start the Application
+// forza PHP a mostrare gli errori
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+
+// initialize the Application
 $app = Application::getInstance();
-
-// oAuth2 token creation
-$app->setGuestModule('oauth2');
-
-// initialize project classes
-require APPLICATION_PATH . '/classes/classLoader.php';
-
-// any API requests
-$app->runApi();
-
-// any session
-$app->manageSession();
 
 Assets::load();
 
 // start controller and then display
-$app->startMvc();
+$app->run();

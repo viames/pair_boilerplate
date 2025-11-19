@@ -1,11 +1,29 @@
 RewriteEngine On
 Options +FollowSymLinks -Indexes
+
+# do not process requests for existing files
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# do not process requests for existing directories
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# return 404 for all requests for files that do not exist
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule (.*) index.php
+RewriteCond %{REQUEST_FILENAME} \.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|otf|webp|mp4|webm|ogg|mp3|wav|json|xml|map)$ [NC]
+RewriteRule .* - [R=404,L]
+
+# rewrite everything else to index.php
+RewriteRule (.*) index.php [L]
+
+# block accidental requests to xml, php and ini files
 <FilesMatch "manifest.xml|\.(php|ini)$">
   Order Deny,Allow
   Deny from all
 </FilesMatch>
+
+# allow access to index.php
 <Files index.php>
   Order Allow,Deny
   Allow from all

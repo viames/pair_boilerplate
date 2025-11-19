@@ -1,14 +1,14 @@
 <?php
 
 use Pair\Core\View;
-use Pair\Orm\Database;
 use Pair\Helpers\Utilities;
+use Pair\Orm\Database;
 
 class SelftestViewDefault extends View {
 
-	protected function init(): void {
+	protected function _init(): void {
 		
-		$this->setPageTitle($this->lang('SELF_TEST'));
+		$this->pageTitle($this->lang('SELF_TEST'));
 		
 	}
 

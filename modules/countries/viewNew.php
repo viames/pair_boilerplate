@@ -4,9 +4,9 @@ use Pair\Core\View;
 
 class CountriesViewNew extends View {
 
-	public function render(): void {
+	protected function render(): void {
 
-		$this->setPageTitle($this->lang('NEW_COUNTRY'));
+		$this->pageHeading($this->lang('NEW_COUNTRY'));
 
 		$form = $this->model->getCountryForm();
 

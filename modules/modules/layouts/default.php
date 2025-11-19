@@ -18,11 +18,11 @@
 						<thead>
 							<tr>
 								<th><?php $this->_('NAME') ?></th>
-								<th><?php $this->_('COMPATIBLE') ?></th>
-								<th><?php $this->_('RELEASE_DATE') ?></th>
-								<th><?php $this->_('INSTALL_DATE') ?></th>
-								<th><?php $this->_('DOWNLOAD') ?></th>
-								<th><?php $this->_('DELETE') ?></th>
+								<th class="text-center"><?php $this->_('COMPATIBLE') ?></th>
+								<th class="text-center"><?php $this->_('RELEASE_DATE') ?></th>
+								<th class="text-center"><?php $this->_('INSTALL_DATE') ?></th>
+								<th class="text-center"><?php $this->_('DOWNLOAD') ?></th>
+								<th class="text-center"><?php $this->_('DELETE') ?></th>
 							</tr>
 						</thead>
 						<tbody><?php
@@ -33,8 +33,8 @@
 							<tr>
 								<td><?php print htmlspecialchars($module->name . ' v' . $module->version) ?></td>
 								<td class="text-center"><?php print $module->compatible ?></td>
-								<td class="text-center small"><?php print $module->formatDateTime('dateReleased', $this->lang('DATE_FORMAT')) ?></td>
-								<td class="text-center small"><?php print $module->formatDateTime('dateInstalled', $this->lang('DATE_FORMAT')) ?></td>
+								<td class="text-center small"><?php print $module->formatDateTime('dateReleased') ?></td>
+								<td class="text-center small"><?php print $module->formatDateTime('dateInstalled') ?></td>
 								<td class="text-center"><?php print $module->downloadIcon ?></td>
 								<td class="text-center"><?php print $module->deleteIcon ?></td>
 							</tr><?php 

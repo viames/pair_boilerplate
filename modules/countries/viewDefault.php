@@ -5,9 +5,13 @@ use Pair\Core\View;
 
 class CountriesViewDefault extends View {
 
-	public function render(): void {
+	protected function _init(): void {
 
-		$this->setPageTitle($this->lang('COUNTRIES'));
+		$this->pageHeading($this->lang('COUNTRIES'));
+
+	}
+
+	protected function render(): void {
 
 		$countries = $this->model->getCountries();
 
@@ -17,11 +21,7 @@ class CountriesViewDefault extends View {
 			$c->officialLanguages = implode(', ', $this->model->getOfficialLanguages($c));
 		}
 		
-		// get an alpha filter list from View parent
-		$filter = $this->getAlphaFilter(Router::get(0));
-
 		$this->assign('countries', $countries);
-		$this->assign('filter', $filter);
 
 	}
 

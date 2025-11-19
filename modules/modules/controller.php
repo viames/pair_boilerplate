@@ -8,7 +8,7 @@ use Pair\Helpers\Upload;
 
 class ModulesController extends Controller {
 
-	protected function init(): void {
+	protected function _init(): void {
 
 		// removes files older than 30 minutes
 		Plugin::removeOldFiles();
@@ -27,7 +27,7 @@ class ModulesController extends Controller {
 
 	public function addAction(): void {
 
-		$this->view = 'default';
+		$this->setView('default');
 
 		// collects file infos
 		$upload = new Upload('package');
@@ -65,7 +65,7 @@ class ModulesController extends Controller {
 			$this->redirect('modules/default');
 		} else {
 			$this->toastError($this->lang('MODULE_HAS_NOT_BEEN_REMOVED'));
-			$this->view = 'default';
+			$this->setView('default');
 			$this->router->action = 'default';
 			$this->router->resetParams();
 		}

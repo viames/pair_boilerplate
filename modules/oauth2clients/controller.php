@@ -3,11 +3,11 @@
 use Pair\Core\Controller;
 use Pair\Helpers\Post;
 use Pair\Html\Breadcrumb;
-use Pair\Models\Oauth2Client;
+use Pair\Models\OAuth2Client;
 
 class Oauth2clientsController extends Controller {
 
-	protected function init(): void {
+	protected function _init(): void {
 
 		Breadcrumb::path($this->lang('OAUTH2CLIENTS'), 'oauth2clients');
 
@@ -18,7 +18,7 @@ class Oauth2clientsController extends Controller {
 	 */
 	public function addAction() {
 
-		$oauth2Client = new Oauth2Client();
+		$oauth2Client = new OAuth2Client();
 		$oauth2Client->populateByRequest();
 
 		// create the record
@@ -34,22 +34,22 @@ class Oauth2clientsController extends Controller {
 	}
 
 	/**
-	 * Show form for edit a Oauth2Client object.
+	 * Show form for edit a OAuth2Client object.
 	 */
 	public function editAction() {
 
-		$oauth2Client = $this->getObjectRequestedById('Pair\Models\Oauth2Client');
+		$oauth2Client = $this->getObjectRequestedById('Pair\Models\OAuth2Client');
 
-		$this->view = $oauth2Client ? 'edit' : 'default';
+		$this->setView($oauth2Client ? 'edit' : 'default');
 
 	}
 
 	/**
-	 * Modify an Oauth2Client object.
+	 * Modify an OAuth2Client object.
 	 */
 	public function changeAction() {
 
-		$oauth2Client = new Oauth2Client(Post::get('id'));
+		$oauth2Client = new OAuth2Client(Post::get('id'));
 		$oauth2Client->populateByRequest();
 
 		// apply the update
@@ -65,11 +65,11 @@ class Oauth2clientsController extends Controller {
 	}
 
 	/**
-	 * Delete an Oauth2Client object.
+	 * Delete an OAuth2Client object.
 	 */
 	public function deleteAction() {
 
-	 	$oauth2Client = $this->getObjectRequestedById('Pair\Models\Oauth2Client');
+	 	$oauth2Client = $this->getObjectRequestedById('Pair\Models\OAuth2Client');
 
 		// execute deletion
 		if (!$oauth2Client->delete()) {

@@ -7,7 +7,7 @@ class LocalesViewDefault extends View {
 
 	public function render(): void {
 
-		$this->setPageTitle($this->lang('LOCALES'));
+		$this->pageTitle($this->lang('LOCALES'));
 
 		$locales = $this->model->getLocales();
 

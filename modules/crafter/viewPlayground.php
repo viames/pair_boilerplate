@@ -10,13 +10,15 @@ use Pair\Html\Breadcrumb;
 
 class CrafterViewPlayground extends View {
 
-	public function render(): void {
+	protected function _init(): void {
 
-		$this->setPageTitle($this->lang('CRAFTER'));
+		$this->pageHeading($this->lang('CRAFTER'));
 
-		Breadcrumb::path([
-			'Playground' => 'crafter/playground',
-		]);
+		Breadcrumb::path('Playground', 'crafter/playground');
+
+	}
+
+	protected function render(): void {
 
 		$results = [];
 
@@ -29,9 +31,9 @@ class CrafterViewPlayground extends View {
 
 			case 'PairException':
 				throw new PairException('PairException message');
-				
+
 			case 'PairExceptionWithCode':
-				throw new PairException('PairException message', ErrorCodes::VIEW_ERROR);
+				throw new PairException('PairException message', ErrorCodes::VIEW_RUNTIME_ERROR);
 
 			case 'CriticalException':
 				throw new CriticalException('CriticalException message');

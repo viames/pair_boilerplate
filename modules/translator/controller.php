@@ -1,15 +1,15 @@
 <?php
 
-use Pair\Html\Breadcrumb;
 use Pair\Core\Controller;
+use Pair\Core\Router;
 use Pair\Helpers\Post;
+use Pair\Html\Breadcrumb;
 use Pair\Models\Locale;
 use Pair\Models\Module;
-use Pair\Core\Router;
 
 class TranslatorController extends Controller {
 
-	protected function init(): void {
+	protected function _init(): void {
 		
 		Breadcrumb::path($this->lang('TRANSLATOR'), 'translator/default');
 		
@@ -55,7 +55,7 @@ class TranslatorController extends Controller {
 			$this->toastError($this->lang('TRANSLATION_STRINGS_NOT_UPDATED', array($locale->getEnglishNames(), ucfirst($module->name))));
 		}
 
-		$this->app->redirect('translator/details/' . $locale->id);
+		$this->redirect('translator/details/' . $locale->id);
 	
 	}
 	

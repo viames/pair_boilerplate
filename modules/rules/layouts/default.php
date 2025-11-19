@@ -19,8 +19,8 @@
 						<thead>
 							<tr>
 								<th><?php $this->_('MODULE') ?></th>
-								<th><?php $this->_('ACTION') ?></th>
-								<th><?php $this->_('ADMIN_ONLY') ?></th>
+								<th class="text-center"><?php $this->_('ACTION') ?></th>
+								<th class="text-center"><?php $this->_('ADMIN_ONLY') ?></th>
 							</tr>
 						</thead>
 						<tbody><?php
@@ -28,9 +28,9 @@
 						foreach ($this->rules as $o) {
 					
 							?><tr>
-								<td><a href="rules/edit/<?php print $o->id ?>"><?php $o->printHtml('name') ?></a></td>
-								<td class="text-center"><?php $o->printHtml('action') ?></td>
-								<td class="text-center"><?php $o->printHtml('adminIcon') ?></td>
+								<td><a href="rules/edit/<?php print $o->id ?>"><?php print $o->name ?></a></td>
+								<td class="text-center"><?php print htmlspecialchars((string)$o->action) ?></td>
+								<td class="text-center"><?php print $o->adminIcon ?></td>
 							</tr><?php 
 							
 						}

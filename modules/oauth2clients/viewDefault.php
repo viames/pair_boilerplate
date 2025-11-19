@@ -4,13 +4,13 @@ use Pair\Core\View;
 
 class Oauth2clientsViewDefault extends View {
 
-	public function render(): void {
+	protected function render(): void {
 
-		$this->setPageTitle($this->lang('OAUTH2CLIENTS'));
+		$this->pageHeading($this->lang('OAUTH2CLIENTS'));
 
-		$oauth2Clients = $this->model->getItems('Pair\Models\Oauth2Client');
+		$oauth2Clients = $this->model->getItems('Pair\Models\OAuth2Client');
 
-		$this->pagination->count = $this->model->countItems('Pair\Models\Oauth2Client');
+		$this->pagination->count = $this->model->countItems('Pair\Models\OAuth2Client');
 
 		$this->assign('oauth2Clients', $oauth2Clients);
 

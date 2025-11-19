@@ -5,12 +5,12 @@ use Pair\Helpers\LogBar;
 
 class ToolsController extends Controller {
 
-	protected function init(): void {
+	protected function _init(): void {
 
 		ignore_user_abort(TRUE);
 		set_time_limit(120);
 
-		$this->view = 'default';
+		$this->setView('default');
 
 		$this->disableLogBar();
 

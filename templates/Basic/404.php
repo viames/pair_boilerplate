@@ -12,7 +12,7 @@ $translator = Translator::getInstance();
 		<base href="<?php print BASE_HREF ?>" />
 		<meta charset="utf-8" />
 		<meta content="width=device-width, initial-scale=1.0" name="viewport" />
-		<title>{{title}}</title>
+		<title><?php print $app->pageTitle ?></title>
 		<?php $app->printStyles() ?>
 	</head>
 	<body class="page404">
@@ -22,7 +22,7 @@ $translator = Translator::getInstance();
 				<div class="icon animated fadeInUp"></div>
 			</div>
 		</div>
-		{{content}}
+		<h1>404</h1>
 		<div id="messageArea"></div>
 		<?php $app->printScripts() ?>
 	</body>

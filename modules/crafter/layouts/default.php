@@ -1,5 +1,5 @@
 <div class="row">
-<div class="col-6">
+	<div class="col-12 col-md-6">
 		<div class="card">
 			<div class="card-header">
 				<h4 class="card-title">Developer module</h4>
@@ -14,7 +14,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="col-6">
+	<div class="col-12 col-md-6 mt-3 mt-md-0">
 		<div class="card">
 			<div class="card-header">
 				<h4 class="card-title">Test area</h4>

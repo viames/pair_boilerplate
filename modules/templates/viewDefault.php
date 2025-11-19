@@ -1,14 +1,14 @@
 <?php
 
 use Pair\Core\Application;
-use Pair\Core\Config;
+use Pair\Core\Env;
 use Pair\Core\View;
 
 class TemplatesViewDefault extends View {
 
 	public function render(): void {
 
-		$this->setPageTitle($this->lang('TEMPLATES'));
+		$this->pageTitle($this->lang('TEMPLATES'));
 
 		$templates = $this->model->getActiveRecordObjects('Pair\Models\Template', 'name');
 		
@@ -24,7 +24,7 @@ class TemplatesViewDefault extends View {
 			}
 
 			// check if plugin is compatible with current application version
-			$template->compatible = (version_compare(Config::get('PRODUCT_VERSION'), $template->appVersion) <= 0) ?
+			$template->compatible = (version_compare(Env::get('APP_VERSION'), $template->appVersion) <= 0) ?
 				'<span class="fa fa-check fa-lg text-success"></span>' :
 				'<div style="color:red">v' . $template->appVersion . '</div>';
 			

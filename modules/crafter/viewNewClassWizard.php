@@ -5,9 +5,9 @@ use Pair\Core\View;
 
 class CrafterViewNewClassWizard extends View {
 
-	public function render(): void {
+	protected function render(): void {
 
-		$this->setPageTitle($this->lang('CRAFTER'));
+		$this->pageHeading($this->lang('CRAFTER'));
 
 		$tableName = Router::get(0);
 

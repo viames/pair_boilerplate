@@ -1,32 +1,45 @@
 <?php
 
 use Pair\Core\Controller;
+use Pair\Core\Router;
 use Pair\Helpers\Post;
+use Pair\Html\Breadcrumb;
+use Pair\Models\Audit;
 use Pair\Models\Session;
 use Pair\Models\User;
 
 class UserController extends Controller {
 	
+	protected function _init(): void {
+
+		Breadcrumb::path($this->lang('USER'), 'user');
+
+	}
+
 	public function defaultAction(): void {
 		
-		$this->view = 'login';
-		
+		if ($this->app->currentUser) {
+			$this->redirect('user/profile');
+		} else {
+			$this->redirect('user/login');
+		}
+
 	}
 	
 	/**
-	 * Shows login form or try login action.
+	 * Try the login action.
 	 */
 	public function loginAction(): void {
-	
-		$username	= Post::trim('username');
-		$password	= Post::trim('password');
-		$timezone	= Post::trim('timezone');
-		$remember	= Post::bool('remember', FALSE);
 
 		// if isn’t post submit, render the page
 		if (!Post::submitted()) {
 			return;
 		}
+
+		$username = Post::trim('username');
+		$password = Post::trim('password');
+		$timezone = Post::trim('timezone');
+		$remember = Post::bool('remember', false);
 			
 		// username or password missing
 		if (!$username or !$password) {
@@ -41,7 +54,7 @@ class UserController extends Controller {
 		if ($result->error) {
 			sleep(3);
 			$this->toastError($result->message);
-			$this->app->redirect('user/login');
+			$this->redirect('user/login');
 		}
 		
 		// userId of user that is ready logged in
@@ -62,7 +75,7 @@ class UserController extends Controller {
 		}
 
 		// get user default landing page
-		$landing = $user->getLanding();
+		$landing = $user->landing();
 
 		// goes to default landing page
 		$this->redirect($landing->module . '/' . $landing->action);
@@ -74,15 +87,19 @@ class UserController extends Controller {
 	 */
 	public function logoutAction(): void {
 
-		$formerUser = Session::current()->getFormerUser();
+		$session = Session::current();
+		$formerUser = $session->getFormerUser();
+
+		// if there is a former user, re-login as that user
+		if ($formerUser) {
+			$this->impersonateStopAction();
+			return;
+		}
+
+		$currentUser = User::current();
 
 		User::doLogout(session_id());
 
-		if ($formerUser) {
-			User::loginAs($formerUser, '');
-			$formerUser->redirectToDefault();
-		}
-		
 		// manual redirect because of variables clean-up
 		header('Location: ' . BASE_HREF . 'login');
 		exit();

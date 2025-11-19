@@ -1,12 +1,11 @@
 <div class="card">
 	<div class="card-header">
+		<div class="float-end">
+			<a class="p-1 btn btn-sm btn-outline-primary mt-1 float-right" href="oauth2clients/new"><i class="fal fa-plus-large fa-fw"></i></a>
+		</div>
 		<h4 class="card-title"><?php $this->_('OAUTH2CLIENTS') ?></h4>
 	</div>
 	<div class="card-body">
-		<div style="overflow:hidden">
-			<a href="oauth2clients/new" class="btn btn-primary btn-sm float-end"><?php $this->_('NEW_OAUTH2CLIENT') ?></a>
-		</div>
-		<hr>
 		<?php if (count($this->oauth2Clients)) { ?>
 		<div class="table-responsive">
 			<table class="table table-hover">
@@ -28,11 +27,11 @@
 				</tbody>
 			</table>
 		</div>
-		<?php print $this->getPaginationBar();
+		<?php $this->printPaginationBar();
 			
 	} else {
 			
-		Pair\Helpers\Utilities::printNoDataMessageBox();
+		$this->noData();
 			
 	} ?>
 	</div>

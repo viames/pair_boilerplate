@@ -6,7 +6,7 @@ class LocalesViewNew extends View {
 
 	public function render(): void {
 
-		$this->setPageTitle($this->lang('NEW_LOCALE'));
+		$this->pageTitle($this->lang('NEW_LOCALE'));
 
 		$form = $this->model->getLocaleForm();
 

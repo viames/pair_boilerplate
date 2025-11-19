@@ -36,7 +36,7 @@ use Pair\Helpers\Utilities;
 			
 			} else {
 				
-				print Utilities::printNoDataMessageBox();
+				print Utilities::showNoDataAlert();
 				
 			}
 			

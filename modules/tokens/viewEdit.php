@@ -9,7 +9,7 @@ class TokensViewEdit extends View {
 
 	public function render(): void {
 
-		$this->setPageTitle($this->lang('EDIT_TOKEN'));
+		$this->pageTitle($this->lang('EDIT_TOKEN'));
 
 		$id = Router::get(0);
 		$token = new Token($id);

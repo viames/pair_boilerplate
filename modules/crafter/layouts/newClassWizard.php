@@ -8,13 +8,13 @@
 				<div class="container">
 					<form action="crafter/classCreation" method="post" class="form-horizontal"> 
 						<fieldset>
-							<div class="form-group">
+							<div class="form-group row">
 								<label class="col-md-3 control-label"><?php $this->_('OBJECT_NAME')?></label>
 								<div class="col-md-3"><?php $this->form->printControl('objectName') ?></div>
 								<div class="col-md-6 small"><?php $this->_('OBJECT_NAME_DESCRIPTION')?></div>
 							</div>
 							<?php $this->form->printControl('tableName') ?>
-							<div class="form-group">
+							<div class="form-group row">
 								<div class="col-md-push-3 col-md-9">
 									<button type="submit" class="btn btn-primary"><?php $this->_('CREATE_CLASS') ?></button>
 									<a href="crafter" class="btn btn-secondary"><?php $this->_('CANCEL') ?></a>

@@ -1,14 +1,14 @@
 <?php
 
 use Pair\Core\Controller;
-use Pair\Html\Breadcrumb;
 use Pair\Helpers\Logger;
 use Pair\Helpers\Plugin;
 use Pair\Helpers\Upload;
+use Pair\Html\Breadcrumb;
 
 class TemplatesController extends Controller {
 
-	protected function init(): void {
+	protected function _init(): void {
 
 		// removes files older than 30 minutes
 		Plugin::removeOldFiles();
@@ -27,7 +27,7 @@ class TemplatesController extends Controller {
 
 	public function addAction(): void {
 
-		$this->view = 'default';
+		$this->setView('default');
 
 		// collects file infos
 		$upload = new Upload('package');
@@ -61,7 +61,7 @@ class TemplatesController extends Controller {
 			$this->redirect('templates/default');
 		} else {
 			$this->toastError($this->lang('TEMPLATE_HAS_NOT_BEEN_REMOVED'));
-			$this->view = 'default';
+			$this->setView('default');
 			$this->router->action = 'default';
 			$this->router->resetParams();
 		}

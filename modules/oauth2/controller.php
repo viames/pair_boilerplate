@@ -1,9 +1,9 @@
 <?php
 
 use Pair\Core\Controller;
-use Pair\Models\Oauth2Client;
-use Pair\Models\Oauth2Token;
 use Pair\Helpers\Post;
+use Pair\Models\OAuth2Client;
+use Pair\Models\OAuth2Token;
 
 class Oauth2Controller extends Controller {
 
@@ -12,6 +12,8 @@ class Oauth2Controller extends Controller {
 	 */
 	public function defaultAction(): void {
 
+		$this->headless();
+
 		if (!Post::submitted()) {
 			$this->redirect('login');
 		}
@@ -19,11 +21,11 @@ class Oauth2Controller extends Controller {
 		// uncomplete request
 		if ('client_credentials'!=Post::trim('grant_type')) {
 			sleep(3);
-			Oauth2Token::badRequest('Invalid grant_type');
+			OAuth2Token::badRequest('Invalid grant_type');
 		}
 
 		// search for Basic Auth authentication
-		$auth = Oauth2Token::readBasicAuth();
+		$auth = OAuth2Token::readBasicAuth();
 
 		// check if it is Basic Auth
 		if (!is_object($auth) or !$auth->id or !$auth->secret) {
@@ -33,12 +35,12 @@ class Oauth2Controller extends Controller {
 		}
 
 		// load the client by its ID
-		$client = new Oauth2Client($auth->id);
+		$client = new OAuth2Client($auth->id);
 
 		// wrong credentials
 		if (!$client->isLoaded() or $client->secret!=$auth->secret) {
 			sleep(3);
-			Oauth2Token::unauthorized('Authentication failed');
+			OAuth2Token::unauthorized('Authentication failed');
 		}
 
 		// if there is a not expired token, update the date, otherwise create a new one

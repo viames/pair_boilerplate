@@ -7,7 +7,7 @@ class ToolsViewDefault extends View {
 
 	public function render(): void {
 
-		$this->setPageTitle($this->lang('TOOLS'));
+		$this->pageTitle($this->lang('TOOLS'));
 
 		Breadcrumb::path($this->lang('TOOLS'));
 

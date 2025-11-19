@@ -1,264 +1,26 @@
 <?php
 
+use Pair\Core\Controller;
+use Pair\Core\Router;
+use Pair\Helpers\Options;
+use Pair\Helpers\Post;
+use Pair\Html\Breadcrumb;
 use Pair\Models\Acl;
 use Pair\Models\Audit;
-use Pair\Core\Controller;
 use Pair\Models\Group;
-use Pair\Helpers\Post;
-use Pair\Helpers\Options;
-use Pair\Core\Router;
 use Pair\Models\User;
 
 class UsersController extends Controller {
-	
-	public function userAddAction() {
+
+	public function _init(): void {
+
+		Breadcrumb::path($this->lang('USERS'), 'users');
 		
-		// fallback view
-		$this->view = 'userList';
-		
-		$userField = PAIR_AUTH_BY_EMAIL ? 'email' : 'username';
-		
-		$username = strtolower(Post::trim($userField));
-		$password = Post::trim('password');
-		
-		// check on minimum password length
-		if (strlen($password) < Options::get('password_min')) {
-			$this->toastError($this->lang('SHORT_PASSWORD'));
-			$this->app->redirect('users/userList');
-		}
-
-		// check if username exist
-		if (count(User::getAllObjects(array($userField => $username)))) {
-			$this->toastError($this->lang('USER_EXIST', $username));
-			$this->app->redirect('users/userList');
-		}
-
-		$form = $this->model->getUserForm();
-
-		$newUser			= new User();
-		$newUser->name		= Post::trim('name');
-		$newUser->surname	= Post::trim('surname');
-		$newUser->email	= Post::trim('email') ? Post::trim('email') : NULL;
-		$newUser->username	= $username;
-		$newUser->enabled	= Post::bool('enabled');
-		$newUser->localeId	= Post::int('localeId');
-		$newUser->groupId	= Post::int('groupId');
-		$newUser->admin	= FALSE;
-		$newUser->faults	= 0;
-
-		// create hash
-		$newUser->hash = User::getHashedPasswordWithSalt($password);
-
-		if ($form->isValid() and $newUser->create()) {
-			$this->toast($this->lang('USER_HAS_BEEN_CREATED', $newUser->fullName));
-			$this->app->redirect('users/userList');
-		} else {
-			$this->toastError($this->lang('USER_HAS_NOT_BEEN_CREATED', $newUser->fullName));
-			foreach ($newUser->getErrors() as $error) {
-				$this->toastError($error);
-			}
-			$this->view = 'userList';
-		}
-
-	}
-	
-	public function userEditAction() {
-	
-		$user = $this->getRequestedUser();
-	
-		if (is_a($user, 'Pair\Models\User') and $user->isLoaded()) {
-			$this->view = 'userEdit';
-		} else {
-			$this->view = 'userList';
-		}
-	
 	}
 
 	/**
-	 * Do the user change.
+	 * Adds new ACLs upon a request coming by POST after a check on group ownership.
 	 */
-	public function userChangeAction() {
-	
-		// fall-back
-		$this->view = 'userList';
-	
-		$user	= new User(Post::int('id'));
-
-		// snapshot for Audit
-		$oldUser = clone $user;
-		
-		// controllo validità del form
-		if (!$this->model->getUserForm()->isValid()) {
-			$this->toastError($this->lang('USER_HAS_NOT_BEEN_CHANGED', $user->fullName));
-			return;
-		}
-		
-		// controllo validità utente e gruppo
-		if (!$user->isLoaded()) {
-			$this->toastError($this->lang('USER_HAS_NOT_BEEN_CHANGED', $user->fullName));
-			return;
-		}
-		
-		// limit changes to non-admin users 
-		if (!$this->app->currentUser->admin and $user->admin) {
-			$this->toastError($this->lang('USER_HAS_NOT_BEEN_CHANGED', $user->fullName));
-			return;
-		}
-		
-		$userField = PAIR_AUTH_BY_EMAIL ? 'email' : 'username';
-		
-		$username = Post::trim($userField);
-		$password = Post::trim('password');
-		
-		// check on password length
-		if (strlen($password) > 0 and strlen($password) < Options::get('password_min')) {
-			$this->toastError($this->lang('SHORT_PASSWORD'));
-			$this->app->redirect('users/userList');
-		}
-
-		$user->name		= Post::trim('name');
-		$user->surname	= Post::trim('surname');
-		$user->email	= Post::trim('email') ? Post::trim('email') : NULL;
-		$user->username	= $username;
-		$user->enabled	= Post::bool('enabled');
-		$user->localeId	= Post::int('localeId');
-
-		// if there’s a new password, set it
-		if ($password) {
-			$user->hash = User::getHashedPasswordWithSalt($password);
-		}
-		
-		if (!$user->store()) {
-			$this->raiseError($user);
-			return;
-		}
-
-		// track the user edit
-		Audit::userChanged($oldUser, $user);
-
-		// track user password change
-		if ($password) {
-			Audit::passwordChanged($user);
-		}
-
-		$this->toast($this->lang('USER_HAS_BEEN_CHANGED', $user->fullName));
-		$this->app->redirect('users');
-	
-	}
-
-	/**
-	 * Do the user deletion.
-	 */
-	public function userDeleteAction() {
-
-		$user	= new User(Router::get(0));
-		$group	= new Group($user->groupId);
-		
-		$fullName = $user->fullName;
-
-		if (!$user->delete()) {
-			$this->raiseError($user);
-			return;
-		}
-
-		$this->toast($this->lang('USER_HAS_BEEN_DELETED', $fullName));
-		$this->app->redirect('users');
-
-	}
-
-	public function groupAddAction() {
-		
-		$form = $this->model->getGroupForm();
-				
-		$group				= new Group();
-		$group->name		= Post::get('name');
-		$group->default		= Post::get('default', 'bool');
-
-		if ($form->isValid() and $group->create()) {
-			$this->toast($this->lang('GROUP_HAS_BEEN_CREATED',   $group->name));
-		} else {
-			$this->toastError($this->lang('GROUP_HAS_NOT_BEEN_CREATED', $group->name));
-		}
-		
-		$this->app->redirect('groups');
-		
-	}
-	
-	/**
-	 * Shows group-edit page.
-	 */
-	public function groupEditAction() {
-
-		$group = $this->getRequestedGroup();
-
-		$this->view = $group ? 'groupEdit' : 'groupList';
-
-	}
-	
-	/**
-	 * Performs changes on a group.
-	 */
-	public function groupChangeAction() {
-
-		$group = new Group(Post::int('id'));
-				
-		$form = $this->model->getGroupForm();
-
-		$group->name = Post::get('name');
-				
-		// if this group is default, it will stay
-		$group->default = $group->default ? 1 : Post::bool('default');
-
-		if ($form->isValid() and $group->update(array('name', 'default'))) {
-
-			// updates related acl to default
-			$group->setDefaultAcl(Post::int('defaultAclId'));
-			
-			// notice only if group change
-			$this->toast($this->lang('GROUP_HAS_BEEN_CHANGED', $group->name));
-
-			$this->app->redirect('groups');
-
-		} else {
-		
-			// warn of possible errors
-			foreach ($group->getErrors() as $error) {
-				$this->toastError($error);
-			}
-			
-			$this->view = 'groupList';
-			
-		}
-		
-	}
-				
-	/**
-	 * Performs deletion on a group.
-	 */
-	public function groupDeleteAction() {
-
-		$group = new Group(Router::get(0));
-
-		if ($group->isDeletable()) {
-
-			$groupName = $group->name;
-
-			if ($group->delete()) {
-				$this->toast($this->lang('GROUP_HAS_BEEN_DELETED', $groupName));
-			} else {
-				$this->toastError($this->lang('GROUP_HAS_NOT_BEEN_DELETED', $groupName));
-			}
-
-		} else {
-
-			$this->toastError($this->lang('GROUP_CAN_NOT_BEEN_DELETED', $group->name));
-
-		}
-		
-		$this->app->redirect('groups');
-		
-	}
-
 	public function aclAddAction() {
 	
 		$groupId	= Post::int('groupId');
@@ -365,6 +127,265 @@ class UsersController extends Controller {
 
 		}
 
+	}
+
+	/**
+	 * Performs addition of a new group.
+	 */
+	public function groupAddAction(): void {
+		
+		$form = $this->model->getGroupForm();
+				
+		$group				= new Group();
+		$group->name		= Post::get('name');
+		$group->default		= Post::get('default', 'bool');
+
+		if ($form->isValid() and $group->create()) {
+			$this->toast($this->lang('GROUP_HAS_BEEN_CREATED',   $group->name));
+		} else {
+			$this->toastError($this->lang('GROUP_HAS_NOT_BEEN_CREATED', $group->name));
+		}
+		
+		$this->redirect('groups');
+		
+	}
+	
+	/**
+	 * Shows group-edit page.
+	 */
+	public function groupEditAction(): void {
+
+		$group = $this->getRequestedGroup();
+
+		$this->view = $group ? 'groupEdit' : 'groupList';
+
+	}
+	
+	/**
+	 * Performs changes on a group.
+	 */
+	public function groupChangeAction(): void {
+
+		$group = new Group(Post::int('id'));
+				
+		$form = $this->model->getGroupForm();
+
+		$group->name = Post::get('name');
+				
+		// if this group is default, it will stay
+		$group->default = $group->default ? 1 : Post::bool('default');
+
+		if ($form->isValid() and $group->update(array('name', 'default'))) {
+
+			// updates related acl to default
+			$group->setDefaultAcl(Post::int('defaultAclId'));
+			
+			// notice only if group change
+			$this->toast($this->lang('GROUP_HAS_BEEN_CHANGED', $group->name));
+
+			$this->redirect('groups');
+
+		} else {
+		
+			// warn of possible errors
+			foreach ($group->getErrors() as $error) {
+				$this->toastError($error);
+			}
+			
+			$this->setView('groupList');
+			
+		}
+		
+	}
+				
+	/**
+	 * Performs deletion on a group.
+	 */
+	public function groupDeleteAction(): void {
+
+		$group = new Group(Router::get(0));
+
+		if ($group->isDeletable()) {
+
+			$groupName = $group->name;
+
+			if ($group->delete()) {
+				$this->toast($this->lang('GROUP_HAS_BEEN_DELETED', $groupName));
+			} else {
+				$this->toastError($this->lang('GROUP_HAS_NOT_BEEN_DELETED', $groupName));
+			}
+
+		} else {
+
+			$this->toastError($this->lang('GROUP_CAN_NOT_BEEN_DELETED', $group->name));
+
+		}
+		
+		$this->redirect('groups');
+		
+	}
+
+	/**
+	 * Do the user addition.
+	 */
+	public function userAddAction(): void {
+		
+		// fallback view
+		$this->setView('default');
+		
+		$userField = PAIR_AUTH_BY_EMAIL ? 'email' : 'username';
+		
+		$username = strtolower(Post::trim($userField));
+		$password = Post::trim('password');
+		$minPassword = Options::get('password_min');
+		
+		// check on minimum password length
+		if (strlen($password) < $minPassword) {
+			$this->toastError($this->lang('SHORT_PASSWORD', [$minPassword]));
+			$this->redirect('users/default');
+		}
+
+		// check if username exist
+		if (count(User::getAllObjects([$userField => $username]))) {
+			$this->toastError($this->lang('USER_EXIST', $username));
+			$this->redirect('users/default');
+		}
+
+		$form = $this->model->getUserForm();
+
+		$newUser			= new User();
+		$newUser->name		= Post::trim('name');
+		$newUser->surname	= Post::trim('surname');
+		$newUser->email	= Post::trim('email') ? Post::trim('email') : NULL;
+		$newUser->username	= $username;
+		$newUser->enabled	= Post::bool('enabled');
+		$newUser->localeId	= Post::int('localeId');
+		$newUser->groupId	= Post::int('groupId');
+		$newUser->admin		= false;
+		$newUser->faults	= 0;
+
+		// create hash
+		$newUser->hash = User::getHashedPasswordWithSalt($password);
+
+		if ($form->isValid() and $newUser->create()) {
+			$this->toast($this->lang('USER_HAS_BEEN_CREATED', $newUser->fullName));
+			$this->redirect('users/userList');
+		} else {
+			$this->toastError($this->lang('USER_HAS_NOT_BEEN_CREATED', $newUser->fullName));
+			foreach ($newUser->getErrors() as $error) {
+				$this->toastError($error);
+			}
+			$this->setView('default');
+		}
+
+	}
+
+
+	/**
+	 * Do the user change.
+	 */
+	public function userChangeAction(): void {
+	
+		// fall-back
+		$this->setView('userList');
+	
+		$user	= new User(Post::int('id'));
+
+		// snapshot for Audit
+		$oldUser = clone $user;
+		
+		// controllo validità del form
+		if (!$this->model->getUserForm()->isValid()) {
+			$this->toastError($this->lang('USER_HAS_NOT_BEEN_CHANGED', $user->fullName));
+			return;
+		}
+		
+		// controllo validità utente e gruppo
+		if (!$user->isLoaded()) {
+			$this->toastError($this->lang('USER_HAS_NOT_BEEN_CHANGED', $user->fullName));
+			return;
+		}
+		
+		// limit changes to non-admin users 
+		if (!$this->app->currentUser->admin and $user->admin) {
+			$this->toastError($this->lang('USER_HAS_NOT_BEEN_CHANGED', $user->fullName));
+			return;
+		}
+		
+		$userField = PAIR_AUTH_BY_EMAIL ? 'email' : 'username';
+		
+		$username = Post::trim($userField);
+		$password = Post::trim('password');
+		
+		// check on password length
+		if (strlen($password) > 0 and strlen($password) < Options::get('password_min')) {
+			$this->toastError($this->lang('SHORT_PASSWORD'));
+			$this->redirect('users/userList');
+		}
+
+		$user->name		= Post::trim('name');
+		$user->surname	= Post::trim('surname');
+		$user->email	= Post::trim('email') ? Post::trim('email') : NULL;
+		$user->username	= $username;
+		$user->enabled	= Post::bool('enabled');
+		$user->localeId	= Post::int('localeId');
+
+		// if there’s a new password, set it
+		if ($password) {
+			$user->hash = User::getHashedPasswordWithSalt($password);
+		}
+		
+		if (!$user->store()) {
+			$this->raiseError($user);
+			return;
+		}
+
+		// track the user edit
+		Audit::userChanged($oldUser, $user);
+
+		// track user password change
+		if ($password) {
+			Audit::passwordChanged($user);
+		}
+
+		$this->toast($this->lang('USER_HAS_BEEN_CHANGED', $user->fullName));
+		$this->redirect('users');
+	
+	}
+
+	/**
+	 * Do the user deletion.
+	 */
+	public function userDeleteAction() {
+
+		$user	= new User(Router::get(0));
+		$group	= new Group($user->groupId);
+		
+		$fullName = $user->fullName;
+
+		if (!$user->delete()) {
+			$this->raiseError($user);
+			return;
+		}
+
+		$this->toast($this->lang('USER_HAS_BEEN_DELETED', $fullName));
+		$this->redirect('users');
+
+	}
+
+	/**
+	 * Shows user-edit page.
+	 */
+	public function userEditAction() {
+	
+		$user = $this->getRequestedUser();
+	
+		if (is_a($user, 'Pair\Models\User') and $user->isLoaded()) {
+			$this->setView('userEdit');
+		} else {
+			$this->setView('userList');
+		}
+	
 	}
 
 }

@@ -1,3 +1,10 @@
+Options -Indexes
+<FilesMatch "^(composer\.(json|lock|phar)|migrate\.php|docker-compose\.yml|docker-boot\.sh|README\.md|cronjob\.php|rsync-exclude\.txt)$">
+  Require all denied
+</FilesMatch>
+
 RewriteEngine On
-RewriteCond %{REQUEST_URI} !^public
+RewriteRule ^(classes|translations|vendor|widgets)/ - [R=404,L]
+
+RewriteRule ^public/ - [L]
 RewriteRule ^(.*)$ public/$1 [L]

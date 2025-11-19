@@ -1,6 +1,7 @@
 <?php
 
 use Pair\Core\Application;
+use Pair\Core\Env;
 
 $app = Application::getInstance();
 

@@ -24,8 +24,8 @@ Also it acts as REST API server with oAuth2 authentication support.
 
 ```apache
 <Directory /var/www/html>
-	Options Indexes FollowSymLinks
-	AllowOverride None
+        Options Indexes FollowSymLinks
+        AllowOverride None
 </Directory>
 ```
 
@@ -34,12 +34,13 @@ Also it acts as REST API server with oAuth2 authentication support.
 * Make sure that at least `PHP v8.2` or higher is installed and active on the machine;
 
 * Verify that the following PHP 8 extensions are configured:
-- `fileinfo`
-- `json`
-- `pcre`
-- `PDO`
-- `pdo_mysql`
-- `Reflection`
+    - `fileinfo`
+    - `json`
+    - `pcre`
+    - `PDO`
+    - `intl`
+    - `pdo_mysql`
+    - `Reflection`
 
 ### MySQL Configuration
 

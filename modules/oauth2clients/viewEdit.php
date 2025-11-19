@@ -3,20 +3,20 @@
 use Pair\Core\Router;
 use Pair\Core\View;
 use Pair\Html\Breadcrumb;
-use Pair\Models\Oauth2Client;
+use Pair\Models\OAuth2Client;
 
 class Oauth2clientsViewEdit extends View {
 
-	public function render(): void {
+	protected function render(): void {
 
 		$id = (string)Router::get(0);
-		$oauth2Client = Oauth2Client::find($id);
+		$oauth2Client = OAuth2Client::find($id);
 
-		$this->setPageTitle($this->lang('EDIT_OAUTH2CLIENT'));
+		$this->pageHeading($this->lang('EDIT_OAUTH2CLIENT'));
 
 		Breadcrumb::path($this->lang('EDIT_OAUTH2CLIENT'), 'edit/' . $oauth2Client->id);
 
-		$form = $this->model->getOauth2clientForm($oauth2Client);
+		$form = $this->model->getOAuth2clientForm($oauth2Client);
 
 		$this->assign('form', $form);
 		$this->assign('oauth2Client', $oauth2Client);

@@ -1,7 +1,7 @@
 <?php
 
 use Pair\Core\Application;
-use Pair\Core\Config;
+use Pair\Core\Env;
 use Pair\Core\Model;
 use Pair\Exceptions\PairException;
 use Pair\Helpers\Translator;
@@ -89,7 +89,7 @@ class CrafterModel extends Model {
 
 		// add the fields
 		foreach ($properties as $propertyName => $value) {
-			
+
 			$fields[] = '`' . $class::getMappedField($propertyName) . '`';
 
 			$type = gettype($value);
@@ -109,11 +109,11 @@ class CrafterModel extends Model {
 					$value = $this->db->quote($value);
 					break;
 			}
-		
+
 			$values[] = $value;
-		
+
 		}
-		
+
 		// remove the last comma
 		$query = 'INSERT INTO `' . $activeRecord::TABLE_NAME . '` ' . '(' . implode(',', $fields) . ")\n" .
 			'VALUES (' . implode(',', $values) . ');';
@@ -147,7 +147,7 @@ class CrafterModel extends Model {
 
 		foreach ($folders as $f) {
 			$old = umask(0);
-			mkdir($f, 0777, TRUE);
+			mkdir($f, 0777, true);
 			umask($old);
 		}
 
@@ -159,7 +159,7 @@ class CrafterModel extends Model {
 	 * Save the file with Migration queries and set the migration as applied.
 	 */
 	public function createMigrationFile(): void {
-		
+
 		// search in the migrations folder for higher prefix index
 		$files = scandir(APPLICATION_PATH . '/migrations');
 
@@ -171,7 +171,7 @@ class CrafterModel extends Model {
 				$prefix = max($prefix, (int)$matches[1]);
 			}
 		}
-		
+
 		// file name with 3 digits next-prefix and module name
 		$prefix = str_pad(++$prefix, 3, '0', STR_PAD_LEFT);
 		$fileName = $prefix . '_' . $this->moduleName . '_model.sql';
@@ -182,7 +182,7 @@ class CrafterModel extends Model {
 		foreach ($this->queries as $query) {
 			$lines[] = '-- ' . $query['comment'] . "\n" . $query['query'];
 		}
-		
+
 		// create a new file with queries content
 		file_put_contents($filePath, implode("\n\n", $lines));
 
@@ -194,8 +194,8 @@ class CrafterModel extends Model {
 			$migration->queryIndex = $index+1;
 			$migration->description = $query['comment'];
 			$migration->affectedRows = $query['affectedRows'] ?? 0;
-			$migration->result = TRUE;
-			
+			$migration->result = true;
+
 			$migration->store();
 
 		}
@@ -241,17 +241,17 @@ class CrafterModel extends Model {
 	public function createTableByClass(string $class): bool {
 
 		$this->addError('Function under development');
-		return FALSE;
+		return false;
 
 		/*
 		if (!defined($class . '::TABLE_FIELDS')) {
 			$this->addError('TABLE_FIELDS constant is missing in the class ' . $class);
-			return FALSE;
+			return false;
 		}
 
 		if (0==count($class::TABLE_FIELDS)) {
 			$this->addError('TABLE_FIELDS constant has no fields in the class ' . $class);
-			return FALSE;
+			return false;
 		}
 
 		$fields = [];
@@ -310,7 +310,7 @@ class CrafterModel extends Model {
 
 		$this->db->exec($query);
 
-		return TRUE;
+		return true;
 		*/
 	}
 
@@ -452,7 +452,7 @@ class CrafterModel extends Model {
 			$singleName = $tableName;
 		}
 
-		return Utilities::getCamelCase($singleName, TRUE);
+		return Utilities::getCamelCase($singleName, true);
 
 	}
 
@@ -460,7 +460,7 @@ class CrafterModel extends Model {
 	 * Format table key variables to be append on CGI URLs.
 	 * @param	string	Optional variable name with $ prefix to put before each key var.
 	 */
-	private function getTableKeyAsCgiParams(?string $object=NULL): string {
+	private function getTableKeyAsCgiParams(?string $object=null): string {
 
 		if (is_null($object)) {
 			$object = '$this->' . lcfirst($this->objectName);
@@ -493,7 +493,7 @@ class CrafterModel extends Model {
 			if ($field == $col->COLUMN_NAME) return $col;
 		}
 
-		return NULL;
+		return null;
 
 	}
 
@@ -563,7 +563,7 @@ class CrafterModel extends Model {
 	}
 
 	/**
-	 * Return TRUE if the passed field is nullable.
+	 * Return true if the passed field is nullable.
 	 */
 	private function isFieldNullable(string $tableName, string $field): bool {
 
@@ -600,20 +600,20 @@ class CrafterModel extends Model {
 		$aclQuery = "INSERT INTO `acl` (`id`, `rule_id`, `group_id`, `is_default`)\nVALUES ";
 
 		foreach ($grantedGroups as $group) {
-			
+
 			$acl = new Acl();
 			$acl->groupId = $group->id;
 			$acl->ruleId = $rule->id;
 			$acl->store();
 
 			$aclQuery .= '(' . $acl->id . ', ' . $acl->ruleId . ', ' . $acl->groupId . ', 0), ';
-			
+
 			$groupNames[] = $group->name;
 
 		}
 
 		$aclComment = Translator::do('REGISTRATION_OF_ACL_FOR_GROUPS', implode(', ', $groupNames));
-		
+
 		$this->queries[] = [
 			'comment' => $aclComment,
 			'query' => substr($aclQuery, 0, -2).';',
@@ -629,11 +629,11 @@ class CrafterModel extends Model {
 		$module->name			= $this->moduleName;
 		$module->version		= '1.0';
 		$module->dateReleased	= date('Y-m-d H:i:s');
-		$module->appVersion		= Config::get('PRODUCT_VERSION');
+		$module->appVersion		= Env::get('APP_VERSION');
 		$module->installedBy	= $this->app->currentUser->id;
 		$module->dateInstalled	= date('Y-m-d H:i:s');
 		$module->store();
-		
+
 		// Module registration
 		$moduleComment = Translator::do('MODULE_REGISTRATION', $this->moduleName);
 		$this->addMigrationQuery($module, $moduleComment);
@@ -645,7 +645,7 @@ class CrafterModel extends Model {
 		// create Rule object
 		$rule = new Rule();
 		$rule->moduleId = $module->id;
-		$rule->adminOnly = FALSE;
+		$rule->adminOnly = false;
 		$rule->store();
 
 		// Rule registration
@@ -742,7 +742,7 @@ class CrafterModel extends Model {
 				$db = Database::getInstance();
 				$column = $db->describeColumn($this->tableName, $columnName);
 				$phpType = ' ' . ('YES'==$column->Null ? '?' : '') . $phpType;
-				$defaultNull = ('YES'==$column->Null) ? ' = NULL' : '';
+				$defaultNull = ('YES'==$column->Null) ? ' = null' : '';
 			}
 
 			// assembles property declaration
@@ -775,10 +775,7 @@ class CrafterModel extends Model {
 		if (count($inits)) {
 
 			$init =
-"	/**
-	 * Method called by constructor just after having populated the object.
-	 */
-	protected function init(): void {
+"	protected function _init(): void {
 
 		" . implode("\n\n\t\t", $inits) . "
 
@@ -796,14 +793,8 @@ class ' . $this->objectName . ' extends ActiveRecord {
 
 ' . implode("\n\n", $properties) . '
 
-	/**
-	 * Name of related db table.
-	 */
 	const TABLE_NAME = \'' . $this->tableName . '\';
 
-	/**
-	 * Name of primary key db field.
-	 */
 	const TABLE_KEY = ' . $this->getFormattedTableKey() . ';
 
 ' . $init . '}';
@@ -815,7 +806,7 @@ class ' . $this->objectName . ' extends ActiveRecord {
 		$tableComment = Translator::do('CREATION_OF_TABLE', $this->tableName);
 		$createTable = Database::load('SHOW CREATE TABLE ' . $this->tableName, [], Database::OBJECT);
 		$this->queries[] = ['comment' => $tableComment,'query' => $createTable->{'Create Table'}.';', 'affectedRows' => 0];
-		
+
 	}
 
 	private function saveController(string $file): void {
@@ -830,7 +821,7 @@ use Pair\Html\Breadcrumb;
 
 class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 
-	protected function init(): void {
+	protected function _init(): void {
 
 		Breadcrumb::path($this->lang(\'' . strtoupper($this->tableName) . '\'), \'' . $this->moduleName . '\');
 
@@ -839,7 +830,7 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 	/**
 	 * Add a new object.
 	 */
-	public function addAction() {
+	public function addAction(): void {
 
 		$' . lcfirst($this->objectName) . ' = new ' . $this->objectName . '();
 		$' . lcfirst($this->objectName) . '->populateByRequest();
@@ -859,18 +850,18 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 	/**
 	 * Show form for edit a ' . $this->objectName . ' object.
 	 */
-	public function editAction() {
+	public function editAction(): void {
 
 		$' . lcfirst($this->objectName) . ' = $this->getObjectRequestedById(\'' . $this->objectName . '\');
 
-		$this->view = $' . lcfirst($this->objectName) . ' ? \'edit\' : \'default\';
+		$this->setView($' . lcfirst($this->objectName) . ' ? \'edit\' : \'default\');
 
 	}
 
 	/**
 	 * Modify a ' . $this->objectName . ' object.
 	 */
-	public function changeAction() {
+	public function changeAction(): void {
 
 		$' . lcfirst($this->objectName) . ' = new ' . $this->objectName . '(Post::get(' . $this->getFormattedTableKey() . '));
 		$' . lcfirst($this->objectName) . '->populateByRequest();
@@ -890,7 +881,7 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 	/**
 	 * Delete a ' . $this->objectName . ' object.
 	 */
-	public function deleteAction() {
+	public function deleteAction(): void {
 
 	 	$' . lcfirst($this->objectName) . ' = $this->getObjectRequestedById(\'' . $this->objectName . '\');
 
@@ -1203,9 +1194,13 @@ use Pair\Core\View;
 
 class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 
-	public function render(): void {
+	protected function _init(): void {
 
-		$this->setPageTitle($this->lang(\'' . strtoupper($this->tableName) . '\'));
+		$this->pageHeading($this->lang(\'' . strtoupper($this->tableName) . '\'));
+
+	}
+
+	protected function render(): void {
 
 		$' . Utilities::getCamelCase($this->tableName) . ' = $this->model->getItems(\'' .  $this->objectName . '\');
 
@@ -1228,7 +1223,7 @@ class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 	private function saveLayoutDefault(string $file): void {
 
 		// trigger for link on first item
-		$fieldWithLink = TRUE;
+		$fieldWithLink = true;
 
 		// get table’s foreign keys
 		$foreignKeys = $this->db->getForeignKeys($this->tableName);
@@ -1292,7 +1287,7 @@ class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 				// replace the table-cell placeholder with link on the first item
 				if ($fieldWithLink) {
 					$replace = '<a href="' . $this->moduleName . '/edit/<?php print ' . $this->getTableKeyAsCgiParams('$o') . ' ?>">' . $replace . '</a>';
-					$fieldWithLink = FALSE;
+					$fieldWithLink = false;
 				}
 
 				// format table cell based on layout
@@ -1333,11 +1328,14 @@ use Pair\Html\Breadcrumb;
 
 class ' . ucfirst($this->moduleName) . 'ViewNew extends View {
 
-	public function render(): void {
+	protected function _init(): void {
 
-		$this->setPageTitle($this->lang(\'NEW_OBJECT\'));
-
+		$this->pageHeading($this->lang(\'NEW_OBJECT\'));
 		Breadcrumb::path($this->lang(\'NEW_OBJECT\'), \'new\');
+
+	}
+
+	protected function render(): void {
 
 		$form = $this->model->get' . $this->objectName . 'Form(new ' . $this->objectName . ');
 
@@ -1424,12 +1422,16 @@ use Pair\Html\Breadcrumb;
 
 class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 
-	public function render(): void {
+	protected function _init(): void {
+
+		$this->pageHeading($this->lang(\'EDIT_OBJECT\'));
+
+	}
+
+	protected function render(): void {
 
 ' . $params . '
 		$' . lcfirst($this->objectName) . ' = ' . $this->objectName . '::find(' . $key . ');
-
-		$this->setPageTitle($this->lang(\'EDIT_OBJECT\'));
 
 		Breadcrumb::path($this->lang(\'EDIT_OBJECT\'), \'edit/\' . ' . $editId . ');
 
@@ -1499,7 +1501,7 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 	 * @param	string	Optional object name with uppercase first and case sensitive.
 	 * @param	string	Optional module name all lowercase alpha chars only.
 	 */
-	public function setupVariables(string $tableName, ?string $objectName=NULL, ?string $moduleName=NULL): void {
+	public function setupVariables(string $tableName, ?string $objectName=null, ?string $moduleName=null): void {
 
 		$app = Application::getInstance();
 
@@ -1518,7 +1520,7 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 		$this->moduleName	= $moduleName ? $moduleName : strtolower(str_replace('_', '', $tableName));
 		$this->objectName	= $objectName ? $objectName : $this->getSingularObjectName($tableName);
 		$this->author		= $app->currentUser->fullName ?? '';
-		$this->package		= Config::get('PRODUCT_NAME');
+		$this->package		= Env::get('APP_NAME');
 
 		$this->propTypes	= [];
 		$this->binds		= [];
@@ -1596,6 +1598,7 @@ class ' . ucfirst($this->moduleName) . 'ViewEdit extends View {
 					case 'smallint':
 					case 'mediumint':
 					case 'int':
+					case 'bigint':
 					case 'year':
 						$this->propTypes[$property] = 'int';
 						break;

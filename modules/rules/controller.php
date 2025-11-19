@@ -36,13 +36,13 @@ class RulesController extends Controller {
 				$this->redirect('rules/default');
 			} else {
 				$this->toastError($this->lang('RULE_HAS_NOT_BEEN_CREATED'));
-				$this->view = 'default';
+				$this->setView('default');
 			}
 
 		}  else {
 			
 			$this->toastError($this->lang('RULE_EXISTS', array($rule->moduleName, $rule->ruleAction)));
-			$this->view = 'default';
+			$this->setView('default');
 			
 		}
 
@@ -53,7 +53,7 @@ class RulesController extends Controller {
 		$rules = $this->getObjectRequestedById('Pair\Models\Rule');
 
 		if ($rules) {
-			$this->view = 'edit';
+			$this->setView('edit');
 		}
 
 	}
@@ -63,7 +63,7 @@ class RulesController extends Controller {
 	 */
 	public function changeAction(): void {
 
-		$this->view = 'default';
+		$this->setView('default');
 		$rule = new Rule(Post::get('id'));
 
 		// get input value
@@ -107,7 +107,7 @@ class RulesController extends Controller {
 			$this->toastError($this->lang('ERROR_DELETING_RULES'));
 		}
 
-		$this->app->redirect('rules/default');
+		$this->redirect('rules/default');
 			
 	}
 

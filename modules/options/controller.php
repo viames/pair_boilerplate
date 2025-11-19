@@ -6,9 +6,9 @@ use Pair\Helpers\Options;
 
 class OptionsController extends Controller {
 	
-	protected function init(): void {
+	protected function _init(): void {
 		
-		$this->view = 'default';
+		$this->setView('default');
 		
 	}
 	
@@ -19,12 +19,12 @@ class OptionsController extends Controller {
 
 		$options = Options::getInstance();
 		
-		$error = FALSE;
+		$error = false;
 		
 		foreach ($options->getAll() as $option) {
 			
 			if (!$error and $option->type == 'password' and !$options->isCryptAvailable()) {
-				$error = TRUE;
+				$error = true;
 			}
 			
 			Options::set($option->name, Post::get($option->name, $option->type));
@@ -37,7 +37,7 @@ class OptionsController extends Controller {
 		
 		$this->toast($this->lang('CHANGES_SAVED'));
 		
-		$this->app->redirect('options/default');
+		$this->redirect('options/default');
 		
 	}
 	

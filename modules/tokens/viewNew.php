@@ -8,7 +8,7 @@ class TokensViewNew extends View {
 
 	public function render(): void {
 
-		$this->setPageTitle($this->lang('NEW_TOKEN'));
+		$this->pageTitle($this->lang('NEW_TOKEN'));
 
 		Breadcrumb::path($this->lang('NEW_TOKEN'), 'new');
 

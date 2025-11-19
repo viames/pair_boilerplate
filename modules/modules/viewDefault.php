@@ -1,14 +1,14 @@
 <?php
 
 use Pair\Core\Application;
-use Pair\Core\Config;
+use Pair\Core\Env;
 use Pair\Core\View;
 
 class ModulesViewDefault extends View {
 
 	public function render(): void {
 
-		$this->setPageTitle($this->lang('MODULES'));
+		$this->pageTitle($this->lang('MODULES'));
 
 		$modules = $this->model->getActiveRecordObjects('Pair\Models\Module', 'name');
 
@@ -18,7 +18,7 @@ class ModulesViewDefault extends View {
 		foreach ($modules as $module) {
 
 			// check if plugin is compatible with current application version
-			$module->compatible = (version_compare(Config::get('PRODUCT_VERSION'), $module->appVersion) <= 0) ?
+			$module->compatible = (version_compare(Env::get('APP_VERSION'), $module->appVersion) <= 0) ?
 				'<span class="fa fa-check fa-lg text-success"></span>' :
 				'<div style="color:red">v' . $module->appVersion . '</div>';
 

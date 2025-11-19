@@ -5,13 +5,14 @@ declare(strict_types=1);
 
 use Pair\Core\Application;
 
-// disable xdebug exception trace
-ini_set('xdebug.show_exception_trace', 0);
-
 // initialize composer
-require 'vendor/autoload.php';
+try {
+	require 'vendor/autoload.php';
+} catch (Throwable $e) {
+	die('Composer is not installed.');
+}
 
-// start the Application
+// initialize the Application
 $app = Application::getInstance();
 
 include 'modules/migrations/model.php';

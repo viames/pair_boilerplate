@@ -5,14 +5,7 @@
 				<h4 class="card-title"><?php $this->_('COUNTRIES') ?></h4>
 			</div>
 			<div class="card-body">
-				<div class="list-filter">
-					<a href="countries/default/page-1"><?php $this->_('ALL') ?></a><?php
-				foreach ($this->filter as $f) {
-					?><a href="<?php print $f->href ?>" class="<?php print ($f->active ? 'active' : '') ?>"><?php print $f->text ?></a><?php
-				}
-				
-				?>
-				</div>
+				<div class="list-filter"><?php Pair\Helpers\Utilities::printAlphaFilter() ?></div>
 				<hr>
 				<div style="overflow:hidden">
 					<a href="countries/new" class="btn btn-primary btn-sm float-right"><?php $this->_('NEW_COUNTRY') ?></a>
@@ -44,11 +37,11 @@
 						</table>
 					</div><?php
 	
-					print $this->getPaginationBar();
+					$this->printPaginationBar();
 						
 				} else {
 						
-					Pair\Helpers\Utilities::printNoDataMessageBox();
+					$this->noData();
 						
 				}
 			

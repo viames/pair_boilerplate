@@ -1,7 +1,7 @@
 <?php
 
 use Pair\Core\Application;
-use Pair\Core\Config;
+use Pair\Core\Env;
 use Pair\Helpers\Translator;
 
 class Assets {
@@ -59,7 +59,7 @@ class Assets {
 		
 		return 'production' != Application::getEnvironment()
 		? time()
-		: Config::get('PRODUCT_VERSION');
+		: Env::get('APP_VERSION');
 		
 	}
 

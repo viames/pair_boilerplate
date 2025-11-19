@@ -15,7 +15,19 @@
             "php migrate.php"
         ]
 	},
+	"autoload": {
+		"classmap": [
+			"classes/",
+			"modules/*/classes/"
+		],
+		"exclude-from-classmap": [
+			"modules/*/assets/",
+			"modules/*/layouts/",
+			"modules/*/translations/"
+		]
+	},
 	"repositories" : [
+
 		{
 			"type" : "vcs",
 			"url" : "https://github.com/viames/pair_boilerplate"
@@ -44,9 +56,6 @@
 	"config": {
 		"allow-plugins": {
 			"php-http/discovery": true
-		},
-		"platform": {
-			"php": "8.3"
 		}
 	},
 	"require-dev": {

@@ -1,11 +1,11 @@
 <?php 
 
 use Pair\Core\Application;
-use Pair\Html\BootstrapMenu;
 use Pair\Helpers\Translator;
+use Pair\Html\BootstrapMenu;
 
 $app = Application::getInstance();
-$translator	= Translator::getInstance();
+$translator = Translator::getInstance();
 
 $menu = new BootstrapMenu();
 

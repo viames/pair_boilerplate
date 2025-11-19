@@ -17,7 +17,7 @@ class UsersViewGroupEdit extends View {
 		$groupId	= Router::get('id');
 		$group		= new Group($groupId);
 		
-		$this->setPageTitle($this->lang('GROUP_EDIT'));
+		$this->pageTitle($this->lang('GROUP_EDIT'));
 		$this->app->activeMenuItem = 'groups';
 		
 		Breadcrumb::path($this->lang('GROUPS'), 'groups');

@@ -1,7 +1,7 @@
 <?php
 
 use Pair\Core\Application;
-use Pair\Core\Config;
+use Pair\Core\Env;
 
 $app = Application::getInstance();
 
@@ -22,9 +22,9 @@ $app = Application::getInstance();
         <div class="d-flex" id="wrapper">
             <!-- Sidebar-->
             <div class="border-end bg-white" id="sidebar-wrapper">
-                <div class="sidebar-heading border-bottom bg-light"><?php print Config::get('PRODUCT_NAME') ?></div>
+                <div class="sidebar-heading border-bottom bg-light"><?php print Env::get('APP_NAME') ?></div>
                 <ul class="nav">
-                    <?php $app->printWidget('sideMenu') ?>
+			{{sideMenu}}
                 </ul>
             </div>
             <!-- Page content wrapper-->

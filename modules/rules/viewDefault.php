@@ -4,9 +4,13 @@ use Pair\Core\View;
 
 class RulesViewDefault extends View {
 
-	public function render(): void {
+	protected function _init(): void {
 
-		$this->setPageTitle($this->lang('RULES'));
+		$this->pageHeading($this->lang('RULES'));
+
+	}
+
+	public function render(): void {
 
 		$this->pagination->count = $this->model->countModules();
 

@@ -20,7 +20,7 @@ class Installer {
 	/**
 	 * Flag to set DB_UTF8 constant.
 	 */
-	private bool $forceDbUtf8 = FALSE;
+	private bool $forceDbUtf8 = false;
 
 	/**
 	 * List of installer notifications.
@@ -135,10 +135,10 @@ class Installer {
 			}
 		} catch (Exception $e) {
 			$this->addError('MySQL connection failed: ' . $e->getMessage());
-			return FALSE;
+			return false;
 		}
 
-		return TRUE;
+		return true;
 
 	}
 
@@ -178,7 +178,7 @@ class Installer {
 			if (array_key_exists($row->Variable_name, $settings)) {
 				if ($settings[$row->Variable_name] != $row->Value) {
 					$this->addNotification('Charset and collation will be forced to utf8mb4');
-					$this->forceDbUtf8 = TRUE;
+					$this->forceDbUtf8 = true;
 				}
 			}
 		}
@@ -197,11 +197,11 @@ class Installer {
 			$db = $sth->fetch(\PDO::FETCH_OBJ);
 		} catch (Exception $e) {
 			$this->addError('Cannot check if DB exists by information schema: ' . $e->getMessage());
-			return FALSE;
+			return false;
 		}
 
 		// not exists, create a new database
-		if (FALSE === $db) {
+		if (false === $db) {
 
 			$query = 'CREATE DATABASE `' . $v['dbName'] . '` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci';
 
@@ -212,7 +212,7 @@ class Installer {
 				$this->addNotification('New database `' . $v['dbName'] . '` has been created');
 			} catch (Exception $e) {
 				$this->addError('DB `' . $v['dbName'] . '` creation failed: ' . $e->getMessage());
-				return FALSE;
+				return false;
 			}
 
 		// db exists, check if charset and collation are utf8mb4
@@ -227,7 +227,7 @@ class Installer {
 				$this->addNotification('Existing database ' . $v['dbName'] . ' has been converted to charset and collation utf8mb4');
 			} catch (Exception $e) {
 				$this->addError('Change of DB charset and collation failed: ' . $e->getMessage());
-				return FALSE;
+				return false;
 			}
 
 		}
@@ -242,7 +242,7 @@ class Installer {
 			$this->dbh->exec($queries);
 		} catch (Exception $e) {
 			$this->addError('Table creation failed: ' . $e->getMessage());
-			return FALSE;
+			return false;
 		}
 
 	}
@@ -262,7 +262,7 @@ class Installer {
 			$exists = (bool)$sth->fetchColumn();
 		} catch (Exception $e) {
 			$this->addError('Error while checking if username is already in use: ' . $e->getMessage());
-			$exists = FALSE;
+			$exists = false;
 		}
 
 		if ($exists) {
@@ -535,7 +535,7 @@ class Installer {
 		$vars = [];
 
 		foreach ($postVars as $v) {
-			$vars[$v] = isset($_POST[$v]) ? $_POST[$v] : NULL;
+			$vars[$v] = isset($_POST[$v]) ? $_POST[$v] : null;
 		}
 
 		return $vars;
@@ -548,57 +548,45 @@ class Installer {
 
 		$content =
 '# Product
-PRODUCT_VERSION = 1.0.0
-PRODUCT_NAME = ' . $vars['productName'] . '
-UTC_DATE = FALSE
+APP_NAME=' . $vars['productName'] . '
+APP_VERSION=1.0.0
+APP_ENV=development
+APP_DEBUG=true
+UTC_DATE=false
 
 # Database
-DB_HOST = ' . $vars['dbHost'] . '
-DB_NAME = ' . $vars['dbName'] . '
-DB_USER = ' . $vars['dbUser'] . '
-DB_PASS = ' . $vars['dbPass'] . '
-DB_UTF8 = ' . ($this->forceDbUtf8 ? 'TRUE' : 'FALSE') . '
-
-# Date in locale format
-PAIR_FORM_DATE_FORMAT =
-PAIR_FORM_DATETIME_FORMAT =
+DB_HOST=' . $vars['dbHost'] . '
+DB_NAME=' . $vars['dbName'] . '
+DB_USER=' . $vars['dbUser'] . '
+DB_PASS=' . $vars['dbPass'] . '
+DB_UTF8=' . ($this->forceDbUtf8 ? 'true' : 'false') . '
 
 # Options
-PAIR_ENVIRONMENT = development
-PAIR_AUDIT_PASSWORD_CHANGED = TRUE
-PAIR_AUDIT_LOGIN_FAILED = TRUE
-PAIR_AUDIT_LOGIN_SUCCESSFUL = TRUE
-PAIR_AUDIT_LOGOUT = TRUE
-PAIR_AUDIT_SESSION_EXPIRED = TRUE
-PAIR_AUDIT_REMEMBER_ME_LOGIN = TRUE
-PAIR_AUDIT_USER_CREATED = TRUE
-PAIR_AUDIT_USER_DELETED = TRUE
-PAIR_AUDIT_USER_CHANGED = TRUE
-PAIR_AUDIT_PERMISSIONS_CHANGED = TRUE
-PAIR_SINGLE_SESSION = TRUE
-PAIR_AUTH_BY_EMAIL = TRUE
-PAIR_LOGGER_EMAIL_RECIPIENTS = 
-PAIR_LOGGER_EMAIL_THRESHOLD = 4
-PAIR_LOGGER_TELEGRAM_CHAT_IDS = 
-PAIR_LOGGER_TELEGRAM_THRESHOLD = 4
+PAIR_AUDIT_ALL=true
+PAIR_SINGLE_SESSION=true
+PAIR_AUTH_BY_EMAIL=true
+PAIR_LOGGER_EMAIL_RECIPIENTS=
+PAIR_LOGGER_EMAIL_THRESHOLD=4
+PAIR_LOGGER_TELEGRAM_CHAT_IDS=
+PAIR_LOGGER_TELEGRAM_THRESHOLD=4
 
 # Crypt keys
-OPTIONS_CRYPT_KEY = ' . bin2hex(random_bytes(32)) . '
-AES_CRYPT_KEY = ' . bin2hex(random_bytes(32)) . '
+OPTIONS_CRYPT_KEY=' . bin2hex(random_bytes(32)) . '
+AES_CRYPT_KEY=' . bin2hex(random_bytes(32)) . '
 
 # Sentry
-SENTRY_DSN =
+SENTRY_DSN=
 
 # Insight Hub
-INSIGHT_HUB_API_KEY = 
-INSIGHT_HUB_PERFORMANCE = 
+INSIGHT_HUB_API_KEY=
+INSIGHT_HUB_PERFORMANCE=
 
 # MySqlDump
-MYSQLDUMP_PATH = ';
+MYSQLDUMP_PATH=';
 
 		$res = file_put_contents($this->rootFolder . '/.env', $content);
 
-		if (FALSE === $res) {
+		if (false === $res) {
 			$this->addError('Write of .env file failed');
 		}
 
@@ -610,7 +598,7 @@ MYSQLDUMP_PATH = ';
 
 		if (!(file_exists($tempFolder) and is_dir($tempFolder))) {
 			$old = umask(0);
-			mkdir($tempFolder, 0777, TRUE);
+			mkdir($tempFolder, 0777, true);
 			umask($old);
 		}
 
@@ -648,19 +636,19 @@ MYSQLDUMP_PATH = ';
 
 			if (!unlink($folder . '/' . $file)) {
 				$this->addError('File ' . $folder . '/' . $file . ' deletion failed');
-				return FALSE;
+				return false;
 			}
 
 		}
 
 		if (!Pair\Helpers\Utilities::deleteFolder($folder)) {
 			$this->addError('Folder ' . $folder . ' deletion failed');
-			return FALSE;
+			return false;
 		}
 
 		$this->addNotification('Installer was deleted');
 
-		return TRUE;
+		return true;
 
 	}
 

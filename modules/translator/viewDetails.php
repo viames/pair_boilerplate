@@ -10,7 +10,7 @@ class TranslatorViewDetails extends View {
 
 	public function render(): void {
 		
-		$this->setPageTitle($this->lang('TRANSLATOR'));
+		$this->pageTitle($this->lang('TRANSLATOR'));
 		
 		// get requested Language object
 		$locale = new Locale(Router::get(0));

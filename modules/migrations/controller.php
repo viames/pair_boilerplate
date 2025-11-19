@@ -5,7 +5,7 @@ use Pair\Html\Breadcrumb;
 
 class MigrationsController extends Controller {
 
-	protected function init(): void {
+	protected function _init(): void {
 
 		Breadcrumb::path($this->lang('MIGRATIONS'), 'migrations');
 
@@ -16,7 +16,7 @@ class MigrationsController extends Controller {
 	 */
 	public function migrateAction() {
 
-		$this->view = 'default';
+		$this->setView('default');
 
 		if (!$this->model->dbTableCheck()) {
 			$this->modal(

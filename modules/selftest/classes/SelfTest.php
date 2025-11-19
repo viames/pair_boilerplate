@@ -1,7 +1,7 @@
 <?php
 
 use Pair\Core\Application;
-use Pair\Core\Config;
+use Pair\Core\Env;
 use Pair\Core\Logger;
 use Pair\Helpers\Utilities;
 use Pair\Orm\ActiveRecord;
@@ -301,11 +301,11 @@ class SelfTest {
 		$ret = TRUE;
 
 		// check about missing UTC_DATE constant
-		if (is_null(Config::get('UTC_DATE'))) {
+		if (is_null(Env::get('UTC_DATE'))) {
 			$ret = FALSE;
 			Logger::error('In .env configuration file the UTC_DATE option is missing');
 		// or check on fall-back timezone
-		} else if (Config::get('UTC_DATE') and 'UTC' == date_default_timezone_get()) {
+		} else if (Env::get('UTC_DATE') and 'UTC' == date_default_timezone_get()) {
 			$ret = FALSE;
 			Logger::error('In .env configuration file the UTC_DATE option is FALSE but Timezone results in UTC by php.ini file');
 		}
@@ -489,9 +489,9 @@ class SelfTest {
 			// for each plugin compare version
 			foreach ($plugins as $plugin) {
 
-				if (version_compare(Config::get('PRODUCT_VERSION'), $plugin->appVersion) > 0) {
+				if (version_compare(Env::get('APP_VERSION'), $plugin->appVersion) > 0) {
 					Logger::warning($type . ' plugin ' . ucfirst($plugin->name) .
-							' is compatible with ' . Config::get('PRODUCT_NAME') . ' v' . $plugin->appVersion);
+							' is compatible with ' . Env::get('APP_NAME') . ' v' . $plugin->appVersion);
 					$ret = FALSE;
 				}
 

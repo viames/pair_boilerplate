@@ -1,32 +1,19 @@
 <?php
 
-use Pair\Html\Breadcrumb;
 use Pair\Core\Controller;
 use Pair\Core\Router;
-use Pair\Models\Country;
 use Pair\Helpers\Post;
+use Pair\Html\Breadcrumb;
+use Pair\Models\Country;
  		
 class CountriesController extends Controller {
 
-	protected function init(): void {
+	protected function _init(): void {
 		
 		Breadcrumb::path($this->lang('COUNTRIES'), 'countries');
 		
 	}
-	
-	/**
-	 * Check if is requested to apply an alpha filter.
-	 */
-	public function defaultAction(): void {
-		
-		if (Router::get(0)) {
-			$this->setPersistentState('countriesAlphaFilter', Router::get(0));
-		} else {
-			$this->unsetPersistentState('countriesAlphaFilter');
-		}
-		
-	}
-	
+
 	/**
 	 * Add a new object.
 	 */
@@ -46,20 +33,22 @@ class CountriesController extends Controller {
 				$msg .= " \n" . $error;
 			}
 			$this->toastError($msg);
-			$this->view = 'default';
+			$this->setView('default');
 		}					
 
 	}
-
+	
 	/**
-	 * Show form for edit a Country object.
+	 * Check if is requested to apply an alpha filter.
 	 */
-	public function editAction(): void {
-	
-		$country = $this->getObjectRequestedById('Pair\Models\Country');
-	
-		$this->view = $country ? 'edit' : 'default';
-	
+	public function defaultAction(): void {
+		
+		if (Router::get(0)) {
+			$this->setPersistentState('countriesAlphaFilter', Router::get(0));
+		} else {
+			$this->unsetPersistentState('countriesAlphaFilter');
+		}
+		
 	}
 
 	/**
@@ -87,7 +76,7 @@ class CountriesController extends Controller {
 			if (count($errors)) { 
 				$message = $this->lang('ERROR_ON_LAST_REQUEST') . ": \n" . implode(" \n", $errors);
 				$this->toastError($message);
-				$this->view = 'default';
+				$this->setView('default');
 			} else {
 				$this->redirect('countries');
 			}
@@ -119,7 +108,7 @@ class CountriesController extends Controller {
 			if (count($errors)) { 
 				$message = $this->lang('ERROR_DELETING_COUNTRY') . ": \n" . implode(" \n", $errors);
 				$this->toastError($message);
-				$this->view = 'default';
+				$this->setView('default');
 			} else {
 				$this->toastError($this->lang('ERROR_ON_LAST_REQUEST'));
 				$this->redirect('countries');
@@ -127,6 +116,17 @@ class CountriesController extends Controller {
 
 		}
 
+	}
+
+	/**
+	 * Show form for edit a Country object.
+	 */
+	public function editAction(): void {
+	
+		$country = $this->getObjectRequestedById('Pair\Models\Country');
+	
+		$this->setView($country ? 'edit' : 'default');
+	
 	}
 
 }

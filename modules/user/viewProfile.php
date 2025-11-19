@@ -10,7 +10,7 @@ class UserViewProfile extends View {
 		$user	= $this->app->currentUser;
 		$group	= new Group($user->groupId);
 
-		$this->setPageTitle($this->lang('USER_PROFILE_OF', $user->fullName));
+		$this->pageTitle($this->lang('USER_PROFILE_OF', $user->fullName));
 		
 		$form = $this->model->getUserForm();
 		$form->values($user);

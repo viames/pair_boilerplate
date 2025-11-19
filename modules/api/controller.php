@@ -1,6 +1,6 @@
 <?php
 
-use Pair\Core\Config;
+use Pair\Core\Env;
 use Pair\Core\Controller;
 use Pair\Core\Router;
 use Pair\Models\Audit;
@@ -294,7 +294,7 @@ class ApiController extends Controller {
 		if (Router::get('xml')) {
 			
 			// initialize node
-			$baseName = strtolower(Config::get('PRODUCT_NAME'));
+			$baseName = strtolower(Env::get('APP_NAME'));
 			$base = new SimpleXMLElement('<' . $baseName . '></' . $baseName . '>');
 			$nodeRecursion($base, 'response', $data);
 

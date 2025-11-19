@@ -6,9 +6,9 @@ use Pair\Models\Country;
 
 class CountriesViewEdit extends View {
 
-	public function render(): void {
+	protected function render(): void {
 
-		$this->setPageTitle($this->lang('EDIT_COUNTRY'));
+		$this->pageHeading($this->lang('EDIT_COUNTRY'));
 
 		$id = Router::get(0);
 		$country = new Country($id);

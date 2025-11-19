@@ -6,7 +6,7 @@ class LanguagesViewNew extends View {
 
 	public function render(): void {
 
-		$this->setPageTitle($this->lang('NEW_LANGUAGE'));
+		$this->pageTitle($this->lang('NEW_LANGUAGE'));
 
 		$form = $this->model->getLanguageForm();
 		

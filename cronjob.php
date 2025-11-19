@@ -10,13 +10,14 @@ use Pair\Core\Application;
 use Pair\Helpers\Schedule;
 
 // initialize composer
-require 'vendor/autoload.php';
+try {
+	require 'vendor/autoload.php';
+} catch (Throwable $e) {
+	die('Composer is not installed.');
+}
 
-// start the Application
+// initialize the Application
 $app = Application::getInstance();
-
-// initialize project classes
-require 'classes/classLoader.php';
 
 $schedule = new Schedule();
 

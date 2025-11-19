@@ -9,6 +9,15 @@ use Pair\Models\Group;
 
 class CrafterController extends Controller {
 
+	protected function _init(): void {
+
+		// prevent access to instances that are not under development
+		$this->checkAccess();
+
+		Breadcrumb::path('Crafter module', 'crafter');
+		
+	}
+
 	public function accessDeniedAction(): void {
 
 		if ('development' == Application::getEnvironment()) {
@@ -32,25 +41,9 @@ class CrafterController extends Controller {
 
 	}
 
-	public function classWizardAction(): void {
-
-		if (!Router::get(0)) {
-			$this->toastError($this->lang('TABLE_NAME_NOT_SPECIFIED'));
-		}
-
-	}
-
-	public function moduleWizardAction(): void {
-
-		if (!Router::get(0)) {
-			$this->toastError($this->lang('TABLE_NAME_NOT_SPECIFIED'));
-		}
-
-	}
-
 	public function classCreationAction(): void {
 
-		$this->view = 'newClass';
+		$this->setView('newClass');
 
 		$tableName   = Post::get('tableName');
 		$objectName  = Post::get('objectName');
@@ -87,24 +80,49 @@ class CrafterController extends Controller {
 
 	}
 
-	protected function init(): void {
+	public function classWizardAction(): void {
 
-		// prevent access to instances that are not under development
-		$this->checkAccess();
+		if (!Router::get(0)) {
+			$this->toastError($this->lang('TABLE_NAME_NOT_SPECIFIED'));
+		}
 
-		Breadcrumb::path('Crafter module', 'crafter');
-		
+	}
+
+	public function createTableAction(): void {
+
+		$tableName = Router::get(0);
+
+		$class = $this->model->getClassByTable($tableName);
+
+		if (!$class) {
+			$this->toastError($this->lang('CLASS_NOT_FOUND_FOR_TABLE', $tableName));
+			$this->setView('newTable');
+			return;
+		}
+
+		$res = $this->model->createTableByClass($class);
+
+		if ($res) {
+			$this->toast($this->lang('TABLE_HAS_BEEN_CREATED', $tableName));
+			$this->redirect('crafter');
+		} else {
+			$errors = $this->model->getErrors();
+			$this->toastError($this->lang('ERROR_ON_LAST_REQUEST') . "\n" . implode("\n", $errors));
+			$this->setView('newTable');
+		}
+
 	}
 
 	public function moduleCreationAction(): void {
 
 		// fall-back
-		$this->view = 'default';
+		$this->setView('default');
 
 		$tableName   = Post::get('tableName');
 		$objectName  = Post::get('objectName');
 		$moduleName  = Post::get('moduleName');
 		$commonClass = Post::bool('commonClass');
+		$migration   = Post::bool('migration');
 
 		if (!$tableName or !$objectName or !$moduleName) {
 			$this->toastError($this->lang('MODULE_HAS_NOT_BEEN_CREATED'));
@@ -127,41 +145,27 @@ class CrafterController extends Controller {
 			$this->model->createModule($commonClass);
 
 			$this->model->registerModule($grantedGroups);
-			$this->model->createMigrationFile();
 
-		} catch (\Exception $e) {
+			if ($migration) {
+				$this->model->createMigrationFile();
+			}
 
-			$this->toastError($e->getMessage());
+		} catch (Throwable $e) {
+
+			$this->modal('Error', $e->getMessage(), 'danger');
 			return;
 
 		}
 
-		$this->toast($this->lang('MODULE_HAS_BEEN_CREATED', $moduleName));
+		$this->toast('Info', $this->lang('MODULE_HAS_BEEN_CREATED', $moduleName));
 		$this->redirect();
 
 	}
 
-	public function createTableAction(): void {
+	public function moduleWizardAction(): void {
 
-		$tableName = Router::get(0);
-
-		$class = $this->model->getClassByTable($tableName);
-
-		if (!$class) {
-			$this->toastError($this->lang('CLASS_NOT_FOUND_FOR_TABLE', $tableName));
-			$this->view = 'newTable';
-			return;
-		}
-
-		$res = $this->model->createTableByClass($class);
-
-		if ($res) {
-			$this->toast($this->lang('TABLE_HAS_BEEN_CREATED', $tableName));
-			$this->redirect('crafter');
-		} else {
-			$errors = $this->model->getErrors();
-			$this->toastError($this->lang('ERROR_ON_LAST_REQUEST') . "\n" . implode("\n", $errors));
-			$this->view = 'newTable';
+		if (!Router::get(0)) {
+			$this->toastError($this->lang('TABLE_NAME_NOT_SPECIFIED'));
 		}
 
 	}

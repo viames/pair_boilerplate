@@ -14,7 +14,7 @@ class UsersViewAclNew extends View {
 
 		$group = new Group($groupId);
 
-		$this->setPageTitle('Aggiungi ACL');
+		$this->pageTitle('Aggiungi ACL');
 		$this->app->activeMenuItem = 'groups';
 
 		Breadcrumb::path($this->lang('GROUPS'), 'groups');

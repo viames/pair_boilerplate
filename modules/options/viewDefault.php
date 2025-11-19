@@ -1,19 +1,19 @@
 <?php
 
 use Pair\Core\View;
+use Pair\Helpers\Options;
 use Pair\Html\Breadcrumb;
 use Pair\Html\Form;
-use Pair\Helpers\Options;
 
 class OptionsViewDefault extends View {
 
-	public function render(): void {
+	protected function render(): void {
 
-		$this->app->loadScript('js/options.js', TRUE);
+		$this->loadScript('js/options.js', true);
 
 		$options = Options::getInstance();
 
-		$this->setPageTitle($this->lang('OPTIONS'));
+		$this->pageHeading($this->lang('OPTIONS'));
 
 		Breadcrumb::path($this->lang('OPTIONS'));
 
@@ -47,7 +47,7 @@ class OptionsViewDefault extends View {
 					break;
 
 				case 'bool':
-					$form->checkbox($o->name, ['role'=>'switch'])->value($o->value)->class('form-check-input');
+					$form->checkbox($o->name)->value($o->value)->class('switchery');
 					break;
 
 				case 'list':

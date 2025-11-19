@@ -9,9 +9,9 @@ use Pair\Orm\Collection;
 
 class CrafterViewNewModuleWizard extends View {
 
-	public function render(): void {
+	protected function render(): void {
 
-		$this->setPageTitle($this->lang('CRAFTER'));
+		$this->pageHeading($this->lang('CRAFTER'));
 
 		$tableName = Router::get(0);
 
@@ -34,7 +34,8 @@ class CrafterViewNewModuleWizard extends View {
 		$form->classForControls('form-control');
 		$form->text('objectName')->required()->value($this->model->objectName)->label('OBJECT_NAME');
 		$form->text('moduleName')->required()->value($this->model->moduleName)->label('MODULE_NAME');
-		$form->checkbox('commonClass')->value(TRUE)->class('switchery')->label('COMMON_CLASS');
+		$form->checkbox('commonClass')->value(false)->class('switchery')->label('COMMON_CLASS');
+		$form->checkbox('migration')->value(true)->class('switchery')->label('MIGRATION');
 		$form->hidden('tableName')->required()->value($tableName)->label('TABLE_NAME');
 
 		foreach ($groups as $group) {

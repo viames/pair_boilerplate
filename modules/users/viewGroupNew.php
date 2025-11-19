@@ -13,7 +13,7 @@ class UsersViewGroupNew extends View {
 	 */
 	public function render(): void {
 		
-		$this->setPageTitle($this->lang('NEW_GROUP'));
+		$this->pageTitle($this->lang('NEW_GROUP'));
 		$this->app->activeMenuItem = 'groups';
 		
 		Breadcrumb::path($this->lang('GROUPS'), 'groups');

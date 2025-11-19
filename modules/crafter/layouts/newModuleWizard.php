@@ -9,34 +9,39 @@
 					<?php $this->form->printControl('tableName') ?>
 					<fieldset>
 						<legend><?php $this->_('NEW_MODULE_OPTIONS') ?></legend>
-						<div class="form-group">
+						<div class="form-group row">
 							<div class="col-md-3"><?php $this->form->printLabel('objectName')?></div>
 							<div class="col-md-3"><?php $this->form->printControl('objectName') ?></div>
 							<div class="col-md-6 small"><?php $this->_('OBJECT_NAME_DESCRIPTION')?></div>
 						</div>
-						<div class="form-group">
-							<div class="col-md-3 control-label"><?php $this->form->printLabel('moduleName')?></div>
+						<div class="form-group row">
+							<div class="col-md-3"><?php $this->form->printLabel('moduleName')?></div>
 							<div class="col-md-3"><?php $this->form->printControl('moduleName') ?></div>
 							<div class="col-md-6 small"><?php $this->_('MODULE_NAME_DESCRIPTION')?></div>
 						</div>
-						<div class="form-group">
-							<div class="col-md-3 control-label"><?php $this->form->printLabel('commonClass')?></div>
+						<div class="form-group row">
+							<div class="col-md-3"><?php $this->form->printLabel('commonClass')?></div>
 							<div class="col-md-3"><?php $this->form->printControl('commonClass') ?></div>
 							<div class="col-md-6 small"><?php $this->_('COMMON_CLASS_DESCRIPTION')?></div>
+						</div>
+						<div class="form-group row">
+							<div class="col-md-3"><?php $this->form->printLabel('migration')?></div>
+							<div class="col-md-3"><?php $this->form->printControl('migration') ?></div>
+							<div class="col-md-6 small"><?php $this->_('MIGRATION_DESCRIPTION')?></div>
 						</div>
 					</fieldset>
 					<fieldset>
 						<legend><?php $this->_('GROUPS_ACL') ?></legend>
 						<?php foreach ($this->groups as $group) { ?>
-						<div class="form-group">
-							<div class="col-md-3 control-label"><?php $this->form->printLabel('group' . $group->id) ?></div>
+						<div class="form-group row">
+							<div class="col-md-3"><?php $this->form->printLabel('group' . $group->id) ?></div>
 							<div class="col-md-3"><?php $this->form->printControl('group' . $group->id) ?></div>
 							<div class="col-md-6 small"><?php $this->printGroupDescription($group) ?></div>
 						</div>
 						<?php } ?>
 					</fieldset>
 					<fieldset>
-						<div class="form-group">
+						<div class="form-group row">
 							<div class="col-md-push-3 col-md-9">
 								<button type="submit" class="btn btn-primary"><?php $this->_('CREATE_MODULE') ?></button>
 								<a href="crafter" class="btn btn-secondary"><?php $this->_('CANCEL') ?></a>
