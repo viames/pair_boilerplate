@@ -15,24 +15,25 @@ try {
 // initialize the Application
 $app = Application::getInstance();
 
-include 'modules/migrations/model.php';
-$model = new MigrationsModel();
+include 'modules/migrate/model.php';
+$model = new MigrateModel();
 
+// check if the migrations table exists
 if (!$model->dbTableCheck()) {
     print 'Migrations table not found' . PHP_EOL;
     exit;
 }
 
-print 'Migrating data...' . PHP_EOL;
+print 'Migrating data...';
 
-// migrate data
 try {
-
+    
+    // run the migrations
     $model->runMigration();
-    print 'Migration successful' . PHP_EOL;
+    print 'successful.' . PHP_EOL;
 
 } catch (Exception $e) {
     
-    print 'Migration failed' . PHP_EOL . $e->getMessage() . PHP_EOL;
+    print 'failed.' . PHP_EOL . $e->getMessage() . PHP_EOL;
 
 }

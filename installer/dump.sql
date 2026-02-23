@@ -1128,7 +1128,7 @@ VALUES
 	(16,'audit','1.0',NOW(),'1.0',1,NOW()),
 	(17,'errorlogs','1.0',NOW(),'1.0',1,NOW()),
 	(18,'oauth2','1.0',NOW(),'1.0',1,NOW()),
-	(19,'migrations','1.0',NOW(),'1.0',1,NOW()),
+	(19,'migrate','1.0',NOW(),'1.0',1,NOW()),
 	(20,'oauth2clients','1.0',NOW(),'1.0',1,NOW());
 
 /*!40000 ALTER TABLE `modules` ENABLE KEYS */;
