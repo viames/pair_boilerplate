@@ -1,10 +1,16 @@
-Options -Indexes
-<FilesMatch "^(composer\.(json|lock|phar)|migrate\.php|docker-compose\.yml|docker-boot\.sh|README\.md|cronjob\.php|rsync-exclude\.txt)$">
+Options -Indexes -MultiViews
+
+# blocks dotfiles and version control system files
+<FilesMatch "^\.|(\.env(\..*)?|\.git|\.svn|\.hg)">
+  Require all denied
+</FilesMatch>
+
+<FilesMatch "^(composer\.(json|lock|phar)|migrate-cli\.php|migrate\.php|README\.md|cronjob\.php|routes\.php|rsync-exclude\.txt)$">
   Require all denied
 </FilesMatch>
 
 RewriteEngine On
-RewriteRule ^(classes|translations|vendor|widgets)/ - [R=404,L]
+RewriteRule ^(classes|migrations|translations|vendor|widgets|tests)/ - [R=404,L]
 
 RewriteRule ^public/ - [L]
 RewriteRule ^(.*)$ public/$1 [L]
