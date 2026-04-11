@@ -358,7 +358,7 @@ class SelfTest {
 
 		// plain list of Pair framework classes with DB mapping
 		$pairClasses = ['Acl','Audit','Country','ErrorLog','Group','Language','Locale',
-						'Module','Rule','Session','Template','Token','User','UserRemember'];
+						'Module','Rule','Session','Template','User','UserRemember'];
 		array_walk($pairClasses, function(&$c) { $c = 'Pair\\Models\\' . $c; });
 
 		// list of excluded from test

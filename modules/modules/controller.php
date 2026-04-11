@@ -2,12 +2,15 @@
 
 use Pair\Core\Controller;
 use Pair\Html\Breadcrumb;
-use Pair\Helpers\Logger;
+use Pair\Helpers\LogBar;
 use Pair\Helpers\Plugin;
 use Pair\Helpers\Upload;
 
 class ModulesController extends Controller {
 
+	/**
+	 * Prepare the module administration page.
+	 */
 	protected function _init(): void {
 
 		// removes files older than 30 minutes
@@ -17,6 +20,9 @@ class ModulesController extends Controller {
 
 	}
 
+	/**
+	 * Download the selected module package.
+	 */
 	public function downloadAction(): void {
 
 		$object = $this->getObjectRequestedById('Pair\Models\Module');
@@ -25,6 +31,9 @@ class ModulesController extends Controller {
 
 	}
 
+	/**
+	 * Install a module package uploaded from the admin UI.
+	 */
 	public function addAction(): void {
 
 		$this->setView('default');
@@ -56,6 +65,9 @@ class ModulesController extends Controller {
 
 	}
 
+	/**
+	 * Delete the selected installed module.
+	 */
 	public function deleteAction(): void {
 
 		$module = $this->getObjectRequestedById('Pair\Models\Module');

@@ -6,12 +6,18 @@ use Pair\Orm\Database;
 
 class SelftestViewDefault extends View {
 
+	/**
+	 * Configure the page title for the self-test view.
+	 */
 	protected function _init(): void {
 		
 		$this->pageTitle($this->lang('SELF_TEST'));
 		
 	}
 
+	/**
+	 * Execute the application self-test suite and expose the resulting sections.
+	 */
 	public function render(): void {
 				
 		// starts the test
@@ -52,10 +58,10 @@ class SelftestViewDefault extends View {
 		$label = $this->lang('TEST_BZIP2_PATH', $path ?? 'n.a.');
 		$test->assertTrue($label, $path ?? '', $this->lang('SERVER'));
 
-		// migrations
-		$label = 'Excecuted migrations';
-		include APPLICATION_PATH . '/modules/migrations/model.php';
-		$migrationModel = new MigrationsModel();
+		// load the current migrations module model so the self-test checks the real module in use.
+		$label = 'Executed migrations';
+		require_once APPLICATION_PATH . '/modules/migrate/model.php';
+		$migrationModel = new MigrateModel();
 		$migrationCheck = !(bool)count($migrationModel->getListOfMigrationFiles());
 		$test->assertTrue($label, $migrationCheck, $this->lang('APPLICATION'));
 

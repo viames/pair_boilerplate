@@ -232,18 +232,54 @@ class Installer {
 
 		}
 
-		// load Pair’s DB dump by SQL file
-		$queries = file_get_contents($this->rootFolder . '/installer/dump.sql');
-
-		// create all tables, if not exist
+		// import the schema baseline first, then the bootstrap seed data
 		try {
 			$this->dbh->exec('USE `' . $v['dbName'] . '`');
 			$this->dbh->setAttribute(\PDO::ATTR_EMULATE_PREPARES, 1);
-			$this->dbh->exec($queries);
 		} catch (Exception $e) {
-			$this->addError('Table creation failed: ' . $e->getMessage());
+			$this->addError('Database selection failed: ' . $e->getMessage());
 			return false;
 		}
+
+		if (!$this->importSqlFile('/installer/sql/schema.sql', 'Schema import failed')) {
+			return false;
+		}
+
+		if (!$this->importSqlFile('/installer/sql/seed.sql', 'Seed import failed')) {
+			return false;
+		}
+
+		return true;
+
+	}
+
+	/**
+	 * Import a SQL file into the already-selected database.
+	 */
+	private function importSqlFile(string $relativePath, string $errorPrefix): bool {
+
+		$file = $this->rootFolder . $relativePath;
+
+		if (!file_exists($file)) {
+			$this->addError($errorPrefix . ': file ' . $file . ' not found');
+			return false;
+		}
+
+		$queries = file_get_contents($file);
+
+		if (false === $queries) {
+			$this->addError($errorPrefix . ': file ' . $file . ' cannot be read');
+			return false;
+		}
+
+		try {
+			$this->dbh->exec($queries);
+		} catch (Exception $e) {
+			$this->addError($errorPrefix . ': ' . $e->getMessage());
+			return false;
+		}
+
+		return true;
 
 	}
 
@@ -630,16 +666,6 @@ MYSQLDUMP_PATH=';
 	public function selfRemove(): bool {
 
 		$folder = $this->rootFolder . '/installer';
-		$files = ['dump.sql', 'start.php'];
-
-		foreach ($files as $file) {
-
-			if (!unlink($folder . '/' . $file)) {
-				$this->addError('File ' . $folder . '/' . $file . ' deletion failed');
-				return false;
-			}
-
-		}
 
 		if (!Pair\Helpers\Utilities::deleteFolder($folder)) {
 			$this->addError('Folder ' . $folder . ' deletion failed');
@@ -671,15 +697,20 @@ if (count($_POST)) {
 	if ($connected) {
 
 		// check and configure db
-		$installer->checkDbmsVersion('8.0');
-		$installer->createDb();
-		$installer->checkDbUtf8();
-		$installer->createUser();
+			$installer->checkDbmsVersion('8.0');
+			$dbCreated = $installer->createDb();
 
-		if (!count($installer->getErrors())) {
+			if ($dbCreated && !count($installer->getErrors())) {
 
-			// create a temporary empty folder
-			$installer->createTempFolder();
+				$installer->checkDbUtf8();
+				$installer->createUser();
+
+			}
+
+			if ($dbCreated && !count($installer->getErrors())) {
+
+				// create a temporary empty folder
+				$installer->createTempFolder();
 
 			// create .env file
 			$installer->createConfigFile();

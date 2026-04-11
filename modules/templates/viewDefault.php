@@ -1,51 +1,63 @@
 <?php
 
 use Pair\Core\Application;
-use Pair\Core\Env;
 use Pair\Core\View;
 
 class TemplatesViewDefault extends View {
 
-	public function render(): void {
+	/**
+	 * Flag used by the layout to decide whether template deletion can be shown.
+	 */
+	protected bool $deletionAllowed = false;
 
-		$this->pageTitle($this->lang('TEMPLATES'));
+	/**
+	 * Prepare the page heading of the templates list.
+	 */
+	protected function _init(): void {
+
+		$this->pageHeading($this->lang('TEMPLATES'));
+
+	}
+
+	/**
+	 * Load installed templates and decorate them with layout helpers.
+	 */
+	protected function render(): void {
 
 		$templates = $this->model->getActiveRecordObjects('Pair\Models\Template', 'name');
-		
-		// if development-mode is enabled and an admin is logged in, objects can be deleted
-		$devMode = ('development' == Application::getEnvironment() and $this->app->currentUser->admin) ? TRUE : FALSE;
-		
+
+		// Only administrators in development mode may remove installed templates.
+		$this->deletionAllowed = ('development' == Application::getEnvironment() && $this->app->currentUser->admin);
+
 		foreach ($templates as $template) {
-			
-			$template->paletteSamples = '';
-			
-			foreach ($template->palette as $color) {
-				$template->paletteSamples .= '<div class="colorSample" style="background-color:' . $color . '" title="' . $color . '"></div>';
+
+			$paletteSamples = [];
+
+			foreach ($template->getPaletteColors() as $color) {
+				$safeColor = htmlspecialchars($color, ENT_QUOTES, 'UTF-8');
+				$paletteSamples[] = '<span class="d-inline-block rounded border border-secondary-subtle me-1 mb-1" '
+					. 'style="width:16px;height:16px;background-color:' . $safeColor . '" '
+					. 'title="' . $safeColor . '"></span>';
 			}
 
-			// check if plugin is compatible with current application version
-			$template->compatible = (version_compare(Env::get('APP_VERSION'), $template->appVersion) <= 0) ?
-				'<span class="fa fa-check fa-lg text-success"></span>' :
-				'<div style="color:red">v' . $template->appVersion . '</div>';
-			
-			$template->defaultIcon = $template->default ? '<span class="fa fa-star fa-lg text-warning"></span>' : '';
-			
-			$template->derivedIcon = $template->derived ? '<span class="fa fa-check fa-lg text-success"></span>' : '';
+			$template->paletteSamples = implode('', $paletteSamples);
 
-			$template->downloadIcon = '<a href="templates/download/'. $template->id .'">'.
-					'<span class="fa fa-lg fa-download"></span></a>';
-
-			if ($devMode) {
-				$template->deleteIcon = $template->default ? '' : '<a href="templates/delete/'. $template->id .'" class="confirm-delete">'.
-					'<span class="fa fa-lg fa-times"></span></a>';
+			if ($template->isCompatibleWithApp()) {
+				$template->compatible = '<span class="fal fa-check fa-lg text-success"></span>';
+			} else if ($template->isCompatibleWithAppMajorVersion()) {
+				$template->compatible = '<span class="text-warning">' . htmlspecialchars($template->appVersion, ENT_QUOTES, 'UTF-8') . '</span>';
 			} else {
-				$template->deleteIcon = '<span class="fa fa-lg fa-times disabled"></span>';
+				$template->compatible = '<span class="text-danger">' . htmlspecialchars($template->appVersion, ENT_QUOTES, 'UTF-8') . '</span>';
 			}
-			
+
+			$template->downloadUrl = 'templates/download/' . $template->id;
+			$template->editUrl = 'templates/edit/' . $template->id;
+			$template->deleteUrl = 'templates/delete/' . $template->id;
+
 		}
-		
+
 		$this->assign('templates', $templates);
-		
+
 	}
-	
+
 }

@@ -130,6 +130,10 @@ The project folder structure follows the following tree:
 
 ```bash
 /classes
+/installer
+    /sql
+        schema.sql
+        seed.sql
 /migrations
 /modules
     /module1
@@ -170,6 +174,8 @@ cronjob.php
 README.md
 routes.php
 ```
+
+The `/installer/sql` folder contains the fresh-install baseline split into schema and seed files. The `/migrations` folder is reserved for append-only upgrade migrations.
 
 ### MVC Pattern
 
@@ -217,6 +223,10 @@ For the module to work effectively and for CRUD data to be well-structured, it i
 This is a folder located in the base folder of the project and contains all the classes and interfaces common to multiple modules. Classes used only in one module can be placed in the `classes` folder inside a module, for example `/users/classes/MySpecialClass.php`.
 
 The class name must be in CamelCase and must be the same as the file name.
+
+### Migrations
+
+Application migrations should use the `YYYYMMDD_description.sql` naming convention. The CLI runner `php migrate-cli.php` executes Pair vendor migrations first and application migrations immediately after.
 
 Each file inside classes contains one and only one class.
 

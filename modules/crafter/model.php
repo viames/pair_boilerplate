@@ -73,11 +73,17 @@ class CrafterModel extends Model {
 	protected array $orderOptions = [];
 
 	/**
+	 * Map of sortable db fields and related ASC/DESC option indexes.
+	 */
+	protected array $orderFields = [];
+
+	/**
 	 * List of DDL queries for migrations.
 	 */
 	protected array $queries = [];
 
-	const INTERNAL_FIELDS = ['created_at', 'created_by', 'updated_at', 'updated_at'];
+	const INTERNAL_FIELDS = ['created_at', 'created_by', 'updated_at', 'updated_by'];
+	const ORDERABLE_TYPES = ['string', 'int', 'float', 'date', 'datetime', 'enum'];
 
 	/**
 	 * Create an Migration Query for an ActiveRecord object.
@@ -160,21 +166,8 @@ class CrafterModel extends Model {
 	 */
 	public function createMigrationFile(): void {
 
-		// search in the migrations folder for higher prefix index
-		$files = scandir(APPLICATION_PATH . '/migrations');
-
-		$prefix = 001;
-
-		// search for the highest prefix index
-		foreach ($files as $file) {
-			if (preg_match('#^(\d+)_#', $file, $matches)) {
-				$prefix = max($prefix, (int)$matches[1]);
-			}
-		}
-
-		// file name with 3 digits next-prefix and module name
-		$prefix = str_pad(++$prefix, 3, '0', STR_PAD_LEFT);
-		$fileName = $prefix . '_' . $this->moduleName . '_model.sql';
+		// The date prefix keeps the generated migration aligned with the current naming convention.
+		$fileName = date('Ymd') . '_' . $this->moduleName . '_model.sql';
 		$filePath = APPLICATION_PATH . '/migrations/' . $fileName;
 
 		$lines = [];
@@ -189,11 +182,12 @@ class CrafterModel extends Model {
 		// set the migration as applied in the current app
 		foreach ($this->queries as $index => $query) {
 
-			$migration = new Migration();
-			$migration->file = $fileName;
-			$migration->queryIndex = $index+1;
-			$migration->description = $query['comment'];
-			$migration->affectedRows = $query['affectedRows'] ?? 0;
+				$migration = new Migration();
+				$migration->file = $fileName;
+				$migration->source = Migration::SOURCE_APP;
+				$migration->queryIndex = $index+1;
+				$migration->description = $query['comment'];
+				$migration->affectedRows = $query['affectedRows'] ?? 0;
 			$migration->result = true;
 
 			$migration->store();
@@ -1053,15 +1047,30 @@ class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 
 		}
 
-		$orderIndex = 1;
+			$orderIndex = 1;
+			$this->orderOptions = [];
+			$this->orderFields = [];
 
-		// look for the first text property to add the sortable headers list
-		foreach ($this->propTypes as $pName => $pType) {
-			if ('string' == $pType) {
-				$this->orderOptions[$orderIndex++]= '`' . $this->binds[$pName] . '`';
-				$this->orderOptions[$orderIndex++]= '`' . $this->binds[$pName] . '` DESC';
+			// Build sortable fields so the generated list can expose Pair sortable headers.
+			foreach ($this->propTypes as $pName => $pType) {
+
+				$fieldName = $this->binds[$pName];
+
+				if (!in_array($pType, self::ORDERABLE_TYPES, true) || $this->isTableKey($fieldName) || in_array($fieldName, self::INTERNAL_FIELDS, true)) {
+					continue;
+				}
+
+				$ascOrder = $orderIndex++;
+				$descOrder = $orderIndex++;
+
+				$this->orderOptions[$ascOrder] = '`' . $fieldName . '`';
+				$this->orderOptions[$descOrder] = '`' . $fieldName . '` DESC';
+				$this->orderFields[$fieldName] = [
+					'asc' => $ascOrder,
+					'desc' => $descOrder
+				];
+
 			}
-		}
 
 		// here starts code collect
 		$content =
@@ -1239,8 +1248,15 @@ class ' . ucfirst($this->moduleName) . 'ViewDefault extends View {
 			// jump the table keys
 			} else if (!$this->isTableKey($field)) {
 
-				// replace the table-header placeholder
-				$headers[] = str_replace('{tableHeader}', "<?php \$this->_('" . strtoupper($field) . "') ?>", $this->layouts['default-table-header']);
+					if (isset($this->orderFields[$field])) {
+						$tableHeader = '<?php $this->sortable($this->lang(\'' . strtoupper($field) . '\'), '
+							. $this->orderFields[$field]['asc'] . ', ' . $this->orderFields[$field]['desc'] . ') ?>';
+					} else {
+						$tableHeader = "<?php \$this->_('" . strtoupper($field) . "') ?>";
+					}
+
+					// replace the table-header placeholder
+					$headers[] = str_replace('{tableHeader}', $tableHeader, $this->layouts['default-table-header']);
 
 				// get the fk-column for the current field
 				$col = $this->getForeignKey($field, $foreignKeys);

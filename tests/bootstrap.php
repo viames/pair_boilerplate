@@ -8,16 +8,7 @@ use Pair\Core\Application;
 // initialize composer
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-// start the Application
-$app = Application::getInstance();
-
-// path to temporary folder
-define ('TEMP_PATH', APPLICATION_PATH . '/temp/');
-
-// initialize project classes
-require APPLICATION_PATH . '/classes/classLoader.php';
-
-// any API requests
-$app->runApi('api');
+// start the Application in headless mode so tests bootstrap the framework without rendering output
+Application::getInstance()->headless();
 
 // ./vendor/bin/phpunit --bootstrap tests/bootstrap.php tests

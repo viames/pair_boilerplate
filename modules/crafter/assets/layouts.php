@@ -4,13 +4,13 @@
 $layouts['default-page'] =
 '<div class="card">
 	<div class="card-header">
+		<div class="float-end">
+			<a class="p-1 btn btn-sm btn-outline-primary mt-1 float-end" href="{linkAdd}"><i class="fal fa-plus-large fa-fw"></i></a>
+		</div>
 		<h4 class="card-title">{pageTitle}</h4>
 	</div>
 	<div class="card-body">
-		<div style="overflow:hidden">
-			<a href="{linkAdd}" class="btn btn-primary btn-sm float-right">{newElement}</a>
-		</div>
-		<hr><?php
+		<?php
 
 		if (count({itemsArray})) {
 
@@ -27,14 +27,14 @@ $layouts['default-page'] =
 				</table>
 			</div><?php
 
-			print $this->getPaginationBar();
-				
+			$this->printPaginationBar();
+
 		} else {
-				
-			Pair\Helpers\Utilities::printNoDataMessageBox();
-				
+
+			$this->noData();
+
 		}
-	
+
 	?></div>
 </div>';
 
@@ -51,12 +51,12 @@ $layouts['new-page'] =
 		<h4 class="card-title">{pageTitle}</h4>
 	</div>
 	<div class="card-body">
-		<form action="{formAction}" method="post" class="form-horizontal">
+		<form action="{formAction}" method="post">
 			<fieldset>{fields}
 			</fieldset>
 			<div class="hr-line-dashed"></div>
-			<div class="form-group row">
-				<div class="col-md-push-3 col-md-9">
+			<div class="row mb-4">
+				<div class="col-md-9 offset-md-3">
 					<button type="submit" class="btn btn-primary"><?php $this->_(\'INSERT\') ?></button>
 					<a href="{cancelUrl}" class="btn btn-secondary"><?php $this->_(\'CANCEL\') ?></a>
 				</div>
@@ -64,12 +64,12 @@ $layouts['new-page'] =
 		</form>
 	</div>
 </div>';
-		
+
 $layouts['new-field'] = '
-						<div class="form-group">
-							<label class="col-md-3 control-label">{fieldLabel}</label>
-							<div class="col-md-9">{fieldControl}</div>
-						</div>';
+				<div class="row mb-4">
+					<div class="col-md-3">{fieldLabel}</div>
+					<div class="col-md-9">{fieldControl}</div>
+				</div>';
 
 // layout della pagina edit
 $layouts['edit-page'] =
@@ -78,17 +78,17 @@ $layouts['edit-page'] =
 		<h4 class="card-title">{pageTitle}</h4>
 	</div>
 	<div class="card-body">
-		<form action="{formAction}" method="post" class="form-horizontal">
+		<form action="{formAction}" method="post">
 			{hiddenFields}
 			<fieldset>{fields}
 			</fieldset>
 			<div class="hr-line-dashed"></div>
-			<div class="form-group row">
-				<div class="col-md-push-3 col-md-9">
+			<div class="row mb-4">
+				<div class="col-md-9 offset-md-3">
 					<button type="submit" class="btn btn-primary"><?php $this->_(\'CHANGE\') ?></button>
 					<a href="{cancelUrl}" class="btn btn-secondary"><?php $this->_(\'CANCEL\') ?></a><?php
 					if ($this->{object}->isDeletable()) { ?>
-					<a href="{deleteUrl}" class="btn btn-link confirm-delete float-right"><?php $this->_(\'DELETE\') ?></a><?php
+					<a href="{deleteUrl}" class="btn btn-link confirm-delete float-end"><?php $this->_(\'DELETE\') ?></a><?php
 					} ?>
 				</div>
 			</div>
@@ -97,7 +97,7 @@ $layouts['edit-page'] =
 </div>';
 
 $layouts['edit-field'] = '
-						<div class="form-group">
-							<label class="col-md-3 control-label">{fieldLabel}</label>
-							<div class="col-md-9">{fieldControl}</div>
-						</div>';
+				<div class="row mb-4">
+					<div class="col-md-3">{fieldLabel}</div>
+					<div class="col-md-9">{fieldControl}</div>
+				</div>';

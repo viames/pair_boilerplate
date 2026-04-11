@@ -1,33 +1,13 @@
 <?php
 
+use Pair\Api\ApiController as PairApiController;
 use Pair\Core\Env;
-use Pair\Core\Controller;
 use Pair\Core\Router;
-use Pair\Models\Audit;
 use Pair\Models\Session;
-use Pair\Models\Token;
 use Pair\Models\User;
-use Pair\Orm\ActiveRecord;
 use Pair\Helpers\Post;
-use Pair\Helpers\Options;
-use Pair\Helpers\Upload;
 
-class ApiController extends Controller {
-	
-	/**
-	 * The token object.
-	 */
-	private ?Token $token;
-
-	/**
-	 * The Bearer token string.
-	 */
-	private ?string $bearerToken;
-	
-	/**
-	 * The session object.
-	 */
-	private ?Session $session;
+class ApiController extends PairApiController {
 	
 	/**
 	 * Missing methods.
@@ -37,32 +17,6 @@ class ApiController extends Controller {
 		sleep(3);
 		$name = substr($name, 0, -6);
 		$this->sendError(21);
-	}
-
-	/**
-	 * Set the Bearer token.
-	 */
-	public function setBearerToken(string $bearerToken): void {
-
-		$this->bearerToken = $bearerToken;
-	}
-
-	/**
-	 * Set the valid token.
-	 */
-	public function setToken(Token $token): void {
-		
-		$this->token = $token;
-		
-	}
-	
-	/**
-	 * Set the current Session object.
-	 */
-	public function setSession(Session $session): void {
-		
-		$this->session = $session;
-		
 	}
 
 	/**
@@ -148,6 +102,9 @@ class ApiController extends Controller {
 		
 	}
 
+	/**
+	 * Delete the currently authenticated user account data.
+	 */
 	public function deleteAccountAction(): void {
 
 		$user = $this->getUser();

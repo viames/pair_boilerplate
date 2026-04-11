@@ -1,14 +1,22 @@
 <div class="card">
 	<div class="card-header">
-		<h4 class="card-title"><?php $this->_('UPLOAD_NEW_TEMPLATE') ?></h4>
+		<h4 class="card-title"><?php $this->_('EDIT_TEMPLATE') ?></h4>
 	</div>
 	<div class="card-body">
-		<p class="card-text"><?php $this->_('UPLOAD_NEW_TEMPLATE_DESCRIPTION') ?></p>
-		<form action="templates/add" method="post" enctype="multipart/form-data">
+		<form action="templates/change" method="post">
+			<?php $this->form->printControl('id') ?>
 			<fieldset>
 				<div class="row mb-4">
-					<label class="col-md-3 col-form-label"><?php $this->_('SELECT') ?></label>
-					<div class="col-md-9"><?php $this->form->printControl('package') ?></div>
+					<div class="col-md-3"><?php $this->form->printLabel('name') ?></div>
+					<div class="col-md-9"><?php $this->form->printControl('name') ?></div>
+				</div>
+				<div class="row mb-4">
+					<div class="col-md-3"><?php $this->form->printLabel('version') ?></div>
+					<div class="col-md-9"><?php $this->form->printControl('version') ?></div>
+				</div>
+				<div class="row mb-4">
+					<div class="col-md-3"><?php $this->form->printLabel('appVersion') ?></div>
+					<div class="col-md-9"><?php $this->form->printControl('appVersion') ?></div>
 				</div>
 				<div class="row mb-4">
 					<label class="col-md-3 col-form-label"><?php $this->_('PALETTE') ?></label>
@@ -55,7 +63,7 @@
 			<div class="hr-line-dashed"></div>
 			<div class="row mb-4">
 				<div class="col-md-9 offset-md-3">
-					<button type="submit" class="btn btn-primary"><?php $this->_('INSERT') ?></button>
+					<button type="submit" class="btn btn-primary"><?php $this->_('CHANGE') ?></button>
 					<a href="templates/default" class="btn btn-secondary"><?php $this->_('CANCEL') ?></a>
 				</div>
 			</div>
