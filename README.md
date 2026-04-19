@@ -10,6 +10,9 @@ a skeleton project to use [Pair PHP Framework](https://github.com/viames/pair) e
 This base project allows a fast start to develop small to medium PHP applications like CRM or web-portals.
 With the addition of a few files more, here provided as sample, and an initial database structure, your web project will be up and running in a breeze.
 
+This boilerplate currently targets the stable Pair v3 release line.
+If you want to experiment with Pair v4 alpha, use the framework repository directly instead of this default boilerplate baseline.
+
 ### Features
 This basic project manages users authentication, creates new custom ActiveRecord classes and [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) modules starting from a DB table by a magic module named `crafter`, all thru a friendly route logic.
 Also it acts as REST API server with oAuth2 authentication support.

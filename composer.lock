@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c38ab19d625aa805213bd267dcb732d1",
+    "content-hash": "00dcb1c44a419a8f89f260f1510667a0",
     "packages": [
         {
             "name": "psr/log",
@@ -58,16 +58,16 @@
         },
         {
             "name": "viames/pair",
-            "version": "dev-main",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/viames/pair.git",
-                "reference": "4b5d779c6d51bcc56d0cabe4678bd24064956c0a"
+                "reference": "f7bc27710234ef5a36bce61aed302c98e32fcd72"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/viames/pair/zipball/4b5d779c6d51bcc56d0cabe4678bd24064956c0a",
-                "reference": "4b5d779c6d51bcc56d0cabe4678bd24064956c0a",
+                "url": "https://api.github.com/repos/viames/pair/zipball/f7bc27710234ef5a36bce61aed302c98e32fcd72",
+                "reference": "f7bc27710234ef5a36bce61aed302c98e32fcd72",
                 "shasum": ""
             },
             "require": {
@@ -86,8 +86,12 @@
                 "ext-redis": "*",
                 "ext-xdebug": "*"
             },
-            "default-branch": true,
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-v3": "3.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Pair\\": "src/",
@@ -124,18 +128,16 @@
             ],
             "support": {
                 "issues": "https://github.com/viames/pair/issues",
-                "source": "https://github.com/viames/pair/tree/master/src",
+                "source": "https://github.com/viames/pair/tree/v3/src",
                 "wiki": "https://github.com/viames/pair/wiki"
             },
-            "time": "2026-04-09T03:26:52+00:00"
+            "time": "2026-04-19T10:02:49+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "viames/pair": 20
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {},
