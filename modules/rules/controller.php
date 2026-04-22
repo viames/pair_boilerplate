@@ -1,22 +1,59 @@
 <?php
 
-use Pair\Core\Controller;
 use Pair\Core\Router;
 use Pair\Models\Module;
 use Pair\Models\Rule;
-use Pair\Helpers\Post;
+use Pair\Html\Breadcrumb;
+use Pair\Web\PageResponse;
 
-class RulesController extends Controller {
+class RulesController extends BoilerplateController {
+
+	/**
+	 * Rules module data helper.
+	 */
+	private RulesModel $model;
+
+	/**
+	 * Prepare the rules module dependencies.
+	 */
+	protected function boot(): void {
+
+		$this->model = new RulesModel();
+		Breadcrumb::path($this->translate('RULES'), 'rules');
+
+	}
+
+	/**
+	 * Render the rules list.
+	 */
+	public function defaultAction(): PageResponse {
+
+		$this->pageHeading($this->translate('RULES'));
+
+		return $this->page('default', $this->buildDefaultPageState(), $this->translate('RULES'));
+
+	}
+
+	/**
+	 * Render the new-rule form.
+	 */
+	public function newAction(): PageResponse {
+
+		$this->pageHeading($this->translate('NEW_RULE'));
+
+		return $this->page('new', new RulesNewPageState($this->model->getRulesForm()), $this->translate('NEW_RULE'));
+
+	}
 
 	/**
 	 * Adds a new object.
 	 */
-	public function addAction(): void {
+	public function addAction(): PageResponse {
 
 		// get input value
-		$moduleId   = Post::get('moduleId', 'int');
-		$action		= Post::get('actionField') ? Post::get('actionField') : NULL;
-		$adminOnly  = Post::get('adminOnly', 'bool');
+		$moduleId   = (int)$this->input()->int('moduleId', 0);
+		$action		= trim((string)$this->input()->string('actionField', '')) ?: NULL;
+		$adminOnly  = (bool)$this->input()->bool('adminOnly', false);
 
 		$rule = Rule::getRuleModuleName($moduleId, $action, $adminOnly);
 
@@ -32,44 +69,45 @@ class RulesController extends Controller {
 			$rules->module = $module->name;
 
 			if ($rules->create()) {
-				$this->toast($this->lang('RULE_HAS_BEEN_CREATED', $module->name));
+				$this->toast($this->translate('RULE_HAS_BEEN_CREATED', $module->name));
 				$this->redirect('rules/default');
 			} else {
-				$this->toastError($this->lang('RULE_HAS_NOT_BEEN_CREATED'));
-				$this->setView('default');
+				$this->toastError($this->translate('RULE_HAS_NOT_BEEN_CREATED'));
 			}
 
 		}  else {
 			
-			$this->toastError($this->lang('RULE_EXISTS', array($rule->moduleName, $rule->ruleAction)));
-			$this->setView('default');
+			$this->toastError($this->translate('RULE_EXISTS', array($rule->moduleName, $rule->ruleAction)));
 			
 		}
 
+		return $this->defaultAction();
+
 	}
 
-	public function editAction(): void {
+	/**
+	 * Render the edit form for the requested rule.
+	 */
+	public function editAction(): PageResponse {
 
-		$rules = $this->getObjectRequestedById('Pair\Models\Rule');
+		$rule = $this->loadRecordFromRoute(Rule::class);
+		$this->pageHeading($this->translate('EDIT_RULE'));
 
-		if ($rules) {
-			$this->setView('edit');
-		}
+		return $this->buildEditPage($rule);
 
 	}
 
 	/**
 	 * Modify or delete an object.
 	 */
-	public function changeAction(): void {
+	public function changeAction(): PageResponse {
 
-		$this->setView('default');
-		$rule = new Rule(Post::get('id'));
+		$rule = new Rule((int)$this->input()->int('id', 0));
 
 		// get input value
-		$moduleId   = Post::get('moduleId');
-		$action		= Post::get('actionField');
-		$adminOnly  = Post::get('adminOnly');
+		$moduleId   = (int)$this->input()->int('moduleId', 0);
+		$action		= trim((string)$this->input()->string('actionField', ''));
+		$adminOnly  = (bool)$this->input()->bool('adminOnly', false);
 
 		// checks if record already exists
 		$checkRule = Rule::getRuleModuleName($moduleId, $action, $adminOnly);
@@ -80,35 +118,77 @@ class RulesController extends Controller {
 		// if nothing found or record has the same ID
 		if (!$checkRule) {
 
-			$rule->moduleId  = Post::get('moduleId');
-			$rule->action	 = Post::get('actionField');
-			$rule->adminOnly = Post::get('adminOnly', 'bool');
+			$rule->moduleId  = $moduleId;
+			$rule->action	 = $action;
+			$rule->adminOnly = $adminOnly;
 
 			if ($rule->store()) {
-				$this->toast($this->lang('RULE_HAS_BEEN_CHANGED_SUCCESSFULLY', $module->name));
+				$this->toast($this->translate('RULE_HAS_BEEN_CHANGED_SUCCESSFULLY', $module->name));
 			}
 
 		} else {
-			$this->toastError($this->lang('RULE_EDIT_EXISTS',array($module->name,$checkRule->ruleAction)));
+			$this->toastError($this->translate('RULE_EDIT_EXISTS', array($module->name, $checkRule->ruleAction)));
 		}
+
+		return $this->defaultAction();
 
 	}
 	
 	/**
 	 * Delete an object.
 	 */
-	public function deleteAction(): void {
+	public function deleteAction(): ?PageResponse {
 		
 		$rule = new Rule(Router::get(0));
 		
 		if ($rule->delete()) {
-			$this->toast($this->lang('RULE_HAS_BEEN_DELETED_SUCCESSFULLY'));
+			$this->toast($this->translate('RULE_HAS_BEEN_DELETED_SUCCESSFULLY'));
 		} else {
-			$this->toastError($this->lang('ERROR_DELETING_RULES'));
+			$this->toastError($this->translate('ERROR_DELETING_RULES'));
 		}
 
 		$this->redirect('rules/default');
+
+		return null;
 			
+	}
+
+	/**
+	 * Build the rule list state.
+	 */
+	private function buildDefaultPageState(): RulesDefaultPageState {
+
+		$pagination = $this->buildPagination();
+		$this->model->pagination = $pagination;
+		$pagination->count = $this->model->countModules();
+
+		$rules = $this->model->getAclModelRules();
+
+		foreach ($rules as $rule) {
+			$rule->adminIcon = $rule->admin_only ? '<i class="fa fa-check text-success fa-lg"></i>' : '';
+		}
+
+		return new RulesDefaultPageState($rules, $pagination->render());
+
+	}
+
+	/**
+	 * Build the rule edit page response.
+	 */
+	private function buildEditPage(Rule $rule): PageResponse {
+
+		$form = $this->model->getRulesForm();
+		$form->values($rule);
+
+		// The HTML control uses actionField to avoid colliding with the router action.
+		$form->control('actionField')->value($rule->action);
+
+		return $this->page(
+			'edit',
+			new RulesEditPageState($form, (int)$rule->id),
+			$this->translate('EDIT_RULE')
+		);
+
 	}
 
 }

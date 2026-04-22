@@ -151,6 +151,7 @@
 
 	document.addEventListener('DOMContentLoaded', initializeEditors);
 
+	// Handle palette add and remove actions through event delegation.
 	document.addEventListener('click', function (event) {
 		const addButton = event.target.closest('[data-action="palette-add"]');
 
@@ -188,6 +189,7 @@
 		ensureAtLeastOneRow(editor);
 	});
 
+	// Keep text and color inputs synchronized after user changes.
 	document.addEventListener('change', function (event) {
 		const picker = event.target.closest('[data-role="palette-picker"]');
 
@@ -214,6 +216,7 @@
 		}
 	});
 
+	// Normalize palette rows before template forms are submitted.
 	document.addEventListener('submit', function (event) {
 		const form = event.target.closest('form[action="templates/add"], form[action="templates/change"]');
 

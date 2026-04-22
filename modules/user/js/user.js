@@ -1,3 +1,4 @@
+// Initialize profile form helpers after the DOM is ready.
 $(document).ready(function() {
 	
 	// show/hide password content in user edit
@@ -6,6 +7,7 @@ $(document).ready(function() {
 		$('input[name="password"]').attr('type', type);
 	});
 	
+	// Store the browser timezone in the profile form.
 	var timezone = jstz.determine();
 	$("input[name='timezone']").val(timezone.name());
 

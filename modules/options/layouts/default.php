@@ -10,7 +10,7 @@
 			
 							$currentGroup = null;
 						
-							foreach ($this->groupedOptions as $groupName=>$group) {
+							foreach ($state->groupedOptions as $groupName=>$group) {
 			
 								?><h3><?php print $groupName ?></h3>
 								<hr>
@@ -20,7 +20,7 @@
 									
 									?><div class="form-group">
 										<label class="col-md-3 control-label"><?php print $o->label ?><br><small><?php print $o->name ?></small></label>
-										<div class="col-md-9"><?php $this->form->printControl($o->name)  ?></div>
+										<div class="col-md-9"><?php $state->form->printControl($o->name)  ?></div>
 									</div><?php
 									
 								}
@@ -30,7 +30,7 @@
 							?><hr>
 							<div class="form-group">
 								<div class="col-md-push-3 col-md-9">
-									<button type="submit" class="btn btn-primary"><?php $this->_('SAVE') ?></button>
+									<button type="submit" class="btn btn-primary"><?php BoilerplateLayout::printText('SAVE'); ?></button>
 								</div>
 							</div>
 					</fieldset>

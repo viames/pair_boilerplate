@@ -10,8 +10,9 @@ a skeleton project to use [Pair PHP Framework](https://github.com/viames/pair) e
 This base project allows a fast start to develop small to medium PHP applications like CRM or web-portals.
 With the addition of a few files more, here provided as sample, and an initial database structure, your web project will be up and running in a breeze.
 
-This boilerplate currently targets the stable Pair v3 release line.
-If you want to experiment with Pair v4 alpha, use the framework repository directly instead of this default boilerplate baseline.
+This boilerplate now targets the Pair v4 development line.
+All bundled modules use the explicit v4 web path (`Pair\Web\Controller` + `PageResponse` + typed `*PageState`) without legacy `View` classes.
+The `crafter` generator also emits Pair v4 controller, state, and layout files, so new modules start from explicit typed state objects instead of raw assigned layout variables.
 
 ### Features
 This basic project manages users authentication, creates new custom ActiveRecord classes and [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) modules starting from a DB table by a magic module named `crafter`, all thru a friendly route logic.
@@ -34,7 +35,7 @@ Also it acts as REST API server with oAuth2 authentication support.
 
 ### PHP Configuration
 
-* Make sure that at least `PHP v8.2` or higher is installed and active on the machine;
+* Make sure that at least `PHP v8.3` or higher is installed and active on the machine;
 
 * Verify that the following PHP 8 extensions are configured:
     - `fileinfo`
@@ -70,6 +71,19 @@ sql_mode = STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_B
 * Run `git pull origin main` from the command line in the root of the project to download the latest stable version;
 
 * Run `composer install` from the command line in the root of the project to install the dependencies packages;
+
+* Run the migration helper in dry-run mode whenever you start moving a legacy module to the explicit v4 path:
+
+```bash
+composer run upgrade-to-v4 -- --dry-run
+```
+
+* Use the local Pair generator wrapper when creating new code from this project:
+
+```bash
+composer run pair -- make:module orders
+composer run pair -- make:crud order --table=orders --fields=id,customer_id,total_amount
+```
 
 * Schedule the execution with a one-minute period of the `/cronjob.php` script by activating Crontab on Linux. For example:
 
@@ -192,6 +206,8 @@ Access controls must be performed in this layer.
 
 The file name is located in each module folder and is always called `controller.php`.
 
+Pair v4 also supports an explicit response-oriented controller path. The migrated `user` module is the reference example for this style.
+
 #### Model
 
 The Model must contain all the business logic, so it must be as free as possible from routing and presentation logic.
@@ -214,6 +230,8 @@ class UserViewLogin extends View {
 // ...
 }
 ```
+
+During a Pair v4 migration, readonly `*PageState` classes replace the old implicit `assign()` variables step by step.
 
 ### `crafter` module
 
@@ -290,7 +308,7 @@ Always and only use the tab with a size of 4 spaces each for cpon files with the
 In inline instructions, avoid PHP abbreviated tags. For consistency with pre-existing code, use `print` instead of `echo`.
 
 ```php
-// preferable
+// preferable
 <?php print $var ?>
 
 // avoid

@@ -1,28 +1,28 @@
 <div class="card">
 	<div class="card-header">
-		<h4 class="card-title"><?php $this->_('UPLOAD_NEW_TEMPLATE') ?></h4>
+		<h4 class="card-title"><?php BoilerplateLayout::printText('UPLOAD_NEW_TEMPLATE'); ?></h4>
 	</div>
 	<div class="card-body">
-		<p class="card-text"><?php $this->_('UPLOAD_NEW_TEMPLATE_DESCRIPTION') ?></p>
+		<p class="card-text"><?php BoilerplateLayout::printText('UPLOAD_NEW_TEMPLATE_DESCRIPTION'); ?></p>
 		<form action="templates/add" method="post" enctype="multipart/form-data">
 			<fieldset>
 				<div class="row mb-4">
-					<label class="col-md-3 col-form-label"><?php $this->_('SELECT') ?></label>
-					<div class="col-md-9"><?php $this->form->printControl('package') ?></div>
+					<label class="col-md-3 col-form-label"><?php BoilerplateLayout::printText('SELECT'); ?></label>
+					<div class="col-md-9"><?php $state->form->printControl('package') ?></div>
 				</div>
 				<div class="row mb-4">
-					<label class="col-md-3 col-form-label"><?php $this->_('PALETTE') ?></label>
+					<label class="col-md-3 col-form-label"><?php BoilerplateLayout::printText('PALETTE'); ?></label>
 					<div class="col-md-9">
-						<p class="small text-body-secondary mb-2"><?php $this->_('PALETTE_HELP') ?></p>
+						<p class="small text-body-secondary mb-2"><?php BoilerplateLayout::printText('PALETTE_HELP'); ?></p>
 						<div class="mb-2">
 							<button type="button" class="btn btn-outline-primary btn-sm" data-action="palette-add">
-								<i class="fal fa-plus me-1"></i><?php $this->_('ADD_COLOR') ?>
+								<i class="fal fa-plus me-1"></i><?php BoilerplateLayout::printText('ADD_COLOR'); ?>
 							</button>
 						</div>
-						<div class="template-palette-editor" data-role="palette-editor" data-default-color="<?php print htmlspecialchars($this->paletteDefaultColor) ?>">
+						<div class="template-palette-editor" data-role="palette-editor" data-default-color="<?php print htmlspecialchars($state->paletteDefaultColor) ?>">
 							<div data-role="palette-list"><?php
 
-								foreach ($this->paletteColors as $color) { ?>
+								foreach ($state->paletteColors as $color) { ?>
 								<div class="d-flex align-items-center gap-2 mb-2" data-role="palette-item">
 									<input
 										type="color"
@@ -41,7 +41,7 @@
 										autocomplete="off"
 										spellcheck="false"
 									>
-									<button type="button" class="btn btn-outline-danger btn-sm" data-action="palette-remove" title="<?php $this->_('REMOVE_COLOR') ?>">
+									<button type="button" class="btn btn-outline-danger btn-sm" data-action="palette-remove" title="<?php print htmlspecialchars(BoilerplateLayout::translate('REMOVE_COLOR')) ?>">
 										<i class="fal fa-times"></i>
 									</button>
 								</div><?php
@@ -55,8 +55,8 @@
 			<div class="hr-line-dashed"></div>
 			<div class="row mb-4">
 				<div class="col-md-9 offset-md-3">
-					<button type="submit" class="btn btn-primary"><?php $this->_('INSERT') ?></button>
-					<a href="templates/default" class="btn btn-secondary"><?php $this->_('CANCEL') ?></a>
+					<button type="submit" class="btn btn-primary"><?php BoilerplateLayout::printText('INSERT'); ?></button>
+					<a href="templates/default" class="btn btn-secondary"><?php BoilerplateLayout::printText('CANCEL'); ?></a>
 				</div>
 			</div>
 		</form>

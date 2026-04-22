@@ -6,6 +6,9 @@ use Pair\Helpers\Translator;
 
 class Assets {
 
+	/**
+	 * Register global CSS, JavaScript, and inline runtime assets.
+	 */
 	public static function load(): void {
 
 		$app = Application::getInstance();
@@ -55,6 +58,9 @@ class Assets {
 
 	}
 
+	/**
+	 * Return the cache-busting suffix for local assets.
+	 */
 	public static function suffix(): string {
 		
 		return 'production' != Application::getEnvironment()

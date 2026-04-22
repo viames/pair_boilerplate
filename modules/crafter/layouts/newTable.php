@@ -6,26 +6,26 @@ use Pair\Helpers\Utilities;
 	<div class="col-12">
 		<div class="card">
 			<div class="card-header">
-				<h4 class="card-title"><?php $this->_('CRAFTER') ?></h4>
+				<h4 class="card-title"><?php BoilerplateLayout::printText('CRAFTER'); ?></h4>
 			</div><?php
 		
-			if (count($this->unmappedClasses)) {
+			if (count($state->unmappedClasses)) {
 			
 				?><div class="table-responsive">
 					<table class="table table-hover">
 						<thead>
 							<tr>
-								<th><?php $this->_('TABLE_NAME') ?></th>
+								<th><?php BoilerplateLayout::printText('TABLE_NAME'); ?></th>
 								<th>&nbsp;</th>
 							</tr>
 						</thead>
 						<tbody><?php 
 						
-							foreach ($this->unmappedClasses as $t) {
+							foreach ($state->unmappedClasses as $t) {
 						
 								?><tr>
 									<td><?php print $t ?></td>
-									<td><a href="crafter/createTable/<?php print $t ?>" class="btn btn-primary btn-sm"><?php $this->_('CREATE_TABLE') ?></a></td>
+									<td><a href="crafter/createTable/<?php print $t ?>" class="btn btn-primary btn-sm"><?php BoilerplateLayout::printText('CREATE_TABLE'); ?></a></td>
 								</tr><?php 
 								
 							}
@@ -36,11 +36,10 @@ use Pair\Helpers\Utilities;
 			
 			} else {
 				
-				print Utilities::showNoDataAlert();
+				Utilities::showNoDataAlert();
 				
 			}
 			
 		?></div>
 	</div>
 </div>
-

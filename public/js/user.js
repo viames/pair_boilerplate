@@ -1,3 +1,4 @@
+// Initialize public user form helpers after the DOM is ready.
 $(document).ready(function() {
 	
 	// show password content in user edit
@@ -13,6 +14,7 @@ $(document).ready(function() {
 		}
 	});
 
+	// Store the browser timezone in the form when the field is present.
 	var timezone = jstz.determine();
 	$("input[name='timezone']").val(timezone.name());
 

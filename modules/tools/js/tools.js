@@ -1,3 +1,4 @@
+// Initialize tool action feedback after the DOM is ready.
 $(document).ready(function() {
 
 	// animates the cog icon

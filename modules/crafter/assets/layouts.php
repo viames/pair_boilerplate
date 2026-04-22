@@ -2,7 +2,11 @@
 
 // layout della pagina default
 $layouts['default-page'] =
-'<div class="card">
+'<?php
+
+use Pair\Helpers\Utilities;
+
+?><div class="card">
 	<div class="card-header">
 		<div class="float-end">
 			<a class="p-1 btn btn-sm btn-outline-primary mt-1 float-end" href="{linkAdd}"><i class="fal fa-plus-large fa-fw"></i></a>
@@ -27,11 +31,11 @@ $layouts['default-page'] =
 				</table>
 			</div><?php
 
-			$this->printPaginationBar();
+			print $state->paginationBar;
 
 		} else {
 
-			$this->noData();
+			Utilities::showNoDataAlert();
 
 		}
 
@@ -57,8 +61,8 @@ $layouts['new-page'] =
 			<div class="hr-line-dashed"></div>
 			<div class="row mb-4">
 				<div class="col-md-9 offset-md-3">
-					<button type="submit" class="btn btn-primary"><?php $this->_(\'INSERT\') ?></button>
-					<a href="{cancelUrl}" class="btn btn-secondary"><?php $this->_(\'CANCEL\') ?></a>
+					<button type="submit" class="btn btn-primary"><?php BoilerplateLayout::printText(\'INSERT\'); ?></button>
+					<a href="{cancelUrl}" class="btn btn-secondary"><?php BoilerplateLayout::printText(\'CANCEL\'); ?></a>
 				</div>
 			</div>
 		</form>
@@ -85,10 +89,10 @@ $layouts['edit-page'] =
 			<div class="hr-line-dashed"></div>
 			<div class="row mb-4">
 				<div class="col-md-9 offset-md-3">
-					<button type="submit" class="btn btn-primary"><?php $this->_(\'CHANGE\') ?></button>
-					<a href="{cancelUrl}" class="btn btn-secondary"><?php $this->_(\'CANCEL\') ?></a><?php
-					if ($this->{object}->isDeletable()) { ?>
-					<a href="{deleteUrl}" class="btn btn-link confirm-delete float-end"><?php $this->_(\'DELETE\') ?></a><?php
+					<button type="submit" class="btn btn-primary"><?php BoilerplateLayout::printText(\'CHANGE\'); ?></button>
+					<a href="{cancelUrl}" class="btn btn-secondary"><?php BoilerplateLayout::printText(\'CANCEL\'); ?></a><?php
+					if ($state->{object}->isDeletable()) { ?>
+					<a href="{deleteUrl}" class="btn btn-link confirm-delete float-end"><?php BoilerplateLayout::printText(\'DELETE\'); ?></a><?php
 					} ?>
 				</div>
 			</div>

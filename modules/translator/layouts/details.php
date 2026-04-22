@@ -1,25 +1,30 @@
+<?php
+
+use Pair\Helpers\Utilities;
+
+?>
 <div class="card">
 	<div class="card-header">
-		<h5><?php $this->_('DETAILS_OF_TRANSLATION', $this->locale->getEnglishNames()) ?></h5>
+		<h5><?php BoilerplateLayout::printText('DETAILS_OF_TRANSLATION', $state->locale->getEnglishNames()); ?></h5>
 	</div>
 	<div class="card-body">
 		<div class="table-responsive"><?php
 
-if (count($this->locale->details)) {
+if (count($state->locale->details)) {
 
 	?><table class="table table-hover">
 		<thead>
 			<tr>
-				<th class="text-center"><?php $this->_('MODULE') ?></th>
-				<th class="text-center"><?php $this->_('PERCENTAGE') ?></th>
-				<th class="text-center"><?php $this->_('TRANSLATED_LINES') ?></th>
-				<th class="text-center"><?php $this->_('EDITED') ?></th>
-				<th class="text-center"><?php $this->_('EDIT') ?></th>
+				<th class="text-center"><?php BoilerplateLayout::printText('MODULE'); ?></th>
+				<th class="text-center"><?php BoilerplateLayout::printText('PERCENTAGE'); ?></th>
+				<th class="text-center"><?php BoilerplateLayout::printText('TRANSLATED_LINES'); ?></th>
+				<th class="text-center"><?php BoilerplateLayout::printText('EDITED'); ?></th>
+				<th class="text-center"><?php BoilerplateLayout::printText('EDIT'); ?></th>
 			</tr>
 		</thead>
 		<tbody><?php
 
-		foreach ($this->locale->details as $detail) {
+		foreach ($state->locale->details as $detail) {
 
 			?><tr>
 				<td class="text-left align-middle"><?php print htmlspecialchars(ucfirst($detail->moduleName)) ?></td>
@@ -36,7 +41,7 @@ if (count($this->locale->details)) {
 				
 } else {
 			
-	Pair\Helpers\Utilities::printNoDataMessageBox();
+	Utilities::showNoDataAlert();
 			
 }	
 	

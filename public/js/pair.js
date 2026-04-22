@@ -1,3 +1,4 @@
+// Register Pair-specific jQuery helpers.
 (function ($) {
 
     // extended functions
@@ -58,6 +59,9 @@
 
         },
 
+        /**
+         * Append one AJAX log entry to the visible debug log.
+         */
         $.addAjaxLog = function(log) {
         	$('#log > .events').append(log);
         },
@@ -135,6 +139,7 @@
 
 })(jQuery);
 
+// Initialize global Pair UI bindings after the DOM is ready.
 $(document).ready(function() {
 
 	/**

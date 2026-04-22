@@ -5,20 +5,26 @@
 	"minimum-stability": "dev",
 	"prefer-stable": true,
 	"require": {
-		"viames/pair": "^3.0"
+		"viames/pair": "dev-main"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "^12.0"
 	},
 	"scripts": {
-        "post-install-cmd": [
-			"php migrate-cli.php"       
-		],
-        "post-update-cmd": [
+		"post-install-cmd": [
 			"php migrate-cli.php"
-        ]
+		],
+		"post-update-cmd": [
+			"php migrate-cli.php"
+		],
+		"pair": "php bin/pair",
+		"test": "phpunit",
+		"upgrade-to-v4": "php vendor/viames/pair/scripts/upgrade-to-v4.php"
 	},
 	"autoload": {
 		"classmap": [
 			"classes/",
-			"modules/*/classes/"
+			"modules/"
 		],
 		"exclude-from-classmap": [
 			"modules/*/assets/",

@@ -4,7 +4,10 @@ use Pair\Html\Form;
 use Pair\Core\Model;
 
 class ModulesModel extends Model {
-	
+
+	/**
+	 * Build the upload form used to install a module package.
+	 */
 	public function getModuleForm() {
 	
 		$form = new Form();

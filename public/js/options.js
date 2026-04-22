@@ -1,3 +1,4 @@
+// Initialize option form password helpers after the DOM is ready.
 $(document).ready(function() {
 	
 	// bind password field

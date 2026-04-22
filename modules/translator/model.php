@@ -7,7 +7,10 @@ use Pair\Orm\Collection;
 use Pair\Orm\Database;
 
 class TranslatorModel extends Model {
-	
+
+	/**
+	 * Build the locale list query with the current alphabetic filter.
+	 */
 	protected function getQuery(string $class): string {
 
 		$alphaFilter = trim((string)$this->app->getPersistentState('translatorAlphaFilter'));
@@ -28,6 +31,9 @@ class TranslatorModel extends Model {
 
 	}
 
+	/**
+	 * Return sortable columns for the locale list.
+	 */
 	protected function getOrderOptions(): array {
 
 		return [

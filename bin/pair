@@ -1,0 +1,11 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Local Pair CLI wrapper that uses this project's Composer autoload.
+ */
+require dirname(__DIR__) . '/vendor/autoload.php';
+
+exit((new Pair\Console\MakeCommand())->run($argv));

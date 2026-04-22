@@ -1,40 +1,78 @@
 <?php
 
 use Pair\Core\Application;
-use Pair\Core\Controller;
 use Pair\Helpers\Plugin;
-use Pair\Helpers\Post;
 use Pair\Helpers\Upload;
 use Pair\Html\Breadcrumb;
+use Pair\Http\EmptyResponse;
 use Pair\Models\Template;
+use Pair\Web\PageResponse;
 
-class TemplatesController extends Controller {
+class TemplatesController extends BoilerplateController {
+
+	/**
+	 * Template module data helper.
+	 */
+	private TemplatesModel $model;
 
 	/**
 	 * Prepare the template administration page.
 	 */
-	protected function _init(): void {
+	protected function boot(): void {
 
 		// Remove temporary plugin archives left by older uploads.
 		Plugin::removeOldFiles();
 
-		Breadcrumb::path($this->lang('TEMPLATES'), 'templates/default');
+		$this->model = new TemplatesModel();
+		Breadcrumb::path($this->translate('TEMPLATES'), 'templates/default');
+
+	}
+
+	/**
+	 * Render the installed templates list.
+	 */
+	public function defaultAction(): PageResponse {
+
+		$this->pageHeading($this->translate('TEMPLATES'));
+
+		return $this->page('default', $this->buildDefaultPageState(), $this->translate('TEMPLATES'));
+
+	}
+
+	/**
+	 * Render the upload form for a new template.
+	 */
+	public function newAction(): PageResponse {
+
+		$this->loadScript('js/templates.js', true);
+		Breadcrumb::path($this->translate('NEW_TEMPLATE'), 'templates/new');
+		$this->pageHeading($this->translate('NEW_TEMPLATE'));
+
+		$paletteColors = Template::defaultPaletteColors();
+
+		return $this->page(
+			'new',
+			new TemplatesNewPageState(
+				$this->model->getTemplateForm(),
+				$paletteColors,
+				$paletteColors[0]
+			),
+			$this->translate('NEW_TEMPLATE')
+		);
 
 	}
 
 	/**
 	 * Install a template package uploaded from the admin UI and optionally apply the selected palette.
 	 */
-	public function addAction(): void {
-
-		$this->setView('default');
+	public function addAction(): PageResponse {
 
 		$upload = new Upload('package');
 		$palette = $this->getPaletteFromRequest();
 
 		if ('zip' != $upload->type) {
-			$this->modal($this->lang('ERROR'), $this->lang('UPLOADED_FILE_IS_NOT_ZIP'), 'error');
-			return;
+			$this->modal($this->translate('ERROR'), $this->translate('UPLOADED_FILE_IS_NOT_ZIP'), 'error');
+			return $this->defaultAction();
 		}
 
 		$upload->save(TEMP_PATH);
@@ -45,8 +83,8 @@ class TemplatesController extends Controller {
 		$installed = $plugin->installPackage($package);
 
 		if (!$installed) {
-			$this->modal($this->lang('ERROR'), $this->lang('TEMPLATE_HAS_NOT_BEEN_INSTALLED'), 'error');
-			return;
+			$this->modal($this->translate('ERROR'), $this->translate('TEMPLATE_HAS_NOT_BEEN_INSTALLED'), 'error');
+			return $this->defaultAction();
 		}
 
 		$template = $templateName ? Template::getPluginByName($templateName) : null;
@@ -59,57 +97,58 @@ class TemplatesController extends Controller {
 			$template->palette = $palette;
 
 			if (!$template->store()) {
-				$this->toastError($this->lang('ERROR'), $this->lang('PALETTE_HAS_NOT_BEEN_APPLIED'));
+				$this->toastError($this->translate('ERROR'), $this->translate('PALETTE_HAS_NOT_BEEN_APPLIED'));
 			}
 		} else {
-			$this->toastError($this->lang('ERROR'), $this->lang('PALETTE_HAS_NOT_BEEN_APPLIED'));
+			$this->toastError($this->translate('ERROR'), $this->translate('PALETTE_HAS_NOT_BEEN_APPLIED'));
 		}
 
-		$this->modal($this->lang('DONE'), $this->lang('TEMPLATE_HAS_BEEN_INSTALLED_SUCCESFULLY'), 'success');
+		$this->modal($this->translate('DONE'), $this->translate('TEMPLATE_HAS_BEEN_INSTALLED_SUCCESFULLY'), 'success');
+
+		return $this->defaultAction();
 
 	}
 
 	/**
 	 * Show the edit form for the selected template.
 	 */
-	public function editAction(): void {
+	public function editAction(): PageResponse {
 
-		$template = $this->getObjectRequestedById('Pair\Models\Template');
+		$template = $this->loadRecordFromRoute(Template::class);
 
 		if (!$template || !$template->isLoaded()) {
 			$this->redirect('templates/default');
-			return;
 		}
 
-		$this->setView('edit');
+		return $this->buildEditPage($template);
 
 	}
 
 	/**
 	 * Apply metadata and palette changes to an installed template.
 	 */
-	public function changeAction(): void {
+	public function changeAction(): ?PageResponse {
 
-		$template = new Template(Post::int('id'));
+		$template = new Template((int)$this->input()->int('id', 0));
 
 		if (!$template->isLoaded()) {
-			$this->toastError($this->lang('ERROR'), $this->lang('TEMPLATE_HAS_NOT_BEEN_CHANGED'));
+			$this->toastError($this->translate('ERROR'), $this->translate('TEMPLATE_HAS_NOT_BEEN_CHANGED'));
 			$this->redirect('templates/default');
-			return;
+			return null;
 		}
 
 		$oldName = $template->name;
-		$newName = trim(Post::get('name'));
+		$newName = trim((string)$this->input()->string('name', ''));
 
 		if (!$this->isValidTemplateName($newName)) {
-			$this->toastError($this->lang('ERROR'), $this->lang('TEMPLATE_NAME_IS_INVALID'));
+			$this->toastError($this->translate('ERROR'), $this->translate('TEMPLATE_NAME_IS_INVALID'));
 			$this->redirect('templates/edit/' . $template->id);
-			return;
+			return null;
 		}
 
 		$template->name = $newName;
-		$template->version = trim(Post::get('version'));
-		$template->appVersion = trim(Post::get('appVersion'));
+		$template->version = trim((string)$this->input()->string('version', ''));
+		$template->appVersion = trim((string)$this->input()->string('appVersion', ''));
 		$template->palette = $this->getPaletteFromRequest();
 
 		$oldFolder = $this->getExistingTemplateFolderPath($oldName);
@@ -119,15 +158,15 @@ class TemplatesController extends Controller {
 		if ($oldName !== $newName) {
 
 			if (!$oldFolder || (is_dir($newFolder) && $oldFolder !== $newFolder)) {
-				$this->toastError($this->lang('ERROR'), $this->lang('TEMPLATE_FOLDER_HAS_NOT_BEEN_RENAMED'));
+				$this->toastError($this->translate('ERROR'), $this->translate('TEMPLATE_FOLDER_HAS_NOT_BEEN_RENAMED'));
 				$this->redirect('templates/edit/' . $template->id);
-				return;
+				return null;
 			}
 
 			if ($oldFolder !== $newFolder && !@rename($oldFolder, $newFolder)) {
-				$this->toastError($this->lang('ERROR'), $this->lang('TEMPLATE_FOLDER_HAS_NOT_BEEN_RENAMED'));
+				$this->toastError($this->translate('ERROR'), $this->translate('TEMPLATE_FOLDER_HAS_NOT_BEEN_RENAMED'));
 				$this->redirect('templates/edit/' . $template->id);
-				return;
+				return null;
 			}
 
 			$folderRenamed = ($oldFolder !== $newFolder);
@@ -135,9 +174,9 @@ class TemplatesController extends Controller {
 		}
 
 		if ($template->store()) {
-			$this->toast($this->lang('DONE'), $this->lang('TEMPLATE_HAS_BEEN_CHANGED_SUCCESFULLY'));
+			$this->toast($this->translate('DONE'), $this->translate('TEMPLATE_HAS_BEEN_CHANGED_SUCCESFULLY'));
 			$this->redirect('templates/default');
-			return;
+			return null;
 		}
 
 		// Restore the old folder name if the filesystem rename happened but DB validation failed.
@@ -145,51 +184,128 @@ class TemplatesController extends Controller {
 			@rename($newFolder, $oldFolder);
 		}
 
-		$message = $this->lang('TEMPLATE_HAS_NOT_BEEN_CHANGED');
+		$message = $this->translate('TEMPLATE_HAS_NOT_BEEN_CHANGED');
 		$errors = $template->getErrors();
 
 		if (count($errors)) {
 			$message .= ":\n" . implode("\n", $errors);
 		}
 
-		$this->toastError($this->lang('ERROR'), $message);
+		$this->toastError($this->translate('ERROR'), $message);
 		$this->redirect('templates/edit/' . $template->id);
+
+		return null;
 
 	}
 
 	/**
 	 * Download the selected template package.
 	 */
-	public function downloadAction(): void {
+	public function downloadAction(): EmptyResponse {
 
-		$template = $this->getObjectRequestedById('Pair\Models\Template');
+		$template = $this->loadRecordFromRoute(Template::class);
 		$plugin = $template->getPlugin();
 		$plugin->downloadPackage();
+
+		return new EmptyResponse();
 
 	}
 
 	/**
 	 * Delete the selected installed template when development mode allows it.
 	 */
-	public function deleteAction(): void {
+	public function deleteAction(): ?PageResponse {
 
 		if (Application::getEnvironment() !== 'development' || !$this->app->currentUser->admin) {
-			$this->toastError($this->lang('ERROR'), $this->lang('TEMPLATE_HAS_NOT_BEEN_REMOVED'));
+			$this->toastError($this->translate('ERROR'), $this->translate('TEMPLATE_HAS_NOT_BEEN_REMOVED'));
 			$this->redirect('templates/default');
-			return;
+			return null;
 		}
 
 		try {
-			$template = $this->getObjectRequestedById('Pair\Models\Template');
+			$template = $this->loadRecordFromRoute(Template::class);
 			$template->delete();
 		} catch (Throwable $e) {
-			$this->toastError($this->lang('ERROR'), $this->lang('TEMPLATE_HAS_NOT_BEEN_REMOVED'));
+			$this->toastError($this->translate('ERROR'), $this->translate('TEMPLATE_HAS_NOT_BEEN_REMOVED'));
 			$this->redirect('templates/default');
-			return;
+			return null;
 		}
 
-		$this->toast($this->lang('DONE'), $this->lang('TEMPLATE_HAS_BEEN_REMOVED_SUCCESFULLY'));
+		$this->toast($this->translate('DONE'), $this->translate('TEMPLATE_HAS_BEEN_REMOVED_SUCCESFULLY'));
 		$this->redirect('templates/default');
+
+		return null;
+
+	}
+
+	/**
+	 * Build the installed templates list state.
+	 */
+	private function buildDefaultPageState(): TemplatesDefaultPageState {
+
+		$pagination = $this->buildPagination();
+		$this->model->pagination = $pagination;
+		$templates = $this->model->getActiveRecordObjects(Template::class, 'name');
+		$deletionAllowed = ('development' == Application::getEnvironment() && $this->app->currentUser->admin);
+
+		foreach ($templates as $template) {
+
+			$paletteSamples = [];
+
+			foreach ($template->getPaletteColors() as $color) {
+				$safeColor = htmlspecialchars($color, ENT_QUOTES, 'UTF-8');
+				$paletteSamples[] = '<span class="d-inline-block rounded border border-secondary-subtle me-1 mb-1" '
+					. 'style="width:16px;height:16px;background-color:' . $safeColor . '" '
+					. 'title="' . $safeColor . '"></span>';
+			}
+
+			$template->paletteSamples = implode('', $paletteSamples);
+			$template->isDefaultIcon = $template->isDefault ? PAIR_CHECK_ICON : PAIR_TIMES_ICON;
+			$template->dateReleasedText = $template->formatDateTime('dateReleased');
+			$template->dateInstalledText = $template->formatDateTime('dateInstalled');
+
+			if ($template->isCompatibleWithApp()) {
+				$template->compatible = '<span class="fal fa-check fa-lg text-success"></span>';
+			} else if ($template->isCompatibleWithAppMajorVersion()) {
+				$template->compatible = '<span class="text-warning">' . htmlspecialchars($template->appVersion, ENT_QUOTES, 'UTF-8') . '</span>';
+			} else {
+				$template->compatible = '<span class="text-danger">' . htmlspecialchars($template->appVersion, ENT_QUOTES, 'UTF-8') . '</span>';
+			}
+
+			$template->downloadUrl = 'templates/download/' . $template->id;
+			$template->editUrl = 'templates/edit/' . $template->id;
+			$template->deleteUrl = 'templates/delete/' . $template->id;
+
+		}
+
+		return new TemplatesDefaultPageState($templates, $deletionAllowed, $pagination->render());
+
+	}
+
+	/**
+	 * Build the template edit page response.
+	 */
+	private function buildEditPage(Template $template): PageResponse {
+
+		$this->loadScript('js/templates.js', true);
+		Breadcrumb::path($this->translate('EDIT_TEMPLATE'), 'templates/edit/' . $template->id);
+		$this->pageHeading($this->translate('EDIT_TEMPLATE'));
+
+		$form = $this->model->getTemplateEditForm();
+		$form->values($template);
+
+		$paletteColors = $template->getPaletteColors();
+
+		return $this->page(
+			'edit',
+			new TemplatesEditPageState(
+				$form,
+				$template,
+				$paletteColors,
+				$paletteColors[0]
+			),
+			$this->translate('EDIT_TEMPLATE')
+		);
 
 	}
 
@@ -200,7 +316,7 @@ class TemplatesController extends Controller {
 	 */
 	private function getPaletteFromRequest(): array {
 
-		$palette = Post::array('palette');
+		$palette = $this->input()->array('palette');
 		$cleanPalette = [];
 
 		foreach ($palette as $color) {

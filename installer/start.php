@@ -32,6 +32,9 @@ class Installer {
 	 */
 	private array $errors = [];
 
+	/**
+	 * Initialize installer paths from the current request.
+	 */
 	public function __construct() {
 
 		// the app root
@@ -42,30 +45,45 @@ class Installer {
 
 	}
 
+	/**
+	 * Add an informational message to the installer output.
+	 */
 	public function addNotification($text) {
 
 		$this->notifications[] = $text;
 
 	}
 
+	/**
+	 * Return collected informational messages.
+	 */
 	public function getNotifications() {
 
 		return $this->notifications;
 
 	}
 
+	/**
+	 * Add an error message to the installer output.
+	 */
 	public function addError($text) {
 
 		$this->errors[] = $text;
 
 	}
 
+	/**
+	 * Return collected installer errors.
+	 */
 	public function getErrors() {
 
 		return $this->errors;
 
 	}
 
+	/**
+	 * Check filesystem permissions required by the installer.
+	 */
 	public function checkFoldersErrors() {
 
 		// check root folder writable
@@ -76,6 +94,9 @@ class Installer {
 
 	}
 
+	/**
+	 * Check Apache requirements used by the boilerplate.
+	 */
 	public function checkApacheErrors() {
 
 		// test apache
@@ -93,6 +114,9 @@ class Installer {
 
 	}
 
+	/**
+	 * Check PHP version and extension requirements.
+	 */
 	public function checkPhpErrors($requiredVersion, $extensions) {
 
 		// check PHP extensions
@@ -109,6 +133,9 @@ class Installer {
 
 	}
 
+	/**
+	 * Validate required submitted installer fields.
+	 */
 	public function checkRequiredFields() {
 
 		// list of required field names
@@ -124,6 +151,9 @@ class Installer {
 
 	}
 
+	/**
+	 * Connect to the configured database server.
+	 */
 	public function connectToDbms() {
 
 		$v = $this->getPostVars();
@@ -142,6 +172,9 @@ class Installer {
 
 	}
 
+	/**
+	 * Check the connected database server version.
+	 */
 	public function checkDbmsVersion($requiredVersion) {
 
 		// check MySQL version
@@ -155,6 +188,9 @@ class Installer {
 
 	}
 
+	/**
+	 * Detect whether the database server needs UTF-8 normalization.
+	 */
 	public function checkDbUtf8() {
 
 		// check about charsets and collations
@@ -185,6 +221,9 @@ class Installer {
 
 	}
 
+	/**
+	 * Create or prepare the application database and import baseline SQL files.
+	 */
 	public function createDb() {
 
 		// get the variables by http post
@@ -350,6 +389,9 @@ class Installer {
 
 	}
 
+	/**
+	 * Render collected installer notifications.
+	 */
 	public function printNotifications() {
 
 		if (count($this->notifications)) {
@@ -363,6 +405,9 @@ class Installer {
 
 	}
 
+	/**
+	 * Render collected installer errors.
+	 */
 	public function printErrors() {
 
 		if (count($this->errors)) {
@@ -376,6 +421,9 @@ class Installer {
 
 	}
 
+	/**
+	 * Render the initial installer form.
+	 */
 	public function printSetupPage() {
 
 		$v = $this->getPostVars();
@@ -503,6 +551,9 @@ class Installer {
 
 	}
 
+	/**
+	 * Render the installation completion page.
+	 */
 	public function printFinalPage() {
 
 		$v = $this->getPostVars();
@@ -562,6 +613,9 @@ class Installer {
 
 	}
 
+	/**
+	 * Return normalized installer POST variables.
+	 */
 	public function getPostVars() {
 
 		// list of required field names
@@ -578,6 +632,9 @@ class Installer {
 
 	}
 
+	/**
+	 * Write the generated environment configuration file.
+	 */
 	public function createConfigFile() {
 
 		$vars = $this->getPostVars();
@@ -628,6 +685,9 @@ MYSQLDUMP_PATH=';
 
 	}
 
+	/**
+	 * Create the runtime temp folder when missing.
+	 */
 	public function createTempFolder() {
 
 		$tempFolder = $this->rootFolder . '/temp';
@@ -640,6 +700,9 @@ MYSQLDUMP_PATH=';
 
 	}
 
+	/**
+	 * Recursively delete a directory tree.
+	 */
 	public static function deleteDir($dirPath) {
 
 		if (!is_dir($dirPath)) {
@@ -663,6 +726,9 @@ MYSQLDUMP_PATH=';
 		rmdir($dirPath);
 	}
 
+	/**
+	 * Remove the installer folder after a successful installation.
+	 */
 	public function selfRemove(): bool {
 
 		$folder = $this->rootFolder . '/installer';

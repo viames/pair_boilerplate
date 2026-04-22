@@ -15,7 +15,7 @@
 				</ul>
 				<h3>Risultati:</h3>
 				<div class="crafter-container">
-					<?php foreach ($this->results as $res) { ?>
+					<?php foreach ($state->results as $res) { ?>
 						<div class="crafter-item">
 							<pre><?php var_dump($res) ?></pre>
 						</div>

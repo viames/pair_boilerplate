@@ -8,7 +8,16 @@ use Pair\Core\Application;
 // initialize composer
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-// start the Application in headless mode so tests bootstrap the framework without rendering output
-Application::getInstance()->headless();
+/**
+ * Tell DB-dependent tests whether an application environment file is available.
+ */
+function pairTestsHaveEnvironment(): bool {
 
-// ./vendor/bin/phpunit --bootstrap tests/bootstrap.php tests
+	return file_exists(dirname(__DIR__) . '/.env');
+
+}
+
+// Start the Application only when .env exists; otherwise Pair would launch the installer and stop the test process.
+if (pairTestsHaveEnvironment()) {
+	Application::getInstance()->headless();
+}

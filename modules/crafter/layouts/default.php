@@ -6,9 +6,9 @@
 			</div>
 			<div class="card-body">
 				<div>
-					<p><?php $this->_('CREATE_CLASS_OR_MODULE_DESCRIPTION') ?></p>
+					<p><?php BoilerplateLayout::printText('CREATE_CLASS_OR_MODULE_DESCRIPTION'); ?></p>
 					<a class="btn btn-primary btn-block" href="crafter/newClass">
-						<?php $this->_('START') ?>
+						<?php BoilerplateLayout::printText('START'); ?>
 					</a>
 				</div>
 			</div>

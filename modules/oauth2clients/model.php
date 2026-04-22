@@ -6,6 +6,9 @@ use Pair\Models\OAuth2Client;
 
 class Oauth2clientsModel extends Model {
 
+	/**
+	 * Build the OAuth2 clients listing query.
+	 */
 	public function getQuery(string $class): string {
 
 		$query = 'SELECT * FROM `oauth2_clients`';
@@ -14,6 +17,9 @@ class Oauth2clientsModel extends Model {
 
 	}
 
+	/**
+	 * Return sortable columns for OAuth2 clients.
+	 */
 	protected function getOrderOptions(): array {
 
 		return [

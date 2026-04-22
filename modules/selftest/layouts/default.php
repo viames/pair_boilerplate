@@ -2,15 +2,15 @@
 	<div class="col-lg-12">
 		<div class="card">
 			<div class="card-header">
-				<h5 class="float-left"><?php $this->_('SELF_TEST') ?></h5>
-				<a class="btn btn-primary btn-sm float-right" href="selftest/default"><i class="fa fa-redo"></i> <?php $this->_('REFRESH') ?></a>
+				<h5 class="float-left"><?php BoilerplateLayout::printText('SELF_TEST'); ?></h5>
+				<a class="btn btn-primary btn-sm float-right" href="selftest/default"><i class="fa fa-redo"></i> <?php BoilerplateLayout::printText('REFRESH'); ?></a>
 			</div>
 			<div class="card-body">
 				<div class="table-responsive">
 					<table class="table table-hover">
 						<tbody><?php
 		
-						foreach ($this->sections as $name=>$tests) {
+						foreach ($state->sections as $name=>$tests) {
 
 							?><tr><th colspan="2"><?php print $name ?></th></tr><?php
 

@@ -14,6 +14,10 @@ function setPersistentState(name, value) {
 
 }
 
+/**
+ * Remove a persistent-state cookie for the active filter.
+ * @param {string} name
+ */
 function unsetPersistentState(name) {
 
 	let cookieName = cookiePrefix + name.charAt(0).toUpperCase() + name.slice(1);
@@ -25,6 +29,7 @@ function unsetPersistentState(name) {
 
 }
 
+// Initialize global UI helpers after the DOM is ready.
 $(document).ready(function () {
 
 	/**
