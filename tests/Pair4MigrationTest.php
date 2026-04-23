@@ -26,6 +26,85 @@ final class Pair4MigrationTest extends TestCase {
 	}
 
 	/**
+	 * Verify that the boilerplate selects the Pair v4 renderer matching its Bootstrap template.
+	 */
+	public function testAssetsSelectBootstrapRenderer(): void {
+
+		$content = (string)file_get_contents($this->projectRoot() . '/classes/Assets.php');
+
+		$this->assertStringContainsString("->uiFramework('bootstrap')", $content);
+
+	}
+
+	/**
+	 * Verify that application code no longer depends on the deprecated Pair v4 MVC bridge.
+	 */
+	public function testApplicationCodeAvoidsDeprecatedPairMvcBridge(): void {
+
+		$forbidden = [
+			'use Pair\\Core\\' . 'Controller',
+			'use Pair\\Core\\' . 'View',
+			'extends \\Pair\\Core\\' . 'Controller',
+			'extends \\Pair\\Core\\' . 'View',
+		];
+
+		foreach ($this->applicationPhpFiles() as $file) {
+			$content = (string)file_get_contents($file);
+
+			foreach ($forbidden as $pattern) {
+				$this->assertStringNotContainsString($pattern, $content, $file);
+			}
+		}
+
+	}
+
+	/**
+	 * Verify that application code uses the current Pair v4 CSS asset signature.
+	 */
+	public function testApplicationCodeUsesCurrentLoadCssSignature(): void {
+
+		foreach ($this->applicationPhpFiles() as $file) {
+			$content = (string)file_get_contents($file);
+
+			$this->assertDoesNotMatchRegularExpression('/->loadCss\\([^;\\n]+,[^;\\n]+\\)/', $content, $file);
+		}
+
+	}
+
+	/**
+	 * Verify that application code uses current Pair 4 package and extension names.
+	 */
+	public function testApplicationCodeUsesCurrentPackageAndExtensionNames(): void {
+
+		$forbidden = [
+			'Pair\\Helpers\\' . 'InstallablePlugin',
+			'Pair\\Helpers\\' . 'Plugin',
+			'Pair\\Helpers\\' . 'PluginBase',
+			'PluginInterface',
+			'RuntimePluginInterface',
+			'registerPlugin(',
+			'registerRuntimePlugin(',
+			'getInstallablePlugin(',
+			'installPackage(',
+			'downloadPackage(',
+			'createManifestFile(',
+			'getManifestByFile(',
+			'removeOldFiles(',
+			'fixPlugins(',
+			'fixPluginsAction(',
+		];
+
+		foreach ($this->applicationPhpFiles() as $file) {
+			$content = (string)file_get_contents($file);
+
+			foreach ($forbidden as $pattern) {
+				$this->assertStringNotContainsString($pattern, $content, $file);
+			}
+		}
+
+	}
+
+	/**
 	 * Verify that module manifests reference files that still exist.
 	 */
 	public function testModuleManifestsReferenceExistingFiles(): void {
@@ -35,6 +114,11 @@ final class Pair4MigrationTest extends TestCase {
 			$xml = simplexml_load_file($manifest);
 
 			$this->assertNotFalse($xml, 'Manifest must be readable: ' . $manifest);
+			$manifestContents = (string)file_get_contents($manifest);
+
+			$this->assertStringContainsString('<package', $manifestContents, $manifest);
+			$this->assertStringNotContainsString('<plugin', $manifestContents, $manifest);
+			$this->assertStringNotContainsString('</plugin>', $manifestContents, $manifest);
 
 			foreach ($xml->xpath('//file') ?: [] as $fileNode) {
 				$file = trim((string)$fileNode);
@@ -46,6 +130,49 @@ final class Pair4MigrationTest extends TestCase {
 				$this->assertFileExists($moduleDir . '/' . $file, 'Manifest references a missing file.');
 			}
 		}
+
+	}
+
+	/**
+	 * Return application PHP files that should stay on current Pair runtime APIs.
+	 *
+	 * @return list<string>
+	 */
+	private function applicationPhpFiles(): array {
+
+		$root = $this->projectRoot();
+		$paths = [
+			$root . '/classes',
+			$root . '/modules',
+			$root . '/public',
+			$root . '/cronjob.php',
+			$root . '/migrate-cli.php',
+		];
+		$files = [];
+
+		foreach ($paths as $path) {
+			if (is_file($path) and str_ends_with($path, '.php')) {
+				$files[] = $path;
+				continue;
+			}
+
+			if (!is_dir($path)) {
+				continue;
+			}
+
+			// Scan production application code while leaving tests and vendor out of this guard.
+			$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS));
+
+			foreach ($iterator as $file) {
+				if ($file->isFile() and 'php' === $file->getExtension()) {
+					$files[] = $file->getPathname();
+				}
+			}
+		}
+
+		sort($files);
+
+		return $files;
 
 	}
 

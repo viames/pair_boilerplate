@@ -684,8 +684,8 @@ class CrafterModel extends Model {
 		$this->addMigrationQuery($module, $moduleComment);
 
 		// create manifest file
-		$plugin = $module->getPlugin();
-		$plugin->createManifestFile();
+		$package = $module->getInstallablePackage();
+		$package->writeManifestFile();
 
 		// create Rule object
 		$rule = new Rule();

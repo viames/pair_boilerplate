@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Pair\Core\Application;
 use Pair\Core\Env;
 use Pair\Helpers\Translator;
@@ -12,6 +14,9 @@ class Assets {
 	public static function load(): void {
 
 		$app = Application::getInstance();
+
+		// Keep Pair HTML helpers aligned with the Bootstrap template shipped by the boilerplate.
+		$app->uiFramework('bootstrap');
 
 		// list of common CSS
 		$styles = [
@@ -49,12 +54,12 @@ class Assets {
 		$app->addScript('let cookiePrefix = "' . $app->getCookiePrefix() . '";');
 
 		// izitoast
-		$app->loadScript('https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js', TRUE);
+		$app->loadScript('https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js', true);
 		$app->loadCss('https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css');
 
 		// sweetalert
-		$app->loadScript('https://cdn.jsdelivr.net/npm/sweetalert2@9', TRUE);
-		$app->loadCss('https://cdn.jsdelivr.net/npm/sweetalert2@9/dist/sweetalert2.min.css');
+		$app->loadScript('https://cdn.jsdelivr.net/npm/sweetalert2@11', true);
+		$app->loadCss('https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css');
 
 	}
 
@@ -64,8 +69,8 @@ class Assets {
 	public static function suffix(): string {
 		
 		return 'production' != Application::getEnvironment()
-		? time()
-		: Env::get('APP_VERSION');
+			? (string)time()
+			: (string)Env::get('APP_VERSION');
 		
 	}
 
