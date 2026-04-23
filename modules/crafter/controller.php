@@ -2,131 +2,208 @@
 
 declare(strict_types=1);
 
+require_once APPLICATION_PATH . '/modules/crafter/classes/CrafterAccessDeniedPageState.php';
+require_once APPLICATION_PATH . '/modules/crafter/classes/CrafterBootstrapReferencePageState.php';
+require_once APPLICATION_PATH . '/modules/crafter/classes/CrafterClassWizardPageState.php';
+require_once APPLICATION_PATH . '/modules/crafter/classes/CrafterDefaultPageState.php';
+require_once APPLICATION_PATH . '/modules/crafter/classes/CrafterModuleWizardPageState.php';
+require_once APPLICATION_PATH . '/modules/crafter/classes/CrafterNewClassPageState.php';
+require_once APPLICATION_PATH . '/modules/crafter/classes/CrafterNewTablePageState.php';
+require_once APPLICATION_PATH . '/modules/crafter/classes/CrafterPlaygroundPageState.php';
+
 use Pair\Core\Application;
 use Pair\Core\Router;
 use Pair\Exceptions\AppException;
 use Pair\Exceptions\CriticalException;
 use Pair\Exceptions\ErrorCodes;
 use Pair\Exceptions\PairException;
+use Pair\Helpers\Translator;
 use Pair\Html\Breadcrumb;
-use Pair\Html\Form;
 use Pair\Models\Group;
-use Pair\Models\User;
-use Pair\Orm\Collection;
+use Pair\Web\Controller;
 use Pair\Web\PageResponse;
 
-class CrafterController extends BoilerplateController {
+/**
+ * Controller Pair v4 del modulo tecnico Crafter.
+ */
+class CrafterController extends Controller {
 
 	/**
-	 * Crafter module data helper.
+	 * Model tecnico del modulo Crafter.
 	 */
-	private CrafterModel $model;
+	protected CrafterModel $model;
 
 	/**
-	 * Prepare access checks and shared breadcrumbs.
+	 * Inizializza guard d'ambiente e breadcrumb base del modulo.
 	 */
 	protected function boot(): void {
 
 		$this->model = new CrafterModel();
 		$this->checkAccess();
-
 		Breadcrumb::path('Crafter module', 'crafter');
 
 	}
 
 	/**
-	 * Render the Crafter landing page.
+	 * Mostra la pagina di diniego oppure rientra sulla dashboard in ambiente sviluppo.
+	 */
+	public function accessDeniedAction(): ?PageResponse {
+
+		if ('development' === Application::getEnvironment()) {
+			$this->redirect('crafter');
+			return null;
+		}
+
+		$this->pageHeading('Crafter');
+
+		return $this->page('accessDeniedPage', new CrafterAccessDeniedPageState(), 'Crafter');
+
+	}
+
+	/**
+	 * Mostra la dashboard principale del modulo tecnico.
 	 */
 	public function defaultAction(): PageResponse {
 
-		$this->pageHeading($this->translate('CRAFTER', null, false));
+		$this->pageTitle('Crafter');
+		$this->pageHeading('Crafter');
+		$this->menuUrl('crafter');
 
-		return $this->page('default', new stdClass(), $this->translate('CRAFTER', null, false));
+		return $this->page('defaultPage', new CrafterDefaultPageState(), 'Crafter');
 
 	}
 
 	/**
-	 * Render the access denied page.
+	 * Mostra l'elenco delle tabelle non ancora mappate a classi.
 	 */
-	public function accessDeniedAction(): PageResponse {
+	public function newClassAction(): PageResponse {
 
-		if ('development' == Application::getEnvironment()) {
-			$this->redirect('crafter');
+		$this->pageHeading('Crafter');
+		$this->menuUrl('crafter');
+
+		return $this->page('newClassPage', $this->buildNewClassPageState(), 'Crafter');
+
+	}
+
+	/**
+	 * Mostra il wizard di creazione classe per la tabella richiesta.
+	 */
+	public function newClassWizardAction(): ?PageResponse {
+
+		$tableName = $this->requestedTableName();
+
+		if ('' === $tableName) {
+			$this->toastError($this->translate('TABLE_NAME_NOT_SPECIFIED'));
+			$this->redirect('crafter/newClass');
+			return null;
 		}
 
-		$this->pageHeading($this->translate('CRAFTER'));
+		$this->pageHeading('Crafter');
+		$this->menuUrl('crafter');
 
-		return $this->page('accessDenied', new stdClass(), $this->translate('CRAFTER'));
+		return $this->page('newClassWizardPage', $this->buildClassWizardPageState($tableName), 'Crafter');
 
 	}
 
 	/**
-	 * Create a new ActiveRecord class from the submitted table mapping.
+	 * Mantiene compatibile il vecchio route del wizard classe.
 	 */
-	public function classCreationAction(): PageResponse {
+	public function classWizardAction(): ?PageResponse {
 
-		$tableName = trim((string)$this->input()->string('tableName', ''));
-		$objectName = trim((string)$this->input()->string('objectName', ''));
+		return $this->newClassWizardAction();
+
+	}
+
+	/**
+	 * Crea la classe richiesta e reindirizza alla lista tabelle non mappate.
+	 */
+	public function classCreationAction(): void {
+
+		$tableName = $this->bodyRawString('tableName');
+		$objectName = $this->bodyRawString('objectName');
 
 		if ($tableName and $objectName) {
-
 			$this->model->setupVariables($tableName, $objectName);
-
-			$file = APPLICATION_PATH . '/classes/' . $this->model->objectName . '.php';
+			$file = $this->model->commonClassPath();
 
 			if (!file_exists($file)) {
-
 				try {
 					$this->model->saveClass($file);
 					$this->model->createMigrationFile();
+					$this->toast($this->translate('CLASS_HAS_BEEN_CREATED', $this->model->objectName));
 				} catch (Exception $e) {
 					$this->toastError($e->getMessage());
-					return $this->newClassAction();
+					$this->redirect('crafter/newClass');
+					return;
 				}
-
-				$this->toast($this->translate('CLASS_HAS_BEEN_CREATED', $this->model->objectName));
-
 			} else {
-
 				$this->toastError($this->translate('CLASS_FILE_ALREADY_EXISTS', $this->model->objectName));
-
 			}
-
 		} else {
-
 			$this->toastError($this->translate('CLASS_HAS_NOT_BEEN_CREATED'));
-
 		}
 
-		return $this->newClassAction();
+		$this->redirect('crafter/newClass');
 
 	}
 
 	/**
-	 * Render the class wizard for the table selected by the legacy route.
+	 * Mostra il wizard di creazione modulo per la tabella richiesta.
 	 */
-	public function classWizardAction(): PageResponse {
+	public function newModuleWizardAction(): ?PageResponse {
 
-		if (!Router::get(0)) {
+		$tableName = $this->requestedTableName();
+
+		if ('' === $tableName) {
 			$this->toastError($this->translate('TABLE_NAME_NOT_SPECIFIED'));
-			return $this->newClassAction();
+			$this->redirect('crafter/newClass');
+			return null;
 		}
 
-		return $this->buildClassWizardPage((string)Router::get(0));
+		$this->pageHeading('Crafter');
+		$this->menuUrl('crafter');
+
+		return $this->page('newModuleWizardPage', $this->buildModuleWizardPageState($tableName), 'Crafter');
 
 	}
 
 	/**
-	 * Create a database table from an existing ActiveRecord class.
+	 * Mantiene compatibile il vecchio route del wizard modulo.
 	 */
-	public function createTableAction(): ?PageResponse {
+	public function moduleWizardAction(): ?PageResponse {
 
-		$tableName = (string)Router::get(0);
+		return $this->newModuleWizardAction();
+
+	}
+
+	/**
+	 * Mostra l'elenco delle classi non ancora materializzate come tabella.
+	 */
+	public function newTableAction(): ?PageResponse {
+
+		if (!(bool)($this->app->currentUser->super ?? false)) {
+			return $this->accessDeniedAction();
+		}
+
+		$this->pageHeading('Crafter');
+		$this->menuUrl('crafter');
+
+		return $this->page('newTablePage', $this->buildNewTablePageState(), 'Crafter');
+
+	}
+
+	/**
+	 * Crea la tabella richiesta e torna al workspace corretto con feedback esplicito.
+	 */
+	public function createTableAction(): void {
+
+		$tableName = $this->requestedTableName();
 		$class = $this->model->getClassByTable($tableName);
 
 		if (!$class) {
 			$this->toastError($this->translate('CLASS_NOT_FOUND_FOR_TABLE', $tableName));
-			return $this->newTableAction();
+			$this->redirect('crafter/newTable');
+			return;
 		}
 
 		$res = $this->model->createTableByClass($class);
@@ -134,88 +211,37 @@ class CrafterController extends BoilerplateController {
 		if ($res) {
 			$this->toast($this->translate('TABLE_HAS_BEEN_CREATED', $tableName));
 			$this->redirect('crafter');
-			return null;
+			return;
 		}
 
 		$errors = $this->model->getErrors();
 		$this->toastError($this->translate('ERROR_ON_LAST_REQUEST') . "\n" . implode("\n", $errors));
-
-		return $this->newTableAction();
-
-	}
-
-	/**
-	 * Render the list of tables that can still be mapped to classes.
-	 */
-	public function newClassAction(): PageResponse {
-
-		$this->pageHeading($this->translate('CRAFTER'));
-
-		return $this->page(
-			'newClass',
-			new CrafterNewClassPageState($this->model->getUnmappedTables()),
-			$this->translate('CRAFTER')
-		);
+		$this->redirect('crafter/newTable');
 
 	}
 
 	/**
-	 * Render the class wizard for a selected table.
+	 * Esegue la creazione del modulo e torna alla dashboard tecnica.
 	 */
-	public function newClassWizardAction(): PageResponse {
+	public function moduleCreationAction(): void {
 
-		return $this->buildClassWizardPage((string)Router::get(0));
-
-	}
-
-	/**
-	 * Render the module wizard for a selected table.
-	 */
-	public function newModuleWizardAction(): PageResponse {
-
-		return $this->buildModuleWizardPage((string)Router::get(0));
-
-	}
-
-	/**
-	 * Render the list of classes that can still create a table.
-	 */
-	public function newTableAction(): PageResponse {
-
-		$this->pageHeading($this->translate('CRAFTER'));
-
-		if (!$this->app->currentUser->admin) {
-			return $this->accessDeniedAction();
-		}
-
-		return $this->page(
-			'newTable',
-			new CrafterNewTablePageState($this->model->getUnmappedClasses()),
-			$this->translate('CRAFTER')
-		);
-
-	}
-
-	/**
-	 * Create a complete Pair v4 module from the submitted table mapping.
-	 */
-	public function moduleCreationAction(): ?PageResponse {
-
-		$tableName = trim((string)$this->input()->string('tableName', ''));
-		$objectName = trim((string)$this->input()->string('objectName', ''));
-		$moduleName = trim((string)$this->input()->string('moduleName', ''));
-		$commonClass = (bool)$this->input()->bool('commonClass', false);
-		$migration = (bool)$this->input()->bool('migration', false);
+		$tableName = $this->bodyRawString('tableName');
+		$objectName = $this->bodyRawString('objectName');
+		$moduleName = $this->bodyRawString('moduleName');
+		$commonClass = $this->bodyBool('commonClass', false);
+		$migration = $this->bodyBool('migration', false);
 
 		if (!$tableName or !$objectName or !$moduleName) {
 			$this->toastError($this->translate('MODULE_HAS_NOT_BEEN_CREATED'));
-			return $this->defaultAction();
+			$this->redirect('crafter');
+			return;
 		}
 
 		$grantedGroups = [];
 
+		// Ricostruisce i gruppi concessi per il nuovo modulo dal POST del wizard.
 		foreach (Group::all() as $group) {
-			$value = (bool)$this->input()->bool('group' . $group->id, false);
+			$value = $this->bodyBool('group' . $group->id, false);
 			if ($value) {
 				$grantedGroups[] = new Group($group->id);
 			}
@@ -224,145 +250,166 @@ class CrafterController extends BoilerplateController {
 		$this->model->setupVariables($tableName, $objectName, $moduleName);
 
 		try {
-
 			$this->model->createModule($commonClass);
 			$this->model->registerModule($grantedGroups);
 
 			if ($migration) {
 				$this->model->createMigrationFile();
 			}
-
 		} catch (Throwable $e) {
-
-			$this->modal($this->translate('ERROR'), $e->getMessage(), 'danger');
-			return $this->defaultAction();
-
+			$this->modal('Error', $e->getMessage(), 'danger');
+			$this->redirect('crafter');
+			return;
 		}
 
-		$this->toast($this->translate('INFO'), $this->translate('MODULE_HAS_BEEN_CREATED', $moduleName));
-		$this->redirect();
-
-		return null;
+		$this->toast('Info', $this->translate('MODULE_HAS_BEEN_CREATED', $moduleName));
+		$this->redirect('crafter');
 
 	}
 
 	/**
-	 * Render the module wizard for the table selected by the legacy route.
-	 */
-	public function moduleWizardAction(): PageResponse {
-
-		if (!Router::get(0)) {
-			$this->toastError($this->translate('TABLE_NAME_NOT_SPECIFIED'));
-			return $this->newClassAction();
-		}
-
-		return $this->buildModuleWizardPage((string)Router::get(0));
-
-	}
-
-	/**
-	 * Render the playground page or trigger the selected exception path.
+	 * Mostra l'area di prova per eccezioni e query sperimentali.
 	 */
 	public function playgroundAction(): PageResponse {
 
-		$this->pageHeading($this->translate('CRAFTER'));
+		$this->pageHeading('Crafter');
+		$this->menuUrl('crafter');
 		Breadcrumb::path('Playground', 'crafter/playground');
 
-		$results = [];
-		$choice = Router::get(0);
-
-		switch ($choice) {
-
-			case 'AppException':
-				throw new AppException('AppException message');
-
-			case 'PairException':
-				throw new PairException('PairException message');
-
-			case 'PairExceptionWithCode':
-				throw new PairException('PairException message', ErrorCodes::VIEW_RUNTIME_ERROR);
-
-			case 'CriticalException':
-				throw new CriticalException('CriticalException message');
-
-			case 'FailureQuery':
-				Pair\Orm\Database::load('SELECT `test` FROM `users`');
-				break;
-
-			default:
-				break;
-
-		}
-
-		return $this->page('playground', new CrafterPlaygroundPageState($results), 'Playground');
+		return $this->page('playgroundPage', $this->buildPlaygroundPageState(), 'Crafter');
 
 	}
 
 	/**
-	 * Render the class synchronization page.
+	 * Mostra l'elenco storico delle tabelle da sincronizzare con classi e moduli.
 	 */
 	public function synchronizeClassAction(): PageResponse {
 
-		$this->pageHeading($this->translate('CRAFTER'));
+		$this->pageHeading('Crafter');
+		$this->menuUrl('crafter');
 
-		if (!$this->app->currentUser->admin) {
-			return $this->accessDeniedAction();
-		}
-
-		return $this->page(
-			'synchronizeClass',
-			new CrafterSynchronizeClassPageState($this->model->getUnmappedTables()),
-			$this->translate('CRAFTER')
-		);
+		return $this->page('synchronizeClassPage', $this->buildNewClassPageState(), 'Crafter');
 
 	}
 
 	/**
-	 * Render a class wizard response for the selected table.
+	 * Espone la pagina autonoma di riferimento per i componenti Bootstrap del modulo.
 	 */
-	private function buildClassWizardPage(string $tableName): PageResponse {
+	public function bootstrapReferenceAction(): PageResponse {
 
-		$this->pageHeading($this->translate('CRAFTER'));
+		$this->pageTitle('Componenti Bootstrap');
+		$this->pageHeading('Componenti Bootstrap');
+		$this->menuUrl('crafter');
+		$this->loadScript('js/crafter.js?' . Assets::suffix(), true);
+		Breadcrumb::path('Componenti Bootstrap', 'crafter/bootstrapReference');
+
+		return $this->page('bootstrapReferencePage', new CrafterBootstrapReferencePageState(), 'Componenti Bootstrap');
+
+	}
+
+	/**
+	 * Costruisce lo stato della lista tabelle non ancora mappate.
+	 */
+	protected function buildNewClassPageState(): CrafterNewClassPageState {
+
+		return new CrafterNewClassPageState($this->model->getUnmappedTables());
+
+	}
+
+	/**
+	 * Costruisce lo stato della lista classi non ancora materializzate come tabella.
+	 */
+	protected function buildNewTablePageState(): CrafterNewTablePageState {
+
+		return new CrafterNewTablePageState($this->model->getUnmappedClasses());
+
+	}
+
+	/**
+	 * Costruisce lo stato del wizard di creazione classe.
+	 */
+	protected function buildClassWizardPageState(string $tableName): CrafterClassWizardPageState {
+
 		$this->model->setupVariables($tableName);
-
 		$form = $this->model->getClassWizardForm();
 		$form->control('objectName')->value($this->model->objectName);
 		$form->control('tableName')->value($tableName);
 
-		return $this->page(
-			'newClassWizard',
-			new CrafterNewClassWizardPageState($form),
-			$this->translate('CRAFTER')
-		);
+		return new CrafterClassWizardPageState($form);
 
 	}
 
 	/**
-	 * Render a module wizard response for the selected table.
+	 * Costruisce lo stato del wizard di creazione modulo.
 	 */
-	private function buildModuleWizardPage(string $tableName): PageResponse {
+	protected function buildModuleWizardPageState(string $tableName): CrafterModuleWizardPageState {
 
-		$this->pageHeading($this->translate('CRAFTER'));
 		$this->model->setupVariables($tableName);
-
 		$groups = Group::all();
-		$form = $this->getModuleWizardForm($tableName, $groups);
+		$form = $this->buildModuleWizardForm($tableName, $groups);
 
-		return $this->page(
-			'newModuleWizard',
-			new CrafterNewModuleWizardPageState($form, $groups),
-			$this->translate('CRAFTER')
-		);
+		return new CrafterModuleWizardPageState($form, $groups);
 
 	}
 
 	/**
-	 * Prevents access to instances that are not under development.
+	 * Costruisce lo stato della pagina playground, mantenendo i side effect storici.
 	 */
-	private function checkAccess(): void {
+	protected function buildPlaygroundPageState(): CrafterPlaygroundPageState {
 
-		$alwaysGranted = in_array($this->router->action, ['playground', 'accessDenied']);
-		$isDevelopment = 'development' == Application::getEnvironment();
+		$results = [];
+		$choice = Router::get(0);
+
+		// Mantiene i casi eccezione e query sperimentali già esposti dal playground tecnico.
+		switch ($choice) {
+			case 'AppException':
+				throw new AppException('AppException message');
+			case 'PairException':
+				throw new PairException('PairException message');
+			case 'PairExceptionWithCode':
+				throw new PairException('PairException message', ErrorCodes::VIEW_RUNTIME_ERROR);
+			case 'CriticalException':
+				throw new CriticalException('CriticalException message');
+			case 'FailureQuery':
+				Pair\Orm\Database::load('SELECT `test` FROM `users`');
+				break;
+			default:
+				break;
+		}
+
+		return new CrafterPlaygroundPageState($results);
+
+	}
+
+	/**
+	 * Costruisce il form del wizard modulo con ACL iniziali.
+	 */
+	protected function buildModuleWizardForm(string $tableName, iterable $groups): Pair\Html\Form {
+
+		$form = new Pair\Html\Form();
+		$form->classForControls('form-control');
+		$form->text('objectName')->required()->value($this->model->objectName)->label('OBJECT_NAME');
+		$form->text('moduleName')->required()->value($this->model->moduleName)->label('MODULE_NAME');
+		$form->checkbox('commonClass')->value(false)->class('switchery')->label('COMMON_CLASS');
+		$form->checkbox('migration')->value(true)->class('switchery')->label('MIGRATION');
+		$form->hidden('tableName')->required()->value($tableName)->label('TABLE_NAME');
+
+		// Prepara gli switch ACL per tutti i gruppi disponibili nel runtime corrente.
+		foreach ($groups as $group) {
+			$form->checkbox('group' . $group->id)->value($group->default)->class('switchery')->label($group->name);
+		}
+
+		return $form;
+
+	}
+
+	/**
+	 * Impedisce l'accesso fuori dal solo ambiente sviluppo.
+	 */
+	protected function checkAccess(): void {
+
+		$alwaysGranted = in_array((string)$this->router->action, ['playground', 'accessDenied'], true);
+		$isDevelopment = 'development' === Application::getEnvironment();
 
 		if (!$alwaysGranted and !$isDevelopment) {
 			$this->redirect('crafter/accessDenied');
@@ -371,24 +418,56 @@ class CrafterController extends BoilerplateController {
 	}
 
 	/**
-	 * Build the module wizard form for the selected table.
+	 * Restituisce il nome tabella richiesto dal route tecnico corrente.
 	 */
-	private function getModuleWizardForm(string $tableName, Collection $groups): Form {
+	protected function requestedTableName(): string {
 
-		$form = new Form();
+		return trim((string)(Router::get(0) ?: ''));
 
-		$form->classForControls('form-control');
-		$form->text('objectName')->required()->value($this->model->objectName)->label('OBJECT_NAME');
-		$form->text('moduleName')->required()->value($this->model->moduleName)->label('MODULE_NAME');
-		$form->checkbox('commonClass')->value(false)->class('switchery')->label('COMMON_CLASS');
-		$form->checkbox('migration')->value(true)->class('switchery')->label('MIGRATION');
-		$form->hidden('tableName')->required()->value($tableName)->label('TABLE_NAME');
+	}
 
-		foreach ($groups as $group) {
-			$form->checkbox('group' . $group->id)->value($group->default)->class('switchery')->label($group->name);
+	/**
+	 * Restituisce una traduzione esplicita senza dipendere dal controller legacy.
+	 */
+	private function translate(string $key, string|array|null $vars = null): string {
+
+		return Translator::do($key, $vars);
+
+	}
+
+	/**
+	 * Legge una stringa non trim dal body della richiesta Pair v4.
+	 */
+	private function bodyRawString(string $key): string {
+
+		$value = $this->input()->body($key, '');
+
+		return (string)$value;
+
+	}
+
+	/**
+	 * Legge un booleano normalizzato dal body della richiesta Pair v4.
+	 */
+	private function bodyBool(string $key, bool $default): bool {
+
+		$value = $this->input()->body($key, $default);
+
+		if (is_bool($value)) {
+			return $value;
 		}
 
-		return $form;
+		$normalized = strtolower(trim((string)$value));
+
+		if (in_array($normalized, ['1', 'true', 'yes', 'on'], true)) {
+			return true;
+		}
+
+		if (in_array($normalized, ['0', 'false', 'no', 'off'], true)) {
+			return false;
+		}
+
+		return $default;
 
 	}
 

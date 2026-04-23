@@ -179,12 +179,12 @@ class CrafterModel extends Model {
 		// set the migration as applied in the current app
 		foreach ($this->queries as $index => $query) {
 
-				$migration = new Migration();
-				$migration->file = $fileName;
-				$migration->source = Migration::SOURCE_APP;
-				$migration->queryIndex = $index+1;
-				$migration->description = $query['comment'];
-				$migration->affectedRows = $query['affectedRows'] ?? 0;
+			$migration = new Migration();
+			$migration->file = $fileName;
+			$migration->source = Migration::SOURCE_APP;
+			$migration->queryIndex = $index+1;
+			$migration->description = $query['comment'];
+			$migration->affectedRows = $query['affectedRows'] ?? 0;
 			$migration->result = true;
 
 			$migration->store();
@@ -210,18 +210,35 @@ class CrafterModel extends Model {
 		Translator::resetLocale();
 
 		// object class file
-		$path = ($commonClass ? APPLICATION_PATH : $folder) . '/classes/' . $this->objectName . '.php';
+		$path = $commonClass ? $this->commonClassPath() : $folder . '/classes/' . $this->objectName . '.php';
 		$this->saveClass($path);
 
-		// create the Pair v4 module files
+		// create the controller, state and layout files with the Pair v4 rendering boundary
 		$this->saveController($folder . '/controller.php');
 		$this->saveModel($folder . '/model.php');
-		$this->savePageStateDefault($folder . '/classes/' . ucfirst($this->moduleName) . 'DefaultPageState.php');
-		$this->savePageStateNew($folder . '/classes/' . ucfirst($this->moduleName) . 'NewPageState.php');
-		$this->savePageStateEdit($folder . '/classes/' . ucfirst($this->moduleName) . 'EditPageState.php');
+		$this->saveDefaultPageState($folder . '/classes/' . ucfirst($this->moduleName) . 'DefaultPageState.php');
+		$this->saveFormPageState($folder . '/classes/' . ucfirst($this->moduleName) . 'FormPageState.php');
 		$this->saveLayoutDefault($folder . '/layouts/default.php');
 		$this->saveLayoutNew($folder . '/layouts/new.php');
 		$this->saveLayoutEdit($folder . '/layouts/edit.php');
+		$this->saveLayoutPage($folder . '/layouts/defaultPage.php', ucfirst($this->moduleName) . 'DefaultPageState', 'default.php');
+		$this->saveLayoutPage($folder . '/layouts/newPage.php', ucfirst($this->moduleName) . 'FormPageState', 'new.php');
+		$this->saveLayoutPage($folder . '/layouts/editPage.php', ucfirst($this->moduleName) . 'FormPageState', 'edit.php');
+
+	}
+
+	/**
+	 * Restituisce il percorso standard per le classi comuni generate da Crafter.
+	 */
+	public function commonClassPath(): string {
+
+		$folder = APPLICATION_PATH . '/classes/Generated';
+
+		if (!is_dir($folder)) {
+			mkdir($folder, 0777, true);
+		}
+
+		return $folder . '/' . $this->objectName . '.php';
 
 	}
 
@@ -485,12 +502,54 @@ class CrafterModel extends Model {
 	}
 
 	/**
-	 * Return PHP code that reads the object key from the Pair v4 input object.
+	 * Restituisce l'espressione PHP generata per il breadcrumb di modifica.
 	 */
-	private function getPostKeyExpression(): string {
+	private function getObjectEditRouteExpression(string $objectVar): string {
 
 		if (is_array($this->tableKey)) {
+			$parts = [];
 
+			foreach ($this->tableKey as $key) {
+				$parts[] = '$' . $objectVar . '->' . Utilities::getCamelCase($key);
+			}
+
+			return "'edit/' . " . implode(" . '/' . ", $parts);
+		}
+
+		return "'edit/' . $" . $objectVar . '->' . Utilities::getCamelCase($this->tableKey);
+
+	}
+
+	/**
+	 * Restituisce il blocco PHP generato per leggere la chiave dal route corrente.
+	 */
+	private function getRequestedObjectCode(): string {
+
+		if (is_array($this->tableKey)) {
+			$params = [];
+			$vars = [];
+
+			foreach ($this->tableKey as $index => $key) {
+				$var = '$' . Utilities::getCamelCase($key);
+				$vars[] = $var;
+				$params[] = '		' . $var . ' = Router::get(' . $index . ');';
+			}
+
+			return implode("\n", $params) . "\n\t\t" . '$key = [' . implode(', ', $vars) . '];';
+		}
+
+		$keyVar = '$' . Utilities::getCamelCase($this->tableKey);
+
+		return '		' . $keyVar . ' = Router::get(0);' . "\n\t\t" . '$key = ' . $keyVar . ';';
+
+	}
+
+	/**
+	 * Return PHP code that reads the object key from the Pair v4 input object.
+	 */
+	private function getInputKeyExpression(): string {
+
+		if (is_array($this->tableKey)) {
 			$keys = [];
 
 			foreach ($this->tableKey as $key) {
@@ -498,31 +557,9 @@ class CrafterModel extends Model {
 			}
 
 			return '[' . implode(', ', $keys) . ']';
-
 		}
 
 		return "\$this->input()->value('" . Utilities::getCamelCase($this->tableKey) . "')";
-
-	}
-
-	/**
-	 * Return PHP code that reads the object key from route parameters.
-	 */
-	private function getRouteKeyExpression(): string {
-
-		if (is_array($this->tableKey)) {
-
-			$keys = [];
-
-			foreach (array_values($this->tableKey) as $index => $key) {
-				$keys[] = 'Router::get(' . $index . ')';
-			}
-
-			return '[' . implode(', ', $keys) . ']';
-
-		}
-
-		return 'Router::get(0)';
 
 	}
 
@@ -684,8 +721,8 @@ class CrafterModel extends Model {
 		$this->addMigrationQuery($module, $moduleComment);
 
 		// create manifest file
-		$plugin = $module->getPlugin();
-		$plugin->createManifestFile();
+		$package = $module->getInstallablePackage();
+		$package->writeManifestFile();
 
 		// create Rule object
 		$rule = new Rule();
@@ -862,10 +899,13 @@ class ' . $this->objectName . ' extends ActiveRecord {
 	 */
 	private function saveController(string $file): void {
 
+		$moduleClass = ucfirst($this->moduleName);
 		$objectVar = lcfirst($this->objectName);
+		$itemsVar = Utilities::getCamelCase($this->tableName);
 		$tableLabel = strtoupper($this->tableName);
-		$routeKey = $this->getRouteKeyExpression();
-		$postKey = $this->getPostKeyExpression();
+		$editUrl = $this->getObjectEditRouteExpression($objectVar);
+		$inputKey = $this->getInputKeyExpression();
+		$requestObjectCode = $this->getRequestedObjectCode();
 
 		// here starts code collect
 		$content =
@@ -873,51 +913,69 @@ class ' . $this->objectName . ' extends ActiveRecord {
 
 declare(strict_types=1);
 
+require_once APPLICATION_PATH . \'/modules/' . $this->moduleName . '/classes/' . $moduleClass . 'DefaultPageState.php\';
+require_once APPLICATION_PATH . \'/modules/' . $this->moduleName . '/classes/' . $moduleClass . 'FormPageState.php\';
+
+use Pair\Core\Logger;
+use Pair\Core\Options;
 use Pair\Core\Router;
-use Pair\Exceptions\AppException;
+use Pair\Helpers\Translator;
 use Pair\Html\Breadcrumb;
+use Pair\Html\Pagination;
+use Pair\Orm\ActiveRecord;
+use Pair\Web\Controller;
 use Pair\Web\PageResponse;
 
-class ' . ucfirst($this->moduleName) . 'Controller extends BoilerplateController {
+class ' . ucfirst($this->moduleName) . 'Controller extends Controller {
 
 	/**
-	 * Module data helper.
+	 * Model operativo del modulo.
 	 */
-	private ' . ucfirst($this->moduleName) . 'Model $model;
+	protected ' . ucfirst($this->moduleName) . 'Model $model;
 
 	/**
-	 * Prepare dependencies and breadcrumbs.
+	 * Inizializza model e breadcrumb base del modulo.
 	 */
 	protected function boot(): void {
 
 		$this->model = new ' . ucfirst($this->moduleName) . 'Model();
-		Breadcrumb::path($this->translate(\'' . $tableLabel . '\'), \'' . $this->moduleName . '\');
+		Breadcrumb::path(Translator::do(\'' . $tableLabel . '\'), \'' . $this->moduleName . '\');
 
 	}
 
 	/**
-	 * Render the list page.
+	 * Mostra la lista degli oggetti disponibili con paginazione Pair v4.
 	 */
 	public function defaultAction(): PageResponse {
 
-		$this->pageHeading($this->translate(\'' . $tableLabel . '\'));
+		$pagination = $this->buildPagination();
+		$this->model->pagination = $pagination;
+		$' . $itemsVar . ' = $this->model->getItems(\'' .  $this->objectName . '\');
+		$pagination->count = $this->model->countItems(\'' .  $this->objectName . '\');
 
-		return $this->page(\'default\', $this->buildDefaultPageState(), $this->translate(\'' . $tableLabel . '\'));
+		$this->pageHeading(Translator::do(\'' . $tableLabel . '\'));
+
+		return $this->page(
+			\'defaultPage\',
+			new ' . $moduleClass . 'DefaultPageState($' . $itemsVar . ', $pagination->render()),
+			Translator::do(\'' . $tableLabel . '\')
+		);
 
 	}
 
 	/**
-	 * Render the creation form.
+	 * Mostra il form di inserimento di un nuovo oggetto.
 	 */
 	public function newAction(): PageResponse {
 
-		$this->pageHeading($this->translate(\'NEW_OBJECT\'));
-		Breadcrumb::path($this->translate(\'NEW_OBJECT\'), \'new\');
+		$this->pageHeading(Translator::do(\'NEW_OBJECT\'));
+		Breadcrumb::path(Translator::do(\'NEW_OBJECT\'), \'new\');
+		$form = $this->model->get' . $this->objectName . 'Form(new ' . $this->objectName . '());
 
 		return $this->page(
-			\'new\',
-			new ' . ucfirst($this->moduleName) . 'NewPageState($this->model->get' . $this->objectName . 'Form(new ' . $this->objectName . '())),
-			$this->translate(\'NEW_OBJECT\')
+			\'newPage\',
+			new ' . $moduleClass . 'FormPageState($form, null),
+			Translator::do(\'NEW_OBJECT\')
 		);
 
 	}
@@ -925,26 +983,20 @@ class ' . ucfirst($this->moduleName) . 'Controller extends BoilerplateController
 	/**
 	 * Add a new object.
 	 */
-	public function addAction(): ?PageResponse {
+	public function addAction(): void {
 
-		$' . $objectVar . ' = new ' . $this->objectName . '();
-		$' . $objectVar . '->populateByRequest();
+		$' . lcfirst($this->objectName) . ' = new ' . $this->objectName . '();
+		$' . lcfirst($this->objectName) . '->populateByRequest();
 
 		// create the record
-		if (!$' . $objectVar . '->store()) {
-			$this->toastError($this->buildRecordErrorMessage($' . $objectVar . ', \'OBJECT_HAS_NOT_BEEN_CREATED\'));
-			return $this->page(
-				\'new\',
-				new ' . ucfirst($this->moduleName) . 'NewPageState($this->model->get' . $this->objectName . 'Form($' . $objectVar . ')),
-				$this->translate(\'NEW_OBJECT\')
-			);
+		if (!$' . lcfirst($this->objectName) . '->store()) {
+			$this->raiseRecordError($' . $objectVar . ');
+			return;
 		}
 
 		// notify the creation and redirect
-		$this->toast($this->translate(\'OBJECT_HAS_BEEN_CREATED\'));
+		$this->toast(Translator::do(\'OBJECT_HAS_BEEN_CREATED\'));
 		$this->redirect($this->router->module);
-
-		return null;
 
 	}
 
@@ -953,100 +1005,99 @@ class ' . ucfirst($this->moduleName) . 'Controller extends BoilerplateController
 	 */
 	public function editAction(): PageResponse {
 
-		$' . $objectVar . ' = $this->loadObjectFromRoute();
-		$this->pageHeading($this->translate(\'EDIT_OBJECT\'));
-		Breadcrumb::path($this->translate(\'EDIT_OBJECT\'), \'edit/\' . ' . $this->getTableKeyAsCgiParams('$' . $objectVar) . ');
+		$' . $objectVar . ' = $this->findRequestedObject();
 
-		return $this->buildEditPage($' . $objectVar . ');
+		if (!$' . $objectVar . ') {
+			return $this->defaultAction();
+		}
+
+		$this->pageHeading(Translator::do(\'EDIT_OBJECT\'));
+		Breadcrumb::path(Translator::do(\'EDIT_OBJECT\'), ' . $editUrl . ');
+		$form = $this->model->get' . ucfirst($this->objectName) . 'Form($' . $objectVar . ');
+
+		return $this->page(
+			\'editPage\',
+			new ' . $moduleClass . 'FormPageState($form, $' . $objectVar . '),
+			Translator::do(\'EDIT_OBJECT\')
+		);
 
 	}
 
 	/**
 	 * Modify a ' . $this->objectName . ' object.
 	 */
-	public function changeAction(): ?PageResponse {
+	public function changeAction(): void {
 
-		$' . $objectVar . ' = new ' . $this->objectName . '(' . $postKey . ');
+		$' . $objectVar . ' = new ' . $this->objectName . '(' . $inputKey . ');
 		$' . $objectVar . '->populateByRequest();
 
 		// apply the update
 		if (!$' . $objectVar . '->store()) {
-			$this->toastError($this->buildRecordErrorMessage($' . $objectVar . ', \'ERROR_ON_LAST_REQUEST\'));
-			return $this->buildEditPage($' . $objectVar . ');
+			$this->raiseRecordError($' . $objectVar . ');
+			return;
 		}
 
 		// notify the change and redirect
-		$this->toast($this->translate(\'OBJECT_HAS_BEEN_CHANGED_SUCCESFULLY\'));
+		$this->toast(Translator::do(\'OBJECT_HAS_BEEN_CHANGED_SUCCESFULLY\'));
 		$this->redirect($this->router->module);
-
-		return null;
 
 	}
 
 	/**
 	 * Delete a ' . $this->objectName . ' object.
 	 */
-	public function deleteAction(): ?PageResponse {
+	public function deleteAction(): void {
 
-			$' . $objectVar . ' = $this->loadObjectFromRoute();
+		$' . $objectVar . ' = $this->findRequestedObject();
 
 		// execute deletion
-		if (!$' . $objectVar . '->delete()) {
-			$this->toastError($this->buildRecordErrorMessage($' . $objectVar . ', \'ERROR_ON_LAST_REQUEST\'));
-			return $this->buildEditPage($' . $objectVar . ');
+		if (!$' . $objectVar . ' || !$' . $objectVar . '->delete()) {
+			$this->raiseRecordError($' . $objectVar . ' ?? new ' . $this->objectName . '());
+			return;
 		}
 
 		// notify the deletion and redirect
-		$this->toast($this->translate(\'OBJECT_HAS_BEEN_DELETED_SUCCESFULLY\'));
+		$this->toast(Translator::do(\'OBJECT_HAS_BEEN_DELETED_SUCCESFULLY\'));
 		$this->redirect($this->router->module);
 
-		return null;
+	}
+
+	/**
+	 * Restituisce la paginazione inizializzata dal router corrente.
+	 */
+	private function buildPagination(): Pagination {
+
+		$pagination = new Pagination();
+		$pagination->perPage = Options::get(\'pagination_pages\');
+		$pagination->page = Router::getInstance()->getPage();
+
+		return $pagination;
 
 	}
 
 	/**
-	 * Build the list page state.
+	 * Carica l\'oggetto richiesto dal route corrente.
 	 */
-	private function buildDefaultPageState(): ' . ucfirst($this->moduleName) . 'DefaultPageState {
+	private function findRequestedObject(): ?' . $this->objectName . ' {
 
-		$pagination = $this->buildPagination();
-		$this->model->pagination = $pagination;
-
-		$items = $this->model->getItems(' . $this->objectName . '::class);
-		$pagination->count = $this->model->countItems(' . $this->objectName . '::class);
-
-		return new ' . ucfirst($this->moduleName) . 'DefaultPageState($items, $pagination->render());
+' . $requestObjectCode . '
+		return ' . $this->objectName . '::find($key);
 
 	}
 
 	/**
-	 * Build the edit page response.
+	 * Converte gli errori ActiveRecord in eccezione applicativa tracciata.
 	 */
-	private function buildEditPage(' . $this->objectName . ' $' . $objectVar . '): PageResponse {
+	private function raiseRecordError(ActiveRecord $object): void {
 
-		return $this->page(
-			\'edit\',
-			new ' . ucfirst($this->moduleName) . 'EditPageState(
-				$this->model->get' . $this->objectName . 'Form($' . $objectVar . '),
-				$' . $objectVar . '
-			),
-			$this->translate(\'EDIT_OBJECT\')
-		);
+		$errors = $object->getErrors();
+		$message = $errors
+			? implode(" \n", $errors)
+			: Translator::do(\'ERROR_ON_LAST_REQUEST\');
 
-	}
+		Logger::getInstance()->error(\'Failure in {objectClass} class\', [\'objectClass\' => get_class($object)]);
 
-	/**
-	 * Load the requested object from route parameters.
-	 */
-	private function loadObjectFromRoute(): ' . $this->objectName . ' {
-
-		$' . $objectVar . ' = ' . $this->objectName . '::find(' . $routeKey . ');
-
-		if (!$' . $objectVar . ' or !$' . $objectVar . '->isLoaded()) {
-			throw new AppException($this->translate(\'ID_OF_ITEM_TO_EDIT_IS_NOT_VALID\', ' . $this->objectName . '::class));
-		}
-
-		return $' . $objectVar . ';
+		throw new RuntimeException($message);
 
 	}
 
@@ -1206,40 +1257,46 @@ class ' . ucfirst($this->moduleName) . 'Controller extends BoilerplateController
 
 		}
 
-			$orderIndex = 1;
-			$this->orderOptions = [];
-			$this->orderFields = [];
+		$orderIndex = 1;
+		$this->orderOptions = [];
+		$this->orderFields = [];
 
-			// Build sortable fields so the generated list can expose Pair sortable headers.
-			foreach ($this->propTypes as $pName => $pType) {
+		// Build sortable fields so the generated list can expose Pair sortable headers.
+		foreach ($this->propTypes as $pName => $pType) {
+			$fieldName = $this->binds[$pName];
 
-				$fieldName = $this->binds[$pName];
-
-				if (!in_array($pType, self::ORDERABLE_TYPES, true) || $this->isTableKey($fieldName) || in_array($fieldName, self::INTERNAL_FIELDS, true)) {
-					continue;
-				}
-
-				$ascOrder = $orderIndex++;
-				$descOrder = $orderIndex++;
-
-				$this->orderOptions[$ascOrder] = '`' . $fieldName . '`';
-				$this->orderOptions[$descOrder] = '`' . $fieldName . '` DESC';
-				$this->orderFields[$fieldName] = [
-					'asc' => $ascOrder,
-					'desc' => $descOrder
-				];
-
+			if (!in_array($pType, self::ORDERABLE_TYPES, true) || $this->isTableKey($fieldName) || in_array($fieldName, self::INTERNAL_FIELDS, true)) {
+				continue;
 			}
+
+			$ascOrder = $orderIndex++;
+			$descOrder = $orderIndex++;
+
+			$this->orderOptions[$ascOrder] = '`' . $fieldName . '`';
+			$this->orderOptions[$descOrder] = '`' . $fieldName . '` DESC';
+			$this->orderFields[$fieldName] = [
+				'asc' => $ascOrder,
+				'desc' => $descOrder
+			];
+		}
 
 		// here starts code collect
 		$content =
 '<?php
 
+declare(strict_types=1);
+
 use Pair\Core\Model;
 use Pair\Html\Form;
 
+/**
+ * Model operativo del modulo ' . $this->moduleName . '.
+ */
 class ' . ucfirst($this->moduleName) . 'Model extends Model {
 
+	/**
+	 * Restituisce la query base della lista generata.
+	 */
 	public function getQuery(string $class): string {
 
 		$query = \'SELECT * FROM `' . $this->tableName . '`\';
@@ -1252,6 +1309,9 @@ class ' . ucfirst($this->moduleName) . 'Model extends Model {
 		if (count($this->orderOptions)) {
 
 			$content .= '
+	/**
+	 * Restituisce le opzioni di ordinamento disponibili per la lista.
+	 */
 	protected function getOrderOptions(): array {
 
 		return [';
@@ -1353,45 +1413,65 @@ class ' . ucfirst($this->moduleName) . 'Model extends Model {
 	}
 
 	/**
-	 * Save the default list page-state class for a generated module.
+	 * Crea lo stato pagina della lista generata dal modulo.
 	 */
-	private function savePageStateDefault(string $file): void {
+	private function saveDefaultPageState(string $file): void {
 
+		// here starts code collect
 		$content =
 '<?php
 
 declare(strict_types=1);
 
-use Pair\Data\ArraySerializableData;
-use Pair\Data\ReadModel;
 use Pair\Orm\Collection;
 
 /**
- * Typed state for the ' . $this->moduleName . ' list page.
+ * Contratto Pair v4 della lista ' . $this->moduleName . '.
  */
-final readonly class ' . ucfirst($this->moduleName) . 'DefaultPageState implements ReadModel {
-
-	use ArraySerializableData;
+final class ' . ucfirst($this->moduleName) . 'DefaultPageState {
 
 	/**
-	 * Build the list page state.
+	 * Costruisce il contratto Pair v4 della lista ' . $this->moduleName . '.
 	 */
 	public function __construct(
 		public Collection $' . Utilities::getCamelCase($this->tableName) . ',
-		public string $paginationBar
-	) {}
+		public string $paginationBarHtml
+	) {
+
+	}
+
+}';
+
+		// writes the code into the file
+		$this->writeFile($file, $content);
+
+	}
 
 	/**
-	 * Export the page state as an array for debugging and tooling.
-	 *
-	 * @return array<string, mixed>
+	 * Crea lo stato pagina condiviso dai form generati.
 	 */
-	public function toArray(): array {
+	private function saveFormPageState(string $file): void {
 
-		return [
-			\'' . Utilities::getCamelCase($this->tableName) . '\' => $this->' . Utilities::getCamelCase($this->tableName) . ',
-			\'paginationBar\' => $this->paginationBar,
-		];
+		// here starts code collect
+		$content =
+'<?php
+
+declare(strict_types=1);
+
+use Pair\Html\Form;
+
+/**
+ * Contratto Pair v4 dei form ' . $this->moduleName . '.
+ */
+final class ' . ucfirst($this->moduleName) . 'FormPageState {
+
+	/**
+	 * Costruisce il contratto Pair v4 dei form ' . $this->moduleName . '.
+	 */
+	public function __construct(
+		public Form $form,
+		public ?' . $this->objectName . ' $' . lcfirst($this->objectName) . '
+	) {
 
 	}
 
@@ -1424,15 +1504,15 @@ final readonly class ' . ucfirst($this->moduleName) . 'DefaultPageState implemen
 			// jump the table keys
 			} else if (!$this->isTableKey($field)) {
 
-					if (isset($this->orderFields[$field])) {
-						$tableHeader = '<?php BoilerplateLayout::printSortable(BoilerplateLayout::translate(\'' . strtoupper($field) . '\'), '
-							. $this->orderFields[$field]['asc'] . ', ' . $this->orderFields[$field]['desc'] . '); ?>';
-					} else {
-						$tableHeader = "<?php BoilerplateLayout::printText('" . strtoupper($field) . "'); ?>";
-					}
+				if (isset($this->orderFields[$field])) {
+					$tableHeader = '<?php BoilerplateLayout::printSortable(BoilerplateLayout::translate(\'' . strtoupper($field) . '\'), '
+						. $this->orderFields[$field]['asc'] . ', ' . $this->orderFields[$field]['desc'] . '); ?>';
+				} else {
+					$tableHeader = "<?php \$this->_('" . strtoupper($field) . "') ?>";
+				}
 
-					// replace the table-header placeholder
-					$headers[] = str_replace('{tableHeader}', $tableHeader, $this->layouts['default-table-header']);
+				// replace the table-header placeholder
+				$headers[] = str_replace('{tableHeader}', $tableHeader, $this->layouts['default-table-header']);
 
 				// get the fk-column for the current field
 				$col = $this->getForeignKey($field, $foreignKeys);
@@ -1491,64 +1571,19 @@ final readonly class ' . ucfirst($this->moduleName) . 'DefaultPageState implemen
 
 		// the cycle that outputs a full table-row
 		$tableRows =
-			'<?php foreach ($state->' . Utilities::getCamelCase($this->tableName) . ' as $o) {' .
+			'<?php foreach ($this->' . Utilities::getCamelCase($this->tableName) . ' as $o) {' .
 			" ?>\n<tr>\n" . implode("\n", $cells) . "\n</tr>\n<?php } ?>\n";
 
-		$ph['pageTitle']	= '<?php BoilerplateLayout::printText(\'' . strtoupper($this->tableName) . '\'); ?>';
+		$ph['pageTitle']	= '<?php $this->_(\'' . strtoupper($this->tableName) . '\') ?>';
 		$ph['linkAdd']		= $this->moduleName . '/new';
-		$ph['newElement']	= '<?php BoilerplateLayout::printText(\'NEW_OBJECT\'); ?>';
-		$ph['itemsArray']	= '$state->' . Utilities::getCamelCase($this->tableName);
+		$ph['newElement']	= '<?php $this->_(\'NEW_OBJECT\') ?>';
+		$ph['itemsArray']	= '$this->' . Utilities::getCamelCase($this->tableName);
+		$ph['paginationBar']	= '$this->paginationBarHtml';
 		$ph['tableHeaders']	= implode("\n", $headers);
 		$ph['tableRows']	= $tableRows;
 
 		// replace value on placeholders
 		$content = $this->replaceHolders($this->layouts['default-page'], $ph);
-
-		// writes the code into the file
-		$this->writeFile($file, $content);
-
-	}
-
-	/**
-	 * Save the creation form page-state class for a generated module.
-	 */
-	private function savePageStateNew(string $file): void {
-
-		$content =
-'<?php
-
-declare(strict_types=1);
-
-use Pair\Data\ArraySerializableData;
-use Pair\Data\ReadModel;
-use Pair\Html\Form;
-
-/**
- * Typed state for the ' . $this->moduleName . ' creation form.
- */
-final readonly class ' . ucfirst($this->moduleName) . 'NewPageState implements ReadModel {
-
-	use ArraySerializableData;
-
-	/**
-	 * Build the creation form state.
-	 */
-	public function __construct(public Form $form) {}
-
-	/**
-	 * Export the page state as an array for debugging and tooling.
-	 *
-	 * @return array<string, mixed>
-	 */
-	public function toArray(): array {
-
-		return [
-			\'form\' => $this->form,
-		];
-
-	}
-
-}';
 
 		// writes the code into the file
 		$this->writeFile($file, $content);
@@ -1573,71 +1608,21 @@ final readonly class ' . ucfirst($this->moduleName) . 'NewPageState implements R
 			} else if (!$this->isTableKey($field)) {
 
 				$search = ['{fieldLabel}', '{fieldControl}'];
-				$replace = ['<?php $state->form->printLabel(\'' . $property . '\') ?>',
-							'<?php $state->form->printControl(\'' . $property . '\') ?>'];
+				$replace = ['<?php $this->form->printLabel(\'' . $property . '\') ?>',
+							'<?php $this->form->printControl(\'' . $property . '\') ?>'];
 				$fields[] = str_replace($search, $replace, $this->layouts['new-field']);
 
 			}
 
 		}
 
-		$ph['pageTitle']	= '<?php BoilerplateLayout::printText(\'NEW_OBJECT\'); ?>';
+		$ph['pageTitle']	= '<?php $this->_(\'NEW_OBJECT\') ?>';
 		$ph['formAction']	= $this->moduleName . '/add';
 		$ph['fields']		= implode('', $fields);
 		$ph['cancelUrl']	= $this->moduleName;
 
 		// replace value on placeholders
 		$content = $this->replaceHolders($this->layouts['new-page'], $ph);
-
-		// writes the code into the file
-		$this->writeFile($file, $content);
-
-	}
-
-	/**
-	 * Save the edit form page-state class for a generated module.
-	 */
-	private function savePageStateEdit(string $file): void {
-
-		$content =
-'<?php
-
-declare(strict_types=1);
-
-use Pair\Data\ArraySerializableData;
-use Pair\Data\ReadModel;
-use Pair\Html\Form;
-
-/**
- * Typed state for the ' . $this->moduleName . ' edit form.
- */
-final readonly class ' . ucfirst($this->moduleName) . 'EditPageState implements ReadModel {
-
-	use ArraySerializableData;
-
-	/**
-	 * Build the edit form state.
-	 */
-	public function __construct(
-		public Form $form,
-		public ' . $this->objectName . ' $' . lcfirst($this->objectName) . '
-	) {}
-
-	/**
-	 * Export the page state as an array for debugging and tooling.
-	 *
-	 * @return array<string, mixed>
-	 */
-	public function toArray(): array {
-
-		return [
-			\'form\' => $this->form,
-			\'' . lcfirst($this->objectName) . '\' => $this->' . lcfirst($this->objectName) . ',
-		];
-
-	}
-
-}';
 
 		// writes the code into the file
 		$this->writeFile($file, $content);
@@ -1663,28 +1648,48 @@ final readonly class ' . ucfirst($this->moduleName) . 'EditPageState implements 
 			} else if (!$this->isTableKey($field)) {
 
 				$search = ['{fieldLabel}', '{fieldControl}'];
-				$replace = ['<?php $state->form->printLabel(\'' . $property . '\') ?>',
-						'<?php $state->form->printControl(\'' . $property . '\') ?>'];
+				$replace = ['<?php $this->form->printLabel(\'' . $property . '\') ?>',
+						'<?php $this->form->printControl(\'' . $property . '\') ?>'];
 				$fields[] = str_replace($search, $replace, $this->layouts['edit-field']);
 
 			} else {
 
-				$hiddens[] = '<?php $state->form->printControl(\'' . $property . '\') ?>';
+				$hiddens[] = '<?php $this->form->printControl(\'' . $property . '\') ?>';
 
 			}
 
 		}
 
-		$ph['pageTitle']	= '<?php BoilerplateLayout::printText(\'EDIT_OBJECT\'); ?>';
+		$ph['pageTitle']	= '<?php $this->_(\'EDIT_OBJECT\') ?>';
 		$ph['formAction']	= $this->moduleName . '/change';
 		$ph['fields']		= implode('', $fields);
 		$ph['hiddenFields']	= implode('', $hiddens);
 		$ph['object']		= lcfirst($this->objectName);
 		$ph['cancelUrl']	= $this->moduleName;
-		$ph['deleteUrl']	= $this->moduleName . '/delete/<?php print ' . $this->getTableKeyAsCgiParams('$state->' . lcfirst($this->objectName)) . ' ?>';
+		$ph['deleteUrl']	= $this->moduleName . '/delete/<?php print ' . $this->getTableKeyAsCgiParams() . ' ?>';
 
 		// replace value on placeholders
 		$content = $this->replaceHolders($this->layouts['edit-page'], $ph);
+
+		// writes the code into the file
+		$this->writeFile($file, $content);
+
+	}
+
+	/**
+	 * Crea un wrapper Pair v4 che include la layout con stato tipizzato.
+	 */
+	private function saveLayoutPage(string $file, string $stateClass, string $layoutFile): void {
+
+		// here starts code collect
+		$content =
+"<?php
+
+declare(strict_types=1);
+
+/** @var {$stateClass} \$state */
+include __DIR__ . '/{$layoutFile}';
+";
 
 		// writes the code into the file
 		$this->writeFile($file, $content);

@@ -2,35 +2,19 @@
 
 declare(strict_types=1);
 
-use Pair\Data\ArraySerializableData;
-use Pair\Data\ReadModel;
-
 /**
- * Typed state for the class creation table list.
+ * Contratto Pair v4 della lista tabelle non ancora mappate.
  */
-final readonly class CrafterNewClassPageState implements ReadModel {
-
-	use ArraySerializableData;
+final class CrafterNewClassPageState {
 
 	/**
-	 * Build the page state.
+	 * Costruisce il contratto Pair v4 della lista tabelle non ancora mappate.
 	 *
-	 * @param	string[]	$unmappedTables	Database tables not mapped by an ActiveRecord class yet.
+	 * @param array<int, string> $unmappedTables
 	 */
 	public function __construct(
 		public array $unmappedTables
-	) {}
-
-	/**
-	 * Export the page state as an array for debugging and migration tooling.
-	 *
-	 * @return	array<string, mixed>
-	 */
-	public function toArray(): array {
-
-		return [
-			'unmappedTables' => $this->unmappedTables,
-		];
+	) {
 
 	}
 

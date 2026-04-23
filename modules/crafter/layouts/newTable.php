@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+/** @var CrafterNewTablePageState $state */
 
 use Pair\Helpers\Utilities;
 
@@ -6,7 +9,7 @@ use Pair\Helpers\Utilities;
 	<div class="col-12">
 		<div class="card">
 			<div class="card-header">
-				<h4 class="card-title"><?php BoilerplateLayout::printText('CRAFTER'); ?></h4>
+				<h4 class="card-title"><?php print htmlspecialchars((string)Pair\Helpers\Translator::do('CRAFTER'), ENT_QUOTES, 'UTF-8') ?></h4>
 			</div><?php
 		
 			if (count($state->unmappedClasses)) {
@@ -15,7 +18,7 @@ use Pair\Helpers\Utilities;
 					<table class="table table-hover">
 						<thead>
 							<tr>
-								<th><?php BoilerplateLayout::printText('TABLE_NAME'); ?></th>
+								<th><?php print htmlspecialchars((string)Pair\Helpers\Translator::do('TABLE_NAME'), ENT_QUOTES, 'UTF-8') ?></th>
 								<th>&nbsp;</th>
 							</tr>
 						</thead>
@@ -25,7 +28,7 @@ use Pair\Helpers\Utilities;
 						
 								?><tr>
 									<td><?php print $t ?></td>
-									<td><a href="crafter/createTable/<?php print $t ?>" class="btn btn-primary btn-sm"><?php BoilerplateLayout::printText('CREATE_TABLE'); ?></a></td>
+									<td><a href="crafter/createTable/<?php print $t ?>" class="btn btn-primary btn-sm"><?php print htmlspecialchars((string)Pair\Helpers\Translator::do('CREATE_TABLE'), ENT_QUOTES, 'UTF-8') ?></a></td>
 								</tr><?php 
 								
 							}

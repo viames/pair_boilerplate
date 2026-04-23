@@ -1,11 +1,11 @@
 <?php
 
 use Pair\Core\Application;
-use Pair\Helpers\Plugin;
 use Pair\Helpers\Upload;
 use Pair\Html\Breadcrumb;
 use Pair\Http\EmptyResponse;
 use Pair\Models\Template;
+use Pair\Packages\InstallablePackage;
 use Pair\Web\PageResponse;
 
 class TemplatesController extends BoilerplateController {
@@ -20,8 +20,8 @@ class TemplatesController extends BoilerplateController {
 	 */
 	protected function boot(): void {
 
-		// Remove temporary plugin archives left by older uploads.
-		Plugin::removeOldFiles();
+		// Remove temporary package archives left by older uploads.
+		InstallablePackage::removeOldArchives();
 
 		$this->model = new TemplatesModel();
 		Breadcrumb::path($this->translate('TEMPLATES'), 'templates/default');
@@ -79,15 +79,15 @@ class TemplatesController extends BoilerplateController {
 		$package = $upload->path . $upload->filename;
 		$templateName = $this->getTemplateNameFromPackage($package);
 
-		$plugin = new Plugin();
-		$installed = $plugin->installPackage($package);
+		$installablePackage = new InstallablePackage();
+		$installed = $installablePackage->installArchive($package);
 
 		if (!$installed) {
 			$this->modal($this->translate('ERROR'), $this->translate('TEMPLATE_HAS_NOT_BEEN_INSTALLED'), 'error');
 			return $this->defaultAction();
 		}
 
-		$template = $templateName ? Template::getPluginByName($templateName) : null;
+		$template = $templateName ? Template::getByName($templateName) : null;
 
 		if (!$template || !$template->isLoaded()) {
 			$template = Template::getObjectByQuery('SELECT * FROM `templates` ORDER BY `id` DESC LIMIT 1');
@@ -204,8 +204,8 @@ class TemplatesController extends BoilerplateController {
 	public function downloadAction(): EmptyResponse {
 
 		$template = $this->loadRecordFromRoute(Template::class);
-		$plugin = $template->getPlugin();
-		$plugin->downloadPackage();
+		$package = $template->getInstallablePackage();
+		$package->downloadArchive();
 
 		return new EmptyResponse();
 
@@ -386,11 +386,11 @@ class TemplatesController extends BoilerplateController {
 
 		$manifest = simplexml_load_string($manifestContent);
 
-		if (!$manifest || !isset($manifest->plugin->name)) {
+		if (!$manifest || !isset($manifest->package->name)) {
 			return null;
 		}
 
-		$name = trim((string)$manifest->plugin->name);
+		$name = trim((string)$manifest->package->name);
 
 		return '' === $name ? null : $name;
 

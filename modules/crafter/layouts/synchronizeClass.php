@@ -1,13 +1,13 @@
 <?php
+declare(strict_types=1);
 
-use Pair\Helpers\Utilities;
-
+/** @var CrafterNewClassPageState $state */
 ?>
 <div class="row">
 	<div class="col-12">
 		<div class="card">
 			<div class="card-header">
-				<h4 class="card-title"><?php BoilerplateLayout::printText('CRAFTER'); ?></h4>
+				<h4 class="card-title"><?php print htmlspecialchars((string)Pair\Helpers\Translator::do('CRAFTER'), ENT_QUOTES, 'UTF-8') ?></h4>
 			</div><?php
 		
 			if (count($state->unmappedTables)) {
@@ -16,7 +16,7 @@ use Pair\Helpers\Utilities;
 					<table class="table table-hover">
 						<thead>
 							<tr>
-								<th><?php BoilerplateLayout::printText('TABLE_NAME'); ?></th>
+								<th><?php print htmlspecialchars((string)Pair\Helpers\Translator::do('TABLE_NAME'), ENT_QUOTES, 'UTF-8') ?></th>
 								<th>&nbsp;</th>
 								<th>&nbsp;</th>
 							</tr>
@@ -27,8 +27,8 @@ use Pair\Helpers\Utilities;
 						
 								?><tr>
 									<td><?php print $t ?></td>
-									<td><a href="crafter/classWizard/<?php print $t ?>" class="btn btn-primary btn-sm"><?php BoilerplateLayout::printText('CREATE_CLASS'); ?></a></td>
-									<td><a href="crafter/moduleWizard/<?php print $t ?>" class="btn btn-primary btn-sm"><?php BoilerplateLayout::printText('CREATE_MODULE'); ?></a></td>
+									<td><a href="crafter/classWizard/<?php print $t ?>" class="btn btn-primary btn-sm"><?php print htmlspecialchars((string)Pair\Helpers\Translator::do('CREATE_CLASS'), ENT_QUOTES, 'UTF-8') ?></a></td>
+									<td><a href="crafter/moduleWizard/<?php print $t ?>" class="btn btn-primary btn-sm"><?php print htmlspecialchars((string)Pair\Helpers\Translator::do('CREATE_MODULE'), ENT_QUOTES, 'UTF-8') ?></a></td>
 								</tr><?php 
 								
 							}
@@ -39,7 +39,7 @@ use Pair\Helpers\Utilities;
 			
 			} else {
 				
-				Utilities::showNoDataAlert();
+				Pair\Helpers\Utilities::showNoDataAlert();
 				
 			}
 			

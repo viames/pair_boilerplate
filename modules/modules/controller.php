@@ -7,9 +7,9 @@ use Pair\Core\Env;
 use Pair\Html\Breadcrumb;
 use Pair\Http\EmptyResponse;
 use Pair\Helpers\LogBar;
-use Pair\Helpers\Plugin;
 use Pair\Helpers\Upload;
 use Pair\Models\Module;
+use Pair\Packages\InstallablePackage;
 use Pair\Web\PageResponse;
 
 class ModulesController extends BoilerplateController {
@@ -24,8 +24,8 @@ class ModulesController extends BoilerplateController {
 	 */
 	protected function boot(): void {
 
-		// removes files older than 30 minutes
-		Plugin::removeOldFiles();
+		// Removes generated package archives older than 30 minutes.
+		InstallablePackage::removeOldArchives();
 
 		Breadcrumb::path('Moduli', 'modules/default');
 		$this->model = new ModulesModel();
@@ -61,8 +61,8 @@ class ModulesController extends BoilerplateController {
 	public function downloadAction(): EmptyResponse {
 
 		$module = $this->loadRecordFromRoute(Module::class);
-		$plugin = $module->getPlugin();
-		$plugin->downloadPackage();
+		$package = $module->getInstallablePackage();
+		$package->downloadArchive();
 
 		return new EmptyResponse();
 
@@ -89,8 +89,8 @@ class ModulesController extends BoilerplateController {
 		$upload->save(TEMP_PATH);
 
 		// installs the package
-		$plugin = new Plugin();
-		$res = $plugin->installPackage($upload->path . $upload->filename);
+		$package = new InstallablePackage();
+		$res = $package->installArchive($upload->path . $upload->filename);
 
 		if ($res) {
 			$this->toast($this->translate('MODULE_HAS_BEEN_INSTALLED_SUCCESFULLY'));

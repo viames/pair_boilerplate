@@ -31,7 +31,7 @@ use Pair\Helpers\Utilities;
 				</table>
 			</div><?php
 
-			print $state->paginationBar;
+			print {paginationBar};
 
 		} else {
 
@@ -61,8 +61,8 @@ $layouts['new-page'] =
 			<div class="hr-line-dashed"></div>
 			<div class="row mb-4">
 				<div class="col-md-9 offset-md-3">
-					<button type="submit" class="btn btn-primary"><?php BoilerplateLayout::printText(\'INSERT\'); ?></button>
-					<a href="{cancelUrl}" class="btn btn-secondary"><?php BoilerplateLayout::printText(\'CANCEL\'); ?></a>
+					<button type="submit" class="btn btn-primary"><?php $this->_(\'INSERT\') ?></button>
+					<a href="{cancelUrl}" class="btn btn-secondary"><?php $this->_(\'CANCEL\') ?></a>
 				</div>
 			</div>
 		</form>
@@ -89,10 +89,10 @@ $layouts['edit-page'] =
 			<div class="hr-line-dashed"></div>
 			<div class="row mb-4">
 				<div class="col-md-9 offset-md-3">
-					<button type="submit" class="btn btn-primary"><?php BoilerplateLayout::printText(\'CHANGE\'); ?></button>
-					<a href="{cancelUrl}" class="btn btn-secondary"><?php BoilerplateLayout::printText(\'CANCEL\'); ?></a><?php
-					if ($state->{object}->isDeletable()) { ?>
-					<a href="{deleteUrl}" class="btn btn-link confirm-delete float-end"><?php BoilerplateLayout::printText(\'DELETE\'); ?></a><?php
+					<button type="submit" class="btn btn-primary"><?php $this->_(\'CHANGE\') ?></button>
+					<a href="{cancelUrl}" class="btn btn-secondary"><?php $this->_(\'CANCEL\') ?></a><?php
+					if ($this->{object}->isDeletable()) { ?>
+					<a href="{deleteUrl}" class="btn btn-link confirm-delete float-end"><?php $this->_(\'DELETE\') ?></a><?php
 					} ?>
 				</div>
 			</div>

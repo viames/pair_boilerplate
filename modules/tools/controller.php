@@ -38,12 +38,12 @@ class ToolsController extends BoilerplateController {
 	}
 
 	/**
-	 * Repair plugin records or manifest files and re-render the tool list.
+	 * Repair package records or manifest files and re-render the tool list.
 	 */
-	public function fixPluginsAction(): PageResponse {
+	public function fixPackagesAction(): PageResponse {
 
-		$res = $this->model->fixPlugins();
-		$this->toast($this->translate('PLUGINS_HAVE_BEEN_FIXED', (string)$res));
+		$res = $this->model->fixPackages();
+		$this->toast($this->translate('PACKAGES_HAVE_BEEN_FIXED', (string)$res));
 
 		return $this->defaultAction();
 
@@ -73,8 +73,8 @@ class ToolsController extends BoilerplateController {
 				'confirm'	=> false,
 			],
 			[
-				'title'		=> $this->translate('FIX_PLUGINS'),
-				'url'		=> 'tools/fixPlugins',
+				'title'		=> $this->translate('FIX_PACKAGES'),
+				'url'		=> 'tools/fixPackages',
 				'confirm'	=> false,
 			],
 		]);

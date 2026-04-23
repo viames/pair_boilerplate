@@ -1,3 +1,8 @@
+<?php
+declare(strict_types=1);
+
+/** @var CrafterPlaygroundPageState $state */
+?>
 <div class="row">
 	<div class="col-12">
 		<div class="card">

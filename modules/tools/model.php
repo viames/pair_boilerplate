@@ -5,7 +5,7 @@ use Pair\Core\Logger;
 use Pair\Core\Model;
 use Pair\Models\Locale;
 use Pair\Models\Module;
-use Pair\Helpers\Plugin;
+use Pair\Packages\InstallablePackage;
 
 class ToolsModel extends Model {
 
@@ -54,30 +54,30 @@ class ToolsModel extends Model {
 	}
 
 	/**
-	 * Creates both manifest.xml files or db records of existent plugins.
+	 * Creates both manifest.xml files or db records of existing packages.
 	 */
-	public function fixPlugins(): int {
+	public function fixPackages(): int {
 
 		$fixes	= 0;
 		$names	= [];
 
-		// all plugin types
-		$pluginTypes = [
+		// Package-backed record types handled by this maintenance task.
+		$packageTypes = [
 			'module'	=> TRUE,
 			'template'	=> TRUE
 		];
 
-		foreach ($pluginTypes as $type => $pair) {
+		foreach ($packageTypes as $type => $pair) {
 
 			// compute names
 			$class	= ($pair ? 'Pair\\Models\\' : '') . ucfirst($type);
 			$folder	= strtolower($type . 's');
 			$names	= [];
 
-			$pluginsFolder = APPLICATION_PATH . '/' . $folder;
+			$packagesFolder = APPLICATION_PATH . '/' . $folder;
 
-			// main plugins folder scanning
-			$dirs = array_diff(scandir($pluginsFolder), ['..', '.', '.DS_Store']);
+			// Scan the main package folder for records missing from the database.
+			$dirs = array_diff(scandir($packagesFolder), ['..', '.', '.DS_Store']);
 
 			// gets db records and makes objects
 			$pObjects = $class::all();
@@ -94,23 +94,23 @@ class ToolsModel extends Model {
 				if (!in_array(strtolower($dir), $names)) {
 
 					// manifest file path
-					$manifestFile = $pluginsFolder . '/' . $dir . '/manifest.xml';
+					$manifestFile = $packagesFolder . '/' . $dir . '/manifest.xml';
 
 					// manifest file is missing
 					if (!file_exists($manifestFile)) {
 
-						Logger::warning('File manifest.xml is missing for ' . ucfirst($type) . ' plugin at path /' . $folder . '/' . $dir);
+						Logger::warning('File manifest.xml is missing for ' . ucfirst($type) . ' package at path /' . $folder . '/' . $dir);
 
 					} else {
 
 						// get XML content of manifest by reading a file
-						$manifest = Plugin::getManifestByFile($manifestFile);
+						$manifest = InstallablePackage::readManifestFile($manifestFile);
 
 						// creates db record by its manifest file
-						Plugin::createPluginByManifest($manifest);
+						InstallablePackage::createRecordFromManifest($manifest);
 
 						// logging
-						Logger::notice('Inserted a new plugin record for ' . $type . ' ' . $dir);
+						Logger::notice('Inserted a new package record for ' . $type . ' ' . $dir);
 						$fixes++;
 
 					}
@@ -123,14 +123,14 @@ class ToolsModel extends Model {
 			foreach ($pObjects as $pObj) {
 
 				// paths
-				$baseFolder	= $pluginsFolder . '/' . strtolower($pObj->name);
+				$baseFolder	= $packagesFolder . '/' . strtolower($pObj->name);
 				$manifest	= $baseFolder . '/manifest.xml';
 
 				// manifest file is missing, create it now
 				if (!file_exists($manifest)) {
 
-					$plugin = $pObj->getPlugin();
-					$plugin->createManifestFile();
+					$package = $pObj->getInstallablePackage();
+					$package->writeManifestFile();
 
 					// logging
 					Logger::notice('Created manifest file for ' . $type . ' ' . $pObj->name);

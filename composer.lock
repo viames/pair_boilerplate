@@ -128,8 +128,9 @@
                 "multilingual",
                 "pair",
                 "php",
-                "plugin-system",
-                "rest-api"
+                "package-system",
+                "rest-api",
+                "runtime-extensions"
             ],
             "support": {
                 "issues": "https://github.com/viames/pair/issues",
