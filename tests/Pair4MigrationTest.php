@@ -92,6 +92,8 @@ final class Pair4MigrationTest extends TestCase {
 			'removeOldFiles(',
 			'fixPlugins(',
 			'fixPluginsAction(',
+			'Pair\\Helpers\\' . 'Upload',
+			'new Upload(',
 		];
 
 		foreach ($this->applicationPhpFiles() as $file) {
@@ -130,6 +132,78 @@ final class Pair4MigrationTest extends TestCase {
 				$this->assertFileExists($moduleDir . '/' . $file, 'Manifest references a missing file.');
 			}
 		}
+
+	}
+
+	/**
+	 * Verify that the installer seed marks every Pair migration reflected by the baseline schema.
+	 */
+	public function testInstallerSeedIncludesCurrentPairMigrations(): void {
+
+		$seed = (string)file_get_contents($this->projectRoot() . '/installer/sql/seed.sql');
+		$pairMigrationFiles = glob($this->projectRoot() . '/vendor/viames/pair/migrations/*.sql') ?: [];
+
+		$this->assertNotSame([], $pairMigrationFiles, 'Pair migration files must be available from Composer.');
+
+		foreach ($pairMigrationFiles as $migrationFile) {
+			$migration = basename($migrationFile);
+
+			$this->assertStringContainsString("'" . $migration . "','pair'", $seed, $migration);
+		}
+
+	}
+
+	/**
+	 * Verify that the installer schema reflects the Pair 4 alpha migration baseline.
+	 */
+	public function testInstallerSchemaUsesCurrentPairBaseline(): void {
+
+		$schema = (string)file_get_contents($this->projectRoot() . '/installer/sql/schema.sql');
+
+		$this->assertStringContainsString('CREATE TABLE IF NOT EXISTS `log_events`', $schema);
+		$this->assertStringNotContainsString('CREATE TABLE IF NOT EXISTS `error_logs`', $schema);
+		$this->assertStringContainsString('`remember_me` varchar(128)', $schema);
+		$this->assertStringContainsString('CREATE TABLE IF NOT EXISTS `api_tokens`', $schema);
+		$this->assertStringContainsString('`device_hash` varchar(64)', $schema);
+		$this->assertStringContainsString('`password_version_hash` char(64)', $schema);
+
+	}
+
+	/**
+	 * Verify that installer runtime checks match the current Pair 4 package requirements.
+	 */
+	public function testInstallerChecksCurrentPairRuntimeRequirements(): void {
+
+		$installer = (string)file_get_contents($this->projectRoot() . '/installer/start.php');
+
+		$this->assertStringContainsString("checkPhpErrors('8.4.1'", $installer);
+
+		foreach (['curl', 'fileinfo', 'intl', 'json', 'mbstring', 'pdo', 'pdo_mysql'] as $extension) {
+			$this->assertStringContainsString("'" . $extension . "'", $installer, $extension);
+		}
+
+	}
+
+	/**
+	 * Verify that installer output and SQL identifiers have basic hardening guards.
+	 */
+	public function testInstallerHardeningGuardsArePresent(): void {
+
+		$installer = (string)file_get_contents($this->projectRoot() . '/installer/start.php');
+
+		$this->assertStringContainsString('function escape(string $value): string', $installer);
+		$this->assertStringContainsString('nl2br($this->escape((string)$p))', $installer);
+		$this->assertStringContainsString('function isValidMysqlIdentifier(string $identifier): bool', $installer);
+		$this->assertStringContainsString('/^[A-Za-z0-9_]{1,64}$/', $installer);
+		$this->assertStringContainsString('function csrfToken(): string', $installer);
+		$this->assertStringContainsString('function hasValidCsrfToken(): bool', $installer);
+		$this->assertStringContainsString('name="csrfToken"', $installer);
+		$this->assertStringContainsString('PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION', $installer);
+		$this->assertStringContainsString('APP_NAME=\' . $this->envString($vars[\'productName\'])', $installer);
+		$this->assertStringNotContainsString('APP_NAME=\' . $vars[\'productName\']', $installer);
+		$this->assertStringContainsString('file_put_contents($tempFile, $content, LOCK_EX)', $installer);
+		$this->assertStringContainsString('chmod($tempFile, 0660)', $installer);
+		$this->assertStringContainsString('mkdir($tempFolder, 0775, true)', $installer);
 
 	}
 

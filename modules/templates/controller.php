@@ -1,9 +1,9 @@
 <?php
 
 use Pair\Core\Application;
-use Pair\Helpers\Upload;
 use Pair\Html\Breadcrumb;
 use Pair\Http\EmptyResponse;
+use Pair\Http\UploadedFile;
 use Pair\Models\Template;
 use Pair\Packages\InstallablePackage;
 use Pair\Web\PageResponse;
@@ -67,16 +67,33 @@ class TemplatesController extends BoilerplateController {
 	 */
 	public function addAction(): PageResponse {
 
-		$upload = new Upload('package');
 		$palette = $this->getPaletteFromRequest();
 
-		if ('zip' != $upload->type) {
+		try {
+			// Pair 4 exposes uploaded files as immutable value objects with explicit move operations.
+			$upload = UploadedFile::fromGlobals('package');
+		} catch (Throwable $e) {
+			$this->modal($this->translate('ERROR'), $this->translate('ERROR_ON_UPLOADED_FILE'), 'error');
+			return $this->defaultAction();
+		}
+
+		if (!$upload->isOk()) {
+			$this->modal($this->translate('ERROR'), $this->translate('ERROR_ON_UPLOADED_FILE'), 'error');
+			return $this->defaultAction();
+		}
+
+		if ('zip' !== strtolower((string)$upload->extension())) {
 			$this->modal($this->translate('ERROR'), $this->translate('UPLOADED_FILE_IS_NOT_ZIP'), 'error');
 			return $this->defaultAction();
 		}
 
-		$upload->save(TEMP_PATH);
-		$package = $upload->path . $upload->filename;
+		try {
+			$package = $upload->moveTo(TEMP_PATH);
+		} catch (Throwable $e) {
+			$this->modal($this->translate('ERROR'), $this->translate('ERROR_ON_UPLOADED_FILE'), 'error');
+			return $this->defaultAction();
+		}
+
 		$templateName = $this->getTemplateNameFromPackage($package);
 
 		$installablePackage = new InstallablePackage();

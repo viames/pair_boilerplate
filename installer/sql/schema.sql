@@ -56,26 +56,44 @@ CREATE TABLE IF NOT EXISTS `countries` (
 --
 
 --
--- Table structure for table `error_logs`
+-- Table structure for table `log_events`
 --
 
-CREATE TABLE IF NOT EXISTS `error_logs` (
+CREATE TABLE IF NOT EXISTS `log_events` (
 	`id` int unsigned NOT NULL AUTO_INCREMENT,
 	`level` int unsigned DEFAULT '8',
+	`event_name` varchar(128) DEFAULT NULL,
 	`user_id` int unsigned DEFAULT NULL,
 	`path` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-	`get_data` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-	`post_data` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-	`files_data` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-	`cookie_data` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+	`request_method` varchar(16) DEFAULT NULL,
+	`request_data` json DEFAULT NULL,
 	`description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-	`user_messages` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
 	`referer` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+	`client_ip` varchar(45) DEFAULT NULL,
+	`user_agent` varchar(512) DEFAULT NULL,
+	`context_data` json DEFAULT NULL,
+	`server_data` json DEFAULT NULL,
+	`app_version` varchar(64) DEFAULT NULL,
+	`environment` varchar(64) DEFAULT NULL,
+	`correlation_id` varchar(128) DEFAULT NULL,
+	`trace_id` char(32) DEFAULT NULL,
+	`fingerprint` char(64) DEFAULT NULL,
+	`exception_class` varchar(255) DEFAULT NULL,
+	`exception_file` varchar(512) DEFAULT NULL,
+	`exception_line` int unsigned DEFAULT NULL,
+	`exception_trace` mediumtext DEFAULT NULL,
 	`created_at` timestamp NOT NULL,
 	PRIMARY KEY (`id`),
+	KEY `idx_log_events_event_name` (`event_name`),
 	KEY `user_id` (`user_id`),
 	KEY `created_at` (`created_at`),
-	CONSTRAINT `fk_error_logs_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+	KEY `idx_log_events_app_version` (`app_version`),
+	KEY `idx_log_events_environment` (`environment`),
+	KEY `idx_log_events_correlation_id` (`correlation_id`),
+	KEY `idx_log_events_trace_id` (`trace_id`),
+	KEY `idx_log_events_fingerprint` (`fingerprint`),
+	KEY `idx_log_events_exception_class` (`exception_class`),
+	CONSTRAINT `fk_log_events_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -318,12 +336,42 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 CREATE TABLE IF NOT EXISTS `user_remembers` (
 	`user_id` int unsigned NOT NULL,
-	`remember_me` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+	`remember_me` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
 	`created_at` timestamp NOT NULL,
 	PRIMARY KEY (`user_id`,`remember_me`),
 	KEY `remember_me` (`remember_me`),
 	KEY `created_at` (`created_at`),
 	CONSTRAINT `fk_user_remembers_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Table structure for table `api_tokens`
+--
+
+CREATE TABLE IF NOT EXISTS `api_tokens` (
+	`id` int unsigned NOT NULL AUTO_INCREMENT,
+	`user_id` int unsigned NOT NULL,
+	`access_token_hash` char(64) NOT NULL,
+	`refresh_token_hash` char(64) DEFAULT NULL,
+	`access_expires_at` datetime NOT NULL,
+	`refresh_expires_at` datetime DEFAULT NULL,
+	`device_hash` varchar(64) DEFAULT NULL,
+	`password_version_hash` char(64) DEFAULT NULL,
+	`device_name` varchar(120) DEFAULT NULL,
+	`ip_address` varchar(45) DEFAULT NULL,
+	`user_agent` varchar(255) DEFAULT NULL,
+	`last_used_at` datetime DEFAULT NULL,
+	`revoked_at` datetime DEFAULT NULL,
+	`created_at` datetime NOT NULL,
+	`updated_at` datetime NOT NULL,
+	PRIMARY KEY (`id`),
+	UNIQUE KEY `api_tokens_access_token_hash_unique` (`access_token_hash`),
+	UNIQUE KEY `api_tokens_refresh_token_hash_unique` (`refresh_token_hash`),
+	KEY `api_tokens_user_id_idx` (`user_id`),
+	KEY `api_tokens_access_lookup_idx` (`access_token_hash`,`access_expires_at`,`revoked_at`),
+	KEY `api_tokens_refresh_lookup_idx` (`refresh_token_hash`,`refresh_expires_at`,`revoked_at`),
+	KEY `api_tokens_user_device_idx` (`user_id`,`device_hash`,`revoked_at`),
+	CONSTRAINT `fk_api_tokens_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;

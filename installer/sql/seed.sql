@@ -950,7 +950,11 @@ INSERT INTO `migrations` (`id`, `file`, `source`, `query_index`, `description`, 
 VALUES
 	(1,'20260227_migration_source.sql','pair',1,'Baseline Pair migration already reflected in installer schema.',0,1,NOW(),NOW()),
 	(2,'20260228_templates_palette.sql','pair',1,'Baseline Pair migration already reflected in installer schema.',0,1,NOW(),NOW()),
-	(3,'20260403_user_auth_tables.sql','pair',1,'Baseline Pair migration already reflected in installer schema.',0,1,NOW(),NOW());
+	(3,'20260403_user_auth_tables.sql','pair',1,'Baseline Pair migration already reflected in installer schema.',0,1,NOW(),NOW()),
+	(4,'20260421_remember_me_token_length.sql','pair',1,'Baseline Pair migration already reflected in installer schema.',0,1,NOW(),NOW()),
+	(5,'20260505_log_events.sql','pair',1,'Baseline Pair migration already reflected in installer schema.',0,1,NOW(),NOW()),
+	(6,'20260510_api_tokens.sql','pair',1,'Baseline Pair migration already reflected in installer schema.',0,1,NOW(),NOW()),
+	(7,'20260510_api_tokens_device_metadata.sql','pair',1,'Baseline Pair migration already reflected in installer schema.',0,1,NOW(),NOW());
 
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 UNLOCK TABLES;

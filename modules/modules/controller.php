@@ -6,8 +6,8 @@ use Pair\Core\Application;
 use Pair\Core\Env;
 use Pair\Html\Breadcrumb;
 use Pair\Http\EmptyResponse;
+use Pair\Http\UploadedFile;
 use Pair\Helpers\LogBar;
-use Pair\Helpers\Upload;
 use Pair\Models\Module;
 use Pair\Packages\InstallablePackage;
 use Pair\Web\PageResponse;
@@ -73,24 +73,32 @@ class ModulesController extends BoilerplateController {
 	 */
 	public function addAction(): PageResponse {
 
-		// collects file infos
-		$upload = new Upload('package');
-
-		// checks for common upload errors
-		if ($upload->getLastError()) {
+		try {
+			// Pair 4 exposes uploaded files as immutable value objects with explicit move operations.
+			$upload = UploadedFile::fromGlobals('package');
+		} catch (Throwable $e) {
 			LogBar::error($this->translate('ERROR_ON_UPLOADED_FILE'));
 			return $this->defaultAction();
-		} else if ('zip'!=$upload->type) {
+		}
+
+		if (!$upload->isOk()) {
+			LogBar::error($this->translate('ERROR_ON_UPLOADED_FILE'));
+			return $this->defaultAction();
+		} else if ('zip' !== strtolower((string)$upload->extension())) {
 			LogBar::error($this->translate('UPLOADED_FILE_IS_NOT_ZIP'));
 			return $this->defaultAction();
 		}
 
-		// saves the file on /temp folder
-		$upload->save(TEMP_PATH);
+		try {
+			$packagePath = $upload->moveTo(TEMP_PATH);
+		} catch (Throwable $e) {
+			LogBar::error($this->translate('ERROR_ON_UPLOADED_FILE'));
+			return $this->defaultAction();
+		}
 
 		// installs the package
 		$package = new InstallablePackage();
-		$res = $package->installArchive($upload->path . $upload->filename);
+		$res = $package->installArchive($packagePath);
 
 		if ($res) {
 			$this->toast($this->translate('MODULE_HAS_BEEN_INSTALLED_SUCCESFULLY'));

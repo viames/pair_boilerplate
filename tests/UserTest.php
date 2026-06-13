@@ -7,14 +7,16 @@ use PHPUnit\Framework\TestCase;
 final class UserTest extends TestCase {
 
 	/**
-	 * Verify that the Pair user password helper returns a verifiable bcrypt hash.
+	 * Verify that the Pair user password helper returns a verifiable current hash.
 	 */
 	public function testPasswordHashVerifiesOriginalPassword(): void {
 
 		$password = 'Unit-Test-Password-123';
 		$hash = Pair\Models\User::getHashedPasswordWithSalt($password);
+		$hashInfo = password_get_info($hash);
+		$expectedAlgorithm = defined('PASSWORD_ARGON2ID') ? 'argon2id' : 'bcrypt';
 
-		$this->assertMatchesRegularExpression('/^\\$2y\\$12\\$/', $hash);
+		$this->assertSame($expectedAlgorithm, $hashInfo['algoName']);
 		$this->assertTrue(password_verify($password, $hash));
 		$this->assertFalse(password_verify('wrong-password', $hash));
 
