@@ -2,10 +2,10 @@
 	"name" : "viames/pair_boilerplate",
 	"description" : "Skeleton project based on Pair PHP framework",
 	"type" : "project",
-	"minimum-stability": "dev",
+	"minimum-stability": "stable",
 	"prefer-stable": true,
 	"require": {
-		"viames/pair": "dev-main"
+		"viames/pair": "^4.0"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "^12.0"
@@ -32,13 +32,6 @@
 			"modules/*/translations/"
 		]
 	},
-	"repositories" : [
-
-		{
-			"type" : "vcs",
-			"url" : "https://github.com/viames/pair_boilerplate"
-		}
-	],
 	"license" : "MIT",
 	"keywords" : [
 		"pair",

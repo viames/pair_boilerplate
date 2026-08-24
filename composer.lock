@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5a81ac4ada995c717927971cc78164a5",
+    "content-hash": "80507c5ec3bd4445d89b80dbf45f1d13",
     "packages": [
         {
             "name": "psr/log",
@@ -58,16 +58,16 @@
         },
         {
             "name": "viames/pair",
-            "version": "dev-main",
+            "version": "4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/viames/pair.git",
-                "reference": "1d70cd8603536966199096e7441212a7b1728ab5"
+                "reference": "99a8dcda56e474cbe8469516cf74b0eb00d55505"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/viames/pair/zipball/1d70cd8603536966199096e7441212a7b1728ab5",
-                "reference": "1d70cd8603536966199096e7441212a7b1728ab5",
+                "url": "https://api.github.com/repos/viames/pair/zipball/99a8dcda56e474cbe8469516cf74b0eb00d55505",
+                "reference": "99a8dcda56e474cbe8469516cf74b0eb00d55505",
                 "shasum": ""
             },
             "require": {
@@ -91,7 +91,6 @@
                 "ext-xdebug": "Useful while debugging Pair applications and tests.",
                 "stripe/stripe-php": "Required by Pair\\Services\\StripeGateway for Stripe payments."
             },
-            "default-branch": true,
             "bin": [
                 "bin/pair"
             ],
@@ -152,7 +151,7 @@
                 "source": "https://github.com/viames/pair/tree/main/src",
                 "wiki": "https://github.com/viames/pair/wiki"
             },
-            "time": "2026-06-12T07:51:21+00:00"
+            "time": "2026-08-24T11:52:06+00:00"
         }
     ],
     "packages-dev": [
@@ -1840,10 +1839,8 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "dev",
-    "stability-flags": {
-        "viames/pair": 20
-    },
+    "minimum-stability": "stable",
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {},
