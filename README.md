@@ -10,7 +10,7 @@ Skeleton project for building applications with [Pair PHP Framework](https://git
 
 This repository provides a ready-to-install baseline for small and medium PHP applications such as CRM tools, internal portals and web back offices. It includes authentication, users and groups, ACL management, localization, a REST API entry point, OAuth2 support, migrations and a generator for CRUD modules.
 
-The project targets the Pair 4 alpha development line. Bundled modules are aligned with the explicit Pair 4 web path based on `Pair\Web\Controller`, `PageResponse` and typed `*PageState` classes. Legacy implicit `View` variables are being replaced by explicit page state objects, and the `crafter` module generates Pair 4-style controller, state and layout files for new modules.
+The project targets the stable Pair 4 release line. Bundled modules use the explicit Pair 4 web path based on `Pair\Web\Controller`, `PageResponse` and typed `*PageState` classes. The `crafter` module generates Pair 4-style controller, state and layout files for new modules, while legacy implicit `View` variables are retained only where migration compatibility still requires them.
 
 ## Requirements
 
