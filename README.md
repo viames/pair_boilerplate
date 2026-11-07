@@ -6,16 +6,22 @@ Skeleton project for building applications with [Pair PHP Framework](https://git
 [![Total Downloads](https://poser.pugx.org/viames/pair_boilerplate/downloads)](https://packagist.org/packages/viames/pair_boilerplate)
 [![Latest Unstable Version](https://poser.pugx.org/viames/pair_boilerplate/v/unstable)](https://packagist.org/packages/viames/pair_boilerplate)
 [![License](https://poser.pugx.org/viames/pair_boilerplate/license)](https://packagist.org/packages/viames/pair_boilerplate)
-[![composer.lock](https://poser.pugx.org/viames/pair_boilerplate/composerlock)](https://packagist.org/packages/viames/pair_boilerplate)
 
 This repository provides a ready-to-install baseline for small and medium PHP applications such as CRM tools, internal portals and web back offices. It includes authentication, users and groups, ACL management, localization, a REST API entry point, OAuth2 support, migrations and a generator for CRUD modules.
 
 The project targets the stable Pair 4 release line. Bundled modules use the explicit Pair 4 web path based on `Pair\Web\Controller`, `PageResponse` and typed `*PageState` classes. The `crafter` module generates Pair 4-style controller, state and layout files for new modules, while legacy implicit `View` variables are retained only where migration compatibility still requires them.
 
+## Release status
+
+Starter **4.0.0** targets stable Pair **^4.1.12**. The previous starter 3.x
+belongs to Pair 3. The installation below selects the Pair 4 starter explicitly.
+See [RELEASING.md](RELEASING.md) for tests, publication order and the public
+installation gate.
+
 ## Requirements
 
-- PHP 8.4.1 or newer.
-- MySQL 8.0 or newer.
+- PHP 8.4.1 or later within PHP 8; PHP 8.4 and 8.5 are tested.
+- MySQL 8.0 or later; fresh installation is tested on 8.0, 8.4 and 26.10.
 - Apache with `mod_rewrite` enabled.
 - Composer.
 - PHP extensions:
@@ -32,7 +38,7 @@ The project targets the stable Pair 4 release line. Bundled modules use the expl
 Create a new project with Composer:
 
 ```shell
-composer create-project viames/pair_boilerplate my_project_name
+composer create-project viames/pair_boilerplate my_project_name "^4.0"
 ```
 
 Open the project URL in the browser:
@@ -41,13 +47,15 @@ Open the project URL in the browser:
 http://localhost/my_project_name
 ```
 
-The installer starts automatically when the root URL is opened for the first time. It checks the environment, creates or updates the database, imports the Pair 4 baseline schema and seed data, writes the `.env` file, creates the first administrator account and removes itself after a successful installation.
+The installer starts automatically when the root URL is opened for the first time. It checks the environment, creates a new database or accepts an empty one, imports the Pair 4 baseline schema and seed data, writes the `.env` file, creates the first administrator account and removes itself after a successful installation.
+
+A populated database is rejected before schema, seed or collation writes. Use the migration runner for an existing application.
 
 After installation, open the application URL and log in with the generated administrator credentials shown by the installer. Change the generated password after the first login.
 
 ## Apache Configuration
 
-Enable Apache `mod_rewrite`:
+On Debian/Ubuntu, enable Apache `mod_rewrite` with the distribution command below. On other systems, enable the module through that Apache installation:
 
 ```shell
 sudo a2enmod rewrite
@@ -64,24 +72,14 @@ Make sure the project directory allows `.htaccess` rules. A typical configuratio
 
 ## MySQL Configuration
 
-Pair applications should use `utf8mb4` and `utf8mb4_unicode_ci`. A typical MySQL configuration is:
+Use a dedicated new or empty database. The installer creates its schema with
+`utf8mb4` and `utf8mb4_unicode_ci`; Pair configures communication at the connection
+level. Existing server-wide charset, SQL-mode and authentication settings do not
+need to be replaced by a boilerplate-specific MySQL configuration.
 
-```ini
-[mysql]
-default-character-set=utf8mb4
-
-[mysqld]
-collation-server = utf8mb4_unicode_ci
-init-connect='SET NAMES utf8mb4'
-character-set-server = utf8mb4
-sql_mode = STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
-```
-
-Verify that:
-
-- the database uses charset `utf8mb4` and collation `utf8mb4_unicode_ci`;
-- the database user can create, read, write, update and delete data in the project database;
-- the database server time is correct, for example with `SELECT NOW();`.
+The installation account needs access to initialize only this application's
+schema. Do not give it unrelated application databases. The installer refuses
+a schema containing tables, including before changing its default collation.
 
 ## Configuration
 
@@ -110,7 +108,7 @@ composer install
 composer update
 ```
 
-Composer runs `php migrate-cli.php` after install and update. The migration runner applies Pair vendor migrations first and application migrations immediately after.
+Composer runs `php migrate-cli.php` after install and update. Without `.env`, it exits successfully without connecting to a database. After configuration, it applies the normal migration flow. The migration runner applies Pair vendor migrations first and application migrations immediately after.
 
 Application migrations live in `/migrations` and should use the `YYYYMMDD_description.sql` naming convention. Treat migration files as append-only after they have been applied to an environment.
 
@@ -126,6 +124,10 @@ The expected dry-run result for the current codebase is:
 Changed files: none
 Warnings: none
 ```
+
+A new project resolves compatible stable dependencies and receives its own
+`composer.lock`. Commit that lock with the application. The starter template's
+obsolete lock is intentionally excluded from distributions.
 
 ## Development Commands
 
@@ -144,14 +146,26 @@ composer run pair -- list
 Generate a module:
 
 ```shell
-composer run pair -- make:module orders
+vendor/bin/pair make:module orders
 ```
 
 Generate a CRUD module from a database table:
 
 ```shell
-composer run pair -- make:crud order --table=orders --fields=id,customer_id,total_amount
+vendor/bin/pair make:crud order --table=orders --fields=id,customer_id,total_amount
 ```
+
+Verify the distributable installation path before publishing the starter:
+
+```shell
+php tests/install.php
+```
+
+This command uses the sibling Pair checkout (override with `PAIR_FRAMEWORK_PATH`)
+and tests real Composer archives/create-project offline, both CLI entrypoints,
+the initial installer page and the starter unit suite. Supply only disposable
+`PAIR_INSTALL_DB_*` credentials for the optional fresh-schema/administrator test.
+See [RELEASING.md](RELEASING.md) for the complete gate and remaining browser checks.
 
 ## Cron
 
@@ -172,7 +186,14 @@ After installation:
 3. Confirm that every check is green.
 4. Fix every reported red `X` before treating the environment as ready.
 
+The checks cover the installed schema and application/session settings. Optional
+Web Push storage is checked only when its subscription table has been provisioned;
+server-wide charset/collation defaults are not requirements of this application.
+
 ## Folder Structure
+
+A generated application has the following structure; `.env`, `temp`, `vendor`
+and its own `composer.lock` are created during dependency/application installation.
 
 ```text
 /classes

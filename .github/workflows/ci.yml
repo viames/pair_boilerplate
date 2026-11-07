@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ['4.*']
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ['8.4', '8.5']
+        mysql-version: ['8.0', '8.4', '26.10']
+    services:
+      mysql:
+        image: mysql:${{ matrix.mysql-version }}
+        env:
+          MYSQL_ROOT_PASSWORD: pair-root
+          MYSQL_DATABASE: pair_test_starter
+          MYSQL_USER: pair_test
+          MYSQL_PASSWORD: pair-test
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 --silent"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: starter
+      - uses: actions/checkout@v7
+        with:
+          repository: viames/pair
+          ref: main
+          path: pair
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: curl, fileinfo, intl, mbstring, pdo_mysql, zip
+          coverage: none
+      - name: Validate starter metadata
+        run: composer validate --no-check-lock --strict
+        working-directory: starter
+      - name: Install framework test dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+        working-directory: pair
+      - name: Verify stable create-project and application entrypoints
+        run: php tests/install.php
+        working-directory: starter
+        env:
+          PAIR_INSTALL_DB_HOST: 127.0.0.1
+          PAIR_INSTALL_DB_NAME: pair_test_starter
+          PAIR_INSTALL_DB_USER: pair_test
+          PAIR_INSTALL_DB_PASS: pair-test

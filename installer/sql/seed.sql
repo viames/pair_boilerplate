@@ -954,7 +954,10 @@ VALUES
 	(4,'20260421_remember_me_token_length.sql','pair',1,'Baseline Pair migration already reflected in installer schema.',0,1,NOW(),NOW()),
 	(5,'20260505_log_events.sql','pair',1,'Baseline Pair migration already reflected in installer schema.',0,1,NOW(),NOW()),
 	(6,'20260510_api_tokens.sql','pair',1,'Baseline Pair migration already reflected in installer schema.',0,1,NOW(),NOW()),
-	(7,'20260510_api_tokens_device_metadata.sql','pair',1,'Baseline Pair migration already reflected in installer schema.',0,1,NOW(),NOW());
+	(7,'20260510_api_tokens_device_metadata.sql','pair',1,'Baseline Pair migration already reflected in installer schema.',0,1,NOW(),NOW()),
+	(8,'20260918_user_passkeys.sql','pair',1,'Baseline Pair migration already reflected in installer schema.',0,1,NOW(),NOW()),
+	(9,'20260412_create_migrations_table.sql','app',1,'Baseline application migration already reflected in installer schema.',0,1,NOW(),NOW()),
+	(10,'20260412_sample_migration.sql','app',1,'Baseline application migration already reflected in installer schema.',0,1,NOW(),NOW());
 
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -967,25 +970,25 @@ LOCK TABLES `modules` WRITE;
 
 INSERT INTO `modules` (`id`, `name`, `version`, `date_released`, `app_version`, `installed_by`, `date_installed`)
 VALUES
-	(1,'api','1.0',NOW(),'1.0',1,NOW()),
-	(2,'crafter','1.0',NOW(),'1.0',1,NOW()),
-	(3,'languages','1.0',NOW(),'1.0',1,NOW()),
-	(4,'modules','1.0',NOW(),'1.0',1,NOW()),
-	(5,'options','1.0',NOW(),'1.0',1,NOW()),
-	(6,'rules','1.0',NOW(),'1.0',1,NOW()),
-	(7,'selftest','1.0',NOW(),'1.0',1,NOW()),
-	(8,'templates','1.0',NOW(),'1.0',1,NOW()),
-	(9,'user','1.0',NOW(),'1.0',1,NOW()),
-	(10,'users','1.0',NOW(),'1.0',1,NOW()),
-	(11,'tools','1.0',NOW(),'1.0',1,NOW()),
-	(12,'countries','1.0',NOW(),'1.0',1,NOW()),
-	(13,'locales','1.0',NOW(),'1.0',1,NOW()),
-	(14,'translator','1.0',NOW(),'1.0',1,NOW()),
-	(16,'audit','1.0',NOW(),'1.0',1,NOW()),
-	(17,'errorlogs','1.0',NOW(),'1.0',1,NOW()),
-	(18,'oauth2','1.0',NOW(),'1.0',1,NOW()),
-	(19,'migrate','1.0',NOW(),'1.0',1,NOW()),
-	(20,'oauth2clients','1.0',NOW(),'1.0',1,NOW());
+	(1,'api','1.0',NOW(),'1.0.0',1,NOW()),
+	(2,'crafter','1.0',NOW(),'1.0.0',1,NOW()),
+	(3,'languages','1.0',NOW(),'1.0.0',1,NOW()),
+	(4,'modules','1.0',NOW(),'1.0.0',1,NOW()),
+	(5,'options','1.0',NOW(),'1.0.0',1,NOW()),
+	(6,'rules','1.0',NOW(),'1.0.0',1,NOW()),
+	(7,'selftest','1.0',NOW(),'1.0.0',1,NOW()),
+	(8,'templates','1.0',NOW(),'1.0.0',1,NOW()),
+	(9,'user','1.0',NOW(),'1.0.0',1,NOW()),
+	(10,'users','1.0',NOW(),'1.0.0',1,NOW()),
+	(11,'tools','1.0',NOW(),'1.0.0',1,NOW()),
+	(12,'countries','1.0',NOW(),'1.0.0',1,NOW()),
+	(13,'locales','1.0',NOW(),'1.0.0',1,NOW()),
+	(14,'translator','1.0',NOW(),'1.0.0',1,NOW()),
+	(16,'audit','1.0',NOW(),'1.0.0',1,NOW()),
+	(17,'errorlogs','1.0',NOW(),'1.0.0',1,NOW()),
+	(18,'oauth2','1.0',NOW(),'1.0.0',1,NOW()),
+	(19,'migrate','1.0',NOW(),'1.0.0',1,NOW()),
+	(20,'oauth2clients','1.0',NOW(),'1.0.0',1,NOW());
 
 /*!40000 ALTER TABLE `modules` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1047,7 +1050,7 @@ LOCK TABLES `templates` WRITE;
 
 INSERT INTO `templates` (`id`, `name`, `version`, `date_released`, `app_version`, `is_default`, `installed_by`, `date_installed`, `palette`)
 VALUES
-		(1,'Basic','1.0',NOW(),'1.0',1,1,NOW(),'["#1AB394","#1C84C6","#9C9C9C","#636363"]');
+		(1,'Basic','1.0',NOW(),'1.0.0',1,1,NOW(),'["#1AB394","#1C84C6","#9C9C9C","#636363"]');
 
 /*!40000 ALTER TABLE `templates` ENABLE KEYS */;
 UNLOCK TABLES;

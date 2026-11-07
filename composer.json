@@ -1,14 +1,22 @@
 {
-	"name" : "viames/pair_boilerplate",
-	"description" : "Skeleton project based on Pair PHP framework",
-	"type" : "project",
+	"name": "viames/pair_boilerplate",
+	"description": "Pair 4 starter with authentication, ACL, migrations and explicit server-rendered modules",
+	"type": "project",
 	"minimum-stability": "stable",
 	"prefer-stable": true,
 	"require": {
-		"viames/pair": "^4.0"
+		"php": "^8.4.1",
+		"ext-curl": "*",
+		"ext-fileinfo": "*",
+		"ext-intl": "*",
+		"ext-json": "*",
+		"ext-mbstring": "*",
+		"ext-pdo": "*",
+		"ext-pdo_mysql": "*",
+		"viames/pair": "^4.1.12"
 	},
 	"require-dev": {
-		"phpunit/phpunit": "^12.0"
+		"phpunit/phpunit": "^13.0"
 	},
 	"scripts": {
 		"post-install-cmd": [
@@ -19,7 +27,8 @@
 		],
 		"pair": "php bin/pair",
 		"test": "phpunit",
-		"upgrade-to-v4": "php vendor/viames/pair/scripts/upgrade-to-v4.php"
+		"upgrade-to-v4": "php vendor/viames/pair/scripts/upgrade-to-v4.php",
+		"test:install": "php tests/install.php"
 	},
 	"autoload": {
 		"classmap": [
@@ -32,8 +41,8 @@
 			"modules/*/translations/"
 		]
 	},
-	"license" : "MIT",
-	"keywords" : [
+	"license": "MIT",
+	"keywords": [
 		"pair",
 		"php",
 		"multilingual",
@@ -46,16 +55,30 @@
 		"rest-api",
 		"oauth2"
 	],
-	"homepage" : "https://github.com/viames/pair_boilerplate",
-	"authors" : [
+	"homepage": "https://github.com/viames/pair_boilerplate",
+	"authors": [
 		{
-			"name" : "Viames Marino",
-			"role" : "Developer"
+			"name": "Viames Marino",
+			"role": "Developer"
 		}
 	],
 	"config": {
 		"allow-plugins": {
 			"php-http/discovery": true
 		}
+	},
+	"archive": {
+		"exclude": [
+			"/.DS_Store",
+			"/.env",
+			"/.env.tmp",
+			"/.github",
+			"/.git",
+			"/.phpunit.cache",
+			"/.vscode",
+			"/vendor",
+			"/temp",
+			"/composer.lock"
+		]
 	}
 }

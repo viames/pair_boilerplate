@@ -387,7 +387,7 @@ class UsersController extends Controller {
 		$this->model->pagination = $pagination;
 
 		$users = $this->model->getUsers();
-		$pagination->count = User::countAllObjects(['admin' => 0]);
+		$pagination->count = User::countAllObjects();
 		$rows = [];
 
 		foreach ($users as $user) {
@@ -398,7 +398,7 @@ class UsersController extends Controller {
 				(string)($user->email ?? ''),
 				(string)($user->groupName ?? ''),
 				(bool)$user->enabled,
-				(string)($user->lastLogin ?? ''),
+				($user->lastLogin instanceof \DateTimeInterface ? $user->lastLogin->format('Y-m-d H:i:s') : ''),
 				$this->canEditUser($user)
 			);
 		}
@@ -492,7 +492,7 @@ class UsersController extends Controller {
 
 		if ($isNew) {
 			$user->groupId = (int)$this->input()->int('groupId', 0);
-			$user->admin = false;
+			$user->super = false;
 			$user->faults = 0;
 		}
 
@@ -851,7 +851,7 @@ class UsersController extends Controller {
 	 */
 	private function canEditUser(User $user): bool {
 
-		return $this->app->currentUser->admin or !$user->admin;
+		return $this->app->currentUser->super or !$user->super;
 
 	}
 

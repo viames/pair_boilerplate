@@ -138,7 +138,7 @@ class ModulesController extends BoilerplateController {
 		$this->model->pagination = $pagination;
 
 		$modules = $this->model->getActiveRecordObjects(Module::class, 'name');
-		$devMode = ('development' == Application::getEnvironment() and $this->app->currentUser and $this->app->currentUser->admin);
+		$devMode = ('development' == Application::getEnvironment() and $this->app->currentUser and $this->app->currentUser->super);
 
 		foreach ($modules as $module) {
 

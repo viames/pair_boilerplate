@@ -10,19 +10,19 @@ use Pair\Orm\Database;
 class SelfTest {
 
 	/**
-	 * Elenco estensioni PHP necessarie.
+	 * PHP extensions required by the starter.
 	 */
-	const REQUIRED_PHP_EXT = ['fileinfo','json','pcre','PDO','pdo_mysql','Reflection','soap'];
+	const REQUIRED_PHP_EXT = ['curl','fileinfo','intl','json','mbstring','PDO','pdo_mysql'];
 
 	/**
-	 * Versione minima di PHP necessaria.
+	 * Minimum supported PHP version.
 	 */
-	const MIN_PHP_VERSION = '8.2';
+	const MIN_PHP_VERSION = '8.4.1';
 
 	/**
-	 * Versione minima di MySQL necessaria.
+	 * Minimum supported MySQL version.
 	 */
-	const MIN_MYSQL_VERSION = '8.0.26';
+	const MIN_MYSQL_VERSION = '8.0';
 
 	/**
 	 * Folders to check for presence and read/write permissions
@@ -201,7 +201,7 @@ class SelfTest {
 
 		$hiddenExt = [];
 
-		Logger::notice('Checking for PHP extensions ' . implode(', ', self::REQUIRED_PHP_EXT));
+		Logger::getInstance()->notice('Checking for PHP extensions ' . implode(', ', self::REQUIRED_PHP_EXT));
 
 		// check each library
 		foreach (self::REQUIRED_PHP_EXT as $ext) {
@@ -220,7 +220,7 @@ class SelfTest {
 
 				// enqueue failure and show error message
 				$res = FALSE;
-				Logger::error('Missing PHP extension ' . $ext);
+				Logger::getInstance()->error('Missing PHP extension ' . $ext);
 
 			}
 
@@ -229,13 +229,13 @@ class SelfTest {
 		// check PHP version
 		if (version_compare(phpversion(), self::MIN_PHP_VERSION, "<")) {
 			$res = FALSE;
-			Logger::error('PHP version required is ' . self::MIN_PHP_VERSION . ' or greater. You are using PHP ' . phpversion());
+			Logger::getInstance()->error('PHP version required is ' . self::MIN_PHP_VERSION . ' or greater. You are using PHP ' . phpversion());
 		}
 
 		// check en_US locales for float storage in DB
 		if (class_exists('ResourceBundle') and !in_array('en_US', ResourceBundle::getLocales(''))) {
 			$res = FALSE;
-			Logger::error('en_US locale is necessary to appropriately convert PHP floats when saving in the DB');
+			Logger::getInstance()->error('en_US locale is necessary to appropriately convert PHP floats when saving in the DB');
 		}
 
 		return $res;
@@ -243,7 +243,7 @@ class SelfTest {
 	}
 
 	/**
-	 * Check that MySQL version is greater than 5.5 and search for charset settings.
+	 * Check supported MySQL and the application database/session Unicode settings.
 	 * Return TRUE if DBMS is ok.
 	 *
 	 * @return	bool
@@ -256,20 +256,18 @@ class SelfTest {
 		$version = $db->getMysqlVersion();
 
 		if (version_compare($version, self::MIN_MYSQL_VERSION) < 0) {
-			Logger::error('MySQL version required is ' . self::MIN_MYSQL_VERSION . ' or greater. You are using MySQL ' . $version);
+			Logger::getInstance()->error('MySQL version required is ' . self::MIN_MYSQL_VERSION . ' or greater. You are using MySQL ' . $version);
 			$ret = FALSE;
 		}
 
-		// the right settings list
+		// Check the owned schema and session; server-wide defaults may serve other applications.
 		$settings = [
 			'character_set_client'		=> 'utf8mb4',
 			'character_set_connection'	=> 'utf8mb4',
 			'character_set_database'	=> 'utf8mb4',
 			'character_set_results'		=> 'utf8mb4',
-			'character_set_server'		=> 'utf8mb4',
 			'collation_connection'		=> 'utf8mb4_unicode_ci',
-			'collation_database'		=> 'utf8mb4_unicode_ci',
-			'collation_server'			=> 'utf8mb4_unicode_ci'
+			'collation_database'		=> 'utf8mb4_unicode_ci'
 		];
 
 		// ask to dbms the current settings
@@ -281,7 +279,7 @@ class SelfTest {
 			if (array_key_exists($row->Variable_name, $settings)) {
 
 				if ($settings[$row->Variable_name] != $row->Value) {
-					Logger::warning('DBMS setting parameter ' . $row->Variable_name . ' value is ' . $row->Value . ' should be ' . $settings[$row->Variable_name]);
+					Logger::getInstance()->warning('DBMS setting parameter ' . $row->Variable_name . ' value is ' . $row->Value . ' should be ' . $settings[$row->Variable_name]);
 					$ret = FALSE;
 				}
 
@@ -303,11 +301,11 @@ class SelfTest {
 		// check about missing UTC_DATE constant
 		if (is_null(Env::get('UTC_DATE'))) {
 			$ret = FALSE;
-			Logger::error('In .env configuration file the UTC_DATE option is missing');
-		// or check on fall-back timezone
-		} else if (Env::get('UTC_DATE') and 'UTC' == date_default_timezone_get()) {
+			Logger::getInstance()->error('In .env configuration file the UTC_DATE option is missing');
+		// UTC storage must agree with the runtime timezone when explicitly enabled.
+		} else if (Env::get('UTC_DATE') and 'UTC' !== date_default_timezone_get()) {
 			$ret = FALSE;
-			Logger::error('In .env configuration file the UTC_DATE option is FALSE but Timezone results in UTC by php.ini file');
+			Logger::getInstance()->error('UTC_DATE is enabled but the runtime timezone is not UTC');
 		}
 
 		return $ret;
@@ -328,12 +326,12 @@ class SelfTest {
 			if ('temp' == $f and !Application::fixTemporaryFolder()) {
 			
 				$ret = FALSE;
-				Logger::error('Temporary folder is not readable and cannot be fixed');
+				Logger::getInstance()->error('Temporary folder is not readable and cannot be fixed');
 			
 			} else if (!is_dir($folder) or !is_readable($folder)) {
 			
 				$ret = FALSE;
-				Logger::error($folder . ' folder is missing or not readable');
+				Logger::getInstance()->error($folder . ' folder is missing or not readable');
 			
 			}
 
@@ -367,6 +365,12 @@ class SelfTest {
 		// build the object and perform the test
 		foreach ($classes as $class => &$opts) {
 
+			// Web Push is opt-in and its subscription table is provisioned only when enabled.
+			if ($class === \Pair\Models\PushSubscription::class and !Database::getInstance()->tableExists($class::TABLE_NAME)) {
+				$excludeClasses[] = $class;
+				continue;
+			}
+
 			// build a class object properly
 			if ($opts['constructor']) {
 				$opts['object'] = new $class;
@@ -385,6 +389,8 @@ class SelfTest {
 			}
 
 		}
+
+		unset($opts);
 
 		// repeat scan to test valid classes
 		foreach ($classes as $class => $opts) {
@@ -415,15 +421,12 @@ class SelfTest {
 		// all class-table maps
 		$properties = $object->getAllProperties();
 
-		// all class properties
-		$properties = get_object_vars($object);
-
 		$db = Database::getInstance();
 
 		// all db fields
 		if (!$db->tableExists($class::TABLE_NAME)) {
 			$errorCount++;
-			Logger::error('DB Table ' . $class::TABLE_NAME . ' doesn’t exist');
+			Logger::getInstance()->error('DB Table ' . $class::TABLE_NAME . ' doesn’t exist');
 			return $errorCount;
 		}
 
@@ -440,15 +443,10 @@ class SelfTest {
 
 			$field = $class::getMappedField($property);
 
-			// looks for object declared property and db bind field
-			if (!in_array($property, $properties)) {
+			// The first column (usually the primary key) is a valid match too.
+			if (!in_array($field, $fieldList, true)) {
 				$errorCount++;
-				Logger::error('Class ' . $class . ' is missing property “' . $property . '”');
-			}
-
-			if (!array_search($field, $fieldList)) {
-				$errorCount++;
-				Logger::error('Class ' . $class . ' is managing unexistent field “' . $field . '”');
+				Logger::getInstance()->error('Class ' . $class . ' is managing unexistent field “' . $field . '”');
 			}
 
 		}
@@ -458,7 +456,7 @@ class SelfTest {
 
 			if (!$class::getMappedProperty($field)) {
 				$errorCount++;
-				Logger::error('Class ' . $class . ' is not binding “' . $field . '” in method getBinds()');
+				Logger::getInstance()->error('Class ' . $class . ' is not binding “' . $field . '” in method getBinds()');
 			}
 
 		}
@@ -490,7 +488,7 @@ class SelfTest {
 			foreach ($plugins as $plugin) {
 
 				if (version_compare(Env::get('APP_VERSION'), $plugin->appVersion) > 0) {
-					Logger::warning($type . ' plugin ' . ucfirst($plugin->name) .
+					Logger::getInstance()->warning($type . ' plugin ' . ucfirst($plugin->name) .
 							' is compatible with ' . Env::get('APP_NAME') . ' v' . $plugin->appVersion);
 					$ret = FALSE;
 				}

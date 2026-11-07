@@ -233,7 +233,7 @@ class TemplatesController extends BoilerplateController {
 	 */
 	public function deleteAction(): ?PageResponse {
 
-		if (Application::getEnvironment() !== 'development' || !$this->app->currentUser->admin) {
+		if (Application::getEnvironment() !== 'development' || !$this->app->currentUser->super) {
 			$this->toastError($this->translate('ERROR'), $this->translate('TEMPLATE_HAS_NOT_BEEN_REMOVED'));
 			$this->redirect('templates/default');
 			return null;
@@ -263,7 +263,7 @@ class TemplatesController extends BoilerplateController {
 		$pagination = $this->buildPagination();
 		$this->model->pagination = $pagination;
 		$templates = $this->model->getActiveRecordObjects(Template::class, 'name');
-		$deletionAllowed = ('development' == Application::getEnvironment() && $this->app->currentUser->admin);
+		$deletionAllowed = ('development' == Application::getEnvironment() && $this->app->currentUser->super);
 
 		foreach ($templates as $template) {
 

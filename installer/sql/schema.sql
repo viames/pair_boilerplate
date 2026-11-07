@@ -316,7 +316,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 	`name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
 	`surname` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
 	`email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-	`admin` tinyint(1) NOT NULL DEFAULT '0',
+	`super` tinyint(1) NOT NULL DEFAULT '0',
 	`enabled` int unsigned NOT NULL,
 	`last_login` datetime DEFAULT NULL,
 	`faults` int unsigned NOT NULL DEFAULT '0',
@@ -325,7 +325,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 	UNIQUE KEY `username` (`username`),
 	UNIQUE KEY `pw_reset` (`pw_reset`),
 	KEY `group_id` (`group_id`),
-	KEY `admin` (`admin`),
+	KEY `super` (`super`),
 	KEY `locale_id` (`locale_id`),
 	CONSTRAINT `fk_users_groups` FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
 	CONSTRAINT `fk_users_locales` FOREIGN KEY (`locale_id`) REFERENCES `locales` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
@@ -372,6 +372,25 @@ CREATE TABLE IF NOT EXISTS `api_tokens` (
 	KEY `api_tokens_refresh_lookup_idx` (`refresh_token_hash`,`refresh_expires_at`,`revoked_at`),
 	KEY `api_tokens_user_device_idx` (`user_id`,`device_hash`,`revoked_at`),
 	CONSTRAINT `fk_api_tokens_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Create WebAuthn credential storage for applications that did not already enable browser passkeys.
+CREATE TABLE IF NOT EXISTS `user_passkeys` (
+	`id` int unsigned NOT NULL AUTO_INCREMENT,
+	`user_id` int unsigned NOT NULL,
+	`credential_id` varchar(255) NOT NULL,
+	`public_key` text NOT NULL,
+	`sign_count` int unsigned NOT NULL DEFAULT 0,
+	`label` varchar(120) DEFAULT NULL,
+	`transports` varchar(255) DEFAULT NULL,
+	`last_used_at` datetime DEFAULT NULL,
+	`revoked_at` datetime DEFAULT NULL,
+	`created_at` datetime NOT NULL,
+	`updated_at` datetime NOT NULL,
+	PRIMARY KEY (`id`),
+	UNIQUE KEY `user_passkeys_credential_id_unique` (`credential_id`),
+	KEY `user_passkeys_user_id_idx` (`user_id`),
+	KEY `user_passkeys_active_user_idx` (`user_id`, `revoked_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;

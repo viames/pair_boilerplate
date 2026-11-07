@@ -376,13 +376,28 @@ class Installer {
 			return false;
 		}
 
+		// Fresh installation must never seed or alter an existing application's populated database.
+		if (false !== $db) {
+			try {
+				$sth = $this->dbh->prepare('SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA = ?');
+				$sth->execute([$v['dbName']]);
+				if ((int)$sth->fetchColumn() > 0) {
+					$this->addError('Use a new or empty database for a fresh installation.');
+					return false;
+				}
+			} catch (Exception $e) {
+				$this->addError('Cannot verify that the installation database is empty.');
+				return false;
+			}
+		}
+
 		// not exists, create a new database
 		if (false === $db) {
 
 			$query = 'CREATE DATABASE ' . $dbIdentifier . ' CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci';
 
 			try {
-				if (!$this->dbh->exec($query)) {
+				if (false === $this->dbh->exec($query)) {
 					throw new \PDOException($this->dbh->errorInfo()[2]);
 				}
 				$this->addNotification('New database `' . $v['dbName'] . '` has been created.');
@@ -397,7 +412,7 @@ class Installer {
 			$query = 'ALTER DATABASE ' . $dbIdentifier . ' CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci';
 
 			try {
-				if (!$this->dbh->exec($query)) {
+				if (false === $this->dbh->exec($query)) {
 					throw new \PDOException($this->dbh->errorInfo()[2]);
 				}
 				$this->addNotification('Existing database ' . $v['dbName'] . ' has been converted to charset and collation utf8mb4.');
@@ -496,15 +511,15 @@ class Installer {
 				$password .= '-';
 				continue;
 			}
-			$password .= $chars[mt_rand(0, $charsCount-1)];
+			$password .= $chars[random_int(0, $charsCount-1)];
 		}
 
-		// Use the current Pair password policy so fresh installs follow Pair 4 alpha.
+		// Use the current Pair password policy for the generated administrator credential.
 		$hash = \Pair\Models\User::getHashedPasswordWithSalt($password);
 
 		// assemble the query
 		$query =
-			'INSERT INTO `users` (`group_id`, `locale_id`, `username`, `hash`, `name`, `surname`, `email`, `admin`, `enabled`, `last_login`, `faults`, `pw_reset`)
+			'INSERT INTO `users` (`group_id`, `locale_id`, `username`, `hash`, `name`, `surname`, `email`, `super`, `enabled`, `last_login`, `faults`, `pw_reset`)
 			VALUES (1, 82, ?, ?, ?, ?, ?, 1, 1, NULL, 0, NULL)';
 
 		// query parameters
@@ -1012,7 +1027,7 @@ class Installer {
 	          <img src="<?php print $this->escape($this->url('images/pair-logo.png')) ?>" alt="Pair logo">
 	          <span>Pair Boilerplate</span>
 	        </div>
-	        <span class="installer-badge">Pair 4 alpha setup</span>
+	        <span class="installer-badge">Pair 4 setup</span>
 	      </header>
 
 	      <div class="installer-grid">
@@ -1038,7 +1053,7 @@ class Installer {
 	          <ul class="installer-requirements">
 	            <li><span class="installer-check">✓</span> PHP 8.4.1 or newer</li>
 	            <li><span class="installer-check">✓</span> MySQL 8.0 or newer</li>
-	            <li><span class="installer-check">✓</span> Pair 4 alpha baseline</li>
+	            <li><span class="installer-check">✓</span> Pair 4 baseline</li>
 	          </ul>
 	        </aside>
 
@@ -1161,7 +1176,7 @@ class Installer {
 	              </div>
 	              <div class="installer-step">
 	                <span class="installer-step-index">✓</span>
-	                <div><strong>Database initialized</strong><span>Pair 4 alpha baseline applied</span></div>
+	                <div><strong>Database initialized</strong><span>Pair 4 baseline applied</span></div>
 	              </div>
 	              <div class="installer-step">
 	                <span class="installer-step-index">✓</span>

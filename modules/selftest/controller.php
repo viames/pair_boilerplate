@@ -37,7 +37,7 @@ class SelftestController extends BoilerplateController {
 
 		$path = Utilities::getExecutablePath('mysqldump', 'MYSQLDUMP_PATH');
 		$label = $this->translate('TEST_MYSQL_DUMP_PATH', $path ?? 'n.a.');
-		$test->assertTrue($label, $path ?? '', $this->translate('SERVER'));
+		$test->assertTrue($label, is_string($path) and $path !== '', $this->translate('SERVER'));
 
 		$label = $this->translate('TEST_PHP_CONFIGURATION', phpversion());
 		$test->assertTrue($label, $test->checkPhp(), $this->translate('SERVER'));
@@ -51,11 +51,15 @@ class SelftestController extends BoilerplateController {
 
 		$path = Utilities::getExecutablePath('bzip2', 'BZIP2_PATH');
 		$label = $this->translate('TEST_BZIP2_PATH', $path ?? 'n.a.');
-		$test->assertTrue($label, $path ?? '', $this->translate('SERVER'));
+		$test->assertTrue($label, is_string($path) and $path !== '', $this->translate('SERVER'));
 
 		require_once APPLICATION_PATH . '/modules/migrate/model.php';
 		$migrationModel = new MigrateModel();
-		$migrationCheck = !(bool)count($migrationModel->getListOfMigrationFiles());
+		// Both sources must be complete; fresh-install baseline markers cover their SQL.
+		$pending = $migrationModel->getPendingMigrationFilesBySource();
+		$migrationCheck = (!$pending['pair'] and !$pending['app']
+			and !$migrationModel->hasIncompleteMigrationForSource('pair')
+			and !$migrationModel->hasIncompleteMigrationForSource('app'));
 		$test->assertTrue('Executed migrations', $migrationCheck, $this->translate('APPLICATION'));
 
 		$label = $this->translate('TEST_FOLDERS', implode(', ', SelfTest::FOLDERS));

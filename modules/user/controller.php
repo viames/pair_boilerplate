@@ -34,7 +34,8 @@ class UserController extends Controller {
 	 */
 	public function defaultAction(): void {
 
-		if ($this->app->currentUser) {
+		// Pair represents a guest with an unloaded User object.
+		if ($this->app->currentUser?->isLoaded()) {
 			$this->redirect('user/profile');
 		}
 
@@ -47,7 +48,8 @@ class UserController extends Controller {
 	 */
 	public function loginAction(): ?PageResponse {
 
-		if ($this->app->currentUser) {
+		// Pair represents a guest with an unloaded User object.
+		if ($this->app->currentUser?->isLoaded()) {
 			$this->redirect('user/profile');
 		}
 

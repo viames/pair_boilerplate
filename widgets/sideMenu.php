@@ -14,8 +14,8 @@ $menu->item('groups', 'GROUPS', 'fa-users');
 $menu->item('oauth2clients', 'oAuth2 client', 'fa-key');
 $menu->item('options', 'OPTIONS', 'fa-sliders-h');
 
-// admin multimenu
-if (is_a($app->currentUser, 'Pair\Models\User') and $app->currentUser->admin) {
+// Superusers can access development tools.
+if (is_a($app->currentUser, 'Pair\Models\User') and $app->currentUser->super) {
 
 	$menu->separator('DEVELOPMENT');
 

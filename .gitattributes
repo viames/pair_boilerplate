@@ -1,0 +1,11 @@
+* text=auto
+
+/.DS_Store export-ignore
+/.env export-ignore
+/.env.tmp export-ignore
+/.github export-ignore
+/.phpunit.cache export-ignore
+/.vscode export-ignore
+/vendor export-ignore
+/temp export-ignore
+/composer.lock export-ignore
