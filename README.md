@@ -131,11 +131,17 @@ obsolete lock is intentionally excluded from distributions.
 
 ## Development Commands
 
-Run the test suite:
+Run the bundled repository tests in a starter checkout or before completing
+browser installation:
 
 ```shell
 composer test
 ```
+
+These checks inspect installer sources/schema as well as application behavior.
+Successful browser installation removes the installer, so an installed app no
+longer contains those source fixtures. Keep application-specific regression
+tests separate from these starter release checks.
 
 Run the Pair CLI wrapper:
 
