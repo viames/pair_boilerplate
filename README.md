@@ -1,10 +1,13 @@
+![Pair Starter — From a clean project to a working application.](https://raw.githubusercontent.com/viames/pair_boilerplate/main/.github/assets/cover.jpg)
+
 # Pair boilerplate
+
+[Install](#installation) · [Requirements](#requirements) · [Architecture](#architecture) · [Pair for Codex](https://github.com/viames/pair-plugin)
 
 Skeleton project for building applications with [Pair PHP Framework](https://github.com/viames/pair).
 
 [![Latest Stable Version](https://poser.pugx.org/viames/pair_boilerplate/v/stable)](https://packagist.org/packages/viames/pair_boilerplate)
 [![Total Downloads](https://poser.pugx.org/viames/pair_boilerplate/downloads)](https://packagist.org/packages/viames/pair_boilerplate)
-[![Latest Unstable Version](https://poser.pugx.org/viames/pair_boilerplate/v/unstable)](https://packagist.org/packages/viames/pair_boilerplate)
 [![License](https://poser.pugx.org/viames/pair_boilerplate/license)](https://packagist.org/packages/viames/pair_boilerplate)
 
 This repository provides a ready-to-install baseline for small and medium PHP applications such as CRM tools, internal portals and web back offices. It includes authentication, users and groups, ACL management, localization, a REST API entry point, OAuth2 support, migrations and a generator for CRUD modules.
