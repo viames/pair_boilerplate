@@ -2,7 +2,7 @@
 
 # Pair boilerplate
 
-[Install](#installation) · [Requirements](#requirements) · [Architecture](#architecture) · [Pair for Codex](https://github.com/viames/pair-plugin)
+[Packagist](https://packagist.org/packages/viames/pair_boilerplate) · [Install](#installation) · [Requirements](#requirements) · [Architecture](#architecture) · [Pair for Codex](https://github.com/viames/pair-plugin)
 
 Skeleton project for building applications with [Pair PHP Framework](https://github.com/viames/pair).
 
