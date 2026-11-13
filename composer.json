@@ -1,6 +1,6 @@
 {
 	"name": "viames/pair_boilerplate",
-	"description": "Pair 4 starter with authentication, ACL, migrations and explicit server-rendered modules",
+	"description": "Ready-to-install Pair PHP application with sign-in, permissions, localization, migrations and CRUD generation.",
 	"type": "project",
 	"minimum-stability": "stable",
 	"prefer-stable": true,
